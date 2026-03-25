@@ -522,9 +522,16 @@ const Navbar = () => {
                     )}
                     {hasDropdown && (
                       <button
-                        onClick={() => {
-                          setExpandedMobile(isExpanded ? null : l.en);
+                        onClick={(e) => {
+                          const next = isExpanded ? null : l.en;
+                          setExpandedMobile(next);
                           setExpandedMobileSub(null);
+                          if (next) {
+                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
+                            if (target) {
+                              setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+                            }
+                          }
                         }}
                         className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground/50 hover:text-accent hover:bg-primary-foreground/10 transition-all"
                         aria-label={`Toggle ${l.en} submenu`}
