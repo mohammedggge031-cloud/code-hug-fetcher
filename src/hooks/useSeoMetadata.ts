@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { fallbackSeo, type FallbackSeoData } from "@/data/fallbackContent";
 import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
 const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
@@ -23,29 +22,7 @@ interface SeoData {
 }
 
 export const useSeoMetadata = (pagePath: string) => {
-  const local = fallbackSeo[pagePath] as Partial<FallbackSeoData> | undefined;
-
-  // Start with fallback immediately so SEO is never blank
-  const [seo, setSeo] = useState<SeoData | null>(
-    local
-      ? {
-          title: local.title ?? null,
-          description: local.description ?? null,
-          keywords: local.keywords ?? null,
-          canonical_url: local.canonical_url ?? null,
-          og_title: local.og_title ?? null,
-          og_description: local.og_description ?? null,
-          og_image: local.og_image ?? null,
-          og_type: local.og_type ?? null,
-          twitter_card: local.twitter_card ?? null,
-          twitter_title: local.twitter_title ?? null,
-          twitter_description: local.twitter_description ?? null,
-          twitter_image: local.twitter_image ?? null,
-          structured_data: local.structured_data ?? null,
-          no_index: local.no_index ?? null,
-        }
-      : null,
-  );
+  const [seo, setSeo] = useState<SeoData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -53,13 +30,10 @@ export const useSeoMetadata = (pagePath: string) => {
 
     if (isGlobalFallbackMode()) {
       setLoading(false);
-      return () => {
-        cancelled = true;
-      };
+      return () => { cancelled = true; };
     }
 
     const timer = setTimeout(() => {
-      // Timeout — keep whatever we have (fallback) and stop loading
       if (!cancelled) setLoading(false);
     }, TIMEOUT_MS);
 
@@ -86,7 +60,7 @@ export const useSeoMetadata = (pagePath: string) => {
           setSeo(data);
         }
       } catch {
-        // Supabase unreachable — fallback already set
+        // Supabase unreachable — seo stays null, page uses code defaults
       } finally {
         if (!cancelled) {
           clearTimeout(timer);

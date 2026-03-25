@@ -1,4 +1,4 @@
-import { fallbackTeachers, type FallbackTeacher } from "@/data/fallbackContent";
+import type { Teacher } from "@/data/fallbackContent";
 import { fetchWithTimeout, isGlobalFallbackMode, enableGlobalFallbackMode, SUPABASE_TIMEOUT_MS } from "@/lib/safeRuntimeData";
 
 interface TeacherRow {
@@ -17,7 +17,7 @@ interface TeacherRow {
   education_ar: string | null;
 }
 
-const mapTeacher = (teacher: TeacherRow): FallbackTeacher => ({
+const mapTeacher = (teacher: TeacherRow): Teacher => ({
   id: teacher.id,
   name_en: teacher.name_en,
   name_ar: teacher.name_ar,
@@ -46,15 +46,11 @@ const buildTeachersEndpoint = () => {
   return `${baseUrl}/rest/v1/teachers?${params.toString()}`;
 };
 
-export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
-  // Skip the network request entirely when there are no fallback teachers populated.
-  // This avoids 404 errors when the teachers table hasn't been created yet.
-  if (fallbackTeachers.length === 0) return fallbackTeachers;
-
+export async function loadTeachers(): Promise<Teacher[]> {
   const endpoint = buildTeachersEndpoint();
   const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-  if (isGlobalFallbackMode() || !endpoint || !anonKey) return fallbackTeachers;
+  if (isGlobalFallbackMode() || !endpoint || !anonKey) return [];
 
   try {
     const response = await fetchWithTimeout(endpoint, {
@@ -70,14 +66,14 @@ export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
 
     if (!response.ok) {
       enableGlobalFallbackMode();
-      return fallbackTeachers;
+      return [];
     }
 
     const data = (await response.json()) as TeacherRow[];
-    if (!Array.isArray(data) || data.length === 0) return fallbackTeachers;
+    if (!Array.isArray(data) || data.length === 0) return [];
 
     return data.map(mapTeacher);
   } catch {
-    return fallbackTeachers;
+    return [];
   }
 }

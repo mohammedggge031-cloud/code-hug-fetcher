@@ -3,10 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
-import { fallbackTeachers, type FallbackTeacher } from "@/data/fallbackContent";
-import { loadTeachersWithFallback } from "@/lib/teachersData";
-
-type Teacher = FallbackTeacher;
+import type { Teacher } from "@/data/fallbackContent";
+import { loadTeachers } from "@/lib/teachersData";
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
@@ -17,10 +15,9 @@ const TeachersSection = () => {
     let cancelled = false;
 
     const runSync = () => {
-      loadTeachersWithFallback()
+      loadTeachers()
         .then((data) => {
-          // Only show teachers actually fetched from the database (not static fallback)
-          if (!cancelled) setTeachers(data === fallbackTeachers ? [] : data);
+          if (!cancelled) setTeachers(data);
         })
         .catch(() => {
           if (!cancelled) setTeachers([]);
