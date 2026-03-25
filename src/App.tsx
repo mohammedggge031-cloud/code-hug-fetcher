@@ -229,13 +229,13 @@ const ScrollToTop = () => {
       return;
     }
 
-    if (navigationType === "POP" && saved > 0) {
+    if (!isFreshLoad && navigationType === "POP" && saved > 0) {
       restoreScrollPosition(saved);
       return;
     }
 
-    // Fallback: restore homepage from sessionStorage when in-memory map is empty
-    if (navigationType === "POP" && pathname === "/" && saved === 0) {
+    // Fallback: restore homepage from sessionStorage when in-memory map is empty (only for in-app back nav)
+    if (!isFreshLoad && navigationType === "POP" && pathname === "/" && saved === 0) {
       const persistedY = parseInt(window.sessionStorage.getItem(HOMEPAGE_SCROLL_KEY) || "0", 10);
       if (persistedY > 0) {
         restoreScrollPosition(persistedY);
