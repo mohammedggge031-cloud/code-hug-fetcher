@@ -22,17 +22,15 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react-dom') || id.includes('node_modules/react/')) return 'vendor-react';
-            if (id.includes('react-router')) return 'vendor-router';
-            if (id.includes('framer-motion')) return 'vendor-motion';
-            if (id.includes('@tanstack/react-query')) return 'vendor-query';
-            if (id.includes('@radix-ui')) return 'vendor-ui';
-            if (id.includes('@supabase')) return 'vendor-supabase';
-            if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
-            if (id.includes('@tiptap') || id.includes('prosemirror')) return 'vendor-editor';
-          }
+        manualChunks: {
+          'vendor-react': [
+            'react',
+            'react-dom',
+            'react/jsx-runtime',
+            'react/jsx-dev-runtime',
+            'scheduler',
+          ],
+          'vendor-router': ['react-router-dom', 'react-router'],
         },
       },
     },
