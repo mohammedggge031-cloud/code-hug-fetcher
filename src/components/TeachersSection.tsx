@@ -10,7 +10,7 @@ type Teacher = FallbackTeacher;
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
-  const [teachers, setTeachers] = useState<Teacher[]>(fallbackTeachers);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
@@ -19,10 +19,11 @@ const TeachersSection = () => {
     const runSync = () => {
       loadTeachersWithFallback()
         .then((data) => {
-          if (!cancelled) setTeachers(data);
+          // Only show teachers actually fetched from the database (not static fallback)
+          if (!cancelled) setTeachers(data === fallbackTeachers ? [] : data);
         })
         .catch(() => {
-          if (!cancelled) setTeachers(fallbackTeachers);
+          if (!cancelled) setTeachers([]);
         });
     };
 
