@@ -65,6 +65,10 @@ const COURSE_RETURN_SCROLL_KEY = "courseReturnState";
 const FORCE_SCROLL_RESTORE_KEY = "forceScrollRestore";
 const HOMEPAGE_SCROLL_KEY = "homepageScrollY";
 
+// Track whether this is a fresh page load (refresh/direct visit) vs in-app navigation.
+// On fresh load, POP should NOT restore scroll — user expects top of page.
+let isFirstLoad = true;
+
 type StoredScrollRestore = {
   path: string;
   y: number;
@@ -150,6 +154,10 @@ const ScrollToTop = () => {
     const navToken = navTokenRef.current;
     clearPendingJobs();
 
+    // On fresh page load (refresh / direct URL), always scroll to top regardless of POP
+    const isFreshLoad = isFirstLoad;
+    if (isFirstLoad) isFirstLoad = false;
+
     const saved = scrollPositions.get(routeKey) ?? scrollPositions.get(`${pathname}${search}`) ?? 0;
     const pendingTarget = pathname === "/" ? window.sessionStorage.getItem("pendingScrollTarget") : null;
     const hashTarget = hash ? decodeURIComponent(hash.replace("#", "")) : null;
@@ -158,13 +166,14 @@ const ScrollToTop = () => {
     const forcedRestore = readStoredScrollRestore(FORCE_SCROLL_RESTORE_KEY);
     const returnRestore = readStoredScrollRestore(COURSE_RETURN_SCROLL_KEY);
     const restoreMatchPath = `${pathname}${search}`;
-    const rootCourseFallbackRestore = navigationType === "POP" && pathname === "/" ? returnRestore : null;
-    const explicitRestore =
-      (forcedRestore && normalizeRestorePath(forcedRestore.path) === restoreMatchPath ? forcedRestore : null) ??
-      (navigationType === "POP" && returnRestore && normalizeRestorePath(returnRestore.path) === restoreMatchPath
-        ? returnRestore
-        : null) ??
-      rootCourseFallbackRestore;
+    const rootCourseFallbackRestore = !isFreshLoad && navigationType === "POP" && pathname === "/" ? returnRestore : null;
+    const explicitRestore = isFreshLoad
+      ? null
+      : (forcedRestore && normalizeRestorePath(forcedRestore.path) === restoreMatchPath ? forcedRestore : null) ??
+        (navigationType === "POP" && returnRestore && normalizeRestorePath(returnRestore.path) === restoreMatchPath
+          ? returnRestore
+          : null) ??
+        rootCourseFallbackRestore;
 
     const restoreScrollPosition = (
       targetY: number,
@@ -220,13 +229,13 @@ const ScrollToTop = () => {
       return;
     }
 
-    if (navigationType === "POP" && saved > 0) {
+    if (!isFreshLoad && navigationType === "POP" && saved > 0) {
       restoreScrollPosition(saved);
       return;
     }
 
-    // Fallback: restore homepage from sessionStorage when in-memory map is empty
-    if (navigationType === "POP" && pathname === "/" && saved === 0) {
+    // Fallback: restore homepage from sessionStorage when in-memory map is empty (only for in-app back nav)
+    if (!isFreshLoad && navigationType === "POP" && pathname === "/" && saved === 0) {
       const persistedY = parseInt(window.sessionStorage.getItem(HOMEPAGE_SCROLL_KEY) || "0", 10);
       if (persistedY > 0) {
         restoreScrollPosition(persistedY);
