@@ -190,6 +190,8 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
             <Link to="/#pricing" className="hover:text-accent transition-colors">{t("Pricing", "الأسعار")}</Link>
             <span className="text-primary-foreground/15">|</span>
             <Link to="/#contact" className="hover:text-accent transition-colors">{t("Contact", "تواصل")}</Link>
+            <span className="text-primary-foreground/15">|</span>
+            <Link to="/privacy-policy" className="hover:text-accent transition-colors">{t("Privacy Policy", "سياسة الخصوصية")}</Link>
           </div>
         </div>
       </div>

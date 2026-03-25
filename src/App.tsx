@@ -56,6 +56,7 @@ const MediaLibrary = lazy(() => import("./pages/admin/MediaLibrary"));
 const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 const queryClient = new QueryClient();
 
@@ -301,6 +302,7 @@ const App = () => (
                 <Route path="/student-success-stories" element={<StudentSuccessStories />} />
                 <Route path="/courses/:slug" element={<CoursePage />} />
                 <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/:slug" element={<LocationPage />} />
 
                 <Route path="/admin/login" element={<AdminLangProvider><AdminLogin /></AdminLangProvider>} />

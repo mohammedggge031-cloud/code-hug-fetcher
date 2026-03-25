@@ -1,10 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Mail, Phone, Send, CalendarIcon, Clock, Globe } from "lucide-react";
+import { Mail, Phone, Send, CalendarIcon, Clock, Globe, AlertCircle } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
+import { bookingFormSchema, getFieldError } from "@/lib/formValidation";
+import { z } from "zod";
 
 const TIME_SLOTS = [
   { label: "12:00 AM – 4:00 AM", value: "00:00-04:00" },
@@ -77,11 +79,27 @@ function formatDiff(userOffset: number): string {
   return `Egypt is ${sign}${diff > 0 ? "" : "-"}${hStr}`;
 }
 
+// Simple rate limiter: max 3 submissions per 5 minutes
+const RATE_LIMIT_WINDOW = 5 * 60 * 1000;
+const RATE_LIMIT_MAX = 3;
+const submissionTimestamps: number[] = [];
+
+const isRateLimited = (): boolean => {
+  const now = Date.now();
+  while (submissionTimestamps.length > 0 && now - submissionTimestamps[0] > RATE_LIMIT_WINDOW) {
+    submissionTimestamps.shift();
+  }
+  return submissionTimestamps.length >= RATE_LIMIT_MAX;
+};
+
 const ContactSection = () => {
   const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTz, setSelectedTz] = useState("UTC+2");
+  const [formErrors, setFormErrors] = useState<z.ZodError | null>(null);
+  const [submitError, setSubmitError] = useState("");
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const currentTzObj = TIMEZONES.find(tz => tz.value === selectedTz);
 
@@ -117,11 +135,40 @@ const ContactSection = () => {
           >
             <form className="grid md:grid-cols-2 gap-6" onSubmit={(e) => {
               e.preventDefault();
+              setFormErrors(null);
+              setSubmitError("");
+
+              // Rate limit check
+              if (isRateLimited()) {
+                setSubmitError(t("Too many submissions. Please wait a few minutes.", "عدد كبير من المحاولات. يرجى الانتظار بضع دقائق."));
+                return;
+              }
+
               const form = e.currentTarget;
-              const name = (form.querySelector('[name="fullName"]') as HTMLInputElement)?.value || '';
-              const phone = (form.querySelector('[name="phone"]') as HTMLInputElement)?.value || '';
-              const course = (form.querySelector('[name="course"]') as HTMLSelectElement)?.value || '';
-              const message = (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value || '';
+              const rawData = {
+                fullName: (form.querySelector('[name="fullName"]') as HTMLInputElement)?.value || '',
+                phone: (form.querySelector('[name="phone"]') as HTMLInputElement)?.value || '',
+                course: (form.querySelector('[name="course"]') as HTMLSelectElement)?.value || '',
+                message: (form.querySelector('[name="message"]') as HTMLTextAreaElement)?.value || '',
+                website: honeypotRef.current?.value || '',
+              };
+
+              // Validate with Zod
+              const result = bookingFormSchema.safeParse(rawData);
+              if (!result.success) {
+                setFormErrors(result.error);
+                return;
+              }
+
+              // Honeypot check (bots fill hidden fields)
+              if (result.data.website) return;
+
+              submissionTimestamps.push(Date.now());
+
+              const name = result.data.fullName;
+              const phone = result.data.phone;
+              const course = result.data.course;
+              const message = result.data.message;
 
               let scheduleText = '';
               if (selectedDate || selectedTime) {
@@ -162,31 +209,52 @@ const ContactSection = () => {
 
               window.open(`https://wa.me/201271134828?text=${encodeURIComponent(text)}`, '_blank');
             }}>
+              {/* Honeypot — invisible to real users */}
+              <div className="absolute -left-[9999px]" aria-hidden="true">
+                <label htmlFor="website">Website</label>
+                <input type="text" name="website" id="website" tabIndex={-1} autoComplete="off" ref={honeypotRef} />
+              </div>
+
+              {submitError && (
+                <div className="md:col-span-2 flex items-center gap-2 text-destructive text-sm bg-destructive/10 p-3 rounded-lg">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {submitError}
+                </div>
+              )}
+
               <div>
                 <label htmlFor="fullName" className="text-sm font-medium text-foreground mb-2 block">
-                  {t("Full Name", "الاسم الكامل")}
+                  {t("Full Name", "الاسم الكامل")} *
                 </label>
                 <input
                   type="text"
                   name="fullName"
                   id="fullName"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                  maxLength={100}
+                  className={`w-full px-4 py-3 rounded-xl border ${getFieldError(formErrors, "fullName") ? "border-destructive" : "border-input"} bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow`}
                   placeholder={t("Your name", "اسمك")}
                 />
+                {getFieldError(formErrors, "fullName") && (
+                  <p className="text-xs text-destructive mt-1">{getFieldError(formErrors, "fullName")}</p>
+                )}
               </div>
               <div>
                 <label htmlFor="phone" className="text-sm font-medium text-foreground mb-2 block">
-                  {t("Phone", "الهاتف")}
+                  {t("Phone", "الهاتف")} *
                 </label>
                 <input
                   type="tel"
                   name="phone"
                   id="phone"
                   required
-                  className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+                  maxLength={20}
+                  className={`w-full px-4 py-3 rounded-xl border ${getFieldError(formErrors, "phone") ? "border-destructive" : "border-input"} bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow`}
                   placeholder={t("+1 (555) 000-0000", "+966 5xx xxx xxxx")}
                 />
+                {getFieldError(formErrors, "phone") && (
+                  <p className="text-xs text-destructive mt-1">{getFieldError(formErrors, "phone")}</p>
+                )}
               </div>
               <div>
                 <label htmlFor="course-select" className="text-sm font-medium text-foreground mb-2 block">
@@ -275,6 +343,7 @@ const ContactSection = () => {
                   rows={4}
                   name="message"
                   id="message"
+                  maxLength={1000}
                   className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow resize-none"
                   placeholder={t("Tell us about your learning goals...", "أخبرنا عن أهدافك التعليمية...")}
                 />

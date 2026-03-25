@@ -23,18 +23,21 @@ const HeroDesktopGallery = () => {
   }, []);
 
   return (
-    <div className="hidden lg:flex justify-center animate-fade-in motion-delay-300">
+    <div className="hidden lg:flex justify-center animate-fade-in motion-reduce:animate-none motion-delay-300">
       <div className="relative">
         <div className="absolute -inset-6 rounded-3xl bg-accent/20 blur-3xl" />
         <div className="relative w-[380px] h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20">
-          <img
-            key={currentImage}
-            src={heroImages[currentImage]}
-            alt={`Student learning Quran online with Alhamd Academy - ${currentImage + 1}`}
-            className="absolute inset-0 w-full h-full object-cover animate-fade-in"
-            loading="lazy"
-            decoding="async"
-          />
+          {heroImages.map((src, idx) => (
+            <img
+              key={idx}
+              src={src}
+              alt={`Student learning Quran online with Alhamd Academy - ${idx + 1}`}
+              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${idx === currentImage ? "opacity-100" : "opacity-0"}`}
+              loading={idx === 0 ? "eager" : "lazy"}
+              fetchPriority={idx === 0 ? "high" : "low"}
+              decoding="async"
+            />
+          ))}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent" />
         </div>
 
