@@ -154,6 +154,10 @@ const ScrollToTop = () => {
     const navToken = navTokenRef.current;
     clearPendingJobs();
 
+    // On fresh page load (refresh / direct URL), always scroll to top regardless of POP
+    const isFreshLoad = isFirstLoad;
+    if (isFirstLoad) isFirstLoad = false;
+
     const saved = scrollPositions.get(routeKey) ?? scrollPositions.get(`${pathname}${search}`) ?? 0;
     const pendingTarget = pathname === "/" ? window.sessionStorage.getItem("pendingScrollTarget") : null;
     const hashTarget = hash ? decodeURIComponent(hash.replace("#", "")) : null;
