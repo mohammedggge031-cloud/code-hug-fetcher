@@ -3,27 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
-import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
-import { fallbackTeachers } from "@/data/fallbackContent";
+import { fallbackTeachers, type FallbackTeacher } from "@/data/fallbackContent";
+import { loadTeachersWithFallback } from "@/lib/teachersData";
 
-interface Teacher {
-  id: string;
-  name_en: string;
-  name_ar: string;
-  title_en: string;
-  title_ar: string;
-  bio_en: string;
-  bio_ar: string;
-  photo_url: string;
-  specializations: string[];
-  rating: number;
-  experience_years?: number;
-  education_en?: string;
-  education_ar?: string;
-}
-
-const TEACHERS_API = getSupabaseFunctionUrl("public-teachers");
-const TIMEOUT_MS = 5000;
+type Teacher = FallbackTeacher;
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
@@ -34,32 +17,19 @@ const TeachersSection = () => {
   useEffect(() => {
     let cancelled = false;
 
-    const timer = setTimeout(() => {
-      // Timeout — use whatever we have (fallback)
-      if (!cancelled) setLoading(false);
-    }, TIMEOUT_MS);
-
-    fetch(TEACHERS_API)
-      .then((res) => {
-        if (!res.ok) return { teachers: [] };
-        return res.json();
-      })
+    loadTeachersWithFallback()
       .then((data) => {
-        if (!cancelled && data.teachers && data.teachers.length > 0) {
-          setTeachers(data.teachers);
-        }
+        if (!cancelled) setTeachers(data);
       })
-      .catch((err) => console.error("Failed to fetch teachers:", err))
+      .catch(() => {
+        if (!cancelled) setTeachers(fallbackTeachers);
+      })
       .finally(() => {
-        if (!cancelled) {
-          clearTimeout(timer);
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       });
 
     return () => {
       cancelled = true;
-      clearTimeout(timer);
     };
   }, []);
 
