@@ -38,17 +38,3 @@ export const fetchExternalFunction = (functionName: string, init: RequestInit = 
   });
 };
 
-/** Build the teachers REST endpoint on the external dashboard */
-export const buildExternalTeachersEndpoint = () => {
-  const base = getExternalBaseUrl();
-  if (!base) return "";
-
-  const params = new URLSearchParams({
-    select:
-      "id,name_en,name_ar,title_en,title_ar,bio_en,bio_ar,photo_url,specializations,rating,experience_years,education_en,education_ar",
-    is_active: "eq.true",
-    order: "display_order.asc,created_at.desc",
-  });
-
-  return `${base}/rest/v1/teachers?${params.toString()}`;
-};
