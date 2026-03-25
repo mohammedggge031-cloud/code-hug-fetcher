@@ -7,6 +7,7 @@
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   will-change: transform;
+  /* Do NOT add transition-transform here — it conflicts with animation on mobile */
 }
 
 .floating-action-whatsapp {
@@ -14,73 +15,47 @@
   color: hsl(var(--whatsapp-foreground));
 }
 
+/* Bounce animation for FABs */
 .fab-gentle-bounce {
-  -webkit-animation: gentle-bounce 3.2s ease-in-out infinite !important;
   animation: gentle-bounce 3.2s ease-in-out infinite !important;
-  -webkit-animation-play-state: running !important;
   animation-play-state: running !important;
 }
 
+/* Hover scale uses a wrapper approach to avoid conflicting with transform animation */
+.fab-gentle-bounce:hover,
+.fab-gentle-bounce:active {
+  animation: gentle-bounce-hover 3.2s ease-in-out infinite !important;
+  animation-play-state: running !important;
+}
+
+/* Badge breathing animation */
 .badge-breathe {
-  -webkit-animation: badge-breathe 1.6s ease-in-out infinite !important;
   animation: badge-breathe 1.6s ease-in-out infinite !important;
-  -webkit-animation-play-state: running !important;
   animation-play-state: running !important;
   transform-origin: center;
-}
-
-@-webkit-keyframes gentle-bounce {
-  0%,
-  100% {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    -webkit-transform: translate3d(0, -6px, 0);
-    transform: translate3d(0, -6px, 0);
-  }
+  will-change: transform;
 }
 
 @keyframes gentle-bounce {
-  0%,
-  100% {
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    -webkit-transform: translate3d(0, -6px, 0);
-    transform: translate3d(0, -6px, 0);
-  }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -6px, 0); }
 }
 
-@-webkit-keyframes badge-breathe {
-  0%,
-  100% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-  50% {
-    -webkit-transform: scale(1.14);
-    transform: scale(1.14);
-  }
+@keyframes gentle-bounce-hover {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50% { transform: translate3d(0, -6px, 0) scale(1.1); }
 }
 
 @keyframes badge-breathe {
-  0%,
-  100% {
-    -webkit-transform: scale(1);
-    transform: scale(1);
-  }
-  50% {
-    -webkit-transform: scale(1.14);
-    transform: scale(1.14);
-  }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .fab-gentle-bounce,
+  .fab-gentle-bounce:hover,
+  .fab-gentle-bounce:active,
   .badge-breathe {
     animation: none !important;
-    -webkit-animation: none !important;
   }
 }
