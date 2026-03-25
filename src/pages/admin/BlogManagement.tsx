@@ -1,0 +1,257 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAdminLang } from "@/contexts/AdminLangContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
+import TipTapEditor from "@/components/admin/TipTapEditor";
+import { Textarea } from "@/components/ui/textarea";
+import { useAuth } from "@/contexts/AuthContext";
+
+interface BlogPost {
+  id: string; title_en: string; title_ar: string; slug: string;
+  excerpt_en: string | null; excerpt_ar: string | null;
+  content_en: string | null; content_ar: string | null;
+  category_id: string | null; featured_image: string | null;
+  status: "draft" | "published"; tags: string[];
+  read_time_en: string | null; read_time_ar: string | null;
+  published_at: string | null; created_at: string;
+}
+
+interface Category { id: string; name_en: string; name_ar: string; slug: string; }
+
+const emptyPost = {
+  title_en: "", title_ar: "", slug: "", excerpt_en: "", excerpt_ar: "",
+  content_en: "", content_ar: "", category_id: "", featured_image: "",
+  status: "draft" as "draft" | "published", tags: [] as string[], read_time_en: "", read_time_ar: "",
+};
+
+const BlogManagement = () => {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [editing, setEditing] = useState<typeof emptyPost & { id?: string }>(emptyPost);
+  const [showEditor, setShowEditor] = useState(false);
+  const [search, setSearch] = useState("");
+  const [tagsInput, setTagsInput] = useState("");
+  const [activeTab, setActiveTab] = useState<"en" | "ar">("en");
+  const [isFetching, setIsFetching] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { isAdmin } = useAuth();
+  const { t, lang } = useAdminLang();
+  const { toast } = useToast();
+
+  const fetchData = async () => {
+    setIsFetching(true);
+    const [{ data: postsData, error: postsError }, { data: catsData, error: catsError }] = await Promise.all([
+      supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
+      supabase.from("blog_categories").select("*").order("name_en"),
+    ]);
+
+    if (postsError || catsError) {
+      toast({
+        title: t("err.error"),
+        description: postsError?.message || catsError?.message,
+        variant: "destructive",
+      });
+    }
+
+    if (postsData) setPosts(postsData);
+    if (catsData) setCategories(catsData);
+    setIsFetching(false);
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  const generateSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 100);
+
+  const openNew = () => { setEditing(emptyPost); setTagsInput(""); setActiveTab("en"); setShowEditor(true); };
+
+  const openEdit = (post: BlogPost) => {
+    setEditing({
+      id: post.id, title_en: post.title_en, title_ar: post.title_ar, slug: post.slug,
+      excerpt_en: post.excerpt_en || "", excerpt_ar: post.excerpt_ar || "",
+      content_en: post.content_en || "", content_ar: post.content_ar || "",
+      category_id: post.category_id || "", featured_image: post.featured_image || "",
+      status: post.status, tags: post.tags || [],
+      read_time_en: post.read_time_en || "", read_time_ar: post.read_time_ar || "",
+    });
+    setTagsInput((post.tags || []).join(", "));
+    setActiveTab("en"); setShowEditor(true);
+  };
+
+  const handleSave = async () => {
+    if (!editing.title_en || !editing.title_ar) {
+      toast({ title: t("err.error"), description: t("blog.err_title"), variant: "destructive" }); return;
+    }
+
+    setIsSaving(true);
+    const slug = editing.slug || generateSlug(editing.title_en);
+    const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean);
+    const payload = {
+      title_en: editing.title_en, title_ar: editing.title_ar, slug,
+      excerpt_en: editing.excerpt_en || null, excerpt_ar: editing.excerpt_ar || null,
+      content_en: editing.content_en || null, content_ar: editing.content_ar || null,
+      category_id: editing.category_id || null, featured_image: editing.featured_image || null,
+      status: editing.status as "draft" | "published", tags,
+      read_time_en: editing.read_time_en || null, read_time_ar: editing.read_time_ar || null,
+      published_at: editing.status === "published" ? new Date().toISOString() : null,
+    };
+
+    let error;
+    if (editing.id) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id)); }
+    else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
+
+    if (error) {
+      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+      setIsSaving(false);
+      return;
+    }
+
+    toast({ title: t("blog.saved"), description: `"${editing.title_en}"` });
+    setShowEditor(false);
+    setIsSaving(false);
+    fetchData();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm(t("blog.confirm_delete"))) return;
+    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+    if (error) {
+      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: t("ok.deleted") });
+    fetchData();
+  };
+
+  const filtered = posts.filter(p => p.title_en.toLowerCase().includes(search.toLowerCase()) || p.title_ar.includes(search));
+  const getCategoryName = (catId: string | null) => {
+    if (!catId) return "—";
+    const cat = categories.find(c => c.id === catId);
+    return cat ? (lang === "ar" ? cat.name_ar : cat.name_en) : "—";
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">{t("blog.title")}</h1>
+          <p className="text-muted-foreground">{posts.length} {t("blog.total")}</p>
+        </div>
+        <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
+      </div>
+
+      <div className="relative w-full sm:w-80">
+        <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t("blog.search")} className="ps-10" />
+      </div>
+
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("blog.col.title")}</TableHead>
+                <TableHead>{t("blog.col.category")}</TableHead>
+                <TableHead>{t("blog.col.status")}</TableHead>
+                <TableHead>{t("blog.col.date")}</TableHead>
+                <TableHead className="w-28">{t("blog.col.actions")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filtered.map(post => (
+                <TableRow key={post.id}>
+                  <TableCell>
+                    <div>
+                      <p className="font-medium text-sm line-clamp-1">{lang === "ar" ? post.title_ar : post.title_en}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-1" dir={lang === "ar" ? "ltr" : "rtl"}>{lang === "ar" ? post.title_en : post.title_ar}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-sm">{getCategoryName(post.category_id)}</TableCell>
+                  <TableCell><Badge variant={post.status === "published" ? "default" : "secondary"}>{post.status === "published" ? t("blog.published") : t("blog.draft")}</Badge></TableCell>
+                  <TableCell className="text-sm text-muted-foreground">{new Date(post.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(post)}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")}><Eye className="h-4 w-4" /></Button>
+                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(post.id)}><Trash2 className="h-4 w-4" /></Button>}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {filtered.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    {isFetching ? t("team.loading") : t("blog.empty")}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showEditor} onOpenChange={setShowEditor}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editing.id ? t("blog.edit") : t("blog.create")}</DialogTitle></DialogHeader>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>{t("blog.title_en")}</Label><Input value={editing.title_en} onChange={e => { setEditing(prev => ({ ...prev, title_en: e.target.value, slug: prev.id ? prev.slug : generateSlug(e.target.value) })); }} /></div>
+              <div className="space-y-2"><Label>{t("blog.title_ar")}</Label><Input value={editing.title_ar} onChange={e => setEditing(prev => ({ ...prev, title_ar: e.target.value }))} dir="rtl" /></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2"><Label>{t("blog.slug")}</Label><Input value={editing.slug} onChange={e => setEditing(prev => ({ ...prev, slug: e.target.value }))} dir="ltr" /></div>
+              <div className="space-y-2"><Label>{t("blog.category")}</Label>
+                <Select value={editing.category_id} onValueChange={v => setEditing(prev => ({ ...prev, category_id: v }))}>
+                  <SelectTrigger><SelectValue placeholder={t("blog.select_cat")} /></SelectTrigger>
+                  <SelectContent>{categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name_en} / {c.name_ar}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2"><Label>{t("blog.status")}</Label>
+                <Select value={editing.status} onValueChange={v => setEditing(prev => ({ ...prev, status: v as "draft" | "published" }))}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent><SelectItem value="draft">{t("blog.draft")}</SelectItem><SelectItem value="published">{t("blog.published")}</SelectItem></SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2"><Label>{t("blog.excerpt_en")}</Label><Textarea value={editing.excerpt_en} onChange={e => setEditing(prev => ({ ...prev, excerpt_en: e.target.value }))} rows={2} /></div>
+              <div className="space-y-2"><Label>{t("blog.excerpt_ar")}</Label><Textarea value={editing.excerpt_ar} onChange={e => setEditing(prev => ({ ...prev, excerpt_ar: e.target.value }))} dir="rtl" rows={2} /></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2"><Label>{t("blog.image")}</Label><Input value={editing.featured_image} onChange={e => setEditing(prev => ({ ...prev, featured_image: e.target.value }))} dir="ltr" placeholder="https://..." /></div>
+              <div className="space-y-2"><Label>{t("blog.read_en")}</Label><Input value={editing.read_time_en} onChange={e => setEditing(prev => ({ ...prev, read_time_en: e.target.value }))} placeholder="5 min read" /></div>
+              <div className="space-y-2"><Label>{t("blog.read_ar")}</Label><Input value={editing.read_time_ar} onChange={e => setEditing(prev => ({ ...prev, read_time_ar: e.target.value }))} dir="rtl" placeholder="٥ دقائق قراءة" /></div>
+            </div>
+            <div className="space-y-2"><Label>{t("blog.tags")}</Label><Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="tajweed, quran, learning" /></div>
+            <div>
+              <div className="flex gap-2 mb-3">
+                <Button variant={activeTab === "en" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("en")}>{t("blog.content_en")}</Button>
+                <Button variant={activeTab === "ar" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("ar")}>{t("blog.content_ar")}</Button>
+              </div>
+              {activeTab === "en" ? (
+                <TipTapEditor key={`en-${editing.id || "new"}`} content={editing.content_en} onChange={html => setEditing(prev => ({ ...prev, content_en: html }))} placeholder="Write your article in English..." />
+              ) : (
+                <TipTapEditor key={`ar-${editing.id || "new"}`} content={editing.content_ar} onChange={html => setEditing(prev => ({ ...prev, content_ar: html }))} placeholder="اكتب المقال بالعربية..." dir="rtl" />
+              )}
+            </div>
+            <div className="flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowEditor(false)}>{t("blog.cancel")}</Button>
+              <Button onClick={handleSave} disabled={isSaving}>{isSaving ? t("login.loading") : (editing.id ? t("blog.update") : t("blog.save"))}</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default BlogManagement;

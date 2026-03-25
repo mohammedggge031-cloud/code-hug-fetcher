@@ -1,0 +1,6 @@
+Contact: mailto:info@alhamdacademy.net
+Contact: https://wa.me/201271134828
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, ar
+Canonical: https://alhamdacademy.net/.well-known/security.txt
+Policy: https://alhamdacademy.net/

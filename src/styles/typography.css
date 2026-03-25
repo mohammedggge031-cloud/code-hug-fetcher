@@ -1,0 +1,56 @@
+html,
+body,
+#root {
+  overflow-x: clip;
+}
+
+body {
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "calt" 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-feature-settings: "kern" 1, "liga" 1, "clig" 1, "calt" 1;
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+.site-fixed-layer {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+.quranic-text {
+  font-family: "Amiri", "Playfair Display", serif;
+  direction: rtl;
+  line-height: 2.35;
+  letter-spacing: 0.02em;
+  word-spacing: 0.08em;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "rlig" 1;
+}
+
+.quranic-reference {
+  letter-spacing: 0.04em;
+}
