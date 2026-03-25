@@ -2,8 +2,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "cleanUrls": true,
   "rewrites": [
-    { "source": "/((?!assets|favicon|og-image|quran-hero|apple-touch|site\\.webmanifest|robots\\.txt|sitemap).*)", "destination": "/index.html" }
+    { "source": "/((?!assets|favicon|og-image|quran-hero|apple-touch|site\\.webmanifest|robots\\.txt|sitemap|_redirects|\\.well-known).*)", "destination": "/index.html" }
   ],
   "headers": [
     {
