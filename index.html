@@ -121,11 +121,6 @@
       img,video{max-width:100%;height:auto}
       [data-hero-bg]{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
       .content-auto{content-visibility:auto;contain-intrinsic-size:auto 600px}
-      /* Lightweight modern fallback while app hydrates */
-      .app-fallback{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:linear-gradient(160deg,#0d233a 0%,#163a5a 100%)}
-      .app-fallback__card{display:flex;align-items:center;gap:.875rem;padding:.85rem 1rem;border-radius:9999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px)}
-      .app-fallback__logo{width:1.5rem;height:1.5rem;display:block}
-      .app-fallback__text{font-size:.95rem;font-weight:600;letter-spacing:.01em;color:#f7f9fc}
     </style>
 
     <!-- Font weights now loaded in single request above -->
@@ -181,14 +176,7 @@
         </nav>
       </div>
     </noscript>
-    <div id="root">
-      <div class="app-fallback" data-skeleton aria-label="Loading Alhamd Academy">
-        <div class="app-fallback__card">
-          <img src="/favicon.svg" alt="Alhamd Academy" class="app-fallback__logo" width="24" height="24" decoding="async" />
-          <span class="app-fallback__text">Loading Alhamd Academy…</span>
-        </div>
-      </div>
-    </div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
