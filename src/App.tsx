@@ -6,7 +6,8 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from "re
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
-import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import { SUPABASE_TIMEOUT_MS } from "@/lib/safeRuntimeData";
+import { lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import ScrollTopButton from "@/components/ScrollTopButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -238,11 +239,38 @@ const ScrollToTop = () => {
   return null;
 };
 
-const Loader = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-  </div>
-);
+const Loader = () => {
+  const [timedOut, setTimedOut] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setTimedOut(true), SUPABASE_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  if (!timedOut) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4 bg-background">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 text-center space-y-3">
+        <h2 className="text-lg font-semibold text-card-foreground">Taking longer than expected</h2>
+        <p className="text-sm text-muted-foreground">Fallback mode is active. You can continue or refresh the page.</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+        >
+          Refresh
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
