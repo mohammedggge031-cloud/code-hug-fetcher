@@ -4,6 +4,7 @@ import { Mail, Phone, Send, CalendarIcon, Clock, Globe } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState } from "react";
 import { format } from "date-fns";
+import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
 
 const TIME_SLOTS = [
   { label: "12:00 AM – 4:00 AM", value: "00:00-04:00" },
@@ -50,6 +51,7 @@ const TIMEZONES = [
 ];
 
 const EGYPT_OFFSET = 2; // UTC+2
+const RECEIVE_BOOKING_API = getSupabaseFunctionUrl("receive-booking");
 
 function convertTimeSlotToEgypt(slotValue: string, userOffset: number): string {
   const startHour = parseInt(slotValue.split("-")[0].split(":")[0]);
@@ -142,7 +144,7 @@ const ContactSection = () => {
 
               // Send copy to admin system (non-blocking)
               try {
-                fetch("https://xoymllyfwvbnbxsbbinu.supabase.co/functions/v1/receive-booking", {
+                fetch(RECEIVE_BOOKING_API, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
