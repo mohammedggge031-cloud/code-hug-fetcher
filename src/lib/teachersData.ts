@@ -1,5 +1,6 @@
 import type { Teacher } from "@/data/fallbackContent";
 import { fetchWithTimeout, isGlobalFallbackMode, enableGlobalFallbackMode, SUPABASE_TIMEOUT_MS } from "@/lib/safeRuntimeData";
+import { buildExternalTeachersEndpoint } from "@/lib/externalDashboard";
 
 interface TeacherRow {
   id: string;
@@ -33,22 +34,9 @@ const mapTeacher = (teacher: TeacherRow): Teacher => ({
   education_ar: teacher.education_ar ?? undefined,
 });
 
-const buildTeachersEndpoint = () => {
-  const baseUrl = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
-  if (!baseUrl) return "";
-
-  const params = new URLSearchParams({
-    select: "id,name_en,name_ar,title_en,title_ar,bio_en,bio_ar,photo_url,specializations,rating,experience_years,education_en,education_ar",
-    is_active: "eq.true",
-    order: "display_order.asc,created_at.desc",
-  });
-
-  return `${baseUrl}/rest/v1/teachers?${params.toString()}`;
-};
-
 export async function loadTeachers(): Promise<Teacher[]> {
-  const endpoint = buildTeachersEndpoint();
-  const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const endpoint = buildExternalTeachersEndpoint();
+  const anonKey = import.meta.env.VITE_EXTERNAL_DASHBOARD_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   if (isGlobalFallbackMode() || !endpoint || !anonKey) return [];
 
@@ -61,11 +49,10 @@ export async function loadTeachers(): Promise<Teacher[]> {
       },
     }, {
       timeoutMs: SUPABASE_TIMEOUT_MS,
-      markGlobalFallbackOnError: true,
+      markGlobalFallbackOnError: false,
     });
 
     if (!response.ok) {
-      enableGlobalFallbackMode();
       return [];
     }
 

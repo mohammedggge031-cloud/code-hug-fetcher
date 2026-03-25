@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
-import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
+import { fetchExternalFunction } from "@/lib/externalDashboard";
 
 type Duration = "30" | "45" | "60";
 
@@ -143,7 +143,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         rel="noopener noreferrer"
         onClick={() => {
           try {
-            fetchSupabaseFunction("receive-booking", {
+            fetchExternalFunction("receive-booking", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

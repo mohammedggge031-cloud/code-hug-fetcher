@@ -4,7 +4,7 @@ import { Mail, Phone, Send, CalendarIcon, Clock, Globe, AlertCircle } from "luci
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useRef } from "react";
 import { format } from "date-fns";
-import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
+import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { bookingFormSchema, getFieldError } from "@/lib/formValidation";
 import { z } from "zod";
 
@@ -189,7 +189,7 @@ const ContactSection = () => {
 
               // Send copy to admin system (non-blocking)
               try {
-                fetchSupabaseFunction("receive-booking", {
+                fetchExternalFunction("receive-booking", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
