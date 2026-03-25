@@ -11,6 +11,7 @@ import { RelatedCoursesForBlog } from "@/components/InternalLinking";
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
+import { sanitizeHtml, sanitizeInline } from "@/lib/sanitize";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
@@ -109,10 +110,12 @@ const BlogPost = () => {
     const relatedPosts = blogPosts.filter((p) => p.id !== staticPost.id && p.category === staticPost.category).slice(0, 3);
 
     const inlineFormat = (text: string) =>
-      text
-        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline hover:text-accent transition-colors">$1</a>')
-        .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      sanitizeInline(
+        text
+          .replace(/\*\*(.*?)\*\*/g, '<strong class="text-foreground">$1</strong>')
+          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline hover:text-accent transition-colors" rel="noopener noreferrer">$1</a>')
+          .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+      );
 
     const renderContent = (md: string) => {
       return md.split("\n").map((line, i) => {
@@ -261,7 +264,7 @@ const BlogPost = () => {
         )}
 
         <article className="container mx-auto px-4 max-w-4xl py-12">
-          <div className="bg-card rounded-xl border border-border p-6 md:p-10 shadow-soft prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: contentHtml }} />
+          <div className="bg-card rounded-xl border border-border p-6 md:p-10 shadow-soft prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(contentHtml) }} />
 
           {/* Related Courses — Internal Linking */}
           <RelatedCoursesForBlog category={catName} maxCourses={3} />

@@ -5,6 +5,7 @@ import HeroSection from "@/components/HeroSection";
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import { allSchemas } from "@/data/schemas";
+import SectionErrorBoundary from "@/components/SectionErrorBoundary";
 
 // Eagerly load only the hero for fastest first paint
 // Lazy load everything below the fold
@@ -88,18 +89,18 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
-        <DeferredSection minHeight={220} forceRender={forceEager}><QuranVersesSection /></DeferredSection>
-        <DeferredSection minHeight={560} forceRender={forceEager}><CoursesSection /></DeferredSection>
-        <DeferredSection minHeight={380} forceRender={forceEager}><HowItWorks /></DeferredSection>
-        <DeferredSection minHeight={460} forceRender={forceEager}><PricingSection /></DeferredSection>
-        <DeferredSection minHeight={440} forceRender={forceEager}><WhyChooseUs /></DeferredSection>
-        <DeferredSection minHeight={360} forceRender={forceEager}><CommitmentSection /></DeferredSection>
-        <DeferredSection minHeight={420} forceRender={forceEager}><TestimonialsSection /></DeferredSection>
-        <DeferredSection minHeight={360} forceRender={forceEager}><AboutSection /></DeferredSection>
-        <DeferredSection minHeight={420} forceRender={forceEager}><TeachersSection /></DeferredSection>
-        <DeferredSection minHeight={420} forceRender={forceEager}><RecentArticlesSection /></DeferredSection>
-        <DeferredSection minHeight={320} forceRender={forceEager}><FinalCTA /></DeferredSection>
-        <DeferredSection minHeight={420} forceRender={forceEager}><ContactSection /></DeferredSection>
+        <SectionErrorBoundary><DeferredSection minHeight={220} forceRender={forceEager}><QuranVersesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={560} forceRender={forceEager}><CoursesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager}><HowItWorks /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager}><PricingSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager}><AboutSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager}><TeachersSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager}><RecentArticlesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager}><FinalCTA /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager}><ContactSection /></DeferredSection></SectionErrorBoundary>
       </main>
       <Suspense fallback={null}>
         <Footer />
