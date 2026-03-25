@@ -39,7 +39,7 @@ const HeroDesktopGallery = () => {
         </div>
 
         {/* Floating logo */}
-        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-white shadow-elevated border border-accent/20 flex items-center justify-center p-2 z-20">
+        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-card shadow-elevated border border-accent/20 flex items-center justify-center p-2 z-20">
           <img
             src={logoImage}
             alt="Alhamd Academy Logo"
@@ -58,7 +58,7 @@ const HeroDesktopGallery = () => {
         </div>
 
         {/* Native teachers badge */}
-        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-white/95 shadow-elevated z-20 backdrop-blur-sm border border-accent/20">
+        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-card/95 shadow-elevated z-20 backdrop-blur-sm border border-accent/20">
           <div className="flex items-center gap-3">
             <EgyptFlag className="w-8 h-6 rounded-sm shadow-sm" />
             <div>
@@ -72,7 +72,7 @@ const HeroDesktopGallery = () => {
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
           {heroImages.map((_, idx) => (
             <button key={idx} onClick={() => setCurrentImage(idx)} aria-label={`View student image ${idx + 1}`} className="relative w-8 h-8 flex items-center justify-center rounded-full transition-all duration-300">
-              <span className={`block rounded-full transition-all duration-300 ${idx === currentImage ? "w-6 h-2 bg-accent" : "w-2 h-2 bg-white/50"}`} />
+              <span className={`block rounded-full transition-all duration-300 ${idx === currentImage ? "w-6 h-2 bg-accent" : "w-2 h-2 bg-primary-foreground/50"}`} />
             </button>
           ))}
         </div>
