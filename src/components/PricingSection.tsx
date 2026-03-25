@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
-import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
+import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
 
 type Duration = "30" | "45" | "60";
 
@@ -45,8 +45,6 @@ const tierNames = {
   en: ["Starter", "Light", "Basic", "Standard", "Premium"],
   ar: ["مبتدئ", "خفيف", "أساسي", "متقدم", "بريميوم"],
 };
-
-const RECEIVE_BOOKING_API = getSupabaseFunctionUrl("receive-booking");
 
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
   const features = [
@@ -145,7 +143,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         rel="noopener noreferrer"
         onClick={() => {
           try {
-            fetch(RECEIVE_BOOKING_API, {
+            fetchSupabaseFunction("receive-booking", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -156,8 +154,10 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
                 preferred_date: "",
                 preferred_time: "",
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                message: `📋 Plan: ${tierNames.en[i]} | ⏱ Session: ${duration} min | 📅 Days/week: ${plan.days} | 🕐 Hours/month: ${plan.hoursPerMonth} | 💰 Price: $${plan.monthly}/month`
+                message: `📋 Plan: ${tierNames.en[i]} | ⏱ Session: ${duration} min | 📅 Days/week: ${plan.days} | 🕐 Hours/month: ${plan.hoursPerMonth} | 💰 Price: $${plan.monthly}/month`,
               })
+            }).catch((e) => {
+              console.error("Subscription sync error:", e);
             });
           } catch (e) {
             console.error("Subscription sync error:", e);

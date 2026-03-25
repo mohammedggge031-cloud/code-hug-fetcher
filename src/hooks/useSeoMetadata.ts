@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fallbackSeo, type FallbackSeoData } from "@/data/fallbackContent";
+import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
-const TIMEOUT_MS = 4000;
+const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
 interface SeoData {
   title: string | null;
@@ -50,6 +51,13 @@ export const useSeoMetadata = (pagePath: string) => {
   useEffect(() => {
     let cancelled = false;
 
+    if (isGlobalFallbackMode()) {
+      setLoading(false);
+      return () => {
+        cancelled = true;
+      };
+    }
+
     const timer = setTimeout(() => {
       // Timeout — keep whatever we have (fallback) and stop loading
       if (!cancelled) setLoading(false);
@@ -57,11 +65,22 @@ export const useSeoMetadata = (pagePath: string) => {
 
     const fetchSeo = async () => {
       try {
-        const { data } = await supabase
-          .from("seo_metadata")
-          .select("*")
-          .eq("page_path", pagePath)
-          .maybeSingle();
+        const data = await safeDataRequest<SeoData | null>({
+          fallback: null,
+          timeoutMs: TIMEOUT_MS,
+          markGlobalFallbackOnError: true,
+          request: async (signal) => {
+            const { data, error } = await supabase
+              .from("seo_metadata")
+              .select("*")
+              .eq("page_path", pagePath)
+              .abortSignal(signal)
+              .maybeSingle();
+
+            if (error) throw error;
+            return data;
+          },
+        });
 
         if (!cancelled && data) {
           setSeo(data);

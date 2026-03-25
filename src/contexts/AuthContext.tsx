@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
 type AppRole = "admin" | "editor";
 
@@ -23,73 +24,112 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
   const initialized = useRef(false);
+  const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
   const fetchRole = async (userId: string) => {
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .maybeSingle();
-    setRole((data?.role as AppRole) || null);
+    const resolvedRole = await safeDataRequest<AppRole | null>({
+      fallback: null,
+      timeoutMs: AUTH_TIMEOUT_MS,
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", userId)
+          .abortSignal(signal)
+          .maybeSingle();
+
+        if (error) throw error;
+        return (data?.role as AppRole) || null;
+      },
+    });
+
+    setRole(resolvedRole);
   };
 
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
 
-    // Defer auth initialization to not block initial render
-    const initAuth = () => {
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (_event, session) => {
-          setSession(session);
-          setUser(session?.user ?? null);
-          if (session?.user) {
-            setTimeout(() => fetchRole(session.user.id), 0);
-          } else {
-            setRole(null);
-          }
-          setLoading(false);
-        }
-      );
+    let active = true;
+    let subscription: ReturnType<typeof supabase.auth.onAuthStateChange>["data"]["subscription"] | null = null;
+    const hardStop = window.setTimeout(() => {
+      if (!active) return;
+      setSession(null);
+      setUser(null);
+      setRole(null);
+      setLoading(false);
+    }, AUTH_TIMEOUT_MS);
 
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          fetchRole(session.user.id);
-        }
-        setLoading(false);
-      });
+    const applySession = async (nextSession: Session | null) => {
+      if (!active) return;
 
-      return subscription;
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+
+      if (nextSession?.user) {
+        await fetchRole(nextSession.user.id);
+      } else {
+        setRole(null);
+      }
+
+      if (active) setLoading(false);
     };
 
-    // Use requestIdleCallback to defer auth init, don't block render
-    let subscription: ReturnType<typeof supabase.auth.onAuthStateChange>['data']['subscription'] | null = null;
-    
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => {
-        subscription = initAuth();
-      }, { timeout: 2000 });
-    } else {
-      // Fallback: defer with setTimeout
-      setTimeout(() => {
-        subscription = initAuth();
-      }, 100);
-    }
+    const initAuth = async () => {
+      const {
+        data: { subscription: nextSubscription },
+      } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+        void applySession(nextSession);
+      });
+      subscription = nextSubscription;
+
+      try {
+        const {
+          data: { session: currentSession },
+        } = await withPromiseTimeout(supabase.auth.getSession(), {
+          timeoutMs: AUTH_TIMEOUT_MS,
+          markGlobalFallbackOnError: false,
+        });
+
+        await applySession(currentSession);
+      } catch {
+        if (!active) return;
+        setSession(null);
+        setUser(null);
+        setRole(null);
+        setLoading(false);
+      } finally {
+        clearTimeout(hardStop);
+      }
+    };
+
+    void initAuth();
 
     return () => {
+      active = false;
+      clearTimeout(hardStop);
       subscription?.unsubscribe();
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    try {
+      const { error } = await withPromiseTimeout(
+        supabase.auth.signInWithPassword({ email, password }),
+        { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false },
+      );
+      return { error: error as Error | null };
+    } catch {
+      return { error: new Error("Request timed out. Please try again.") };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await withPromiseTimeout(supabase.auth.signOut(), {
+      timeoutMs: AUTH_TIMEOUT_MS,
+      markGlobalFallbackOnError: false,
+    }).catch(() => undefined);
     setRole(null);
   };
 

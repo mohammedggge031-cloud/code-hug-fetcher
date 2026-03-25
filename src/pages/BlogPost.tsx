@@ -10,6 +10,7 @@ import SEOHead from "@/components/SEOHead";
 import { RelatedCoursesForBlog } from "@/components/InternalLinking";
 import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
+import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
@@ -24,29 +25,74 @@ const BlogPost = () => {
   const [relatedDbPosts, setRelatedDbPosts] = useState<any[]>([]);
 
   useEffect(() => {
-    if (staticPost) return;
-    const fetchPost = async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("*, blog_categories(name_en, name_ar)")
-        .eq("slug", id!)
-        .eq("status", "published")
-        .maybeSingle();
-      setDbPost(data);
+    if (staticPost) {
       setLoading(false);
+      return;
+    }
 
-      if (data?.category_id) {
-        const { data: related } = await supabase
-          .from("blog_posts")
-          .select("slug, title_en, title_ar, featured_image, published_at")
-          .eq("status", "published")
-          .eq("category_id", data.category_id)
-          .neq("id", data.id)
-          .limit(3);
-        if (related) setRelatedDbPosts(related);
+    let cancelled = false;
+
+    const fetchPost = async () => {
+      if (isGlobalFallbackMode()) {
+        if (!cancelled) setLoading(false);
+        return;
       }
+
+      const post = await safeDataRequest<any | null>({
+        fallback: null,
+        markGlobalFallbackOnError: true,
+        request: async (signal) => {
+          const { data, error } = await supabase
+            .from("blog_posts")
+            .select("*, blog_categories(name_en, name_ar)")
+            .eq("slug", id!)
+            .eq("status", "published")
+            .abortSignal(signal)
+            .maybeSingle();
+
+          if (error) throw error;
+          return data;
+        },
+      });
+
+      if (cancelled) return;
+
+      setDbPost(post);
+
+      if (post?.category_id) {
+        const related = await safeDataRequest<any[]>({
+          fallback: [],
+          markGlobalFallbackOnError: true,
+          request: async (signal) => {
+            const { data, error } = await supabase
+              .from("blog_posts")
+              .select("slug, title_en, title_ar, featured_image, published_at")
+              .eq("status", "published")
+              .eq("category_id", post.category_id)
+              .neq("id", post.id)
+              .limit(3)
+              .abortSignal(signal);
+
+            if (error) throw error;
+            return data ?? [];
+          },
+        });
+
+        if (!cancelled) {
+          setRelatedDbPosts(related);
+        }
+      }
+
+      if (!cancelled) setLoading(false);
     };
-    fetchPost();
+
+    void fetchPost().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [id, staticPost]);
 
   if (loading) {
