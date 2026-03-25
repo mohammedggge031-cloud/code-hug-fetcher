@@ -61,7 +61,7 @@ const HeroDesktopGallery = () => {
         </div>
 
         {/* Native teachers badge */}
-        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-card/95 shadow-elevated z-20 backdrop-blur-sm border border-accent/20">
+        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-card shadow-elevated z-20 border border-accent/20">
           <div className="flex items-center gap-3">
             <EgyptFlag className="w-8 h-6 rounded-sm shadow-sm" />
             <div>
