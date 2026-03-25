@@ -24,7 +24,7 @@ function fetchTeachersExist(): Promise<boolean> {
 
 export function useHasTeachers() {
   const [hasTeachers, setHasTeachers] = useState(cachedResult ?? fallbackTeachers.length > 0);
-  const [loading, setLoading] = useState(cachedResult === null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cachedResult !== null) {

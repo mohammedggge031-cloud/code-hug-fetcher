@@ -11,35 +11,39 @@ type Teacher = FallbackTeacher;
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
   const [teachers, setTeachers] = useState<Teacher[]>(fallbackTeachers);
-  const [loading, setLoading] = useState(true);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    loadTeachersWithFallback()
-      .then((data) => {
-        if (!cancelled) setTeachers(data);
-      })
-      .catch(() => {
-        if (!cancelled) setTeachers(fallbackTeachers);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const runSync = () => {
+      loadTeachersWithFallback()
+        .then((data) => {
+          if (!cancelled) setTeachers(data);
+        })
+        .catch(() => {
+          if (!cancelled) setTeachers(fallbackTeachers);
+        });
+    };
+
+    let idleId: number | null = null;
+    const fallbackTimer = window.setTimeout(runSync, 450);
+
+    if ("requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(runSync, { timeout: 1200 });
+    }
 
     return () => {
       cancelled = true;
+      window.clearTimeout(fallbackTimer);
+      if (idleId !== null && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
     };
   }, []);
 
   // Auto-hide: if no teachers returned, render nothing
-  if (!loading && teachers.length === 0) {
-    return null;
-  }
-
-  // While loading, also render nothing (no skeleton flash for empty state)
-  if (loading) {
+  if (teachers.length === 0) {
     return null;
   }
 
