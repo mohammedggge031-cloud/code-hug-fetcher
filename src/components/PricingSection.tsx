@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
-import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
+import { fetchExternalFunction } from "@/lib/externalDashboard";
 
 type Duration = "30" | "45" | "60";
 
