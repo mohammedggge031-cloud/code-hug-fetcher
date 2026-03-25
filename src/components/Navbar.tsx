@@ -487,7 +487,26 @@ const Navbar = () => {
               return (
                 <div key={l.en} className="border-b border-primary-foreground/5 last:border-0">
                   <div className="flex items-center">
-                    {l.isRoute ? (
+                    {hasDropdown ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          const next = isExpanded ? null : l.en;
+                          setExpandedMobile(next);
+                          setExpandedMobileSub(null);
+                          if (next) {
+                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
+                            if (target) {
+                              setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+                            }
+                          }
+                        }}
+                        className="flex-1 flex items-center justify-between py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      >
+                        {t(l.en, l.ar)}
+                        <ChevronDown className={`w-4 h-4 text-primary-foreground/50 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                      </button>
+                    ) : l.isRoute ? (
                       <Link
                         to={l.href}
                         onClick={() => setMobileOpen(false)}
@@ -504,25 +523,6 @@ const Navbar = () => {
                         {t(l.en, l.ar)}
                       </a>
                     )}
-                    {hasDropdown && (
-                      <button
-                        onClick={(e) => {
-                          const next = isExpanded ? null : l.en;
-                          setExpandedMobile(next);
-                          setExpandedMobileSub(null);
-                          if (next) {
-                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
-                            if (target) {
-                              setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-                            }
-                          }
-                        }}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground/50 hover:text-accent hover:bg-primary-foreground/10 transition-all"
-                        aria-label={`Toggle ${l.en} submenu`}
-                      >
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                      </button>
-                    )}
                   </div>
 
                   {hasDropdown && isExpanded && (
@@ -534,7 +534,19 @@ const Navbar = () => {
                         return (
                           <div key={i}>
                             <div className="flex items-center">
-                              {item.isRoute ? (
+                              {hasSubItems ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setExpandedMobileSub(isSubExpanded ? null : i)}
+                                  className="flex-1 flex items-center justify-between gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                >
+                                  <span className="flex items-center gap-2.5">
+                                    <span className="text-accent">{item.icon}</span>
+                                    {t(item.labelEn, item.labelAr)}
+                                  </span>
+                                  <ChevronDown className={`w-3.5 h-3.5 text-primary-foreground/40 transition-transform duration-300 ${isSubExpanded ? "rotate-180" : ""}`} />
+                                </button>
+                              ) : item.isRoute ? (
                                 <Link
                                   to={item.href}
                                   onClick={() => setMobileOpen(false)}
@@ -563,14 +575,6 @@ const Navbar = () => {
                                   <span className="text-accent">{item.icon}</span>
                                   {t(item.labelEn, item.labelAr)}
                                 </a>
-                              )}
-                              {hasSubItems && (
-                                <button
-                                  onClick={() => setExpandedMobileSub(isSubExpanded ? null : i)}
-                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-primary-foreground/40 hover:text-accent transition-all"
-                                >
-                                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isSubExpanded ? "rotate-180" : ""}`} />
-                                </button>
                               )}
                             </div>
                             {hasSubItems && isSubExpanded && (
