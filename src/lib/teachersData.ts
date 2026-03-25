@@ -1,6 +1,6 @@
 import type { Teacher } from "@/data/fallbackContent";
-import { fetchWithTimeout, isGlobalFallbackMode, enableGlobalFallbackMode, SUPABASE_TIMEOUT_MS } from "@/lib/safeRuntimeData";
-import { buildExternalTeachersEndpoint } from "@/lib/externalDashboard";
+import { isGlobalFallbackMode } from "@/lib/safeRuntimeData";
+import { fetchExternalFunction } from "@/lib/externalDashboard";
 
 interface TeacherRow {
   id: string;
@@ -35,28 +35,17 @@ const mapTeacher = (teacher: TeacherRow): Teacher => ({
 });
 
 export async function loadTeachers(): Promise<Teacher[]> {
-  const endpoint = buildExternalTeachersEndpoint();
-  const anonKey = import.meta.env.VITE_EXTERNAL_DASHBOARD_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-
-  if (isGlobalFallbackMode() || !endpoint || !anonKey) return [];
+  if (isGlobalFallbackMode()) return [];
 
   try {
-    const response = await fetchWithTimeout(endpoint, {
+    const response = await fetchExternalFunction("public-teachers", {
       method: "GET",
-      headers: {
-        apikey: anonKey,
-        Authorization: `Bearer ${anonKey}`,
-      },
-    }, {
-      timeoutMs: SUPABASE_TIMEOUT_MS,
-      markGlobalFallbackOnError: false,
     });
 
-    if (!response.ok) {
-      return [];
-    }
+    if (!response.ok) return [];
 
-    const data = (await response.json()) as TeacherRow[];
+    const json = await response.json();
+    const data = (json?.teachers ?? json) as TeacherRow[];
     if (!Array.isArray(data) || data.length === 0) return [];
 
     return data.map(mapTeacher);
