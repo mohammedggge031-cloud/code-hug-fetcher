@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
+import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
 
 type Duration = "30" | "45" | "60";
 
@@ -44,6 +45,8 @@ const tierNames = {
   en: ["Starter", "Light", "Basic", "Standard", "Premium"],
   ar: ["مبتدئ", "خفيف", "أساسي", "متقدم", "بريميوم"],
 };
+
+const RECEIVE_BOOKING_API = getSupabaseFunctionUrl("receive-booking");
 
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
   const features = [
@@ -142,7 +145,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         rel="noopener noreferrer"
         onClick={() => {
           try {
-            fetch("https://xoymllyfwvbnbxsbbinu.supabase.co/functions/v1/receive-booking", {
+            fetch(RECEIVE_BOOKING_API, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

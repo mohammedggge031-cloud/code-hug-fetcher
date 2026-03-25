@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
 
-const TEACHERS_API = "https://xoymllyfwvbnbxsbbinu.supabase.co/functions/v1/public-teachers";
+const TEACHERS_API = getSupabaseFunctionUrl("public-teachers");
 
 let cachedResult: boolean | null = null;
 let fetchPromise: Promise<boolean> | null = null;

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
+import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
 
 interface Teacher {
   id: string;
@@ -20,7 +21,7 @@ interface Teacher {
   education_ar?: string;
 }
 
-const TEACHERS_API = "https://xoymllyfwvbnbxsbbinu.supabase.co/functions/v1/public-teachers";
+const TEACHERS_API = getSupabaseFunctionUrl("public-teachers");
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
