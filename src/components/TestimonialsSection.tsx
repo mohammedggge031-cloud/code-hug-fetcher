@@ -161,14 +161,14 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
           {/* Navigation Arrows */}
           <button
             onClick={() => paginate(lang === "ar" ? 1 : -1)}
-            className="absolute left-0 md:-left-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-primary-foreground/20 flex items-center justify-center text-primary-foreground/70 hover:bg-white/20 hover:text-primary-foreground transition-all duration-300"
+            className="absolute left-0 md:-left-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 flex items-center justify-center text-primary-foreground/70 hover:bg-primary-foreground/20 hover:text-primary-foreground transition-all duration-300"
             aria-label="Previous testimonials"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => paginate(lang === "ar" ? -1 : 1)}
-            className="absolute right-0 md:-right-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-primary-foreground/20 flex items-center justify-center text-primary-foreground/70 hover:bg-white/20 hover:text-primary-foreground transition-all duration-300"
+            className="absolute right-0 md:-right-12 top-1/2 -translate-y-1/2 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-primary-foreground/10 backdrop-blur-sm border border-primary-foreground/20 flex items-center justify-center text-primary-foreground/70 hover:bg-primary-foreground/20 hover:text-primary-foreground transition-all duration-300"
             aria-label="Next testimonials"
           >
             <ChevronRight className="w-5 h-5" />
