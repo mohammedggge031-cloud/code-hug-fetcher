@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 
 interface Category { id: string; name_en: string; name_ar: string; slug: string; }
 
@@ -25,12 +26,20 @@ const CategoriesManagement = () => {
   const { toast } = useToast();
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase.from("blog_categories").select("*").order("name_en");
-    if (error) {
-      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
-      return;
+    const result = await safeDataRequest<{ data: Category[]; errorMessage: string | null }>({
+      fallback: { data: [], errorMessage: null },
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase.from("blog_categories").select("*").order("name_en").abortSignal(signal);
+        return { data: data ?? [], errorMessage: error?.message || null };
+      },
+    });
+
+    if (result.errorMessage) {
+      toast({ title: t("err.error"), description: result.errorMessage, variant: "destructive" });
     }
-    if (data) setCategories(data);
+
+    setCategories(result.data);
   };
 
   useEffect(() => { fetchCategories(); }, []);
@@ -41,22 +50,30 @@ const CategoriesManagement = () => {
   const handleSave = async () => {
     if (!nameEn || !nameAr) { toast({ title: t("err.error"), description: t("cat.err_names"), variant: "destructive" }); return; }
     const finalSlug = slug || nameEn.toLowerCase().replace(/\s+/g, "-");
-    let error;
-    if (editing) { ({ error } = await supabase.from("blog_categories").update({ name_en: nameEn, name_ar: nameAr, slug: finalSlug }).eq("id", editing.id)); }
-    else { ({ error } = await supabase.from("blog_categories").insert({ name_en: nameEn, name_ar: nameAr, slug: finalSlug })); }
-    if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-    toast({ title: t("ok.done") }); setShowDialog(false); fetchCategories();
+    try {
+      let error;
+      if (editing) { ({ error } = await supabase.from("blog_categories").update({ name_en: nameEn, name_ar: nameAr, slug: finalSlug }).eq("id", editing.id)); }
+      else { ({ error } = await supabase.from("blog_categories").insert({ name_en: nameEn, name_ar: nameAr, slug: finalSlug })); }
+      if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      toast({ title: t("ok.done") }); setShowDialog(false); void fetchCategories();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm(t("cat.confirm_delete"))) return;
-    const { error } = await supabase.from("blog_categories").delete().eq("id", id);
-    if (error) {
-      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
-      return;
+    try {
+      const { error } = await supabase.from("blog_categories").delete().eq("id", id);
+      if (error) {
+        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+        return;
+      }
+      toast({ title: t("ok.deleted") });
+      void fetchCategories();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
     }
-    toast({ title: t("ok.deleted") });
-    fetchCategories();
   };
 
   return (

@@ -14,6 +14,7 @@ import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 
 interface BlogPost {
   id: string; title_en: string; title_ar: string; slug: string;
@@ -49,22 +50,33 @@ const BlogManagement = () => {
 
   const fetchData = async () => {
     setIsFetching(true);
-    const [{ data: postsData, error: postsError }, { data: catsData, error: catsError }] = await Promise.all([
-      supabase.from("blog_posts").select("*").order("created_at", { ascending: false }),
-      supabase.from("blog_categories").select("*").order("name_en"),
-    ]);
+    try {
+      const result = await safeDataRequest<{ posts: BlogPost[]; cats: Category[]; errorMessage: string | null }>({
+        fallback: { posts: [], cats: [], errorMessage: null },
+        markGlobalFallbackOnError: false,
+        request: async (signal) => {
+          const [{ data: postsData, error: postsError }, { data: catsData, error: catsError }] = await Promise.all([
+            supabase.from("blog_posts").select("*").order("created_at", { ascending: false }).abortSignal(signal),
+            supabase.from("blog_categories").select("*").order("name_en").abortSignal(signal),
+          ]);
 
-    if (postsError || catsError) {
-      toast({
-        title: t("err.error"),
-        description: postsError?.message || catsError?.message,
-        variant: "destructive",
+          return {
+            posts: postsData ?? [],
+            cats: catsData ?? [],
+            errorMessage: postsError?.message || catsError?.message || null,
+          };
+        },
       });
-    }
 
-    if (postsData) setPosts(postsData);
-    if (catsData) setCategories(catsData);
-    setIsFetching(false);
+      if (result.errorMessage) {
+        toast({ title: t("err.error"), description: result.errorMessage, variant: "destructive" });
+      }
+
+      setPosts(result.posts);
+      setCategories(result.cats);
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -105,31 +117,39 @@ const BlogManagement = () => {
       published_at: editing.status === "published" ? new Date().toISOString() : null,
     };
 
-    let error;
-    if (editing.id) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id)); }
-    else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
+    try {
+      let error;
+      if (editing.id) { ({ error } = await supabase.from("blog_posts").update(payload).eq("id", editing.id)); }
+      else { ({ error } = await supabase.from("blog_posts").insert(payload)); }
 
-    if (error) {
-      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+      if (error) {
+        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+        return;
+      }
+
+      toast({ title: t("blog.saved"), description: `"${editing.title_en}"` });
+      setShowEditor(false);
+      void fetchData();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Using fallback state.", variant: "destructive" });
+    } finally {
       setIsSaving(false);
-      return;
     }
-
-    toast({ title: t("blog.saved"), description: `"${editing.title_en}"` });
-    setShowEditor(false);
-    setIsSaving(false);
-    fetchData();
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm(t("blog.confirm_delete"))) return;
-    const { error } = await supabase.from("blog_posts").delete().eq("id", id);
-    if (error) {
-      toast({ title: t("err.error"), description: error.message, variant: "destructive" });
-      return;
+    try {
+      const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+      if (error) {
+        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+        return;
+      }
+      toast({ title: t("ok.deleted") });
+      void fetchData();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
     }
-    toast({ title: t("ok.deleted") });
-    fetchData();
   };
 
   const filtered = posts.filter(p => p.title_en.toLowerCase().includes(search.toLowerCase()) || p.title_ar.includes(search));

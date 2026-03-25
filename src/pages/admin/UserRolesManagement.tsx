@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
+import { safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
 const SUPER_ADMIN_ID = "91122b58-4875-42f5-a4a6-6df6569a388d";
 
@@ -45,7 +46,7 @@ const UserRolesManagement = () => {
     if (userIds.length === 0) return;
     setLoadingEmails(true);
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
+      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
       const token = sessionData?.session?.access_token;
       const res = await fetchSupabaseFunction("list-user-emails", {
         method: "POST",
@@ -58,8 +59,18 @@ const UserRolesManagement = () => {
   };
 
   const fetchRoles = async () => {
-    const { data } = await supabase.from("user_roles").select("*").order("created_at");
-    if (data) { setRoles(data); fetchEmails(data.map(r => r.user_id)); }
+    const data = await safeDataRequest<UserRole[]>({
+      fallback: [],
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase.from("user_roles").select("*").order("created_at").abortSignal(signal);
+        if (error) throw error;
+        return data ?? [];
+      },
+    });
+
+    setRoles(data);
+    void fetchEmails(data.map(r => r.user_id));
   };
 
   useEffect(() => { fetchRoles(); }, []);
@@ -84,7 +95,7 @@ const UserRolesManagement = () => {
 
     setAddLoading(true);
     try {
-      const { data: sessionData } = await supabase.auth.getSession();
+      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
       const token = sessionData?.session?.access_token;
       const res = await fetchSupabaseFunction("get-user-by-email", {
         method: "POST",
@@ -98,15 +109,22 @@ const UserRolesManagement = () => {
       const { error } = await supabase.from("user_roles").insert({ user_id: result.user_id, role: newRole as any });
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       toast({ title: `✅ ${t("ok.done")}`, description: t("ok.role_assigned") });
-      setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); fetchRoles();
+      setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); void fetchRoles();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
     } finally { setAddLoading(false); }
   };
 
   const handleDelete = async (r: UserRole) => {
     if (r.user_id === SUPER_ADMIN_ID) { toast({ title: t("err.not_allowed"), description: t("err.cant_del_super"), variant: "destructive" }); return; }
     if (!isSuperAdmin) { toast({ title: t("err.not_allowed"), description: t("err.only_super_del"), variant: "destructive" }); return; }
-    await supabase.from("user_roles").delete().eq("id", r.id);
-    toast({ title: t("ok.deleted") }); fetchRoles();
+    try {
+      await supabase.from("user_roles").delete().eq("id", r.id);
+      toast({ title: t("ok.deleted") });
+      void fetchRoles();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const getInitials = (email: string) => email.split("@")[0].slice(0, 2).toUpperCase();

@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Code } from "lucide-react";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 
 interface Script {
   id: string; name: string; script_content: string;
@@ -27,8 +28,17 @@ const ScriptsManagement = () => {
   const { toast } = useToast();
 
   const fetchScripts = async () => {
-    const { data } = await supabase.from("custom_scripts").select("*").order("created_at", { ascending: false });
-    if (data) setScripts(data);
+    const data = await safeDataRequest<Script[]>({
+      fallback: [],
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase.from("custom_scripts").select("*").order("created_at", { ascending: false }).abortSignal(signal);
+        if (error) throw error;
+        return data ?? [];
+      },
+    });
+
+    setScripts(data);
   };
 
   useEffect(() => { fetchScripts(); }, []);
@@ -46,15 +56,23 @@ const ScriptsManagement = () => {
     if (!editing?.name || !editing.script_content) {
       toast({ title: t("err.error"), description: "Name and script content are required", variant: "destructive" }); return;
     }
-    const payload = { ...editing, updated_by: user?.id };
-    if (isNew) { const { error } = await supabase.from("custom_scripts").insert(payload as any); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
-    else { const { error } = await supabase.from("custom_scripts").update(payload as any).eq("id", editing.id!); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
-    toast({ title: t("ok.done") }); setEditing(null); fetchScripts();
+    try {
+      const payload = { ...editing, updated_by: user?.id };
+      if (isNew) { const { error } = await supabase.from("custom_scripts").insert(payload as any); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
+      else { const { error } = await supabase.from("custom_scripts").update(payload as any).eq("id", editing.id!); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
+      toast({ title: t("ok.done") }); setEditing(null); void fetchScripts();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const handleDelete = async (id: string) => {
-    await supabase.from("custom_scripts").delete().eq("id", id);
-    toast({ title: t("ok.deleted") }); fetchScripts();
+    try {
+      await supabase.from("custom_scripts").delete().eq("id", id);
+      toast({ title: t("ok.deleted") }); void fetchScripts();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   return (

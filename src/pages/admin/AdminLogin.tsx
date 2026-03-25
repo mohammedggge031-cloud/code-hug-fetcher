@@ -13,10 +13,16 @@ const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [allowRender, setAllowRender] = useState(false);
   const { signIn, user, role, loading } = useAuth();
   const { t, lang, toggleLang } = useAdminLang();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => setAllowRender(true), 3200);
+    return () => window.clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     if (!loading && user && role) {
@@ -24,7 +30,7 @@ const AdminLogin = () => {
     }
   }, [loading, user, role, navigate]);
 
-  if (loading) {
+  if (loading && !allowRender) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />

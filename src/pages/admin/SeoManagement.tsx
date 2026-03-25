@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2, Search } from "lucide-react";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 
 interface SeoEntry {
   id: string; page_path: string; page_name: string;
@@ -49,8 +50,17 @@ const SeoManagement = () => {
   const { toast } = useToast();
 
   const fetchEntries = async () => {
-    const { data } = await supabase.from("seo_metadata").select("*").order("page_path");
-    if (data) setEntries(data);
+    const data = await safeDataRequest<SeoEntry[]>({
+      fallback: [],
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase.from("seo_metadata").select("*").order("page_path").abortSignal(signal);
+        if (error) throw error;
+        return data ?? [];
+      },
+    });
+
+    setEntries(data);
   };
 
   useEffect(() => { fetchEntries(); }, []);
@@ -61,25 +71,38 @@ const SeoManagement = () => {
     if (typeof structuredData === "string" && structuredData.trim()) {
       try { structuredData = JSON.parse(structuredData); } catch { toast({ title: t("err.error"), description: "Invalid JSON", variant: "destructive" }); return; }
     }
-    const payload = { ...editing, structured_data: structuredData, updated_by: user?.id };
-    if (isNew) { const { error } = await supabase.from("seo_metadata").insert(payload as any); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
-    else { const { error } = await supabase.from("seo_metadata").update(payload as any).eq("id", editing.id!); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
-    toast({ title: t("ok.done") }); setEditing(null); fetchEntries();
+    try {
+      const payload = { ...editing, structured_data: structuredData, updated_by: user?.id };
+      if (isNew) { const { error } = await supabase.from("seo_metadata").insert(payload as any); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
+      else { const { error } = await supabase.from("seo_metadata").update(payload as any).eq("id", editing.id!); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
+      toast({ title: t("ok.done") }); setEditing(null); void fetchEntries();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from("seo_metadata").delete().eq("id", id);
-    if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-    toast({ title: t("ok.deleted") }); fetchEntries();
+    try {
+      const { error } = await supabase.from("seo_metadata").delete().eq("id", id);
+      if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      toast({ title: t("ok.deleted") }); void fetchEntries();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const handleInitialize = async () => {
     const existing = entries.map(e => e.page_path);
     const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({ page_path: p.path, page_name: p.name, updated_by: user?.id }));
     if (toInsert.length === 0) { toast({ title: t("ok.done") }); return; }
-    const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
-    if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-    toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages` }); fetchEntries();
+    try {
+      const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
+      if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages` });
+      void fetchEntries();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const filtered = entries.filter(e => e.page_name.toLowerCase().includes(filter.toLowerCase()) || e.page_path.toLowerCase().includes(filter.toLowerCase()));
