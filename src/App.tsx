@@ -65,6 +65,10 @@ const COURSE_RETURN_SCROLL_KEY = "courseReturnState";
 const FORCE_SCROLL_RESTORE_KEY = "forceScrollRestore";
 const HOMEPAGE_SCROLL_KEY = "homepageScrollY";
 
+// Track whether this is a fresh page load (refresh/direct visit) vs in-app navigation.
+// On fresh load, POP should NOT restore scroll — user expects top of page.
+let isFirstLoad = true;
+
 type StoredScrollRestore = {
   path: string;
   y: number;
