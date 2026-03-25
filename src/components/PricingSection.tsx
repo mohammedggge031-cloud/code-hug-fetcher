@@ -143,7 +143,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         rel="noopener noreferrer"
         onClick={() => {
           try {
-            fetchSupabaseFunction("receive-booking", {
+            fetchExternalFunction("receive-booking", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({

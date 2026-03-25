@@ -189,7 +189,7 @@ const ContactSection = () => {
 
               // Send copy to admin system (non-blocking)
               try {
-                fetchSupabaseFunction("receive-booking", {
+                fetchExternalFunction("receive-booking", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
