@@ -6,8 +6,7 @@
 .floating-action-shell {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 .floating-action-whatsapp {
