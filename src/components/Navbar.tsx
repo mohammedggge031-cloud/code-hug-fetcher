@@ -1,0 +1,643 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useEffect, useMemo, forwardRef } from "react";
+import { Mail, Phone, BookOpen, Moon, Languages, GraduationCap, Sparkles, Users, Award, MessageCircle, Clock, ChevronDown, Globe } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useHasTeachers } from "@/hooks/useHasTeachers";
+import logo from "@/assets/logo.webp";
+
+
+
+const FacebookIcon = forwardRef<SVGSVGElement>((_, ref) => (
+  <svg ref={ref} className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+));
+FacebookIcon.displayName = "FacebookIcon";
+
+const InstagramIcon = forwardRef<SVGSVGElement>((_, ref) => (
+  <svg ref={ref} className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+));
+InstagramIcon.displayName = "InstagramIcon";
+
+const WhatsAppIcon = forwardRef<SVGSVGElement>((_, ref) => (
+  <svg ref={ref} className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+));
+WhatsAppIcon.displayName = "WhatsAppIcon";
+
+interface SubItem {
+  labelEn: string;
+  labelAr: string;
+  href: string;
+  isRoute?: boolean;
+}
+
+interface DropdownItem {
+  icon?: React.ReactNode;
+  labelEn: string;
+  labelAr: string;
+  href: string;
+  isRoute?: boolean;
+  courseIndex?: number;
+  subItems?: SubItem[];
+}
+
+interface NavLinkWithDropdown {
+  en: string;
+  ar: string;
+  href: string;
+  isRoute?: boolean;
+  dropdown?: DropdownItem[];
+}
+
+const Navbar = () => {
+  const { t, lang, toggleLang } = useLanguage();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
+  const [expandedMobileSub, setExpandedMobileSub] = useState<number | null>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHomePage = location.pathname === "/";
+  const isCourseDetailPage = location.pathname.startsWith("/courses/");
+  const { hasTeachers } = useHasTeachers();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setExpandedMobile(null);
+    setExpandedMobileSub(null);
+  }, [location.pathname, location.hash]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileOpen(false);
+        setExpandedMobile(null);
+        setExpandedMobileSub(null);
+      }
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const body = document.body;
+    const scrollY = window.scrollY;
+
+    if (mobileOpen) {
+      body.classList.add("menu-open");
+      body.style.position = "fixed";
+      body.style.top = `-${scrollY}px`;
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.width = "100%";
+      body.style.overscrollBehavior = "none";
+    } else {
+      const offset = Number.parseInt(body.style.top || "0", 10) || 0;
+      body.classList.remove("menu-open");
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      body.style.overscrollBehavior = "";
+      if (offset) {
+        window.scrollTo({ top: Math.abs(offset), left: 0, behavior: "auto" });
+      }
+    }
+
+    return () => {
+      const offset = Number.parseInt(body.style.top || "0", 10) || 0;
+      body.classList.remove("menu-open");
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      body.style.overscrollBehavior = "";
+      if (offset && !mobileOpen) {
+        window.scrollTo({ top: Math.abs(offset), left: 0, behavior: "auto" });
+      }
+    };
+  }, [mobileOpen]);
+
+  const normalizePath = (path: string) => {
+    const [withoutHash] = path.split("#");
+    return withoutHash || "/";
+  };
+
+  const goHomeToCoursesSection = () => {
+    const raw = window.sessionStorage.getItem("courseReturnState");
+    let targetPath = "/";
+    let restoreY: number | null = null;
+
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as Partial<{ path: string; y: number }>;
+        if (typeof parsed.path === "string") {
+          const normalized = normalizePath(parsed.path);
+          targetPath = normalized.startsWith("/courses/") ? "/" : normalized;
+        }
+        if (typeof parsed.y === "number" && parsed.y > 0) {
+          restoreY = parsed.y;
+        }
+      } catch {
+        // Ignore malformed session data and fallback to /#courses.
+      }
+    }
+
+    if (restoreY !== null) {
+      window.sessionStorage.setItem(
+        "forceScrollRestore",
+        JSON.stringify({ path: targetPath, y: restoreY, ts: Date.now() }),
+      );
+    }
+
+    window.sessionStorage.setItem("pendingScrollTarget", "courses");
+    navigate(`${targetPath}#courses`);
+  };
+
+  const handleHomeLogoClick = (e: React.MouseEvent) => {
+    if (!isCourseDetailPage) return;
+    e.preventDefault();
+    goHomeToCoursesSection();
+  };
+
+  const handleAnchorClick = (e: React.MouseEvent, href: string) => {
+    if (!href.startsWith("#")) return;
+
+    e.preventDefault();
+
+    if (href === "#home" && isCourseDetailPage) {
+      goHomeToCoursesSection();
+      return;
+    }
+
+    if (isHomePage) {
+      const targetId = href.slice(1);
+      const target = document.getElementById(targetId);
+      if (target) {
+        const headerOffset = 96;
+        const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+        window.history.replaceState(null, "", `/#${targetId}`);
+        return;
+      }
+    }
+
+    window.sessionStorage.setItem("pendingScrollTarget", href.slice(1));
+    navigate("/");
+  };
+
+  const links: NavLinkWithDropdown[] = [
+    { en: "Home", ar: "الرئيسية", href: "#home" },
+    {
+      en: "Courses", ar: "الدورات", href: "#courses",
+      dropdown: [
+        {
+          icon: <BookOpen className="w-4 h-4" />, labelEn: "Quran Course", labelAr: "دورة القرآن الكريم", href: "/courses/quran-course", isRoute: true,
+          subItems: [
+            { labelEn: "Learn to Read Quran", labelAr: "تعلم قراءة القرآن", href: "/online-quran-classes", isRoute: true },
+            { labelEn: "Quran Memorization (Hifz)", labelAr: "حفظ القرآن أونلاين", href: "/quran-memorization-hifz", isRoute: true },
+            { labelEn: "Quran Course Full Track", labelAr: "دورة القرآن المتكاملة", href: "/courses/quran-course", isRoute: true },
+            { labelEn: "Quran for Kids", labelAr: "القرآن للأطفال", href: "/courses/quran-course", isRoute: true },
+            { labelEn: "Ijazah Program", labelAr: "برنامج الإجازة", href: "/ijazah-program", isRoute: true },
+          ],
+        },
+        {
+          icon: <Moon className="w-4 h-4" />, labelEn: "Tajweed Course", labelAr: "دورة التجويد", href: "/courses/tajweed-course", isRoute: true,
+          subItems: [
+            { labelEn: "Basic Tajweed", labelAr: "التجويد الأساسي", href: "/tajweed-course-online", isRoute: true },
+            { labelEn: "Intermediate Tajweed", labelAr: "التجويد المتوسط", href: "/courses/tajweed-course", isRoute: true },
+            { labelEn: "Advanced Tajweed", labelAr: "التجويد المتقدم", href: "/courses/tajweed-course", isRoute: true },
+            { labelEn: "Tajweed for Kids", labelAr: "التجويد للأطفال", href: "/courses/tajweed-course", isRoute: true },
+          ],
+        },
+        {
+          icon: <Languages className="w-4 h-4" />, labelEn: "Arabic Course", labelAr: "دورة اللغة العربية", href: "/courses/arabic-course", isRoute: true,
+          subItems: [
+            { labelEn: "Noorani Qaida Online", labelAr: "النورانية أونلاين", href: "/courses/arabic-course", isRoute: true },
+            { labelEn: "Arabic for Kids", labelAr: "العربية للأطفال", href: "/arabic-for-kids", isRoute: true },
+            { labelEn: "Arabic for Adults", labelAr: "العربية للكبار", href: "/arabic-for-adults", isRoute: true },
+            { labelEn: "Quranic Arabic", labelAr: "العربية القرآنية", href: "/courses/arabic-course", isRoute: true },
+          ],
+        },
+        {
+          icon: <GraduationCap className="w-4 h-4" />, labelEn: "Islamic Studies", labelAr: "الدراسات الإسلامية", href: "/courses/islamic-studies", isRoute: true,
+          subItems: [
+            { labelEn: "Islamic Essentials for Kids", labelAr: "الأساسيات الإسلامية للأطفال", href: "/courses/islamic-studies", isRoute: true },
+            { labelEn: "Fiqh & Aqeedah", labelAr: "الفقه والعقيدة", href: "/courses/islamic-studies", isRoute: true },
+            { labelEn: "Tafseer, Hadith & Seerah", labelAr: "التفسير والحديث والسيرة", href: "/courses/islamic-studies", isRoute: true },
+            { labelEn: "New Muslim Program", labelAr: "برنامج المسلمين الجدد", href: "/courses/islamic-studies", isRoute: true },
+          ],
+        },
+        {
+          icon: <Sparkles className="w-4 h-4" />, labelEn: "All-in-One Course", labelAr: "الدورة الشاملة", href: "/courses/all-in-one-course", isRoute: true,
+          subItems: [
+            { labelEn: "Customized Learning Plan", labelAr: "خطة تعلم مخصصة", href: "/courses/all-in-one-course", isRoute: true },
+            { labelEn: "Family Package", labelAr: "الباقة العائلية", href: "/courses/all-in-one-course", isRoute: true },
+            { labelEn: "Weekend Intensive", labelAr: "المكثفة في عطلة الأسبوع", href: "/courses/all-in-one-course", isRoute: true },
+          ],
+        },
+      ],
+    },
+    { en: "Pricing", ar: "الأسعار", href: "#pricing" },
+    {
+      en: "About", ar: "من نحن", href: "#about",
+      dropdown: [
+        { icon: <Users className="w-4 h-4" />, labelEn: "Our Team", labelAr: "فريقنا", href: "#about" },
+        ...(hasTeachers ? [{ icon: <GraduationCap className="w-4 h-4" />, labelEn: "Our Teachers", labelAr: "معلمونا", href: "#teachers" }] : []),
+        { icon: <Award className="w-4 h-4" />, labelEn: "Why Choose Us", labelAr: "لماذا نحن", href: "#why-us" },
+        { icon: <MessageCircle className="w-4 h-4" />, labelEn: "Student Success Stories", labelAr: "قصص نجاح الطلاب", href: "/student-success-stories", isRoute: true },
+        { icon: <MessageCircle className="w-4 h-4" />, labelEn: "Testimonials", labelAr: "آراء الطلاب", href: "#testimonials" },
+      ],
+    },
+    { en: "Blog", ar: "المدونة", href: "/blog", isRoute: true },
+    { en: "Videos", ar: "فيديوهات", href: "/videos", isRoute: true },
+    {
+      en: "Contact", ar: "تواصل معنا", href: "#contact",
+      dropdown: [
+        { icon: <Phone className="w-4 h-4" />, labelEn: "WhatsApp", labelAr: "واتساب", href: "https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B" },
+        { icon: <Mail className="w-4 h-4" />, labelEn: "Email Us", labelAr: "راسلنا", href: "mailto:info@alhamdacademy.net" },
+        { icon: <Clock className="w-4 h-4" />, labelEn: "Free Trial", labelAr: "تجربة مجانية", href: "/free-trial", isRoute: true },
+      ],
+    },
+  ];
+
+  const socials = [
+    { icon: <WhatsAppIcon />, href: "https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B", label: "WhatsApp" },
+    { icon: <FacebookIcon />, href: "https://www.facebook.com/share/1BFyf4qMm8/", label: "Facebook" },
+    { icon: <InstagramIcon />, href: "https://www.instagram.com/alhamdacademy_official", label: "Instagram" },
+    { icon: <Mail className="w-4 h-4" />, href: "mailto:info@alhamdacademy.net", label: "Email" },
+  ];
+
+  const renderLink = (l: NavLinkWithDropdown) => {
+    const hasDropdown = l.dropdown && l.dropdown.length > 0;
+
+    const linkContent = (
+      <>
+        {t(l.en, l.ar)}
+        {hasDropdown && <ChevronDown className="w-3 h-3 ml-1 transition-transform group-hover:rotate-180" />}
+      </>
+    );
+
+    const linkClass = "flex items-center px-4 py-2 text-[15px] font-bold text-primary-foreground uppercase tracking-wide hover:text-accent transition-colors whitespace-nowrap rounded-full hover:bg-primary-foreground/10";
+
+    return (
+      <div key={l.en} className="relative group">
+        {l.isRoute ? (
+          <Link to={l.href} className={linkClass}>
+            {linkContent}
+          </Link>
+        ) : (
+          <a href={l.href} className={linkClass} onClick={(e) => handleAnchorClick(e, l.href)}>
+            {linkContent}
+          </a>
+        )}
+
+        {/* Dropdown */}
+        {hasDropdown && (
+          <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="bg-white rounded-xl shadow-xl border border-border/50 py-2 min-w-[280px] overflow-hidden">
+              {l.dropdown!.map((item, i) => {
+                const hasSubItems = item.subItems && item.subItems.length > 0;
+
+                return (
+                  <div key={i} className="group/item relative">
+                    {item.isRoute ? (
+                      <Link
+                        to={item.href}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-foreground hover:bg-accent/10 hover:text-accent transition-colors"
+                      >
+                        <span className="text-accent">{item.icon}</span>
+                        {t(item.labelEn, item.labelAr)}
+                        {hasSubItems && <ChevronDown className="w-3 h-3 ms-auto -rotate-90" />}
+                      </Link>
+                    ) : item.href.startsWith("http") || item.href.startsWith("mailto:") ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-foreground hover:bg-accent/10 hover:text-accent transition-colors"
+                      >
+                        <span className="text-accent">{item.icon}</span>
+                        {t(item.labelEn, item.labelAr)}
+                      </a>
+                    ) : (
+                      <a
+                        href={item.href}
+                        onClick={(e) => handleAnchorClick(e, item.href)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-foreground hover:bg-accent/10 hover:text-accent transition-colors"
+                      >
+                        <span className="text-accent">{item.icon}</span>
+                        {t(item.labelEn, item.labelAr)}
+                        {hasSubItems && <ChevronDown className="w-3 h-3 ms-auto -rotate-90" />}
+                      </a>
+                    )}
+
+                    {/* Sub-items flyout */}
+                    {hasSubItems && (
+                      <div className="absolute top-0 start-full ps-2 opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50">
+                        <div className="bg-white rounded-xl shadow-xl border border-border/50 py-2 min-w-[220px]">
+                          {item.subItems!.map((sub, j) =>
+                            sub.isRoute ? (
+                              <Link
+                                key={j}
+                                to={sub.href}
+                                className="block px-4 py-2.5 text-sm text-muted-foreground hover:bg-accent/10 hover:text-accent transition-colors"
+                              >
+                                {t(sub.labelEn, sub.labelAr)}
+                              </Link>
+                            ) : (
+                              <a
+                                key={j}
+                                href={sub.href}
+                                onClick={(e) => handleAnchorClick(e, sub.href)}
+                                className="block px-4 py-2.5 text-sm text-muted-foreground hover:bg-accent/10 hover:text-accent transition-colors"
+                              >
+                                {t(sub.labelEn, sub.labelAr)}
+                              </a>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <>
+    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
+      <div className="bg-primary shadow-sm">
+        <div className={`container mx-auto flex items-center justify-between px-4 transition-all duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
+          {/* Desktop: Logo left */}
+          <Link to="/" onClick={handleHomeLogoClick} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
+            <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" fetchPriority="high" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
+            <span className="text-[11px] font-heading font-bold text-primary-foreground uppercase tracking-widest">
+              {t("Alhamd Academy", "أكاديمية الحمد")}
+            </span>
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center justify-center gap-0.5 py-2" aria-label="Main navigation">
+            {links.map((l) => renderLink(l))}
+          </nav>
+
+          {/* Desktop: Social icons + Language toggle */}
+          <div className="hidden lg:flex items-center gap-1 shrink-0">
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-primary-foreground hover:text-accent hover:bg-primary-foreground/10 transition-all text-sm font-bold"
+              aria-label="Toggle language"
+            >
+              <Globe className="w-4 h-4" />
+              {lang === "en" ? "عربي" : "EN"}
+            </button>
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-primary-foreground hover:text-accent hover:bg-primary-foreground/10 transition-all"
+                aria-label={s.label}
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile/Tablet: Logo (left) | Nav center | Book Trial (right) */}
+          <div className="flex lg:hidden items-center justify-between w-full gap-2">
+            {/* Left: Large Logo */}
+            <Link to="/" onClick={handleHomeLogoClick} className="flex items-center gap-2.5 shrink-0">
+              <img src={logo} alt="Alhamd Academy" width={48} height={48} loading="eager" decoding="async" className="h-12 w-12 object-cover rounded-xl shadow-soft border-2 border-accent/20" />
+              <div className="flex flex-col leading-tight">
+                <span className="text-[13px] font-heading font-extrabold text-primary-foreground uppercase tracking-wider">
+                  {t("Alhamd", "الحمد")}
+                </span>
+                <span className="text-[9px] font-medium text-primary-foreground/60 uppercase tracking-widest">
+                  {t("Academy", "أكاديمية")}
+                </span>
+              </div>
+            </Link>
+
+            {/* Center: hamburger */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-all duration-300"
+              aria-label="Toggle menu"
+            >
+              <div className="relative w-5 h-5 flex items-center justify-center">
+                <span className={`absolute h-[2px] w-5 bg-primary-foreground rounded-full transition-all duration-300 ${mobileOpen ? "rotate-45" : "-translate-y-1.5"}`} />
+                <span className={`absolute h-[2px] w-5 bg-primary-foreground rounded-full transition-all duration-300 ${mobileOpen ? "opacity-0 scale-0" : "opacity-100"}`} />
+                <span className={`absolute h-[2px] w-5 bg-primary-foreground rounded-full transition-all duration-300 ${mobileOpen ? "-rotate-45" : "translate-y-1.5"}`} />
+              </div>
+            </button>
+
+            {/* Right: Book Trial CTA */}
+            <div className="flex items-center gap-1.5">
+              <a
+                href="#contact"
+                onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }}
+                className="flex items-center whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-elevated transition-all hover:brightness-110"
+              >
+                <Sparkles className="me-1.5 h-3.5 w-3.5" />
+                {t("Free Trial", "تجربة مجانية")}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    {/* Mobile fullscreen menu - OUTSIDE header to escape stacking context */}
+    <div className={`lg:hidden fixed inset-x-0 bottom-0 z-[55] overscroll-none bg-primary transition-all duration-300 ${scrolled ? "top-[4.5rem]" : "top-16"} ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
+      <div className={`relative h-full flex flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
+        {/* Top: Logo on right */}
+        <div className="flex items-center justify-end px-6 pt-6 pb-4">
+          <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
+            <span className="text-xs font-heading font-bold text-primary-foreground/80 uppercase tracking-widest">
+              {t("Alhamd Academy", "أكاديمية الحمد")}
+            </span>
+            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft border border-accent/20" />
+          </Link>
+        </div>
+
+        {/* Menu items - scrollable */}
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-4 scrollbar-hide" aria-label="Mobile navigation">
+          <div className="space-y-0.5">
+            {links.map((l) => {
+              const hasDropdown = l.dropdown && l.dropdown.length > 0;
+              const isExpanded = expandedMobile === l.en;
+
+              return (
+                <div key={l.en} className="border-b border-primary-foreground/5 last:border-0">
+                  <div className="flex items-center">
+                    {l.isRoute ? (
+                      <Link
+                        to={l.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      >
+                        {t(l.en, l.ar)}
+                      </Link>
+                    ) : (
+                      <a
+                        href={l.href}
+                        onClick={(e) => { handleAnchorClick(e, l.href); setMobileOpen(false); }}
+                        className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      >
+                        {t(l.en, l.ar)}
+                      </a>
+                    )}
+                    {hasDropdown && (
+                      <button
+                        onClick={() => {
+                          setExpandedMobile(isExpanded ? null : l.en);
+                          setExpandedMobileSub(null);
+                        }}
+                        className="w-9 h-9 rounded-xl flex items-center justify-center text-primary-foreground/50 hover:text-accent hover:bg-primary-foreground/10 transition-all"
+                        aria-label={`Toggle ${l.en} submenu`}
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                      </button>
+                    )}
+                  </div>
+
+                  {hasDropdown && isExpanded && (
+                    <div className="ps-3 pb-3 border-s-2 border-accent/30 ms-2">
+                      {l.dropdown!.map((item, i) => {
+                        const hasSubItems = item.subItems && item.subItems.length > 0;
+                        const isSubExpanded = expandedMobileSub === i;
+
+                        return (
+                          <div key={i}>
+                            <div className="flex items-center">
+                              {item.isRoute ? (
+                                <Link
+                                  to={item.href}
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                >
+                                  <span className="text-accent">{item.icon}</span>
+                                  {t(item.labelEn, item.labelAr)}
+                                </Link>
+                              ) : item.href.startsWith("http") || item.href.startsWith("mailto:") ? (
+                                <a
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={() => setMobileOpen(false)}
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                >
+                                  <span className="text-accent">{item.icon}</span>
+                                  {t(item.labelEn, item.labelAr)}
+                                </a>
+                              ) : (
+                                <a
+                                  href={item.href}
+                                  onClick={(e) => { handleAnchorClick(e, item.href); setMobileOpen(false); }}
+                                  className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                >
+                                  <span className="text-accent">{item.icon}</span>
+                                  {t(item.labelEn, item.labelAr)}
+                                </a>
+                              )}
+                              {hasSubItems && (
+                                <button
+                                  onClick={() => setExpandedMobileSub(isSubExpanded ? null : i)}
+                                  className="w-8 h-8 rounded-lg flex items-center justify-center text-primary-foreground/40 hover:text-accent transition-all"
+                                >
+                                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isSubExpanded ? "rotate-180" : ""}`} />
+                                </button>
+                              )}
+                            </div>
+                            {hasSubItems && isSubExpanded && (
+                              <div className="ps-9 pb-1">
+                                {item.subItems!.map((sub, j) =>
+                                  sub.isRoute ? (
+                                    <Link
+                                      key={j}
+                                      to={sub.href}
+                                      onClick={() => setMobileOpen(false)}
+                                      className="block px-3 py-2 text-xs font-medium text-primary-foreground/50 hover:text-accent transition-colors"
+                                    >
+                                      {t(sub.labelEn, sub.labelAr)}
+                                    </Link>
+                                  ) : (
+                                    <a
+                                      key={j}
+                                      href={sub.href}
+                                      onClick={(e) => { handleAnchorClick(e, sub.href); setMobileOpen(false); }}
+                                      className="block px-3 py-2 text-xs font-medium text-primary-foreground/50 hover:text-accent transition-colors"
+                                    >
+                                      {t(sub.labelEn, sub.labelAr)}
+                                    </a>
+                                  )
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Language toggle + Social icons row */}
+          <div className="flex items-center justify-center gap-3 pt-5 mt-4 border-t border-primary-foreground/10">
+            <button
+              onClick={toggleLang}
+              className="h-10 px-4 rounded-full bg-accent/15 border border-accent/30 flex items-center gap-2 text-primary-foreground hover:bg-accent/25 transition-all"
+              aria-label="Toggle language"
+            >
+              <Globe className="w-4 h-4 text-accent" />
+              <span className="text-sm font-bold">{lang === "en" ? "عربي" : "English"}</span>
+            </button>
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/15 transition-all"
+                aria-label={s.label}
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+        </nav>
+
+        {/* Bottom: Book Trial CTA - full width */}
+        <div className="px-6 pb-6 pt-2">
+          <a
+            href="#contact"
+            onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); setMobileOpen(false); }}
+            className="block w-full py-3.5 text-center text-sm font-bold uppercase tracking-wider rounded-xl bg-accent text-accent-foreground hover:brightness-110 transition-all shadow-elevated"
+          >
+            {t("Book Your Free Trial", "احجز حصتك المجانية")}
+          </a>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+};
+
+export default Navbar;

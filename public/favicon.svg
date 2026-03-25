@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D4B340"/>
+      <stop offset="100%" stop-color="#B8922E"/>
+    </linearGradient>
+  </defs>
+  <!-- Dome -->
+  <path d="M32 8 C18 8 10 22 10 32 L54 32 C54 22 46 8 32 8Z" fill="url(#g)"/>
+  <!-- Crescent -->
+  <circle cx="32" cy="8" r="4" fill="#D4B340"/>
+  <circle cx="33.5" cy="7" r="3" fill="white"/>
+  <!-- Base -->
+  <rect x="8" y="32" width="48" height="6" rx="1" fill="url(#g)"/>
+  <rect x="12" y="38" width="40" height="4" rx="1" fill="#B8922E"/>
+  <!-- Pillars -->
+  <rect x="16" y="42" width="4" height="14" rx="1" fill="url(#g)"/>
+  <rect x="44" y="42" width="4" height="14" rx="1" fill="url(#g)"/>
+  <!-- Base platform -->
+  <rect x="6" y="56" width="52" height="4" rx="2" fill="#B8922E"/>
+</svg>

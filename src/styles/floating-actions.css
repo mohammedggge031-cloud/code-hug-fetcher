@@ -1,0 +1,87 @@
+:root {
+  --whatsapp: 142 70% 49%;
+  --whatsapp-foreground: 0 0% 100%;
+}
+
+.floating-action-shell {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.floating-action-whatsapp {
+  background: hsl(var(--whatsapp));
+  color: hsl(var(--whatsapp-foreground));
+}
+
+.fab-gentle-bounce {
+  -webkit-animation: gentle-bounce 3.2s ease-in-out infinite !important;
+  animation: gentle-bounce 3.2s ease-in-out infinite !important;
+  -webkit-animation-play-state: running !important;
+  animation-play-state: running !important;
+}
+
+.badge-breathe {
+  -webkit-animation: badge-breathe 1.6s ease-in-out infinite !important;
+  animation: badge-breathe 1.6s ease-in-out infinite !important;
+  -webkit-animation-play-state: running !important;
+  animation-play-state: running !important;
+  transform-origin: center;
+}
+
+@-webkit-keyframes gentle-bounce {
+  0%,
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    -webkit-transform: translate3d(0, -6px, 0);
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes gentle-bounce {
+  0%,
+  100% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    -webkit-transform: translate3d(0, -6px, 0);
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@-webkit-keyframes badge-breathe {
+  0%,
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.14);
+    transform: scale(1.14);
+  }
+}
+
+@keyframes badge-breathe {
+  0%,
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    -webkit-transform: scale(1.14);
+    transform: scale(1.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-gentle-bounce,
+  .badge-breathe {
+    animation: none !important;
+    -webkit-animation: none !important;
+  }
+}
