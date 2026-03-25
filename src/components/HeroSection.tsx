@@ -51,7 +51,7 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-6 pb-16 pt-24 sm:px-8 md:pt-32 lg:px-16 lg:pt-32 xl:px-20">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
           <div className="text-center lg:text-start">
-            <div className="animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/20 px-5 py-2.5 backdrop-blur-sm">
+            <div className="animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/25 px-5 py-2.5">
               <EgyptFlag className="w-5 h-3.5 shrink-0" />
               <span className="text-sm font-semibold text-accent">
                 {t(

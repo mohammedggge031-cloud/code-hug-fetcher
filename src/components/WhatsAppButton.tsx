@@ -19,7 +19,7 @@ const WhatsAppButton = forwardRef<HTMLAnchorElement>((_, ref) => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="floating-action-shell fab-gentle-bounce whatsapp-fab fixed bottom-[5.15rem] end-4 z-[60] flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-elevated transition-transform duration-300 hover:scale-110 active:scale-110 md:bottom-[6.1rem] md:end-6 md:h-14 md:w-14"
+      className="floating-action-shell fab-gentle-bounce whatsapp-fab fixed bottom-[5.15rem] end-4 z-[60] flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-elevated md:bottom-[6.1rem] md:end-6 md:h-14 md:w-14"
       aria-label="Chat on WhatsApp"
     >
       <WhatsAppSvg />
