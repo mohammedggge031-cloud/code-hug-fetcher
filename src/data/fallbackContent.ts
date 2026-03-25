@@ -22,7 +22,7 @@ export interface FallbackSeoData {
   no_index: boolean;
 }
 
-// ─── SEO fallbacks per page path ─────────────────────────────────────
+// ─── SEO fallbacks per page path (must match actual routes in App.tsx) ────
 export const fallbackSeo: Record<string, Partial<FallbackSeoData>> = {
   "/": {
     title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
@@ -39,17 +39,17 @@ export const fallbackSeo: Record<string, Partial<FallbackSeoData>> = {
     twitter_card: "summary_large_image",
     no_index: false,
   },
-  "/tajweed-course": {
+  "/tajweed-course-online": {
     title: "Tajweed Course Online — Learn Quran Recitation | Alhamd Academy",
     description:
       "Master Tajweed rules with certified Al-Azhar teachers. From basic to Ijazah level. One-on-one online Tajweed classes for kids and adults.",
-    canonical_url: "https://alhamdacademy.net/tajweed-course",
+    canonical_url: "https://alhamdacademy.net/tajweed-course-online",
   },
-  "/quran-memorization": {
+  "/quran-memorization-hifz": {
     title: "Quran Memorization (Hifz) Online | Alhamd Academy",
     description:
       "Memorize the Quran with personalized Hifz plans and certified Egyptian teachers. One-on-one online classes for kids and adults.",
-    canonical_url: "https://alhamdacademy.net/quran-memorization",
+    canonical_url: "https://alhamdacademy.net/quran-memorization-hifz",
   },
   "/arabic-for-kids": {
     title: "Arabic for Kids — Online Arabic Classes | Alhamd Academy",
@@ -63,11 +63,11 @@ export const fallbackSeo: Record<string, Partial<FallbackSeoData>> = {
       "Learn Arabic online with native speakers. Al-Arabiyyah Bayna Yadayk curriculum. Reading, writing, grammar, and conversation.",
     canonical_url: "https://alhamdacademy.net/arabic-for-adults",
   },
-  "/islamic-studies": {
+  "/islamic-studies-online": {
     title: "Islamic Studies Online — Fiqh, Aqeedah, Tafseer | Alhamd Academy",
     description:
       "Comprehensive Islamic Studies covering Fiqh, Aqeedah, Tafseer, Hadith & Seerah with certified Al-Azhar scholars.",
-    canonical_url: "https://alhamdacademy.net/islamic-studies",
+    canonical_url: "https://alhamdacademy.net/islamic-studies-online",
   },
   "/ijazah-program": {
     title: "Ijazah Certification Program — Connected Sanad | Alhamd Academy",
@@ -98,6 +98,18 @@ export const fallbackSeo: Record<string, Partial<FallbackSeoData>> = {
     description:
       "Read articles about Quran learning, Tajweed, Arabic language, and Islamic studies from Alhamd Academy.",
     canonical_url: "https://alhamdacademy.net/blog",
+  },
+  "/student-success-stories": {
+    title: "Student Success Stories | Alhamd Academy",
+    description:
+      "Read inspiring stories from our students who learned Quran, Arabic, and Islamic studies online with Alhamd Academy.",
+    canonical_url: "https://alhamdacademy.net/student-success-stories",
+  },
+  "/videos": {
+    title: "Videos — Quran & Islamic Education | Alhamd Academy",
+    description:
+      "Watch educational videos about Quran recitation, Tajweed, Arabic language, and Islamic studies.",
+    canonical_url: "https://alhamdacademy.net/videos",
   },
 };
 
