@@ -14,6 +14,7 @@ import { Trash2, Shield, Crown, UserPlus, Mail, KeyRound, Loader2 } from "lucide
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
 
 const SUPER_ADMIN_ID = "91122b58-4875-42f5-a4a6-6df6569a388d";
 
@@ -46,7 +47,7 @@ const UserRolesManagement = () => {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/list-user-emails`, {
+      const res = await fetchSupabaseFunction("list-user-emails", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ user_ids: userIds }),
@@ -85,7 +86,7 @@ const UserRolesManagement = () => {
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-user-by-email`, {
+      const res = await fetchSupabaseFunction("get-user-by-email", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ email: newEmail, password: newPassword, create_if_not_found: createNew }),
