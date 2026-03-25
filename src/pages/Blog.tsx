@@ -10,6 +10,7 @@ import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { Calendar, Clock, ArrowRight, ArrowLeft, Search } from "lucide-react";
+import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
 const POSTS_PER_PAGE = 6;
 
@@ -60,13 +61,39 @@ const Blog = () => {
   const [dbCategories, setDbCategories] = useState<{ id: string; name_en: string; name_ar: string }[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchDbPosts = async () => {
-      const [{ data: posts }, { data: cats }] = await Promise.all([
-        supabase.from("blog_posts").select("*, blog_categories(name_en, name_ar)").eq("status", "published").order("published_at", { ascending: false }),
-        supabase.from("blog_categories").select("id, name_en, name_ar"),
-      ]);
-      if (posts) {
-        setDbPosts(posts.map((p: any) => ({
+      if (isGlobalFallbackMode()) return;
+
+      const result = await safeDataRequest<{ posts: any[]; cats: { id: string; name_en: string; name_ar: string }[] }>({
+        fallback: { posts: [], cats: [] },
+        markGlobalFallbackOnError: true,
+        request: async (signal) => {
+          const [postsRes, categoriesRes] = await Promise.all([
+            supabase
+              .from("blog_posts")
+              .select("*, blog_categories(name_en, name_ar)")
+              .eq("status", "published")
+              .order("published_at", { ascending: false })
+              .abortSignal(signal),
+            supabase.from("blog_categories").select("id, name_en, name_ar").abortSignal(signal),
+          ]);
+
+          if (postsRes.error) throw postsRes.error;
+          if (categoriesRes.error) throw categoriesRes.error;
+
+          return {
+            posts: postsRes.data ?? [],
+            cats: categoriesRes.data ?? [],
+          };
+        },
+      });
+
+      if (cancelled) return;
+
+      if (result.posts.length > 0) {
+        setDbPosts(result.posts.map((p: any) => ({
           id: p.slug,
           titleEn: p.title_en || p.title_ar,
           titleAr: p.title_ar || p.title_en,
@@ -81,9 +108,17 @@ const Blog = () => {
           source: "db" as const,
         })));
       }
-      if (cats) setDbCategories(cats);
+
+      if (result.cats.length > 0) {
+        setDbCategories(result.cats);
+      }
     };
-    fetchDbPosts();
+
+    void fetchDbPosts();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const dbSlugs = useMemo(() => new Set(dbPosts.map((post) => post.id)), [dbPosts]);
