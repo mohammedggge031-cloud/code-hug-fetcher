@@ -166,13 +166,14 @@ const ScrollToTop = () => {
     const forcedRestore = readStoredScrollRestore(FORCE_SCROLL_RESTORE_KEY);
     const returnRestore = readStoredScrollRestore(COURSE_RETURN_SCROLL_KEY);
     const restoreMatchPath = `${pathname}${search}`;
-    const rootCourseFallbackRestore = navigationType === "POP" && pathname === "/" ? returnRestore : null;
-    const explicitRestore =
-      (forcedRestore && normalizeRestorePath(forcedRestore.path) === restoreMatchPath ? forcedRestore : null) ??
-      (navigationType === "POP" && returnRestore && normalizeRestorePath(returnRestore.path) === restoreMatchPath
-        ? returnRestore
-        : null) ??
-      rootCourseFallbackRestore;
+    const rootCourseFallbackRestore = !isFreshLoad && navigationType === "POP" && pathname === "/" ? returnRestore : null;
+    const explicitRestore = isFreshLoad
+      ? null
+      : (forcedRestore && normalizeRestorePath(forcedRestore.path) === restoreMatchPath ? forcedRestore : null) ??
+        (navigationType === "POP" && returnRestore && normalizeRestorePath(returnRestore.path) === restoreMatchPath
+          ? returnRestore
+          : null) ??
+        rootCourseFallbackRestore;
 
     const restoreScrollPosition = (
       targetY: number,
