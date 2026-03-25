@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, Trash2, Copy, Search, Image as ImageIcon } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 
 interface MediaAsset {
   id: string; file_name: string; file_url: string;
@@ -23,8 +24,17 @@ const MediaLibrary = () => {
   const { toast } = useToast();
 
   const fetchAssets = async () => {
-    const { data } = await supabase.from("media_assets").select("*").order("created_at", { ascending: false });
-    if (data) setAssets(data);
+    const data = await safeDataRequest<MediaAsset[]>({
+      fallback: [],
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await supabase.from("media_assets").select("*").order("created_at", { ascending: false }).abortSignal(signal);
+        if (error) throw error;
+        return data ?? [];
+      },
+    });
+
+    setAssets(data);
   };
 
   useEffect(() => { fetchAssets(); }, []);
@@ -33,27 +43,44 @@ const MediaLibrary = () => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     setUploading(true);
-    for (const file of Array.from(files)) {
-      const ext = file.name.split(".").pop();
-      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("media").upload(path, file);
-      if (uploadError) { toast({ title: t("err.error"), description: uploadError.message, variant: "destructive" }); continue; }
-      const { data: { publicUrl } } = supabase.storage.from("media").getPublicUrl(path);
-      await supabase.from("media_assets").insert({ file_name: file.name, file_url: publicUrl, file_size: file.size, file_type: file.type });
+    try {
+      for (const file of Array.from(files)) {
+        try {
+          const ext = file.name.split(".").pop();
+          const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { error: uploadError } = await supabase.storage.from("media").upload(path, file);
+          if (uploadError) { toast({ title: t("err.error"), description: uploadError.message, variant: "destructive" }); continue; }
+          const { data: { publicUrl } } = supabase.storage.from("media").getPublicUrl(path);
+          const { error: insertError } = await supabase.from("media_assets").insert({ file_name: file.name, file_url: publicUrl, file_size: file.size, file_type: file.type });
+          if (insertError) {
+            toast({ title: t("err.error"), description: insertError.message, variant: "destructive" });
+          }
+        } catch {
+          toast({ title: t("err.error"), description: "Upload timed out for one file. Skipped.", variant: "destructive" });
+        }
+      }
+      toast({ title: t("ok.done"), description: `${files.length} file(s) uploaded.` });
+      void fetchAssets();
+    } finally {
+      setUploading(false);
+      e.target.value = "";
     }
-    toast({ title: t("ok.done"), description: `${files.length} file(s) uploaded.` });
-    setUploading(false); fetchAssets(); e.target.value = "";
   };
 
   const copyUrl = (url: string) => { navigator.clipboard.writeText(url); toast({ title: t("media.copied"), description: t("media.copied_desc") }); };
 
   const handleDelete = async (asset: MediaAsset) => {
     if (!confirm(t("media.confirm_delete"))) return;
-    const urlParts = asset.file_url.split("/media/");
-    const storagePath = urlParts[urlParts.length - 1];
-    await supabase.storage.from("media").remove([storagePath]);
-    await supabase.from("media_assets").delete().eq("id", asset.id);
-    toast({ title: t("ok.deleted") }); fetchAssets();
+    try {
+      const urlParts = asset.file_url.split("/media/");
+      const storagePath = urlParts[urlParts.length - 1];
+      await supabase.storage.from("media").remove([storagePath]);
+      await supabase.from("media_assets").delete().eq("id", asset.id);
+      toast({ title: t("ok.deleted") });
+      void fetchAssets();
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    }
   };
 
   const filtered = assets.filter(a => a.file_name.toLowerCase().includes(search.toLowerCase()));
