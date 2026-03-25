@@ -10,7 +10,10 @@ function fetchTeachersExist(): Promise<boolean> {
   if (cachedResult !== null) return Promise.resolve(cachedResult);
   if (fetchPromise) return fetchPromise;
   fetchPromise = fetch(TEACHERS_API)
-    .then((res) => res.json())
+    .then((res) => {
+      if (!res.ok) return { teachers: [] };
+      return res.json();
+    })
     .then((data) => {
       cachedResult = !!(data.teachers && data.teachers.length > 0);
       return cachedResult;

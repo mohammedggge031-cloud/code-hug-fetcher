@@ -31,7 +31,10 @@ const TeachersSection = () => {
 
   useEffect(() => {
     fetch(TEACHERS_API)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) return { teachers: [] };
+        return res.json();
+      })
       .then((data) => {
         if (data.teachers && data.teachers.length > 0) {
           setTeachers(data.teachers);
