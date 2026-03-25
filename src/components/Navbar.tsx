@@ -53,6 +53,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedMobile, setExpandedMobile] = useState<string | null>(null);
   const [expandedMobileSub, setExpandedMobileSub] = useState<number | null>(null);
+  const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
@@ -69,6 +70,7 @@ const Navbar = () => {
     setMobileOpen(false);
     setExpandedMobile(null);
     setExpandedMobileSub(null);
+    setOpenDesktopDropdown(null);
   }, [location.pathname, location.hash]);
 
   useEffect(() => {
@@ -124,6 +126,14 @@ const Navbar = () => {
       }
     };
   }, [mobileOpen]);
+
+  // Close desktop dropdown on outside click
+  useEffect(() => {
+    if (!openDesktopDropdown) return;
+    const handler = () => setOpenDesktopDropdown(null);
+    document.addEventListener("click", handler);
+    return () => document.removeEventListener("click", handler);
+  }, [openDesktopDropdown]);
 
   const normalizePath = (path: string) => {
     const [withoutHash] = path.split("#");
@@ -277,6 +287,7 @@ const Navbar = () => {
 
   const renderLink = (l: NavLinkWithDropdown) => {
     const hasDropdown = l.dropdown && l.dropdown.length > 0;
+    const isDesktopOpen = openDesktopDropdown === l.en;
 
     const linkContent = (
       <>
@@ -288,20 +299,27 @@ const Navbar = () => {
     const linkClass = "flex items-center px-4 py-2 text-[15px] font-bold text-primary-foreground uppercase tracking-wide hover:text-accent transition-colors whitespace-nowrap rounded-full hover:bg-primary-foreground/10";
 
     return (
-      <div key={l.en} className="relative group">
-        {l.isRoute ? (
-          <Link to={l.href} className={linkClass}>
+      <div key={l.en} className="relative group" onMouseLeave={() => { if (isDesktopOpen) setOpenDesktopDropdown(null); }}>
+        {hasDropdown ? (
+          <button
+            type="button"
+            className={linkClass}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenDesktopDropdown(isDesktopOpen ? null : l.en);
+            }}
+          >
             {linkContent}
-          </Link>
+          </button>
+        ) : l.isRoute ? (
+          <Link to={l.href} className={linkClass}>{linkContent}</Link>
         ) : (
-          <a href={l.href} className={linkClass} onClick={(e) => handleAnchorClick(e, l.href)}>
-            {linkContent}
-          </a>
+          <a href={l.href} className={linkClass} onClick={(e) => handleAnchorClick(e, l.href)}>{linkContent}</a>
         )}
 
         {/* Dropdown */}
         {hasDropdown && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+          <div className={`absolute top-full left-1/2 -translate-x-1/2 pt-2 transition-all duration-200 z-50 ${isDesktopOpen ? "opacity-100 visible" : "opacity-0 invisible group-hover:opacity-100 group-hover:visible"}`}>
             <div className="bg-white rounded-xl shadow-xl border border-border/50 py-2 min-w-[280px] overflow-hidden">
               {l.dropdown!.map((item, i) => {
                 const hasSubItems = item.subItems && item.subItems.length > 0;
