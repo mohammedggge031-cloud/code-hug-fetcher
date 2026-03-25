@@ -1,6 +1,5 @@
 import { fallbackTeachers, type FallbackTeacher } from "@/data/fallbackContent";
-
-const TEACHERS_TIMEOUT_MS = 5000;
+import { fetchWithTimeout, isGlobalFallbackMode, enableGlobalFallbackMode, SUPABASE_TIMEOUT_MS } from "@/lib/safeRuntimeData";
 
 interface TeacherRow {
   id: string;
@@ -51,22 +50,24 @@ export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
   const endpoint = buildTeachersEndpoint();
   const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-  if (!endpoint || !anonKey) return fallbackTeachers;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), TEACHERS_TIMEOUT_MS);
+  if (isGlobalFallbackMode() || !endpoint || !anonKey) return fallbackTeachers;
 
   try {
-    const response = await fetch(endpoint, {
+    const response = await fetchWithTimeout(endpoint, {
       method: "GET",
-      signal: controller.signal,
       headers: {
         apikey: anonKey,
         Authorization: `Bearer ${anonKey}`,
       },
+    }, {
+      timeoutMs: SUPABASE_TIMEOUT_MS,
+      markGlobalFallbackOnError: true,
     });
 
-    if (!response.ok) return fallbackTeachers;
+    if (!response.ok) {
+      enableGlobalFallbackMode();
+      return fallbackTeachers;
+    }
 
     const data = (await response.json()) as TeacherRow[];
     if (!Array.isArray(data) || data.length === 0) return fallbackTeachers;
@@ -74,7 +75,5 @@ export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
     return data.map(mapTeacher);
   } catch {
     return fallbackTeachers;
-  } finally {
-    clearTimeout(timeout);
   }
 }
