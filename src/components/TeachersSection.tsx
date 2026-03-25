@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { getSupabaseFunctionUrl } from "@/lib/supabaseFunctions";
+import { fallbackTeachers } from "@/data/fallbackContent";
 
 interface Teacher {
   id: string;
@@ -22,26 +23,44 @@ interface Teacher {
 }
 
 const TEACHERS_API = getSupabaseFunctionUrl("public-teachers");
+const TIMEOUT_MS = 5000;
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>(fallbackTeachers);
   const [loading, setLoading] = useState(true);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const timer = setTimeout(() => {
+      // Timeout — use whatever we have (fallback)
+      if (!cancelled) setLoading(false);
+    }, TIMEOUT_MS);
+
     fetch(TEACHERS_API)
       .then((res) => {
         if (!res.ok) return { teachers: [] };
         return res.json();
       })
       .then((data) => {
-        if (data.teachers && data.teachers.length > 0) {
+        if (!cancelled && data.teachers && data.teachers.length > 0) {
           setTeachers(data.teachers);
         }
       })
       .catch((err) => console.error("Failed to fetch teachers:", err))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!cancelled) {
+          clearTimeout(timer);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
   }, []);
 
   // Auto-hide: if no teachers returned, render nothing
