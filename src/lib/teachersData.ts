@@ -47,6 +47,10 @@ const buildTeachersEndpoint = () => {
 };
 
 export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
+  // Skip the network request entirely when there are no fallback teachers populated.
+  // This avoids 404 errors when the teachers table hasn't been created yet.
+  if (fallbackTeachers.length === 0) return fallbackTeachers;
+
   const endpoint = buildTeachersEndpoint();
   const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
