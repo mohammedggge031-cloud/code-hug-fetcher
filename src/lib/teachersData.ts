@@ -1,4 +1,3 @@
-import { supabase } from "@/integrations/supabase/client";
 import { fallbackTeachers, type FallbackTeacher } from "@/data/fallbackContent";
 
 const TEACHERS_TIMEOUT_MS = 5000;
@@ -35,28 +34,47 @@ const mapTeacher = (teacher: TeacherRow): FallbackTeacher => ({
   education_ar: teacher.education_ar ?? undefined,
 });
 
+const buildTeachersEndpoint = () => {
+  const baseUrl = (import.meta.env.VITE_SUPABASE_URL || "").replace(/\/+$/, "");
+  if (!baseUrl) return "";
+
+  const params = new URLSearchParams({
+    select: "id,name_en,name_ar,title_en,title_ar,bio_en,bio_ar,photo_url,specializations,rating,experience_years,education_en,education_ar",
+    is_active: "eq.true",
+    order: "display_order.asc,created_at.desc",
+  });
+
+  return `${baseUrl}/rest/v1/teachers?${params.toString()}`;
+};
+
 export async function loadTeachersWithFallback(): Promise<FallbackTeacher[]> {
+  const endpoint = buildTeachersEndpoint();
+  const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  if (!endpoint || !anonKey) return fallbackTeachers;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TEACHERS_TIMEOUT_MS);
+
   try {
-    const query = supabase
-      .from("teachers")
-      .select(
-        "id,name_en,name_ar,title_en,title_ar,bio_en,bio_ar,photo_url,specializations,rating,experience_years,education_en,education_ar"
-      )
-      .eq("is_active", true)
-      .order("display_order", { ascending: true })
-      .order("created_at", { ascending: false });
+    const response = await fetch(endpoint, {
+      method: "GET",
+      signal: controller.signal,
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${anonKey}`,
+      },
+    });
 
-    const result = await Promise.race([
-      query,
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), TEACHERS_TIMEOUT_MS)),
-    ]);
+    if (!response.ok) return fallbackTeachers;
 
-    if (!result || result.error || !result.data || result.data.length === 0) {
-      return fallbackTeachers;
-    }
+    const data = (await response.json()) as TeacherRow[];
+    if (!Array.isArray(data) || data.length === 0) return fallbackTeachers;
 
-    return (result.data as TeacherRow[]).map(mapTeacher);
+    return data.map(mapTeacher);
   } catch {
     return fallbackTeachers;
+  } finally {
+    clearTimeout(timeout);
   }
 }
