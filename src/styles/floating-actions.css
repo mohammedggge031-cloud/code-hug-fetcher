@@ -7,7 +7,39 @@
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   will-change: transform;
+  transform: translateZ(0);
+  contain: layout paint;
   /* Do NOT add transition-transform here — it conflicts with animation on mobile */
+}
+
+.floating-fab-booking,
+.floating-fab-whatsapp {
+  position: fixed;
+  inset-inline-end: 1rem;
+  z-index: 60;
+}
+
+.floating-fab-booking {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1.35rem);
+}
+
+.floating-fab-whatsapp {
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 5.15rem);
+}
+
+@media (min-width: 768px) {
+  .floating-fab-booking,
+  .floating-fab-whatsapp {
+    inset-inline-end: 1.5rem;
+  }
+
+  .floating-fab-booking {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 1.85rem);
+  }
+
+  .floating-fab-whatsapp {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 6.1rem);
+  }
 }
 
 .floating-action-whatsapp {
@@ -17,45 +49,56 @@
 
 /* Bounce animation for FABs */
 .fab-gentle-bounce {
-  animation: gentle-bounce 3.2s ease-in-out infinite !important;
+  animation: gentle-bounce 2.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
   animation-play-state: running !important;
+  transform-origin: center;
 }
 
-/* Hover scale uses a wrapper approach to avoid conflicting with transform animation */
 .fab-gentle-bounce:hover,
-.fab-gentle-bounce:active {
-  animation: gentle-bounce-hover 3.2s ease-in-out infinite !important;
+.fab-gentle-bounce:active,
+.fab-gentle-bounce:focus-visible {
   animation-play-state: running !important;
 }
 
 /* Badge breathing animation */
 .badge-breathe {
-  animation: badge-breathe 1.6s ease-in-out infinite !important;
+  animation: badge-breathe 1.2s ease-in-out infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
   will-change: transform;
 }
 
-@keyframes gentle-bounce {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -6px, 0); }
+.floating-free-badge {
+  pointer-events: none;
 }
 
-@keyframes gentle-bounce-hover {
-  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
-  50% { transform: translate3d(0, -6px, 0) scale(1.1); }
+@keyframes gentle-bounce {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  38% { transform: translate3d(0, -10px, 0); }
+  64% { transform: translate3d(0, -4px, 0); }
 }
 
 @keyframes badge-breathe {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.14); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes gentle-bounce-reduced {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -3px, 0); }
+}
+
+@keyframes badge-breathe-reduced {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fab-gentle-bounce,
-  .fab-gentle-bounce:hover,
-  .fab-gentle-bounce:active,
+  .fab-gentle-bounce {
+    animation: gentle-bounce-reduced 4.2s ease-in-out infinite !important;
+  }
+
   .badge-breathe {
-    animation: none !important;
+    animation: badge-breathe-reduced 2.2s ease-in-out infinite !important;
   }
 }
