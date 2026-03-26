@@ -25,31 +25,47 @@ const Footer = lazy(() => import("@/components/Footer"));
 const TeachersSection = lazy(() => import("@/components/TeachersSection"));
 const RecentArticlesSection = lazy(() => import("@/components/RecentArticlesSection"));
 
-const DeferredSection = ({ children, minHeight = 260, forceRender = false }: { children: ReactNode; minHeight?: number; forceRender?: boolean }) => {
+const DeferredSection = ({ children, minHeight = 260, forceRender = false, delayMs = 0 }: { children: ReactNode; minHeight?: number; forceRender?: boolean; delayMs?: number }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [shouldRender, setShouldRender] = useState(forceRender);
 
   useEffect(() => {
-    if (forceRender) {
+    if (forceRender || shouldRender) {
       setShouldRender(true);
       return;
     }
+
+    // Two triggers: IntersectionObserver (scroll-based) OR timer (time-based)
+    // Whichever fires first wins
+    let cancelled = false;
     const marker = markerRef.current;
-    if (!marker || shouldRender) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((entry) => entry.isIntersecting)) {
-          setShouldRender(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "300px 0px" },
-    );
+    // Timer: auto-load after delayMs from page load
+    const timer = delayMs > 0
+      ? window.setTimeout(() => { if (!cancelled) setShouldRender(true); }, delayMs)
+      : null;
 
-    observer.observe(marker);
-    return () => observer.disconnect();
-  }, [shouldRender, forceRender]);
+    // Observer: load when near viewport
+    let observer: IntersectionObserver | null = null;
+    if (marker) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            if (!cancelled) setShouldRender(true);
+            observer?.disconnect();
+          }
+        },
+        { rootMargin: "600px 0px" },
+      );
+      observer.observe(marker);
+    }
+
+    return () => {
+      cancelled = true;
+      if (timer) window.clearTimeout(timer);
+      observer?.disconnect();
+    };
+  }, [shouldRender, forceRender, delayMs]);
 
   return (
     <div ref={markerRef}>
