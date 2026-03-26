@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
 const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
@@ -44,6 +43,7 @@ export const useSeoMetadata = (pagePath: string) => {
           timeoutMs: TIMEOUT_MS,
           markGlobalFallbackOnError: true,
           request: async (signal) => {
+            const { supabase } = await import("@/integrations/supabase/client");
             const { data, error } = await supabase
               .from("seo_metadata")
               .select("*")
