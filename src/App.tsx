@@ -194,16 +194,18 @@ const ScrollToTop = () => {
       const docHeight = document.documentElement.scrollHeight;
       const viewportHeight = window.innerHeight;
       const maxScrollTop = Math.max(docHeight - viewportHeight, 0);
-      const canReachTarget = maxScrollTop >= targetY - Math.max(viewportHeight * 0.2, 120);
+      const canReachTarget = maxScrollTop >= targetY - Math.max(viewportHeight * 0.3, 150);
       const clampedTarget = Math.min(targetY, maxScrollTop);
 
-      if (canReachTarget || attempt >= 180 || stableAttempts >= 24) {
+      if (canReachTarget || attempt >= 300 || stableAttempts >= 40) {
         window.scrollTo({ top: clampedTarget, left: 0, behavior: "auto" });
         return;
       }
-      pendingRafRef.current = requestAnimationFrame(() =>
+      // Use setTimeout instead of rAF to give React time to render deferred sections
+      const delay = attempt < 30 ? 16 : 50;
+      pendingTimeoutRef.current = window.setTimeout(() =>
         restoreScrollPosition(targetY, attempt + 1, maxScrollTop, maxScrollTop === lastMaxScroll ? stableAttempts + 1 : 0),
-      );
+      delay);
     };
 
     if (targetId) {
