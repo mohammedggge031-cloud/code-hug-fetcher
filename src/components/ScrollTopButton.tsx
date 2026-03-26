@@ -40,7 +40,7 @@ const ScrollTopButton = () => {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="floating-action-shell fixed bottom-[1.35rem] start-4 md:bottom-[1.85rem] md:start-6 z-[60] flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-elevated transition-transform duration-300 hover:scale-110 md:h-12 md:w-12"
+      className="fixed bottom-[1.35rem] start-4 md:bottom-[1.85rem] md:start-6 z-[60] flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-elevated md:h-12 md:w-12 hover:brightness-110 transition-[filter] duration-200"
       aria-label={t("Back to top", "العودة لأعلى الصفحة")}
     >
       <ArrowUp className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2.4} />
