@@ -14,11 +14,11 @@ const FloatingBookingFAB = forwardRef<HTMLButtonElement>((_, ref) => {
       aria-label={t("Book a Free Trial", "احجز حصة مجانية")}
       style={{ animationDelay: "0.25s" }}
     >
-      <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-elevated md:h-12 md:w-12">
+      <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-elevated md:h-12 md:w-12" style={{ overflow: 'visible' }}>
         <GraduationCap className="h-5 w-5 md:h-6 md:w-6" />
-        <span className="badge-breathe floating-free-badge absolute -top-2 -end-2 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-extrabold uppercase leading-none text-destructive-foreground md:text-[11px]">
-          {t("Free", "مجاني")}
-        </span>
+      </span>
+      <span className="badge-breathe floating-free-badge absolute -top-1.5 -end-1.5 z-10 rounded-full bg-destructive px-1.5 py-[3px] text-[9px] font-extrabold uppercase leading-none text-destructive-foreground md:-top-2 md:-end-2 md:px-2 md:py-0.5 md:text-[11px]">
+        {t("Free", "مجاني")}
       </span>
     </button>
   );

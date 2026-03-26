@@ -8,7 +8,8 @@
   backface-visibility: hidden;
   will-change: transform;
   transform: translateZ(0);
-  contain: layout paint;
+  contain: layout;
+  overflow: visible;
   /* Do NOT add transition-transform here — it conflicts with animation on mobile */
 }
 
