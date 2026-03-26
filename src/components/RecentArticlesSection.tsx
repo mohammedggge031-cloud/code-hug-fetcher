@@ -2,15 +2,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
-import { blogPosts } from "@/data/blogPosts";
+import { recentArticles } from "@/data/recentArticles";
 
 const RecentArticlesSection = () => {
   const { t, lang } = useLanguage();
 
-  // Pick 4 most recent articles
-  const recent = [...blogPosts]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 4);
+  const recent = recentArticles.slice(0, 4);
 
   return (
     <section className="py-16 sm:py-20 bg-secondary/30" aria-label="Latest Blog Articles from Alhamd Academy">
