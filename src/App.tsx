@@ -58,7 +58,16 @@ const LocationPage = lazy(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const scrollPositions = new Map<string, number>();
 const COURSE_RETURN_SCROLL_KEY = "courseReturnState";
