@@ -10,7 +10,7 @@ const FloatingBookingFAB = forwardRef<HTMLButtonElement>((_, ref) => {
       ref={ref}
       type="button"
       onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-      className="floating-action-shell floating-fab-booking fab-gentle-bounce group"
+      className="floating-action-shell floating-fab-booking fab-gentle-bounce group relative"
       aria-label={t("Book a Free Trial", "احجز حصة مجانية")}
       style={{ animationDelay: "0.25s" }}
     >
