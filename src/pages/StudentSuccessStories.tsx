@@ -107,15 +107,9 @@ const StudentSuccessStories = () => {
   const reviewJsonLd = {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
+    "@id": "https://alhamdacademy.net/#organization",
     name: "Alhamd Academy",
     url: "https://alhamdacademy.net",
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: 4.9,
-      bestRating: 5,
-      ratingCount: 200,
-      reviewCount: 150,
-    },
     review: stories.map((s, i) => ({
       "@type": "Review",
       author: { "@type": "Person", name: s.name },
