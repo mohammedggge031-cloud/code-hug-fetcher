@@ -98,9 +98,15 @@ const AdminLayout = () => {
             </Avatar>
             <p className="text-xs text-muted-foreground truncate flex-1">{user?.email}</p>
           </div>
+          {isAdmin && (
+            <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground" onClick={() => setShowChangePassword(true)}>
+              <KeyRound className="h-4 w-4" /> {t("pwd.change")}
+            </Button>
+          )}
           <Button variant="ghost" className="w-full justify-start gap-3 text-destructive hover:text-destructive" onClick={handleSignOut}>
             <LogOut className="h-4 w-4" /> {t("nav.signout")}
           </Button>
+          {isAdmin && <ChangePasswordDialog open={showChangePassword} onOpenChange={setShowChangePassword} />}
         </div>
       </aside>
 
