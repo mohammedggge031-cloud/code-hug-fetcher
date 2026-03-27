@@ -192,7 +192,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
         dynamicSeo={seo}
       />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      
 
       <Navbar />
 
@@ -647,25 +647,12 @@ const ServicePageLayout = (props: ServicePageProps) => {
 
       <Footer />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        ...props.jsonLd,
-        review: props.testimonials.map((t, i) => ({
-          "@type": "Review",
-          author: { "@type": "Person", name: t.name },
-          datePublished: `2025-${String(i + 1).padStart(2, "0")}-15`,
-          reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
-          reviewBody: t.textEn,
-        })),
-      }) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://alhamdacademy.net/" },
-          { "@type": "ListItem", position: 2, name: props.seoTitle.split("|")[0].trim(), item: props.canonical },
-        ],
-      }) }} />
+      <ServicePageJsonLd
+        jsonLd={props.jsonLd}
+        testimonials={props.testimonials}
+        faqJsonLd={faqJsonLd}
+        breadcrumbJsonLd={breadcrumbJsonLd}
+      />
     </div>
   );
 };
