@@ -1,4 +1,4 @@
-export const SUPABASE_TIMEOUT_MS = 3000;
+export const SUPABASE_TIMEOUT_MS = 8000;
 
 let globalFallbackMode = false;
 

@@ -10,14 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Shield, Crown, UserPlus, Mail, KeyRound, Loader2 } from "lucide-react";
+import { Trash2, Shield, Crown, UserPlus, Mail, KeyRound, Loader2, Eye, EyeOff } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
 import { safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
-
-const SUPER_ADMIN_ID = "c792e8df-1447-4432-9897-49477582fbb4";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
 interface UserRole {
   id: string;
@@ -32,6 +31,7 @@ const UserRolesManagement = () => {
   const [showAdd, setShowAdd] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [createNew, setCreateNew] = useState(false);
   const [newRole, setNewRole] = useState<string>("editor");
   const { isAdmin, user } = useAuth();
@@ -39,8 +39,20 @@ const UserRolesManagement = () => {
   const { toast } = useToast();
   const [addLoading, setAddLoading] = useState(false);
   const [loadingEmails, setLoadingEmails] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<UserRole | null>(null);
 
-  const isSuperAdmin = user?.id === SUPER_ADMIN_ID;
+  // Check super admin from database: first admin role by created_at
+  const [superAdminId, setSuperAdminId] = useState<string | null>(null);
+  useEffect(() => {
+    if (roles.length > 0) {
+      const firstAdmin = roles
+        .filter(r => r.role === "admin")
+        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
+      setSuperAdminId(firstAdmin?.user_id ?? null);
+    }
+  }, [roles]);
+
+  const isSuperAdmin = !!superAdminId && user?.id === superAdminId;
 
   const fetchEmails = async (userIds: string[]) => {
     if (userIds.length === 0) return;
@@ -99,7 +111,13 @@ const UserRolesManagement = () => {
       let wasCreated = false;
 
       if (createNew) {
-        // Create user via signUp - works without edge functions
+        // Save current admin session before signUp
+        const { data: currentSessionData } = await withPromiseTimeout(
+          supabase.auth.getSession(),
+          { markGlobalFallbackOnError: false }
+        );
+        const adminRefreshToken = currentSessionData?.session?.refresh_token;
+
         const { data: signUpData, error: signUpError } = await withPromiseTimeout(
           supabase.auth.signUp({
             email: newEmail,
@@ -109,21 +127,23 @@ const UserRolesManagement = () => {
           { markGlobalFallbackOnError: false }
         );
 
+        // Restore admin session immediately after signUp
+        if (adminRefreshToken) {
+          await supabase.auth.refreshSession({ refresh_token: adminRefreshToken }).catch(() => {});
+        }
+
         if (signUpError) {
           toast({ title: t("err.error"), description: signUpError.message, variant: "destructive" });
           return;
         }
 
-        // Check if user already exists (signUp returns user with empty identities)
         if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
-          // User already exists - use their ID
           userId = signUpData.user.id;
         } else if (signUpData.user) {
           userId = signUpData.user.id;
           wasCreated = true;
         }
       } else {
-        // Look up existing user by checking if they can sign in (then sign back as admin)
         toast({ title: t("err.error"), description: t("err.enable_create_new"), variant: "destructive" });
         return;
       }
@@ -137,7 +157,6 @@ const UserRolesManagement = () => {
         toast({ title: `✅ ${t("ok.account_created")}`, description: `${t("ok.account_created_for")} ${newEmail}` });
       }
 
-      // Check if role already exists
       const { data: existingRole } = await supabase.from("user_roles").select("id").eq("user_id", userId).maybeSingle();
       if (existingRole) {
         toast({ title: t("err.error"), description: t("err.role_exists"), variant: "destructive" });
@@ -147,14 +166,14 @@ const UserRolesManagement = () => {
       const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: newRole as any });
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       toast({ title: `✅ ${t("ok.done")}`, description: t("ok.role_assigned") });
-      setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); void fetchRoles();
+      setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); setShowPassword(false); void fetchRoles();
     } catch {
       toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
     } finally { setAddLoading(false); }
   };
 
   const handleDelete = async (r: UserRole) => {
-    if (r.user_id === SUPER_ADMIN_ID) { toast({ title: t("err.not_allowed"), description: t("err.cant_del_super"), variant: "destructive" }); return; }
+    if (r.user_id === superAdminId) { toast({ title: t("err.not_allowed"), description: t("err.cant_del_super"), variant: "destructive" }); return; }
     if (!isSuperAdmin) { toast({ title: t("err.not_allowed"), description: t("err.only_super_del"), variant: "destructive" }); return; }
     try {
       await supabase.from("user_roles").delete().eq("id", r.id);
@@ -168,7 +187,7 @@ const UserRolesManagement = () => {
   const getInitials = (email: string) => email.split("@")[0].slice(0, 2).toUpperCase();
 
   const getRoleBadge = (role: string, userId: string) => {
-    if (userId === SUPER_ADMIN_ID) return <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1"><Crown className="h-3 w-3" /> {t("team.badge.super")}</Badge>;
+    if (userId === superAdminId) return <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1"><Crown className="h-3 w-3" /> {t("team.badge.super")}</Badge>;
     if (role === "admin") return <Badge className="bg-primary/10 text-primary border-primary/20 gap-1"><Shield className="h-3 w-3" /> {t("team.badge.admin")}</Badge>;
     return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> {t("team.badge.editor")}</Badge>;
   };
@@ -210,8 +229,10 @@ const UserRolesManagement = () => {
                       {new Date(r.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
                     </TableCell>
                     <TableCell>
-                      {r.user_id !== SUPER_ADMIN_ID && isSuperAdmin && (
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(r)}><Trash2 className="h-4 w-4" /></Button>
+                      {r.user_id !== superAdminId && isSuperAdmin && (
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(r)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>
@@ -225,6 +246,18 @@ const UserRolesManagement = () => {
         </CardContent>
       </Card>
 
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={() => { if (deleteTarget) { handleDelete(deleteTarget); setDeleteTarget(null); } }}
+        title={t("team.confirm_delete_title")}
+        description={t("team.confirm_delete_desc")}
+        confirmLabel={t("ok.deleted")}
+        cancelLabel={t("blog.cancel")}
+      />
+
+      {/* Add Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -243,7 +276,24 @@ const UserRolesManagement = () => {
             {createNew && (
               <div className="space-y-2 animate-in slide-in-from-top-2">
                 <Label className="flex items-center gap-2"><KeyRound className="h-4 w-4 text-muted-foreground" /> {t("team.password")}</Label>
-                <Input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} dir="ltr" />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    dir="ltr"
+                    className="pe-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute end-3 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground">{t("team.password_hint")}</p>
               </div>
             )}
             <div className="space-y-2">

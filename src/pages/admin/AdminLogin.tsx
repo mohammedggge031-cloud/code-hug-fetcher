@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Lock, Mail, Loader2, Globe, Eye, EyeOff, BookOpen } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
   const [allowRender, setAllowRender] = useState(false);
   const { signIn, user, role, loading } = useAuth();
   const { t, lang, toggleLang } = useAdminLang();
@@ -52,6 +54,28 @@ const AdminLogin = () => {
     setSubmitting(false);
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({ title: t("err.error"), description: t("err.email_required"), variant: "destructive" });
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/admin/login`,
+      });
+      if (error) {
+        toast({ title: t("login.reset_error"), description: error.message, variant: "destructive" });
+      } else {
+        toast({ title: t("login.reset_sent"), description: t("login.reset_sent_desc") });
+      }
+    } catch {
+      toast({ title: t("login.reset_error"), description: "Request failed", variant: "destructive" });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div
       className="min-h-screen flex items-center justify-center relative overflow-hidden"
@@ -65,7 +89,7 @@ const AdminLogin = () => {
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
       }} />
 
-      {/* Decorative gold accent circle */}
+      {/* Decorative gold accent circles */}
       <div className="absolute -top-32 -end-32 w-96 h-96 rounded-full opacity-10" style={{ background: "var(--gold-gradient)" }} />
       <div className="absolute -bottom-24 -start-24 w-72 h-72 rounded-full opacity-[0.07]" style={{ background: "var(--gold-gradient)" }} />
 
@@ -129,9 +153,19 @@ const AdminLogin = () => {
 
               {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium text-foreground">
-                  {t("login.password")}
-                </Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                    {t("login.password")}
+                  </Label>
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={resetLoading}
+                    className="text-xs text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
+                  >
+                    {resetLoading ? <Loader2 className="h-3 w-3 animate-spin inline" /> : t("login.forgot")}
+                  </button>
+                </div>
                 <div className="relative">
                   <Lock className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                   <Input
@@ -151,10 +185,7 @@ const AdminLogin = () => {
                     tabIndex={-1}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword
-                      ? <EyeOff className="h-4 w-4" />
-                      : <Eye className="h-4 w-4" />
-                    }
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
