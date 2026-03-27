@@ -13,6 +13,7 @@ const AdminLayout = () => {
   const { t, lang, toggleLang, dir } = useAdminLang();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const navItems = [
     { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true },
