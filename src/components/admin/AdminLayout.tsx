@@ -2,10 +2,11 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe } from "lucide-react";
+import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin } = useAuth();
