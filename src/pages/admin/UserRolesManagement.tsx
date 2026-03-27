@@ -95,18 +95,56 @@ const UserRolesManagement = () => {
 
     setAddLoading(true);
     try {
-      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
-      const token = sessionData?.session?.access_token;
-      const res = await fetchSupabaseFunction("get-user-by-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ email: newEmail, password: newPassword, create_if_not_found: createNew }),
-      });
-      const result = await res.json();
-      if (!res.ok) { toast({ title: t("err.error"), description: result.error || t("err.user_not_found"), variant: "destructive" }); return; }
-      if (result.created) { toast({ title: `✅ ${t("ok.account_created")}`, description: `${t("ok.account_created_for")} ${result.email}` }); }
+      let userId: string | null = null;
+      let wasCreated = false;
 
-      const { error } = await supabase.from("user_roles").insert({ user_id: result.user_id, role: newRole as any });
+      if (createNew) {
+        // Create user via signUp - works without edge functions
+        const { data: signUpData, error: signUpError } = await withPromiseTimeout(
+          supabase.auth.signUp({
+            email: newEmail,
+            password: newPassword,
+            options: { emailRedirectTo: window.location.origin },
+          }),
+          { markGlobalFallbackOnError: false }
+        );
+
+        if (signUpError) {
+          toast({ title: t("err.error"), description: signUpError.message, variant: "destructive" });
+          return;
+        }
+
+        // Check if user already exists (signUp returns user with empty identities)
+        if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
+          // User already exists - use their ID
+          userId = signUpData.user.id;
+        } else if (signUpData.user) {
+          userId = signUpData.user.id;
+          wasCreated = true;
+        }
+      } else {
+        // Look up existing user by checking if they can sign in (then sign back as admin)
+        toast({ title: t("err.error"), description: t("err.enable_create_new"), variant: "destructive" });
+        return;
+      }
+
+      if (!userId) {
+        toast({ title: t("err.error"), description: t("err.user_not_found"), variant: "destructive" });
+        return;
+      }
+
+      if (wasCreated) {
+        toast({ title: `✅ ${t("ok.account_created")}`, description: `${t("ok.account_created_for")} ${newEmail}` });
+      }
+
+      // Check if role already exists
+      const { data: existingRole } = await supabase.from("user_roles").select("id").eq("user_id", userId).maybeSingle();
+      if (existingRole) {
+        toast({ title: t("err.error"), description: t("err.role_exists"), variant: "destructive" });
+        return;
+      }
+
+      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: newRole as any });
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       toast({ title: `✅ ${t("ok.done")}`, description: t("ok.role_assigned") });
       setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); void fetchRoles();
