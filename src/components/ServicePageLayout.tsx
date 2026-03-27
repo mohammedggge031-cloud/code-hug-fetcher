@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle, Star, Users, Award, Clock, BookOpen, ArrowRight, AlertTriangle, Lightbulb, type LucideIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
