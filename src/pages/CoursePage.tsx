@@ -609,7 +609,7 @@ const CoursePage = () => {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "EducationalOrganization",
-              "@id": `https://alhamdacademy.net/courses/${course.slug}#reviews`,
+              "@id": "https://alhamdacademy.net/#organization",
               name: "Alhamd Academy",
               review: course.reviews.map((r, i) => ({
                 "@type": "Review",
@@ -618,12 +618,6 @@ const CoursePage = () => {
                 reviewRating: { "@type": "Rating", ratingValue: r.rating, bestRating: 5 },
                 reviewBody: r.textEn,
               })),
-              aggregateRating: {
-                "@type": "AggregateRating",
-                ratingValue: 4.9,
-                reviewCount: course.reviews.length,
-                bestRating: 5,
-              },
             }),
           }}
         />
