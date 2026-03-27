@@ -1,41 +1,32 @@
 import { useState, useEffect } from "react";
 import { loadTeachers } from "@/lib/teachersData";
 
-let cachedResult: boolean | null = null;
-let fetchPromise: Promise<boolean> | null = null;
-
-function fetchTeachersExist(): Promise<boolean> {
-  if (cachedResult !== null) return Promise.resolve(cachedResult);
-  if (fetchPromise) return fetchPromise;
-
-  fetchPromise = loadTeachers()
-    .then((teachers) => {
-      cachedResult = teachers.length > 0;
-      return cachedResult;
-    })
-    .catch(() => {
-      cachedResult = false;
-      return false;
-    });
-
-  return fetchPromise;
-}
-
+/**
+ * Lightweight hook that checks if any teachers exist.
+ * Shares the same singleton cache as loadTeachers() — zero extra network requests.
+ */
 export function useHasTeachers() {
-  const [hasTeachers, setHasTeachers] = useState(cachedResult ?? false);
-  const [loading, setLoading] = useState(cachedResult === null);
+  const [hasTeachers, setHasTeachers] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (cachedResult !== null) {
-      setHasTeachers(cachedResult);
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    fetchTeachersExist().then((result) => {
-      setHasTeachers(result);
-      setLoading(false);
-    });
+    loadTeachers()
+      .then((teachers) => {
+        if (!cancelled) {
+          setHasTeachers(teachers.length > 0);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHasTeachers(false);
+          setLoading(false);
+        }
+      });
+
+    return () => { cancelled = true; };
   }, []);
 
   return { hasTeachers, loading };

@@ -34,22 +34,40 @@ const mapTeacher = (teacher: TeacherRow): Teacher => ({
   education_ar: teacher.education_ar ?? undefined,
 });
 
+/** Shared singleton cache — ensures only ONE network request across all consumers. */
+let cachedTeachers: Teacher[] | null = null;
+let fetchPromise: Promise<Teacher[]> | null = null;
+
 export async function loadTeachers(): Promise<Teacher[]> {
+  if (cachedTeachers !== null) return cachedTeachers;
+  if (fetchPromise) return fetchPromise;
   if (isGlobalFallbackMode()) return [];
 
-  try {
-    const response = await fetchExternalFunction("public-teachers", {
-      method: "GET",
-    });
+  fetchPromise = (async () => {
+    try {
+      const response = await fetchExternalFunction("public-teachers", {
+        method: "GET",
+      });
 
-    if (!response.ok) return [];
+      if (!response.ok) {
+        cachedTeachers = [];
+        return [];
+      }
 
-    const json = await response.json();
-    const data = (json?.teachers ?? json) as TeacherRow[];
-    if (!Array.isArray(data) || data.length === 0) return [];
+      const json = await response.json();
+      const data = (json?.teachers ?? json) as TeacherRow[];
+      if (!Array.isArray(data) || data.length === 0) {
+        cachedTeachers = [];
+        return [];
+      }
 
-    return data.map(mapTeacher);
-  } catch {
-    return [];
-  }
+      cachedTeachers = data.map(mapTeacher);
+      return cachedTeachers;
+    } catch {
+      cachedTeachers = [];
+      return [];
+    }
+  })();
+
+  return fetchPromise;
 }
