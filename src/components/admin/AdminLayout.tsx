@@ -2,16 +2,18 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe } from "lucide-react";
+import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin } = useAuth();
   const { t, lang, toggleLang, dir } = useAdminLang();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const navItems = [
     { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true },
@@ -96,9 +98,15 @@ const AdminLayout = () => {
             </Avatar>
             <p className="text-xs text-muted-foreground truncate flex-1">{user?.email}</p>
           </div>
+          {isAdmin && (
+            <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground" onClick={() => setShowChangePassword(true)}>
+              <KeyRound className="h-4 w-4" /> {t("pwd.change")}
+            </Button>
+          )}
           <Button variant="ghost" className="w-full justify-start gap-3 text-destructive hover:text-destructive" onClick={handleSignOut}>
             <LogOut className="h-4 w-4" /> {t("nav.signout")}
           </Button>
+          {isAdmin && <ChangePasswordDialog open={showChangePassword} onOpenChange={setShowChangePassword} />}
         </div>
       </aside>
 
