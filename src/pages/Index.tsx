@@ -68,7 +68,7 @@ const DeferredSection = ({ children, minHeight = 260, forceRender = false, delay
   }, [shouldRender, forceRender, delayMs]);
 
   return (
-    <div ref={markerRef}>
+    <div ref={markerRef} className={shouldRender ? "content-auto" : ""}>
       {shouldRender ? <Suspense fallback={<div style={{ minHeight }} />}>{children}</Suspense> : <div style={{ minHeight }} />}
     </div>
   );
@@ -106,17 +106,17 @@ const Index = () => {
       <main>
         <HeroSection />
         <SectionErrorBoundary><DeferredSection minHeight={220} forceRender={forceEager} delayMs={100}><QuranVersesSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={560} forceRender={forceEager} delayMs={200}><CoursesSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={400}><HowItWorks /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={600}><PricingSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={800}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={1000}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1200}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={1400}><AboutSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1600}><TeachersSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1800}><RecentArticlesSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={2000}><FinalCTA /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={2000}><ContactSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={560} forceRender={forceEager} delayMs={150}><CoursesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={250}><HowItWorks /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={400}><PricingSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={600}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={800}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1000}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={1200}><AboutSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1400}><TeachersSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1600}><RecentArticlesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1800}><FinalCTA /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1800}><ContactSection /></DeferredSection></SectionErrorBoundary>
       </main>
       <Suspense fallback={null}>
         <Footer />
