@@ -279,64 +279,29 @@ const LocationPage = () => {
         </div>
       </section>
 
-      {/* Teaching Methodology */}
-      <section className="py-16 md:py-20 bg-muted/20">
+      {/* Courses Available — compact links */}
+      <section className="py-10 md:py-12 bg-muted/20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 text-center">
-              {location.type === 'city'
-                ? `How We Teach Quran to Students in ${location.name}`
-                : `The Al-Azhar Teaching Approach for ${location.name} Learners`}
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6">
+              Courses Available {location.type === 'city' ? `from ${location.name}` : `Across ${location.name}`}
             </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6 text-center max-w-3xl mx-auto">
-              {location.type === 'city'
-                ? `Families in ${location.name}, ${location.country}, are taught by native Arabic-speaking scholars from Al-Azhar University in Cairo — the world's oldest Islamic institution (est. 970 CE). Because Arabic is their mother tongue, students receive authentic pronunciation guidance that non-native tutors simply cannot replicate.`
-                : `Across ${location.name}, our Al-Azhar graduates deliver Quran instruction rooted in over a millennium of Islamic scholarship. As native Arabic speakers from Egypt, they bring an innate command of Quranic phonetics, grammar, and meaning — giving ${location.name}-based students an unmistakable edge in their recitation and comprehension.`}
-            </p>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex flex-wrap justify-center gap-3">
               {[
-                { title: "Noor Al-Bayan Foundation", desc: `The Noor Al-Bayan curriculum gives ${location.name} beginners a clear path from zero to fluent Quran reading — mastering Arabic letter forms, connecting sounds, and building confidence before advancing to full Surahs.` },
-                { title: "Tailored Study Plans", desc: `Your teacher designs a unique syllabus around your schedule in ${location.timezone} and your personal objectives — whether that's daily Hifz revision, weekend Tajweed refinement, or conversational Arabic fluency.` },
-                { title: "Ijazah with Sanad", desc: `Dedicated students in ${location.name} can pursue an authenticated Ijazah — a certification with an unbroken chain of transmission back to the Prophet ﷺ, recognized by Islamic institutions worldwide.` },
-              ].map((m, i) => (
-                <div key={i} className="bg-background rounded-xl border p-6">
-                  <h3 className="font-semibold text-foreground mb-2">{m.title}</h3>
-                  <p className="text-sm text-muted-foreground">{m.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Courses Available */}
-      <section className="py-16 md:py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 text-center">
-              {location.type === 'city'
-                ? `What You Can Study from ${location.name}`
-                : `Full Course Catalog for ${location.name} Students`}
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: "Quran Reading & Recitation", desc: `Popular among ${location.name} beginners — progress from Noor Al-Bayan letter recognition to fluent Quran reading with proper Tajweed`, link: "/online-quran-classes", icon: BookOpen },
-                { title: "Tajweed Mastery", desc: `${location.name} students refine every Makharij and Sifat rule with native speakers who model authentic Egyptian Quranic recitation`, link: "/tajweed-course-online", icon: Award },
-                { title: "Quran Memorization (Hifz)", desc: `A structured Hifz track with daily Mutoon revision — designed for ${location.type === 'city' ? location.name : location.country} learners balancing school or work`, link: "/quran-memorization-hifz", icon: Star },
-                { title: "Arabic Language", desc: `Build real Arabic fluency — reading, grammar, and conversation — essential for deeper Quran understanding from ${location.name}`, link: "/arabic-for-adults", icon: Globe },
-                { title: "Islamic Studies", desc: `Comprehensive Fiqh, Aqeedah, Tafseer, Hadith & Seerah curriculum contextualized for Muslims living in ${location.country}`, link: "/islamic-studies-online", icon: BookOpen },
-                { title: "Ijazah Certification", desc: `Earn an authenticated Ijazah with full Sanad — available to advanced ${location.name} students at just $15/hour`, link: "/ijazah-program", icon: Award },
+                { title: "Quran Reading & Recitation", link: "/online-quran-classes" },
+                { title: "Tajweed Mastery", link: "/tajweed-course-online" },
+                { title: "Quran Memorization (Hifz)", link: "/quran-memorization-hifz" },
+                { title: "Arabic Language", link: "/arabic-for-adults" },
+                { title: "Islamic Studies", link: "/islamic-studies-online" },
+                { title: "Ijazah Certification — $15/hr", link: "/ijazah-program" },
               ].map((course, i) => (
                 <Link
                   key={i}
                   to={course.link}
-                  className="group bg-background rounded-xl border p-6 hover:border-primary hover:shadow-md transition-all"
+                  className="inline-flex items-center gap-2 bg-background border rounded-full px-4 py-2 text-sm font-medium text-foreground hover:border-primary hover:text-primary transition-all"
                 >
-                  <course.icon className="w-8 h-8 text-primary mb-3" />
-                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                    {course.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">{course.desc}</p>
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  {course.title}
                 </Link>
               ))}
             </div>
