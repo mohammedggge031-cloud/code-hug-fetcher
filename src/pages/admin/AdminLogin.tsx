@@ -5,13 +5,13 @@ import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock, Mail, Loader2, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Lock, Mail, Loader2, Globe, Eye, EyeOff, BookOpen } from "lucide-react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [allowRender, setAllowRender] = useState(false);
   const { signIn, user, role, loading } = useAuth();
@@ -38,9 +38,7 @@ const AdminLogin = () => {
     );
   }
 
-  if (user && role) {
-    return null;
-  }
+  if (user && role) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,50 +53,135 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted px-4" dir={lang === "ar" ? "rtl" : "ltr"}>
-      <div className="absolute top-4 end-4">
-        <Button variant="outline" size="sm" onClick={toggleLang} className="gap-2 text-xs">
+    <div
+      className="min-h-screen flex items-center justify-center relative overflow-hidden"
+      dir={lang === "ar" ? "rtl" : "ltr"}
+    >
+      {/* Background with gradient */}
+      <div className="absolute inset-0" style={{ background: "var(--hero-gradient)" }} />
+
+      {/* Decorative pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+      }} />
+
+      {/* Decorative gold accent circle */}
+      <div className="absolute -top-32 -end-32 w-96 h-96 rounded-full opacity-10" style={{ background: "var(--gold-gradient)" }} />
+      <div className="absolute -bottom-24 -start-24 w-72 h-72 rounded-full opacity-[0.07]" style={{ background: "var(--gold-gradient)" }} />
+
+      {/* Language toggle */}
+      <div className="absolute top-5 end-5 z-10">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleLang}
+          className="gap-2 text-xs text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 backdrop-blur-sm border border-white/10"
+        >
           <Globe className="h-3.5 w-3.5" />
           {lang === "ar" ? "English" : "العربية"}
         </Button>
       </div>
 
-      <div className="w-full max-w-sm">
+      {/* Login Card */}
+      <div className="relative z-10 w-full max-w-[420px] mx-4">
+        {/* Brand header */}
         <div className="text-center mb-8">
-          <img src="/favicon-48.png" alt="Alhamd Academy" className="h-16 w-16 mx-auto rounded-2xl shadow-lg mb-4" loading="lazy" decoding="async" />
-          <h1 className="text-xl font-bold text-foreground">Alhamd Academy</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t("login.panel")}</p>
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 shadow-xl" style={{ background: "var(--gold-gradient)" }}>
+            <BookOpen className="h-10 w-10 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold text-primary-foreground tracking-tight">
+            Alhamd Academy
+          </h1>
+          <p className="text-sm text-primary-foreground/50 mt-1.5">{t("login.panel")}</p>
         </div>
 
-        <Card className="shadow-lg border-0 bg-card/80 backdrop-blur">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg text-center">{t("login.title")}</CardTitle>
-            <CardDescription className="text-center">{t("login.subtitle")}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Card */}
+        <div className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
+          {/* Card top accent */}
+          <div className="h-1" style={{ background: "var(--gold-gradient)" }} />
+
+          <div className="p-8">
+            <div className="text-center mb-7">
+              <h2 className="text-lg font-semibold text-foreground">{t("login.title")}</h2>
+              <p className="text-sm text-muted-foreground mt-1">{t("login.subtitle")}</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Email */}
               <div className="space-y-2">
-                <Label htmlFor="email">{t("login.email")}</Label>
+                <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                  {t("login.email")}
+                </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} className="pl-10" required dir="ltr" />
+                  <Mail className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className="ps-11 h-11 bg-muted/40 border-border/60 focus:bg-background transition-colors"
+                    placeholder="email@example.com"
+                    required
+                    dir="ltr"
+                  />
                 </div>
               </div>
+
+              {/* Password */}
               <div className="space-y-2">
-                <Label htmlFor="password">{t("login.password")}</Label>
+                <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                  {t("login.password")}
+                </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} className="pl-10" required dir="ltr" />
+                  <Lock className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="ps-11 pe-11 h-11 bg-muted/40 border-border/60 focus:bg-background transition-colors"
+                    placeholder="••••••••"
+                    required
+                    dir="ltr"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute end-3 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground transition-colors rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    tabIndex={-1}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword
+                      ? <EyeOff className="h-4 w-4" />
+                      : <Eye className="h-4 w-4" />
+                    }
+                  </button>
                 </div>
               </div>
-              <Button type="submit" className="w-full gap-2" disabled={submitting}>
-                {submitting ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("login.loading")}</> : t("login.submit")}
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                className="w-full h-11 gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {t("login.loading")}
+                  </>
+                ) : (
+                  t("login.submit")
+                )}
               </Button>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <p className="text-xs text-center text-muted-foreground mt-6">© {new Date().getFullYear()} Alhamd Academy</p>
+        {/* Footer */}
+        <p className="text-xs text-center text-primary-foreground/30 mt-6">
+          © {new Date().getFullYear()} Alhamd Academy — All rights reserved
+        </p>
       </div>
     </div>
   );
