@@ -285,7 +285,7 @@ const IjazahProgram = () => (
           url: "https://alhamdacademy.net/ijazah-program",
           description: "One-on-one Ijazah course online with certified sheikh — $15 per hour"
         },
-        aggregateRating: { "@type": "AggregateRating", ratingValue: 5.0, bestRating: 5, ratingCount: 50 },
+        
       }}
       extraSection={<IjazahPricingSection />}
     />
