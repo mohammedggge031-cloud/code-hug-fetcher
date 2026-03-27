@@ -82,6 +82,8 @@ const translations: Record<string, Record<AdminLang, string>> = {
   "err.cant_del_super": { ar: "لا يمكن حذف المدير الرئيسي", en: "Cannot delete the Super Admin" },
   "err.user_not_found": { ar: "المستخدم غير موجود", en: "User not found" },
   "err.error": { ar: "خطأ", en: "Error" },
+  "err.role_exists": { ar: "هذا المستخدم لديه صلاحية بالفعل", en: "This user already has a role" },
+  "err.enable_create_new": { ar: "يرجى تفعيل خيار إنشاء حساب جديد", en: "Please enable the create new account option" },
 
   // Success
   "ok.account_created": { ar: "تم إنشاء الحساب", en: "Account Created" },
@@ -89,6 +91,16 @@ const translations: Record<string, Record<AdminLang, string>> = {
   "ok.role_assigned": { ar: "تم تعيين الصلاحية بنجاح", en: "Role assigned successfully" },
   "ok.done": { ar: "تم", en: "Done" },
   "ok.deleted": { ar: "تم الحذف", en: "Deleted" },
+
+  // Delete confirm
+  "team.confirm_delete_title": { ar: "هل أنت متأكد؟", en: "Are you sure?" },
+  "team.confirm_delete_desc": { ar: "سيتم حذف صلاحية هذا العضو نهائياً. لا يمكن التراجع عن هذا الإجراء.", en: "This member's role will be permanently removed. This action cannot be undone." },
+
+  // Forgot Password
+  "login.forgot": { ar: "نسيت كلمة المرور؟", en: "Forgot password?" },
+  "login.reset_sent": { ar: "تم إرسال رابط الاستعادة", en: "Reset link sent" },
+  "login.reset_sent_desc": { ar: "تحقق من بريدك الإلكتروني لإعادة تعيين كلمة المرور", en: "Check your email to reset your password" },
+  "login.reset_error": { ar: "خطأ في الإرسال", en: "Error sending reset" },
 
   // Login
   "login.title": { ar: "تسجيل الدخول", en: "Sign In" },
