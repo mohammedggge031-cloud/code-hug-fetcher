@@ -35,6 +35,7 @@ export default defineConfig(({ mode }) => ({
           'vendor-motion': ['framer-motion'],
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-icons': ['lucide-react'],
+          'vendor-utils': ['date-fns', 'zod', 'dompurify'],
         },
       },
     },
