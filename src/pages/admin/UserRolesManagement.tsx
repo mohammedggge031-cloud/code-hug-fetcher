@@ -254,7 +254,7 @@ const UserRolesManagement = () => {
       <DeleteConfirmDialog
         open={!!deleteTarget}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        onConfirm={() => { if (deleteTarget) { handleDelete(deleteTarget); setDeleteTarget(null); } }}
+        onConfirm={async () => { if (deleteTarget) { const target = deleteTarget; setDeleteTarget(null); await handleDelete(target); } }}
         title={t("team.confirm_delete_title")}
         description={t("team.confirm_delete_desc")}
         confirmLabel={t("ok.deleted")}
