@@ -374,8 +374,7 @@ const ArabicForAdults = () => (
       provider: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
       educationalLevel: ["Beginner (A1-A2)", "Intermediate (B1-B2)", "Advanced (C1-C2)"],
       inLanguage: ["en", "ar"],
-      offers: { "@type": "Offer", price: "6", priceCurrency: "USD" },
-      aggregateRating: { "@type": "AggregateRating", ratingValue: 4.9, bestRating: 5, ratingCount: 80 },
+      offers: { "@type": "Offer", price: "57", priceCurrency: "USD", description: "Starting from $57/month for 3 sessions/week" },
     }}
   />
 );
