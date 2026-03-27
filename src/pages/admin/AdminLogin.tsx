@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, Loader2, Globe, Eye, EyeOff, BookOpen } from "lucide-react";
+import { Lock, Mail, Loader2, Globe, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
@@ -110,8 +110,8 @@ const AdminLogin = () => {
       <div className="relative z-10 w-full max-w-[420px] mx-4">
         {/* Brand header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 shadow-xl" style={{ background: "var(--gold-gradient)" }}>
-            <BookOpen className="h-10 w-10 text-primary" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 shadow-xl bg-white/95 p-2">
+            <img src="/logo-admin.webp" alt="Alhamd Academy" className="h-14 w-14 object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-primary-foreground tracking-tight">
             Alhamd Academy
