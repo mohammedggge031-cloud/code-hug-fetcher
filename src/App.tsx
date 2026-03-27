@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
-import { lazy, Suspense, forwardRef } from "react";
+import { lazy, Suspense } from "react";
 
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
 
@@ -73,60 +73,58 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = forwardRef<HTMLDivElement>(function App(_, ref) { return (
-  <div ref={ref}>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <LanguageProvider>
-            <Suspense fallback={null}><Toaster /></Suspense>
-            <Suspense fallback={null}><Sonner /></Suspense>
-            <BrowserRouter>
-              <ScrollToTop />
-              <FloatingActions />
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <Suspense fallback={null}><Toaster /></Suspense>
+          <Suspense fallback={null}><Sonner /></Suspense>
+          <BrowserRouter>
+            <ScrollToTop />
+            <FloatingActions />
 
-              <Suspense fallback={<Loader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:id" element={<BlogPost />} />
-                  <Route path="/videos" element={<Videos />} />
-                  <Route path="/online-quran-classes" element={<OnlineQuranClasses />} />
-                  <Route path="/tajweed-course-online" element={<TajweedCourse />} />
-                  <Route path="/quran-memorization-hifz" element={<QuranMemorization />} />
-                  <Route path="/arabic-for-kids" element={<ArabicForKids />} />
-                  <Route path="/arabic-for-adults" element={<ArabicForAdults />} />
-                  <Route path="/islamic-studies-online" element={<IslamicStudies />} />
-                  <Route path="/ijazah-program" element={<IjazahProgram />} />
-                  <Route path="/female-quran-teacher" element={<FemaleQuranTeacher />} />
-                  <Route path="/free-trial" element={<FreeTrial />} />
-                  <Route path="/student-success-stories" element={<StudentSuccessStories />} />
-                  <Route path="/courses/:slug" element={<CoursePage />} />
-                  <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/:slug" element={<LocationPage />} />
+            <Suspense fallback={<Loader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogPost />} />
+                <Route path="/videos" element={<Videos />} />
+                <Route path="/online-quran-classes" element={<OnlineQuranClasses />} />
+                <Route path="/tajweed-course-online" element={<TajweedCourse />} />
+                <Route path="/quran-memorization-hifz" element={<QuranMemorization />} />
+                <Route path="/arabic-for-kids" element={<ArabicForKids />} />
+                <Route path="/arabic-for-adults" element={<ArabicForAdults />} />
+                <Route path="/islamic-studies-online" element={<IslamicStudies />} />
+                <Route path="/ijazah-program" element={<IjazahProgram />} />
+                <Route path="/female-quran-teacher" element={<FemaleQuranTeacher />} />
+                <Route path="/free-trial" element={<FreeTrial />} />
+                <Route path="/student-success-stories" element={<StudentSuccessStories />} />
+                <Route path="/courses/:slug" element={<CoursePage />} />
+                <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/:slug" element={<LocationPage />} />
 
-                  <Route path="/admin/login" element={<AdminLangProvider><AdminLogin /></AdminLangProvider>} />
-                  <Route path="/admin" element={<AdminLangProvider><ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute></AdminLangProvider>}>
-                    <Route index element={<AdminDashboard />} />
-                    <Route path="blog" element={<BlogManagement />} />
-                    <Route path="categories" element={<CategoriesManagement />} />
-                    <Route path="media" element={<MediaLibrary />} />
-                    <Route path="seo" element={<SeoManagement />} />
-                    <Route path="scripts" element={<ScriptsManagement />} />
-                    <Route path="users" element={<UserRolesManagement />} />
-                  </Route>
+                <Route path="/admin/login" element={<AdminLangProvider><AdminLogin /></AdminLangProvider>} />
+                <Route path="/admin" element={<AdminLangProvider><ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute></AdminLangProvider>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="blog" element={<BlogManagement />} />
+                  <Route path="categories" element={<CategoriesManagement />} />
+                  <Route path="media" element={<MediaLibrary />} />
+                  <Route path="seo" element={<SeoManagement />} />
+                  <Route path="scripts" element={<ScriptsManagement />} />
+                  <Route path="users" element={<UserRolesManagement />} />
+                </Route>
 
-                  <Route path="/404" element={<NotFound />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </LanguageProvider>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </div>
-); });
+                <Route path="/404" element={<NotFound />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </LanguageProvider>
+      </AuthProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
