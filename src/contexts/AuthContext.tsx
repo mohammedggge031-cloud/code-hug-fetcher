@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
-import { User, Session } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
+import type { User, Session } from "@supabase/supabase-js";
 import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
 type AppRole = "admin" | "editor";
@@ -18,6 +17,15 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Lazy singleton – supabase client is only imported when auth is actually needed
+let supabasePromise: ReturnType<typeof import("@/integrations/supabase/client")> | null = null;
+const getSupabase = () => {
+  if (!supabasePromise) {
+    supabasePromise = import("@/integrations/supabase/client");
+  }
+  return supabasePromise;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -27,6 +35,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
   const fetchRole = async (userId: string) => {
+    const { supabase } = await getSupabase();
     const resolvedRole = await safeDataRequest<AppRole | null>({
       fallback: null,
       timeoutMs: AUTH_TIMEOUT_MS,
@@ -52,7 +61,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initialized.current = true;
 
     let active = true;
-    let subscription: ReturnType<typeof supabase.auth.onAuthStateChange>["data"]["subscription"] | null = null;
+    let subscription: { unsubscribe: () => void } | null = null;
     const hardStop = window.setTimeout(() => {
       if (!active) return;
       setSession(null);
@@ -77,6 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const initAuth = async () => {
+      const { supabase } = await getSupabase();
+
       const {
         data: { subscription: nextSubscription },
       } = supabase.auth.onAuthStateChange((_event, nextSession) => {
@@ -115,6 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      const { supabase } = await getSupabase();
       const { error } = await withPromiseTimeout(
         supabase.auth.signInWithPassword({ email, password }),
         { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false },
@@ -126,6 +138,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
+    const { supabase } = await getSupabase();
     await withPromiseTimeout(supabase.auth.signOut(), {
       timeoutMs: AUTH_TIMEOUT_MS,
       markGlobalFallbackOnError: false,
