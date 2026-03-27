@@ -326,9 +326,9 @@ const LocationPage = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { plan: "Basic", sessions: "3 days/week", duration: "30 min", price: "$57", note: "Great for beginners" },
-                { plan: "Standard", sessions: "5 days/week", duration: "30 min", price: "$76", note: "Most popular" },
-                { plan: "Premium", sessions: "5 days/week", duration: "45 min", price: "$114", note: "Deeper sessions" },
-                { plan: "Intensive", sessions: "5 days/week", duration: "60 min", price: "$152", note: "Hifz & Ijazah track" },
+                { plan: "Standard", sessions: "4 days/week", duration: "30 min", price: "$74", note: "Most popular" },
+                { plan: "Premium", sessions: "5 days/week", duration: "45 min", price: "$132", note: "Deeper sessions" },
+                { plan: "Intensive", sessions: "5 days/week", duration: "60 min", price: "$174", note: "Hifz & Ijazah track" },
               ].map((p, i) => (
                 <div key={i} className={`bg-background rounded-xl border p-6 ${i === 1 ? 'border-primary ring-2 ring-primary/20' : ''}`}>
                   <h3 className="font-semibold text-foreground mb-1">{p.plan}</h3>
