@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Lock, Mail, Loader2, Globe, Eye, EyeOff, BookOpen } from "lucide-react";
+import { Lock, Mail, Loader2, Globe, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
