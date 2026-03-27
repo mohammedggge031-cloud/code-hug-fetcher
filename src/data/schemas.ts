@@ -140,7 +140,7 @@ export const faqSchema = {
     {
       "@type": "Question",
       "name": "How much do online Quran classes cost?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Plans start from $57/month for 30-minute sessions, 3 days per week. We offer flexible plans with 30, 45, or 60-minute sessions, up to 5 days per week. Semi-annual subscribers save 6%, and annual subscribers save 14%. Family discounts are available for multiple students. Ijazah sessions are only $15/hour." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Plans start from $21/month for one 30-minute session per week. Our most popular plan is $74/month for four 30-minute sessions per week. We offer flexible plans with 30, 45, or 60-minute sessions, 1 to 5 days per week. Semi-annual subscribers save 6%, and annual subscribers save 14%. Family discounts are available for multiple students. Ijazah sessions are only $15/hour." }
     },
     {
       "@type": "Question",
