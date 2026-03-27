@@ -145,6 +145,14 @@
   }
 }
 
+/* GPU-accelerated sections for below-fold content */
+@layer base {
+  .content-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 500px;
+  }
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;
