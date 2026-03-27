@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
-import { lazy, Suspense, forwardRef } from "react";
+import { lazy, Suspense } from "react";
 
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
 
@@ -73,7 +73,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const App = forwardRef<HTMLDivElement>(function App(_, _ref) { return (
+const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
@@ -125,6 +125,6 @@ const App = forwardRef<HTMLDivElement>(function App(_, _ref) { return (
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
-); });
+);
 
 export default App;
