@@ -21,7 +21,7 @@ const LocationPage = () => {
   const location = slug ? getLocationBySlug(slug) : null;
   const { seo } = useSeoMetadata(`/${slug}`);
 
-  if (!location) return <Navigate to="/not-found" replace />;
+  if (!location) return <Navigate to="/404" replace />;
 
   const childCities = location.type === 'country' ? getCitiesByCountry(location.slug) : [];
   const parentCountry = location.type === 'city' && location.countrySlug

@@ -116,6 +116,7 @@ const App = () => (
                   <Route path="users" element={<UserRolesManagement />} />
                 </Route>
 
+                <Route path="/404" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>

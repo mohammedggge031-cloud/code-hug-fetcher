@@ -322,17 +322,9 @@ export const websiteSchema = {
 export const reviewSchema = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
-  "@id": "https://alhamdacademy.net/#org-reviews",
+  "@id": "https://alhamdacademy.net/#organization",
   "name": "Alhamd Academy",
   "url": "https://alhamdacademy.net",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 4.9,
-    "bestRating": 5,
-    "worstRating": 1,
-    "ratingCount": 200,
-    "reviewCount": 150
-  },
   "review": [
     {
       "@type": "Review",
@@ -443,7 +435,7 @@ export const serviceSchema = {
     {
       "@type": "Offer",
       "name": "Monthly Plan - 60min sessions",
-      "price": "152",
+      "price": "174",
       "priceCurrency": "USD",
       "description": "5 days/week, 60-minute sessions, 20 hours/month",
       "availability": "https://schema.org/InStock",
@@ -467,12 +459,6 @@ export const serviceSchema = {
     "opens": "00:00",
     "closes": "23:59"
   },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 4.9,
-    "reviewCount": 150,
-    "bestRating": 5
-  }
 };
 
 // HowTo schema — competitors don't have this, gives us rich snippets
