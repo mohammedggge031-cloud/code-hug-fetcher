@@ -33,6 +33,8 @@ export default defineConfig(({ mode }) => ({
           'vendor-router': ['react-router-dom', 'react-router'],
           'vendor-query': ['@tanstack/react-query'],
           'vendor-motion': ['framer-motion'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-icons': ['lucide-react'],
         },
       },
     },

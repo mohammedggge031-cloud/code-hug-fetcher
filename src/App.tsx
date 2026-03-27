@@ -1,5 +1,3 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
@@ -8,21 +6,25 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
 import { lazy, Suspense } from "react";
 
-import ScrollTopButton from "@/components/ScrollTopButton";
-import WhatsAppButton from "@/components/WhatsAppButton";
-import FloatingBookingFAB from "@/components/FloatingBookingFAB";
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
+
+// Lazy load non-critical UI overlays
+const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
+const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
+const ScrollTopButton = lazy(() => import("@/components/ScrollTopButton"));
+const WhatsAppButton = lazy(() => import("@/components/WhatsAppButton"));
+const FloatingBookingFAB = lazy(() => import("@/components/FloatingBookingFAB"));
 
 const FloatingActions = () => {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
   if (isAdmin) return null;
   return (
-    <>
+    <Suspense fallback={null}>
       <ScrollTopButton />
       <WhatsAppButton />
       <FloatingBookingFAB />
-    </>
+    </Suspense>
   );
 };
 
@@ -76,8 +78,8 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <LanguageProvider>
-          <Toaster />
-          <Sonner />
+          <Suspense fallback={null}><Toaster /></Suspense>
+          <Suspense fallback={null}><Sonner /></Suspense>
           <BrowserRouter>
             <ScrollToTop />
             <FloatingActions />
