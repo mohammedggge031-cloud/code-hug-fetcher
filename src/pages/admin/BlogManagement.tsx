@@ -15,6 +15,7 @@ import TipTapEditor from "@/components/admin/TipTapEditor";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
+import BlogMigrationTrigger from "@/components/admin/BlogMigrationTrigger";
 
 interface BlogPost {
   id: string; title_en: string; title_ar: string; slug: string;
@@ -168,6 +169,8 @@ const BlogManagement = () => {
         </div>
         <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
       </div>
+
+      {posts.length < 10 && <BlogMigrationTrigger onComplete={() => void fetchData()} />}
 
       <div className="relative w-full sm:w-80">
         <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
