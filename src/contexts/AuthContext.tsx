@@ -18,7 +18,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Lazy singleton – supabase client is only imported when auth is actually needed
-let supabasePromise: ReturnType<typeof import("@/integrations/supabase/client")> | null = null;
+let supabasePromise: Promise<typeof import("@/integrations/supabase/client")> | null = null;
 const getSupabase = () => {
   if (!supabasePromise) {
     supabasePromise = import("@/integrations/supabase/client");
