@@ -56,7 +56,7 @@ const AdminLayout = () => {
       )}>
         <div className="p-4 border-b flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <img src="/favicon-48.png" alt="Alhamd Academy" className="h-10 w-10 object-contain rounded-lg" loading="lazy" decoding="async" />
+            <img src="/logo-admin.webp" alt="Alhamd Academy" className="h-10 w-10 object-contain rounded-lg" loading="eager" decoding="async" />
             <div>
               <h1 className="font-bold text-base text-sidebar-foreground">Alhamd Academy</h1>
               <p className="text-xs text-muted-foreground">{getRoleLabel(role)}</p>
