@@ -153,7 +153,43 @@ const defaultTrustBadges: TrustBadge[] = [
   { icon: Clock, textEn: "Flexible Schedule", textAr: "مواعيد مرنة" },
 ];
 
-const ServicePageLayout = (props: ServicePageProps) => {
+/** Renders JSON-LD scripts and cleans them up on unmount to prevent stale schemas during SPA navigation */
+const ServicePageJsonLd = ({ jsonLd, testimonials, faqJsonLd, breadcrumbJsonLd }: {
+  jsonLd: object;
+  testimonials: { name: string; textEn: string; rating: number }[];
+  faqJsonLd: object;
+  breadcrumbJsonLd: object;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    return () => {
+      // On unmount, remove all JSON-LD scripts we injected
+      containerRef.current?.querySelectorAll('script[type="application/ld+json"]').forEach(el => el.remove());
+    };
+  }, []);
+
+  // Strip aggregateRating from the course jsonLd — it lives only on organizationSchema
+  const { aggregateRating: _removed, ...cleanJsonLd } = jsonLd as any;
+
+  return (
+    <div ref={containerRef} style={{ display: 'none' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        ...cleanJsonLd,
+        review: testimonials.map((t, i) => ({
+          "@type": "Review",
+          author: { "@type": "Person", name: t.name },
+          datePublished: `2025-${String(i + 1).padStart(2, "0")}-15`,
+          reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
+          reviewBody: t.textEn,
+        })),
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+    </div>
+  );
+};
+
   const { t, lang } = useLanguage();
   const canonicalPath = props.canonical ? new URL(props.canonical).pathname : "/";
   const { seo } = useSeoMetadata(canonicalPath);
