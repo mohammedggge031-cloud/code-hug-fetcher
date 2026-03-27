@@ -71,8 +71,8 @@ const testimonials = [
 ];
 
 const ITEMS_DESKTOP = 3;
-const ITEMS_MOBILE = 1;
 const ITEMS_TABLET = 2;
+const ITEMS_MOBILE = 1;
 
 const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   const { t, lang } = useLanguage();
@@ -80,27 +80,34 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [viewMode, setViewMode] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => {
+      const w = window.innerWidth;
+      if (w < 640) setViewMode('mobile');
+      else if (w < 1024) setViewMode('tablet');
+      else setViewMode('desktop');
+    };
     check();
-    window.addEventListener("resize", check);
+    window.addEventListener("resize", check, { passive: true });
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const itemsPerPage = isMobile ? ITEMS_MOBILE : ITEMS_DESKTOP;
+  const itemsPerPage = viewMode === 'mobile' ? ITEMS_MOBILE : viewMode === 'tablet' ? ITEMS_TABLET : ITEMS_DESKTOP;
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
 
-  // Reset page when switching between mobile/desktop
+  // Reset page when switching view modes
   useEffect(() => {
     setPage(0);
-  }, [isMobile]);
+  }, [viewMode]);
 
   const paginate = useCallback((newDirection: number) => {
     setDirection(newDirection);
     setPage((prev) => {
-      const tp = Math.ceil(testimonials.length / (window.innerWidth < 768 ? ITEMS_MOBILE : ITEMS_DESKTOP));
+      const w = window.innerWidth;
+      const perPage = w < 640 ? ITEMS_MOBILE : w < 1024 ? ITEMS_TABLET : ITEMS_DESKTOP;
+      const tp = Math.ceil(testimonials.length / perPage);
       const next = prev + newDirection;
       if (next < 0) return tp - 1;
       if (next >= tp) return 0;
@@ -185,7 +192,7 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
                 {currentItems.map((item) => (
                   <div
