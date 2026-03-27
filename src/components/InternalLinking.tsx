@@ -1,62 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { blogPosts } from "@/data/blogPosts";
 import { courses } from "@/data/courses";
+import { supabase } from "@/integrations/supabase/client";
+import { safeDataRequest } from "@/lib/safeRuntimeData";
 import { BookOpen, ArrowRight, ArrowLeft } from "lucide-react";
 
-// Map course slugs to relevant blog post IDs
-const courseRelatedPosts: Record<string, string[]> = {
-  "quran-course": [
-    "how-to-start-learning-quran", "benefits-of-memorizing-quran", "noor-al-bayan-method",
-    "quran-for-adults", "best-quran-reciters", "teaching-quran-to-kids",
-    "quran-ijazah-explained", "tafseer-surah-fatiha", "quran-learning-mistakes",
-    "how-to-learn-quran-online-step-by-step", "best-online-quran-classes-for-kids",
-    "best-online-quran-classes-for-adults", "online-quran-learning-guide-for-beginners",
-    "how-to-choose-best-online-quran-academy"
-  ],
-  "tajweed-course": [
-    "what-is-tajweed", "makharij-al-huruf", "best-quran-reciters",
-    "quran-ijazah-explained", "quran-learning-mistakes",
-    "what-are-tajweed-rules-explained-simply", "how-to-learn-tajweed-online",
-    "tajweed-rules-every-muslim-should-know", "best-tajweed-course-for-beginners",
-    "common-tajweed-mistakes-and-how-to-fix-them"
-  ],
-  "arabic-course": [
-    "importance-of-arabic-language", "al-arabiya-bayna-yadayk-intro",
-    "al-arabiya-bayna-yadayk-level1", "al-arabiya-bayna-yadayk-level2",
-    "al-arabiya-level3-advanced", "arabic-grammar-basics", "arabic-vocabulary-daily",
-    "why-learning-arabic-helps-understand-quran", "best-way-to-learn-arabic-for-beginners",
-    "arabic-for-kids-complete-learning-guide", "how-long-does-it-take-to-learn-arabic",
-    "arabic-words-every-muslim-should-know"
-  ],
-  "islamic-studies": [
-    "pillars-of-islam", "story-of-prophet-muhammad", "hajj-complete-guide",
-    "umrah-guide", "fasting-ramadan-rules", "salah-step-by-step", "wudu-guide",
-    "dua-for-studying", "quran-and-science", "story-of-luqman",
-    "what-are-islamic-studies-and-why-they-matter", "best-islamic-classes-online-for-kids",
-    "what-muslims-should-know-about-their-religion", "basic-islamic-knowledge-every-muslim-should-learn",
-    "islamic-education-for-children"
-  ],
-  "all-in-one-course": [
-    "how-to-start-learning-quran", "what-is-tajweed", "importance-of-arabic-language",
-    "pillars-of-islam", "online-quran-classes-benefits", "noor-al-bayan-method",
-    "how-to-learn-quran-online-step-by-step", "online-quran-learning-guide-for-beginners",
-    "how-to-memorize-quran-fast-and-effectively"
-  ],
+// Map course slugs to relevant blog categories for DB queries
+const courseCategoryMap: Record<string, string[]> = {
+  "quran-course": ["Quran"],
+  "tajweed-course": ["Tajweed"],
+  "arabic-course": ["Arabic"],
+  "islamic-studies": ["Islamic Studies", "Islamic Knowledge"],
+  "all-in-one-course": ["Quran", "Tajweed", "Arabic", "Islamic Studies"],
 };
 
 // Map blog categories to relevant course slugs
 const categoryRelatedCourses: Record<string, string[]> = {
-  "Tajweed": ["tajweed-course", "quran-course"],
-  "Quran": ["quran-course", "tajweed-course", "all-in-one-course"],
-  "Arabic": ["arabic-course", "all-in-one-course"],
+  Tajweed: ["tajweed-course", "quran-course"],
+  Quran: ["quran-course", "tajweed-course", "all-in-one-course"],
+  Arabic: ["arabic-course", "all-in-one-course"],
   "Islamic Studies": ["islamic-studies", "all-in-one-course"],
   "Islamic Knowledge": ["islamic-studies", "quran-course"],
-  "Education": ["all-in-one-course", "quran-course", "arabic-course"],
+  Education: ["all-in-one-course", "quran-course", "arabic-course"],
   "Quran Stories": ["quran-course", "islamic-studies"],
-  "Hifz": ["quran-course", "all-in-one-course"],
-  "Ijazah": ["quran-course", "tajweed-course"],
+  Hifz: ["quran-course", "all-in-one-course"],
+  Ijazah: ["quran-course", "tajweed-course"],
 };
 
 interface RelatedBlogPostsProps {
@@ -65,68 +34,93 @@ interface RelatedBlogPostsProps {
 }
 
 /**
- * Shows related blog posts on course pages for internal linking.
+ * Shows related blog posts on course pages — fetched from DB.
  */
-export const RelatedBlogPosts = React.forwardRef<HTMLElement, RelatedBlogPostsProps>(({ courseSlug, maxPosts = 4 }, ref) => {
-  const { t, lang } = useLanguage();
-  const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
-  const relatedIds = courseRelatedPosts[courseSlug] || [];
-  const related = relatedIds
-    .map(id => blogPosts.find(p => p.id === id))
-    .filter(Boolean)
-    .slice(0, maxPosts);
+export const RelatedBlogPosts = React.forwardRef<HTMLElement, RelatedBlogPostsProps>(
+  ({ courseSlug, maxPosts = 4 }, ref) => {
+    const { t, lang } = useLanguage();
+    const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
+    const [posts, setPosts] = useState<any[]>([]);
 
-  if (related.length === 0) return null;
+    useEffect(() => {
+      let cancelled = false;
+      const categories = courseCategoryMap[courseSlug];
+      if (!categories?.length) return;
 
-  return (
-    <section className="py-8 md:py-10 bg-section" aria-label="Related Articles">
-      <div className="container mx-auto px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg md:text-xl font-bold text-foreground">
-              {t("Related Articles", "مقالات ذات صلة")}
-            </h2>
-            <Link
-              to="/blog"
-              className="text-xs text-primary hover:text-accent font-semibold flex items-center gap-1 transition-colors"
-            >
-              {t("View All", "عرض الكل")}
-              <ArrowIcon className="w-3 h-3" />
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {related.map((post) => (
+      const fetchRelated = async () => {
+        const data = await safeDataRequest<any[]>({
+          fallback: [],
+          request: async (signal) => {
+            const { data, error } = await supabase
+              .from("blog_posts")
+              .select("slug, title_en, title_ar, featured_image, blog_categories!inner(name_en, name_ar)")
+              .eq("status", "published")
+              .in("blog_categories.name_en", categories)
+              .limit(maxPosts)
+              .abortSignal(signal);
+            if (error) throw error;
+            return data ?? [];
+          },
+        });
+        if (!cancelled) setPosts(data);
+      };
+
+      void fetchRelated();
+      return () => { cancelled = true; };
+    }, [courseSlug, maxPosts]);
+
+    if (posts.length === 0) return null;
+
+    return (
+      <section className="py-8 md:py-10 bg-section" aria-label="Related Articles">
+        <div className="container mx-auto px-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg md:text-xl font-bold text-foreground">
+                {t("Related Articles", "مقالات ذات صلة")}
+              </h2>
               <Link
-                key={post!.id}
-                to={`/blog/${post!.id}`}
-                className="group bg-card rounded-xl border border-border overflow-hidden hover:border-accent/30 hover:shadow-card transition-all duration-300"
+                to="/blog"
+                className="text-xs text-primary hover:text-accent font-semibold flex items-center gap-1 transition-colors"
               >
-                <div className="aspect-[16/10] overflow-hidden">
-                  <img
-                    src={post!.image}
-                    alt={t(post!.titleEn, post!.titleAr)}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    width="400"
-                    height="250"
-                  />
-                </div>
-                <div className="p-3">
-                  <span className="text-[10px] text-accent font-semibold">
-                    {t(post!.category, post!.categoryAr)}
-                  </span>
-                  <h3 className="text-xs font-bold text-foreground line-clamp-2 mt-0.5 group-hover:text-primary transition-colors">
-                    {t(post!.titleEn, post!.titleAr)}
-                  </h3>
-                </div>
+                {t("View All", "عرض الكل")}
+                <ArrowIcon className="w-3 h-3" />
               </Link>
-            ))}
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {posts.map((post: any) => (
+                <Link
+                  key={post.slug}
+                  to={`/blog/${post.slug}`}
+                  className="group bg-card rounded-xl border border-border overflow-hidden hover:border-accent/30 hover:shadow-card transition-all duration-300"
+                >
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={post.featured_image || "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=640&q=70"}
+                      alt={t(post.title_en || post.title_ar, post.title_ar || post.title_en)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      width="400"
+                      height="250"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <span className="text-[10px] text-accent font-semibold">
+                      {t(post.blog_categories?.name_en || "", post.blog_categories?.name_ar || "")}
+                    </span>
+                    <h3 className="text-xs font-bold text-foreground line-clamp-2 mt-0.5 group-hover:text-primary transition-colors">
+                      {t(post.title_en || post.title_ar, post.title_ar || post.title_en)}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-});
+      </section>
+    );
+  }
+);
 RelatedBlogPosts.displayName = "RelatedBlogPosts";
 
 interface RelatedCoursesForBlogProps {
@@ -142,7 +136,7 @@ export const RelatedCoursesForBlog = ({ category, maxCourses = 3 }: RelatedCours
   const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
   const relatedSlugs = categoryRelatedCourses[category] || ["quran-course", "all-in-one-course"];
   const related = relatedSlugs
-    .map(slug => courses.find(c => c.slug === slug))
+    .map((slug) => courses.find((c) => c.slug === slug))
     .filter(Boolean)
     .slice(0, maxCourses);
 
