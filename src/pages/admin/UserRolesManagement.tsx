@@ -176,7 +176,11 @@ const UserRolesManagement = () => {
     if (r.user_id === superAdminId) { toast({ title: t("err.not_allowed"), description: t("err.cant_del_super"), variant: "destructive" }); return; }
     if (!isSuperAdmin) { toast({ title: t("err.not_allowed"), description: t("err.only_super_del"), variant: "destructive" }); return; }
     try {
-      await supabase.from("user_roles").delete().eq("id", r.id);
+      const { error } = await supabase.from("user_roles").delete().eq("id", r.id);
+      if (error) {
+        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+        return;
+      }
       toast({ title: t("ok.deleted") });
       void fetchRoles();
     } catch {
