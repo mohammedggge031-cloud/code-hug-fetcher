@@ -203,6 +203,17 @@ const translations: Record<string, Record<AdminLang, string>> = {
   "scripts.cancel": { ar: "إلغاء", en: "Cancel" },
   "scripts.admin_only": { ar: "صلاحيات المدير فقط", en: "Admin Only" },
   "scripts.admin_only_desc": { ar: "فقط المديرون يمكنهم إدارة السكربتات", en: "Only administrators can manage custom scripts" },
+
+  // Change Password
+  "pwd.title": { ar: "تغيير كلمة المرور", en: "Change Password" },
+  "pwd.new": { ar: "كلمة المرور الجديدة", en: "New Password" },
+  "pwd.confirm": { ar: "تأكيد كلمة المرور", en: "Confirm Password" },
+  "pwd.hint": { ar: "يجب أن تكون 6 أحرف على الأقل", en: "Must be at least 6 characters" },
+  "pwd.save": { ar: "تغيير كلمة المرور", en: "Change Password" },
+  "pwd.success": { ar: "تم تغيير كلمة المرور بنجاح", en: "Password changed successfully" },
+  "pwd.mismatch": { ar: "كلمات المرور غير متطابقة", en: "Passwords do not match" },
+  "pwd.min_length": { ar: "كلمة المرور يجب أن تكون 6 أحرف على الأقل", en: "Password must be at least 6 characters" },
+  "pwd.change": { ar: "تغيير كلمة المرور", en: "Change Password" },
 };
 
 const AdminLangContext = createContext<AdminLangContextType | undefined>(undefined);
