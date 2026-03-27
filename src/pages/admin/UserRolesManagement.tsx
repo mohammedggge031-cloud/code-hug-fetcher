@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
 import { safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
-const SUPER_ADMIN_ID = "91122b58-4875-42f5-a4a6-6df6569a388d";
+const SUPER_ADMIN_ID = "c792e8df-1447-4432-9897-49477582fbb4";
 
 interface UserRole {
   id: string;
