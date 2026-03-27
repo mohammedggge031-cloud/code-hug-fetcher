@@ -322,7 +322,7 @@ export const websiteSchema = {
 export const reviewSchema = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
-  "@id": "https://alhamdacademy.net/#organization",
+  "@id": "https://alhamdacademy.net/#reviews",
   "name": "Alhamd Academy",
   "url": "https://alhamdacademy.net",
   "review": [
