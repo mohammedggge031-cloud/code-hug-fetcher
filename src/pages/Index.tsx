@@ -68,7 +68,7 @@ const DeferredSection = ({ children, minHeight = 260, forceRender = false, delay
   }, [shouldRender, forceRender, delayMs]);
 
   return (
-    <div ref={markerRef}>
+    <div ref={markerRef} className={shouldRender ? "content-auto" : ""}>
       {shouldRender ? <Suspense fallback={<div style={{ minHeight }} />}>{children}</Suspense> : <div style={{ minHeight }} />}
     </div>
   );
