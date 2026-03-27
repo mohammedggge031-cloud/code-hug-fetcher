@@ -122,13 +122,30 @@ const FreeTrial = () => (
     relatedTitleAr="بعد تجربتك، استكشف هذه الدورات"
     jsonLd={{
       "@context": "https://schema.org",
-      "@type": "Offer",
-      name: "Free Trial Quran Class",
-      description: "Book a free 30-minute trial class with a certified Quran teacher. No commitment required.",
-      price: "0",
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      seller: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
+      "@graph": [
+        {
+          "@type": "Offer",
+          name: "Free Trial Quran Class",
+          description: "Book a free 30-minute trial class with a certified Quran teacher. No commitment required.",
+          price: "0",
+          priceCurrency: "USD",
+          availability: "https://schema.org/InStock",
+          seller: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
+        },
+        {
+          "@type": "Event",
+          name: "Free Trial Quran Class - Alhamd Academy",
+          description: "Book a free 30-minute one-on-one trial class with a certified Al-Azhar Quran teacher. No commitment, no payment required.",
+          eventAttendanceMode: "https://schema.org/OnlineEventAttendanceMode",
+          eventStatus: "https://schema.org/EventScheduled",
+          startDate: "2026-01-01",
+          endDate: "2027-12-31",
+          location: { "@type": "VirtualLocation", url: "https://alhamdacademy.net/free-trial" },
+          organizer: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock", url: "https://alhamdacademy.net/free-trial" },
+          isAccessibleForFree: true,
+        }
+      ]
     }}
   />
 );

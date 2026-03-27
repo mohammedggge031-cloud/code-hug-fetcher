@@ -243,6 +243,23 @@ const BlogPost = () => {
   return (
     <div className="min-h-screen">
       <SEOHead title={`${t(titleEn, titleAr)} | Alhamd Academy Blog`} description={t(excerptEn, excerptAr)} canonical={`https://alhamdacademy.net/blog/${dbPost.slug}`} ogType="article" ogImage={dbPost.featured_image} keywords={`${catName}, quran, alhamd academy`} article={{ publishedTime: postDate, modifiedTime: postDate, author: "Alhamd Academy", section: catName }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "BlogPosting",
+        "headline": t(titleEn, titleAr),
+        "description": t(excerptEn, excerptAr),
+        "image": dbPost.featured_image, "datePublished": postDate, "dateModified": postDate,
+        "author": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net/" },
+        "publisher": { "@type": "Organization", "name": "Alhamd Academy", "logo": { "@type": "ImageObject", "url": "https://alhamdacademy.net/favicon-512.png", "width": 512, "height": 512 } },
+        "mainEntityOfPage": { "@type": "WebPage", "@id": `https://alhamdacademy.net/blog/${dbPost.slug}` },
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://alhamdacademy.net/" },
+          { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://alhamdacademy.net/blog" },
+          { "@type": "ListItem", "position": 3, "name": t(titleEn, titleAr), "item": `https://alhamdacademy.net/blog/${dbPost.slug}` }
+        ]
+      }) }} />
       <Navbar />
       <main>
         <section className="bg-hero geometric-pattern pt-32 pb-12 md:pt-40 md:pb-16">
