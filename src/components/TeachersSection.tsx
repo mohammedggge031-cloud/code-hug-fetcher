@@ -14,30 +14,15 @@ const TeachersSection = () => {
   useEffect(() => {
     let cancelled = false;
 
-    const runSync = () => {
-      loadTeachers()
-        .then((data) => {
-          if (!cancelled) setTeachers(data);
-        })
-        .catch(() => {
-          if (!cancelled) setTeachers([]);
-        });
-    };
+    loadTeachers()
+      .then((data) => {
+        if (!cancelled) setTeachers(data);
+      })
+      .catch(() => {
+        if (!cancelled) setTeachers([]);
+      });
 
-    let idleId: number | null = null;
-    const fallbackTimer = window.setTimeout(runSync, 450);
-
-    if ("requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(runSync, { timeout: 1200 });
-    }
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(fallbackTimer);
-      if (idleId !== null && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
-      }
-    };
+    return () => { cancelled = true; };
   }, []);
 
   // Auto-hide: if no teachers returned, render nothing
