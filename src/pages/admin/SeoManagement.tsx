@@ -11,8 +11,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Plus, Trash2, Search } from "lucide-react";
+import { Pencil, Plus, Trash2, Search, Loader2 } from "lucide-react";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
 interface SeoEntry {
   id: string; page_path: string; page_name: string;
@@ -31,38 +32,57 @@ const defaultEntry: Partial<SeoEntry> = {
 };
 
 const SITE_PAGES = [
-  { path: "/", name: "Home" }, { path: "/online-quran-classes", name: "Online Quran Classes" },
-  { path: "/tajweed-course-online", name: "Tajweed Course" }, { path: "/quran-memorization-hifz", name: "Quran Memorization" },
-  { path: "/arabic-for-kids", name: "Arabic for Kids" }, { path: "/arabic-for-adults", name: "Arabic for Adults" },
-  { path: "/islamic-studies-online", name: "Islamic Studies" }, { path: "/ijazah-program", name: "Ijazah Program" },
-  { path: "/female-quran-teacher", name: "Female Quran Teacher" }, { path: "/free-trial", name: "Free Trial" },
-  { path: "/blog", name: "Blog" }, { path: "/videos", name: "Videos" },
+  { path: "/", name: "Home" },
+  { path: "/online-quran-classes", name: "Online Quran Classes" },
+  { path: "/tajweed-course-online", name: "Tajweed Course" },
+  { path: "/quran-memorization-hifz", name: "Quran Memorization" },
+  { path: "/arabic-for-kids", name: "Arabic for Kids" },
+  { path: "/arabic-for-adults", name: "Arabic for Adults" },
+  { path: "/islamic-studies-online", name: "Islamic Studies" },
+  { path: "/ijazah-program", name: "Ijazah Program" },
+  { path: "/female-quran-teacher", name: "Female Quran Teacher" },
+  { path: "/free-trial", name: "Free Trial" },
+  { path: "/blog", name: "Blog" },
+  { path: "/videos", name: "Videos" },
   { path: "/student-success-stories", name: "Student Success Stories" },
   { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide" },
   { path: "/privacy-policy", name: "Privacy Policy" },
+  // Course detail pages
+  { path: "/courses/quran-course", name: "Quran Course" },
+  { path: "/courses/tajweed-course", name: "Tajweed Course Detail" },
+  { path: "/courses/arabic-course", name: "Arabic Course" },
+  { path: "/courses/islamic-studies", name: "Islamic Studies Course" },
+  { path: "/courses/all-in-one-course", name: "All-in-One Course" },
 ];
 
 const SeoManagement = () => {
   const [entries, setEntries] = useState<SeoEntry[]>([]);
   const [editing, setEditing] = useState<Partial<SeoEntry> | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [filter, setFilter] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<SeoEntry | null>(null);
   const { user, isAdmin } = useAuth();
-  const { t } = useAdminLang();
+  const { t, lang } = useAdminLang();
   const { toast } = useToast();
 
   const fetchEntries = async () => {
-    const data = await safeDataRequest<SeoEntry[]>({
-      fallback: [],
-      markGlobalFallbackOnError: false,
-      request: async (signal) => {
-        const { data, error } = await supabase.from("seo_metadata").select("*").order("page_path").abortSignal(signal);
-        if (error) throw error;
-        return data ?? [];
-      },
-    });
-
-    setEntries(data);
+    setIsFetching(true);
+    try {
+      const data = await safeDataRequest<SeoEntry[]>({
+        fallback: [],
+        markGlobalFallbackOnError: false,
+        request: async (signal) => {
+          const { data, error } = await supabase.from("seo_metadata").select("*").order("page_path").abortSignal(signal);
+          if (error) throw error;
+          return data ?? [];
+        },
+      });
+      setEntries(data);
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   useEffect(() => { fetchEntries(); }, []);
@@ -73,19 +93,27 @@ const SeoManagement = () => {
     if (typeof structuredData === "string" && structuredData.trim()) {
       try { structuredData = JSON.parse(structuredData); } catch { toast({ title: t("err.error"), description: "Invalid JSON", variant: "destructive" }); return; }
     }
+    setIsSaving(true);
     try {
       const payload = { ...editing, structured_data: structuredData, updated_by: user?.id };
-      if (isNew) { const { error } = await supabase.from("seo_metadata").insert(payload as any); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
-      else { const { error } = await supabase.from("seo_metadata").update(payload as any).eq("id", editing.id!); if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; } }
+      if (isNew) {
+        const { error } = await supabase.from("seo_metadata").insert(payload as any);
+        if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      } else {
+        const { error } = await supabase.from("seo_metadata").update(payload as any).eq("id", editing.id!);
+        if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      }
       toast({ title: t("ok.done") }); setEditing(null); void fetchEntries();
     } catch {
       toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (entry: SeoEntry) => {
     try {
-      const { error } = await supabase.from("seo_metadata").delete().eq("id", id);
+      const { error } = await supabase.from("seo_metadata").delete().eq("id", entry.id);
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       toast({ title: t("ok.deleted") }); void fetchEntries();
     } catch {
@@ -96,7 +124,7 @@ const SeoManagement = () => {
   const handleInitialize = async () => {
     const existing = entries.map(e => e.page_path);
     const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({ page_path: p.path, page_name: p.name, updated_by: user?.id }));
-    if (toInsert.length === 0) { toast({ title: t("ok.done") }); return; }
+    if (toInsert.length === 0) { toast({ title: t("ok.done"), description: lang === "ar" ? "جميع الصفحات مهيأة بالفعل" : "All pages already initialized" }); return; }
     try {
       const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
@@ -139,7 +167,15 @@ const SeoManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(entry => (
+              {isFetching ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-12">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                  </TableCell>
+                </TableRow>
+              ) : filtered.length === 0 ? (
+                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">{t("seo.empty")}</TableCell></TableRow>
+              ) : filtered.map(entry => (
                 <TableRow key={entry.id}>
                   <TableCell className="font-medium">{entry.page_name}</TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{entry.page_path}</TableCell>
@@ -147,16 +183,26 @@ const SeoManagement = () => {
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(entry); setIsNew(false); }}><Pencil className="h-4 w-4" /></Button>
-                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(entry.id)}><Trash2 className="h-4 w-4" /></Button>}
+                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(entry)}><Trash2 className="h-4 w-4" /></Button>}
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {filtered.length === 0 && <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">{t("seo.empty")}</TableCell></TableRow>}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={() => { if (deleteTarget) { handleDelete(deleteTarget); setDeleteTarget(null); } }}
+        title={lang === "ar" ? "حذف إعدادات السيو؟" : "Delete SEO Entry?"}
+        description={lang === "ar" ? "سيتم حذف إعدادات السيو لهذه الصفحة نهائياً." : "SEO settings for this page will be permanently deleted."}
+        confirmLabel={t("ok.deleted")}
+        cancelLabel={t("seo.cancel")}
+      />
 
       <Dialog open={!!editing} onOpenChange={open => !open && setEditing(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -168,8 +214,8 @@ const SeoManagement = () => {
                 <div className="space-y-2"><Label>Page Name</Label><Input value={editing.page_name || ""} onChange={e => setEditing({ ...editing, page_name: e.target.value })} /></div>
               </div>
               <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Basic SEO</h3>
-              <div className="space-y-2"><Label>Page Title</Label><Input value={editing.title || ""} onChange={e => setEditing({ ...editing, title: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Meta Description</Label><Textarea value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} rows={2} /></div>
+              <div className="space-y-2"><Label>Page Title</Label><Input value={editing.title || ""} onChange={e => setEditing({ ...editing, title: e.target.value })} /><p className="text-xs text-muted-foreground">{(editing.title || "").length}/60 characters</p></div>
+              <div className="space-y-2"><Label>Meta Description</Label><Textarea value={editing.description || ""} onChange={e => setEditing({ ...editing, description: e.target.value })} rows={2} /><p className="text-xs text-muted-foreground">{(editing.description || "").length}/160 characters</p></div>
               <div className="space-y-2"><Label>Keywords</Label><Input value={editing.keywords || ""} onChange={e => setEditing({ ...editing, keywords: e.target.value })} /></div>
               <div className="space-y-2"><Label>Canonical URL</Label><Input value={editing.canonical_url || ""} onChange={e => setEditing({ ...editing, canonical_url: e.target.value })} dir="ltr" /></div>
               <div className="flex items-center gap-2"><Switch checked={editing.no_index || false} onCheckedChange={v => setEditing({ ...editing, no_index: v })} /><Label>No Index</Label></div>
@@ -190,7 +236,9 @@ const SeoManagement = () => {
               <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide pt-2">Structured Data (JSON-LD)</h3>
               <Textarea value={typeof editing.structured_data === "string" ? editing.structured_data : JSON.stringify(editing.structured_data, null, 2) || ""} onChange={e => setEditing({ ...editing, structured_data: e.target.value })} rows={6} className="font-mono text-xs" dir="ltr" />
               <div className="flex gap-2 pt-2">
-                <Button onClick={handleSave} className="flex-1">{t("seo.save")}</Button>
+                <Button onClick={handleSave} className="flex-1" disabled={isSaving}>
+                  {isSaving ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : t("seo.save")}
+                </Button>
                 <Button variant="outline" onClick={() => setEditing(null)}>{t("seo.cancel")}</Button>
               </div>
             </div>

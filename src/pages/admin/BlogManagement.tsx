@@ -10,12 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Search, Loader2 } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
-
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
 interface BlogPost {
   id: string; title_en: string; title_ar: string; slug: string;
@@ -38,13 +38,14 @@ const emptyPost = {
 const BlogManagement = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [editing, setEditing] = useState<typeof emptyPost & { id?: string }>(emptyPost);
+  const [editing, setEditing] = useState<typeof emptyPost & { id?: string; published_at?: string | null }>(emptyPost);
   const [showEditor, setShowEditor] = useState(false);
   const [search, setSearch] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [activeTab, setActiveTab] = useState<"en" | "ar">("en");
   const [isFetching, setIsFetching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
   const { isAdmin } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
@@ -95,6 +96,7 @@ const BlogManagement = () => {
       category_id: post.category_id || "", featured_image: post.featured_image || "",
       status: post.status, tags: post.tags || [],
       read_time_en: post.read_time_en || "", read_time_ar: post.read_time_ar || "",
+      published_at: post.published_at,
     });
     setTagsInput((post.tags || []).join(", "));
     setActiveTab("en"); setShowEditor(true);
@@ -108,6 +110,16 @@ const BlogManagement = () => {
     setIsSaving(true);
     const slug = editing.slug || generateSlug(editing.title_en);
     const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean);
+
+    // Only set published_at on first publish, preserve existing value on edit
+    let publishedAt = editing.published_at || null;
+    if (editing.status === "published" && !publishedAt) {
+      publishedAt = new Date().toISOString();
+    }
+    if (editing.status === "draft") {
+      publishedAt = null;
+    }
+
     const payload = {
       title_en: editing.title_en, title_ar: editing.title_ar, slug,
       excerpt_en: editing.excerpt_en || null, excerpt_ar: editing.excerpt_ar || null,
@@ -115,7 +127,7 @@ const BlogManagement = () => {
       category_id: editing.category_id || null, featured_image: editing.featured_image || null,
       status: editing.status as "draft" | "published", tags,
       read_time_en: editing.read_time_en || null, read_time_ar: editing.read_time_ar || null,
-      published_at: editing.status === "published" ? new Date().toISOString() : null,
+      published_at: publishedAt,
     };
 
     try {
@@ -138,10 +150,9 @@ const BlogManagement = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm(t("blog.confirm_delete"))) return;
+  const handleDelete = async (post: BlogPost) => {
     try {
-      const { error } = await supabase.from("blog_posts").delete().eq("id", id);
+      const { error } = await supabase.from("blog_posts").delete().eq("id", post.id);
       if (error) {
         toast({ title: t("err.error"), description: error.message, variant: "destructive" });
         return;
@@ -170,8 +181,6 @@ const BlogManagement = () => {
         <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
       </div>
 
-      
-
       <div className="relative w-full sm:w-80">
         <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t("blog.search")} className="ps-10" />
@@ -190,7 +199,19 @@ const BlogManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(post => (
+              {isFetching ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                  </TableCell>
+                </TableRow>
+              ) : filtered.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                    {t("blog.empty")}
+                  </TableCell>
+                </TableRow>
+              ) : filtered.map(post => (
                 <TableRow key={post.id}>
                   <TableCell>
                     <div>
@@ -205,22 +226,26 @@ const BlogManagement = () => {
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(post)}><Pencil className="h-4 w-4" /></Button>
                       <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")}><Eye className="h-4 w-4" /></Button>
-                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => handleDelete(post.id)}><Trash2 className="h-4 w-4" /></Button>}
+                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(post)}><Trash2 className="h-4 w-4" /></Button>}
                     </div>
                   </TableCell>
                 </TableRow>
               ))}
-              {filtered.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                    {isFetching ? t("team.loading") : t("blog.empty")}
-                  </TableCell>
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={() => { if (deleteTarget) { handleDelete(deleteTarget); setDeleteTarget(null); } }}
+        title={t("blog.confirm_delete")}
+        description={lang === "ar" ? "سيتم حذف هذا المقال نهائياً. لا يمكن التراجع." : "This post will be permanently deleted. This cannot be undone."}
+        confirmLabel={t("ok.deleted")}
+        cancelLabel={t("blog.cancel")}
+      />
 
       <Dialog open={showEditor} onOpenChange={setShowEditor}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
@@ -268,7 +293,7 @@ const BlogManagement = () => {
             </div>
             <div className="flex justify-end gap-3">
               <Button variant="outline" onClick={() => setShowEditor(false)}>{t("blog.cancel")}</Button>
-              <Button onClick={handleSave} disabled={isSaving}>{isSaving ? t("login.loading") : (editing.id ? t("blog.update") : t("blog.save"))}</Button>
+              <Button onClick={handleSave} disabled={isSaving}>{isSaving ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : (editing.id ? t("blog.update") : t("blog.save"))}</Button>
             </div>
           </div>
         </DialogContent>

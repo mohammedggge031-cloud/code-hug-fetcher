@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, Trash2, Copy, Search, Image as ImageIcon } from "lucide-react";
+import { Upload, Trash2, Copy, Search, Image as ImageIcon, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
+import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
 interface MediaAsset {
   id: string; file_name: string; file_url: string;
@@ -19,22 +20,28 @@ const MediaLibrary = () => {
   const [assets, setAssets] = useState<MediaAsset[]>([]);
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<MediaAsset | null>(null);
   const { isAdmin } = useAuth();
-  const { t } = useAdminLang();
+  const { t, lang } = useAdminLang();
   const { toast } = useToast();
 
   const fetchAssets = async () => {
-    const data = await safeDataRequest<MediaAsset[]>({
-      fallback: [],
-      markGlobalFallbackOnError: false,
-      request: async (signal) => {
-        const { data, error } = await supabase.from("media_assets").select("*").order("created_at", { ascending: false }).abortSignal(signal);
-        if (error) throw error;
-        return data ?? [];
-      },
-    });
-
-    setAssets(data);
+    setIsFetching(true);
+    try {
+      const data = await safeDataRequest<MediaAsset[]>({
+        fallback: [],
+        markGlobalFallbackOnError: false,
+        request: async (signal) => {
+          const { data, error } = await supabase.from("media_assets").select("*").order("created_at", { ascending: false }).abortSignal(signal);
+          if (error) throw error;
+          return data ?? [];
+        },
+      });
+      setAssets(data);
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   useEffect(() => { fetchAssets(); }, []);
@@ -70,12 +77,15 @@ const MediaLibrary = () => {
   const copyUrl = (url: string) => { navigator.clipboard.writeText(url); toast({ title: t("media.copied"), description: t("media.copied_desc") }); };
 
   const handleDelete = async (asset: MediaAsset) => {
-    if (!confirm(t("media.confirm_delete"))) return;
     try {
       const urlParts = asset.file_url.split("/media/");
       const storagePath = urlParts[urlParts.length - 1];
       await supabase.storage.from("media").remove([storagePath]);
-      await supabase.from("media_assets").delete().eq("id", asset.id);
+      const { error } = await supabase.from("media_assets").delete().eq("id", asset.id);
+      if (error) {
+        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
+        return;
+      }
       toast({ title: t("ok.deleted") });
       void fetchAssets();
     } catch {
@@ -95,7 +105,10 @@ const MediaLibrary = () => {
         <div>
           <input type="file" id="media-upload" multiple accept="image/*,video/*" className="hidden" onChange={handleUpload} />
           <Button asChild disabled={uploading}>
-            <label htmlFor="media-upload" className="cursor-pointer"><Upload className="h-4 w-4 me-1" /> {uploading ? t("media.uploading") : t("media.upload")}</label>
+            <label htmlFor="media-upload" className="cursor-pointer">
+              {uploading ? <Loader2 className="h-4 w-4 me-1 animate-spin" /> : <Upload className="h-4 w-4 me-1" />}
+              {uploading ? t("media.uploading") : t("media.upload")}
+            </label>
           </Button>
         </div>
       </div>
@@ -105,7 +118,11 @@ const MediaLibrary = () => {
         <Input value={search} onChange={e => setSearch(e.target.value)} placeholder={t("media.search")} className="ps-10" />
       </div>
 
-      {filtered.length > 0 ? (
+      {isFetching ? (
+        <div className="flex justify-center py-16">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      ) : filtered.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {filtered.map(asset => (
             <Card key={asset.id} className="group overflow-hidden">
@@ -117,7 +134,7 @@ const MediaLibrary = () => {
                 )}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                   <Button size="icon" variant="secondary" className="h-8 w-8" onClick={() => copyUrl(asset.file_url)}><Copy className="h-4 w-4" /></Button>
-                  {isAdmin && <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => handleDelete(asset)}><Trash2 className="h-4 w-4" /></Button>}
+                  {isAdmin && <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => setDeleteTarget(asset)}><Trash2 className="h-4 w-4" /></Button>}
                 </div>
               </div>
               <CardContent className="p-2">
@@ -133,6 +150,17 @@ const MediaLibrary = () => {
           <p>{t("media.empty")}</p>
         </div>
       )}
+
+      {/* Delete Confirmation */}
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={() => { if (deleteTarget) { handleDelete(deleteTarget); setDeleteTarget(null); } }}
+        title={t("media.confirm_delete")}
+        description={lang === "ar" ? "سيتم حذف هذا الملف نهائياً من التخزين." : "This file will be permanently deleted from storage."}
+        confirmLabel={t("ok.deleted")}
+        cancelLabel={t("blog.cancel")}
+      />
     </div>
   );
 };
