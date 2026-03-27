@@ -111,16 +111,11 @@ const HeroSection = () => {
 
             {/* Stats with professional dividers */}
             <div className="animate-fade-up motion-delay-500 mt-10 sm:mt-12 lg:mx-0">
-              <div className="flex flex-wrap items-center justify-center gap-y-5 lg:justify-start">
-                {stats.map((s, index) => (
-                  <div key={s.num} className="flex items-center">
-                    <div className="px-3 text-center sm:px-4 lg:text-start">
-                      <div className="text-2xl font-bold text-accent sm:text-2xl md:text-3xl">{s.num}</div>
-                      <div className="mt-0.5 text-xs font-medium text-primary-foreground/85 sm:text-sm">{t(s.labelEn, s.labelAr)}</div>
-                    </div>
-                    {index < stats.length - 1 && (
-                      <div className="hidden sm:block h-10 w-px bg-primary-foreground/20" />
-                    )}
+              <div className="grid grid-cols-2 gap-y-5 gap-x-2 sm:grid-cols-5 lg:justify-items-start justify-items-center">
+                {stats.map((s) => (
+                  <div key={s.num} className="text-center lg:text-start sm:border-e sm:last:border-e-0 border-primary-foreground/20 px-2">
+                    <div className="text-2xl font-bold text-accent md:text-3xl">{s.num}</div>
+                    <div className="mt-0.5 text-xs font-medium text-primary-foreground/85 sm:text-sm">{t(s.labelEn, s.labelAr)}</div>
                   </div>
                 ))}
               </div>
