@@ -190,6 +190,7 @@ const ServicePageJsonLd = ({ jsonLd, testimonials, faqJsonLd, breadcrumbJsonLd }
   );
 };
 
+const ServicePageLayout = (props: ServicePageProps) => {
   const { t, lang } = useLanguage();
   const canonicalPath = props.canonical ? new URL(props.canonical).pathname : "/";
   const { seo } = useSeoMetadata(canonicalPath);
