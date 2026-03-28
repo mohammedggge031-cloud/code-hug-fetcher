@@ -82,6 +82,8 @@ const HeroDesktopGallery = forwardRef<HTMLDivElement>((_, ref) => {
       </div>
     </div>
   );
-};
+});
+
+HeroDesktopGallery.displayName = "HeroDesktopGallery";
 
 export default HeroDesktopGallery;
