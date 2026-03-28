@@ -461,7 +461,7 @@ const Navbar = () => {
             <div className="flex items-center gap-1.5">
               <a
                 href="#contact"
-                onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }}
+                onClick={(e) => handleAnchorClick(e, "#contact")}
                 className="flex items-center whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-elevated transition-all hover:brightness-110"
               >
                 <Sparkles className="me-1.5 h-3.5 w-3.5" />
@@ -650,7 +650,7 @@ const Navbar = () => {
         <div className="px-6 pb-6 pt-2">
           <a
             href="#contact"
-            onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); setMobileOpen(false); }}
+            onClick={(e) => { handleAnchorClick(e, "#contact"); setMobileOpen(false); }}
             className="block w-full py-3.5 text-center text-sm font-bold uppercase tracking-wider rounded-xl bg-accent text-accent-foreground hover:brightness-110 transition-all shadow-elevated"
           >
             {t("Book Your Free Trial", "احجز حصتك المجانية")}
