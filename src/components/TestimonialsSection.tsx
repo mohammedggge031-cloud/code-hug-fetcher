@@ -14,8 +14,8 @@ const testimonials = [
     roleAr: "طالب",
     gender: "male",
     country: "us",
-    textEn: "Assalamu alaykum! The one-on-one sessions helped me improve my Tajweed so much. My teacher corrects every letter patiently and I can feel real progress every week 📖",
-    textAr: "السلام عليكم! الحصص الفردية ساعدتني أحسّن التجويد بشكل كبير. معلمي يصحح كل حرف بصبر وأحس بتقدم حقيقي كل أسبوع 📖",
+    textEn: "The one-on-one sessions made a huge difference in my Tajweed. My teacher patiently corrects every letter, and I genuinely feel myself improving week after week.",
+    textAr: "الحصص الفردية أحدثت فرق كبير في التجويد عندي. معلمي بيصحح كل حرف بصبر وفعلاً حاسس إني بتحسن كل أسبوع.",
   },
   {
     nameEn: "Zayan",
@@ -24,8 +24,8 @@ const testimonials = [
     roleAr: "طالب",
     gender: "male",
     country: "bd",
-    textEn: "Wa alaykum salam! I started from zero and now I can read Quran fluently. The Noor Al-Bayan method they use is amazing — I learned the Arabic letters in just 2 weeks! 🤲",
-    textAr: "وعليكم السلام! بدأت من الصفر ودلوقتي أقدر أقرأ القرآن بطلاقة. طريقة نور البيان اللي بيستخدموها رائعة — اتعلمت الحروف العربية في أسبوعين بس! 🤲",
+    textEn: "I started from zero — couldn't even read Arabic letters. Now I read Quran fluently thanks to the Noor Al-Bayan method. Took me only 2 weeks to learn the alphabet!",
+    textAr: "بدأت من الصفر — ما كنت أعرف أقرأ الحروف العربية. دلوقتي بأقرأ القرآن بطلاقة بفضل طريقة نور البيان. اتعلمت الحروف في أسبوعين بس!",
   },
   {
     nameEn: "Aisha M.",
@@ -34,8 +34,8 @@ const testimonials = [
     roleAr: "طالبة",
     gender: "female",
     country: "gb",
-    textEn: "Wa alaykum salam! As a sister, having a female teacher made me so comfortable. She's like a big sister who guides me through my Hifz journey with so much love and patience 💜",
-    textAr: "وعليكم السلام! كأخت، وجود معلمة أنثى خلاني مرتاحة جداً. هي زي الأخت الكبيرة اللي بتوجهني في رحلة الحفظ بحب وصبر كبير 💜",
+    textEn: "Having a female teacher was so important to me. She feels like an older sister guiding me through my Hifz journey with love and patience 💜",
+    textAr: "وجود معلمة كان مهم جداً بالنسبة لي. حاسة إنها زي أختي الكبيرة بتوجهني في رحلة الحفظ بحب وصبر 💜",
   },
   {
     nameEn: "Issa",
@@ -44,8 +44,8 @@ const testimonials = [
     roleAr: "ولي أمر",
     gender: "male",
     country: "ca",
-    textEn: "Assalamu alaykum Sheikh! The way the teachers treat my kids is outstanding. They make learning feel like fun, and my children actually look forward to their classes every day 💚",
-    textAr: "السلام عليكم يا شيخ! طريقة تعامل المعلمين مع أطفالي رائعة. يجعلون التعلم ممتعًا وأطفالي يتطلعون لحصصهم كل يوم 💚",
+    textEn: "Honestly, I'm impressed by how the teachers handle my kids. They make learning feel like play — my children actually ask for their Quran class every day.",
+    textAr: "بصراحة معجب جداً بطريقة المعلمين مع أطفالي. يخلّوا التعلم زي اللعب — أطفالي هم اللي بيطلبوا حصة القرآن كل يوم.",
   },
   {
     nameEn: "Naveed Shahul",
@@ -54,8 +54,8 @@ const testimonials = [
     roleAr: "طالب",
     gender: "male",
     country: "bd",
-    textEn: "Wa alaykum salam 🙏 I was amazed by how organized and professional the system is. Everything from booking to class follow-ups runs so smoothly.",
-    textAr: "وعليكم السلام 🙏 أذهلني مدى تنظيم واحترافية النظام. كل شيء من الحجز إلى متابعة الحصص يسير بسلاسة تامة.",
+    textEn: "Everything runs so smoothly here. From booking to class follow-ups, the whole system is organized and professional. No complaints at all.",
+    textAr: "كل حاجة بتمشي بسلاسة هنا. من الحجز لمتابعة الحصص، النظام كله منظم واحترافي. مفيش أي شكوى.",
   },
   {
     nameEn: "Hamza A.",
@@ -64,8 +64,8 @@ const testimonials = [
     roleAr: "طالب بالغ",
     gender: "male",
     country: "ae",
-    textEn: "JazakAllah khair! The teachers genuinely care about your progress. They celebrate every milestone with you and always encourage you to keep going 🌟",
-    textAr: "جزاكم الله خيراً! المعلمون يهتمون حقًا بتقدمك. يحتفلون معك بكل إنجاز ويشجعونك دائمًا على الاستمرار 🌟",
+    textEn: "What I appreciate most is that the teachers truly care. They celebrate every small milestone with you and always push you to keep going 🌟",
+    textAr: "أكتر حاجة بقدّرها إن المعلمين فعلاً مهتمين. بيحتفلوا معاك بكل إنجاز صغير وبيشجعوك تكمل دايماً 🌟",
   },
   {
     nameEn: "Ruqayyah N.",
@@ -74,8 +74,8 @@ const testimonials = [
     roleAr: "ولية أمر",
     gender: "female",
     country: "se",
-    textEn: "Wa alaykum salam! What sets Alhamd Academy apart is the personal attention. The teachers know each student's strengths and adapt their teaching accordingly.",
-    textAr: "وعليكم السلام! ما يميز أكاديمية الحمد هو الاهتمام الشخصي. المعلمون يعرفون نقاط قوة كل طالب ويكيّفون تدريسهم وفقًا لذلك.",
+    textEn: "The personal attention here is unmatched. Teachers know each student's strengths and weaknesses and adapt their approach accordingly.",
+    textAr: "الاهتمام الشخصي هنا مالوش مثيل. المعلمون يعرفوا نقاط قوة وضعف كل طالب ويكيّفوا أسلوبهم على حسب كده.",
   },
   {
     nameEn: "Fatima K.",
@@ -84,8 +84,8 @@ const testimonials = [
     roleAr: "طالبة",
     gender: "female",
     country: "de",
-    textEn: "Assalamu alaykum! I was nervous about learning Quran online but the teachers made it so easy. Now I look forward to every class. Best decision I ever made! 🌸",
-    textAr: "السلام عليكم! كنت متوترة من تعلم القرآن أونلاين لكن المعلمات سهّلوا كل شيء. دلوقتي بستنى كل حصة بشوق. أحسن قرار اتخذته! 🌸",
+    textEn: "I was really nervous about online Quran learning at first, but the teachers put me at ease right away. Best decision I've made 🌸",
+    textAr: "كنت متوترة في الأول من تعلم القرآن أونلاين، بس المعلمات طمّنوني من أول حصة. أحسن قرار اتخذته 🌸",
   },
   {
     nameEn: "Tariq J.",
@@ -94,8 +94,8 @@ const testimonials = [
     roleAr: "طالب",
     gender: "male",
     country: "ng",
-    textEn: "Assalamu alaykum! The academy's structured curriculum and warm, welcoming environment made me feel comfortable from day one. Truly a world-class experience 🤲",
-    textAr: "السلام عليكم! المنهج المنظم والبيئة الدافئة والمرحبة جعلتني أشعر بالراحة من اليوم الأول. تجربة عالمية المستوى حقًا 🤲",
+    textEn: "بارك الله فيكم — the structured curriculum and welcoming environment made me comfortable from day one. A truly world-class experience.",
+    textAr: "بارك الله فيكم — المنهج المنظم والبيئة المرحبة خلتني مرتاح من أول يوم. تجربة عالمية بكل معنى الكلمة.",
   },
 ];
 
