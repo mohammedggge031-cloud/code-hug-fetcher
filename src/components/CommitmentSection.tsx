@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 
-import imgIntegrity from "@/assets/features/integrity-trust.png";
-import imgPatience from "@/assets/features/patience-compassion.png";
-import imgResults from "@/assets/features/results-driven.png";
-import imgAuthentic from "@/assets/features/authentic-education.png";
+import imgIntegrity from "@/assets/features/integrity-trust.webp";
+import imgPatience from "@/assets/features/patience-compassion.webp";
+import imgResults from "@/assets/features/results-driven.webp";
+import imgAuthentic from "@/assets/features/authentic-education.webp";
 
 const values = [
   {
