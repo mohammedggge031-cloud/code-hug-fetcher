@@ -1,6 +1,7 @@
 import { GraduationCap } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { forwardRef } from "react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const FloatingBookingFAB = forwardRef<HTMLButtonElement>((_, ref) => {
   const { t } = useLanguage();
@@ -9,7 +10,7 @@ const FloatingBookingFAB = forwardRef<HTMLButtonElement>((_, ref) => {
     <button
       ref={ref}
       type="button"
-      onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+      onClick={() => scrollToContactForm()}
       className="floating-action-shell floating-fab-booking fab-gentle-bounce group relative"
       aria-label={t("Book a Free Trial", "احجز حصة مجانية")}
       style={{ animationDelay: "0.25s" }}
