@@ -160,8 +160,9 @@ const QuranVersesSection = () => {
                     {verse.type === "quran" ? t("Quran", "قرآن") : t("Hadith", "حديث")}
                   </span>
                   <span className="text-xs sm:text-sm font-semibold text-accent/80 bg-accent/[0.08] px-4 py-1.5 rounded-full border border-accent/10">
-                  {t(verse.referenceEn, verse.referenceAr)}
-                </span>
+                    {t(verse.referenceEn, verse.referenceAr)}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
