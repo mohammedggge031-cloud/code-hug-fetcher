@@ -32,8 +32,8 @@ const values = [
     image: imgAuthentic,
     titleEn: "Authentic Islamic Education",
     titleAr: "تعليم إسلامي أصيل",
-    descEn: "Our curriculum is rooted in Al-Azhar University — the world's oldest and most prestigious Islamic institution, founded in 970 CE. All teachers hold degrees from Al-Azhar and carry Ijazah with connected Sanad.",
-    descAr: "مناهجنا مبنية على جامعة الأزهر الشريف — أقدم وأعرق مؤسسة إسلامية في العالم، تأسست عام 970م. جميع المعلمين حاصلون على شهادات من الأزهر وإجازات بسند متصل.",
+    descEn: "Our curriculum is rooted in Al-Azhar University — the world's oldest and most prestigious Islamic institution. All teachers hold degrees from Al-Azhar and carry Ijazah with connected Sanad.",
+    descAr: "مناهجنا مبنية على جامعة الأزهر الشريف — أقدم وأعرق مؤسسة إسلامية في العالم. جميع المعلمين حاصلون على شهادات من الأزهر وإجازات بسند متصل.",
   },
 ];
 
@@ -71,16 +71,16 @@ const CommitmentSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group flex flex-col items-center text-center p-6 rounded-2xl bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 transition-all duration-300"
+              className="group flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="w-24 h-24 mb-5 rounded-2xl overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+              <div className="w-28 h-28 mb-6 rounded-full bg-accent/10 border-2 border-accent/20 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/40 transition-all duration-300">
                 <img
                   src={v.image}
                   alt={v.titleEn}
                   width={96}
                   height={96}
                   loading="lazy"
-                  className="w-full h-full object-contain"
+                  className="w-20 h-20 object-contain drop-shadow-sm"
                 />
               </div>
               <h3 className="text-lg font-bold mb-2">{t(v.titleEn, v.titleAr)}</h3>
