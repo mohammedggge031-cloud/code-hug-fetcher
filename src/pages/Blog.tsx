@@ -140,7 +140,7 @@ const Blog = () => {
     <div className="min-h-screen">
       <SEOHead
         title="Quran & Islamic Studies Blog | Alhamd Academy"
-        description="Read articles on Quran, Tajweed, Arabic language, and Islamic studies. Tips for Quran memorization, Tajweed rules, Islamic knowledge and more from certified teachers."
+        description="Quran, Tajweed, Arabic & Islamic studies articles. Memorization tips, Tajweed rules & more from certified Al-Azhar teachers."
         canonical="https://alhamdacademy.net/blog"
         keywords="quran blog, tajweed articles, islamic studies blog, arabic language tips, quran memorization tips, learn quran articles, islamic education blog"
         dynamicSeo={seo}
