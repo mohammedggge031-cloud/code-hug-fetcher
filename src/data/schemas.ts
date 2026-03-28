@@ -193,9 +193,55 @@ export const faqSchema = {
 export const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": "https://alhamdacademy.net/#breadcrumb",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://alhamdacademy.net/" }
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://alhamdacademy.net/" },
+    { "@type": "ListItem", "position": 2, "name": "Online Quran Classes", "item": "https://alhamdacademy.net/online-quran-classes" },
+    { "@type": "ListItem", "position": 3, "name": "Blog", "item": "https://alhamdacademy.net/blog" },
+    { "@type": "ListItem", "position": 4, "name": "Free Trial", "item": "https://alhamdacademy.net/free-trial" }
   ]
+};
+
+// VideoObject schema for rich video snippets in search
+export const videoSchema = {
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "@id": "https://alhamdacademy.net/#intro-video",
+  "name": "Learn Quran Online with Alhamd Academy — Introduction",
+  "description": "Watch how Alhamd Academy provides one-on-one online Quran, Arabic & Islamic studies classes with certified Al-Azhar teachers for kids and adults worldwide.",
+  "thumbnailUrl": "https://alhamdacademy.net/og-image.jpg",
+  "uploadDate": "2024-01-01",
+  "contentUrl": "https://alhamdacademy.net/videos",
+  "embedUrl": "https://alhamdacademy.net/videos",
+  "publisher": { "@id": "https://alhamdacademy.net/#organization" },
+  "inLanguage": "en",
+  "duration": "PT3M"
+};
+
+// EducationalOccupationalProgram — Google Education vertical rich result
+export const programSchema = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOccupationalProgram",
+  "@id": "https://alhamdacademy.net/#program",
+  "name": "Online Quran & Arabic Education Program",
+  "description": "Comprehensive online Quran memorization (Hifz), Tajweed, Arabic language, and Islamic studies program with certified Al-Azhar teachers. From beginner to Ijazah certification.",
+  "provider": { "@id": "https://alhamdacademy.net/#organization" },
+  "educationalProgramMode": "online",
+  "timeToComplete": "P12M",
+  "occupationalCategory": "25-3099.00",
+  "programType": "Certificate",
+  "offers": {
+    "@type": "Offer",
+    "price": "21",
+    "priceCurrency": "USD",
+    "priceSpecification": {
+      "@type": "PriceSpecification",
+      "price": "21",
+      "priceCurrency": "USD",
+      "unitText": "month"
+    }
+  },
+  "educationalCredentialAwarded": "Ijazah Certification with Connected Sanad"
 };
 
 export const organizationSchema = {
@@ -297,7 +343,15 @@ export const websiteSchema = {
   "url": "https://alhamdacademy.net",
   "publisher": { "@id": "https://alhamdacademy.net/#organization" },
   "inLanguage": ["en", "ar"],
-  "about": "Online Quran, Arabic & Islamic education with certified Al-Azhar teachers"
+  "about": "Online Quran, Arabic & Islamic education with certified Al-Azhar teachers",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://alhamdacademy.net/blog?q={search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
 };
 
 
@@ -321,7 +375,8 @@ export const speakableSchema = {
   "url": "https://alhamdacademy.net/",
   "inLanguage": "en",
   "datePublished": "2020-01-01",
-  "dateModified": "2026-03-24"
+  "dateModified": "2026-03-28",
+  "breadcrumb": { "@id": "https://alhamdacademy.net/#breadcrumb" }
 };
 
 export const serviceSchema = {
@@ -493,5 +548,7 @@ export const allSchemas = {
     stripContext(serviceSchema),
     stripContext(howToSchema),
     stripContext(courseListSchema),
+    stripContext(videoSchema),
+    stripContext(programSchema),
   ]
 };
