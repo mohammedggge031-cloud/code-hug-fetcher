@@ -105,7 +105,7 @@ const QuranVersesSection = () => {
             <span className="block w-8 h-px bg-accent/60" />
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight">
-            {t("Inspiration from the Quran", "إلهام من القرآن الكريم")}
+            {t("Inspiration from the Quran & Sunnah", "إلهام من القرآن والسنة")}
           </h2>
         </motion.div>
 
