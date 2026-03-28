@@ -67,8 +67,7 @@ export const courseSchemas = [
     "teaches": "Arabic reading, writing, grammar (Nahw & Sarf), and conversation skills",
     "about": ["Arabic Language", "Learn Arabic", "Arabic Grammar", "Arabic Conversation"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.8, "ratingCount": 40, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
@@ -83,8 +82,7 @@ export const courseSchemas = [
     "teaches": "Islamic jurisprudence, creed, Quran interpretation, Prophetic traditions, and Prophet's biography",
     "about": ["Islamic Studies", "Fiqh", "Aqeedah", "Tafseer", "Hadith", "Seerah"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.9, "ratingCount": 30, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
@@ -100,8 +98,7 @@ export const courseSchemas = [
     "teaches": "Complete Quran recitation with Ijazah certification in Hafs 'an 'Asim and other Qiraat",
     "about": ["Ijazah", "Sanad", "Quran Certification", "Hafs an Asim"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "15", "priceCurrency": "USD", "unitText": "per hour", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/ijazah-program" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 5.0, "ratingCount": 20, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "15", "priceCurrency": "USD", "unitText": "per hour", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/ijazah-program" }
   }
 ];
 
