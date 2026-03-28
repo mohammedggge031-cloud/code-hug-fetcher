@@ -2,6 +2,7 @@ import ServicePageLayout from "@/components/ServicePageLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Award, Clock, DollarSign, CheckCircle, Star, Sparkles } from "lucide-react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const RELATED = [
   { titleEn: "Tajweed Course Online", titleAr: "دورة التجويد", href: "/tajweed-course-online" },
@@ -95,8 +96,16 @@ const IjazahPricingSection = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   const contactEl = document.getElementById("contact-section") || document.querySelector("[data-contact]");
-                  if (contactEl) contactEl.scrollIntoView({ behavior: "smooth" });
-                  else window.location.href = "/#contact";
+                  if (contactEl) {
+                    contactEl.scrollIntoView({ behavior: "smooth" });
+                    setTimeout(() => {
+                      const nameInput = document.getElementById("fullName") as HTMLInputElement | null;
+                      nameInput?.focus({ preventScroll: true });
+                    }, 600);
+                  } else {
+                    window.location.href = "/#contact";
+                  }
+                }
                 }}
                 className="block w-full text-center px-6 py-4 rounded-xl bg-accent text-accent-foreground font-bold text-base hover:bg-accent/90 transition-colors shadow-lg"
               >
