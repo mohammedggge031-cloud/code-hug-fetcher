@@ -104,20 +104,7 @@ const StudentSuccessStories = () => {
     about: { "@type": "EducationalOrganization", name: "Alhamd Academy" },
   };
 
-  const reviewJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    "@id": "https://alhamdacademy.net/#organization",
-    name: "Alhamd Academy",
-    url: "https://alhamdacademy.net",
-    review: stories.map((s, i) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: s.name },
-      datePublished: `2025-0${i + 1}-15`,
-      reviewRating: { "@type": "Rating", ratingValue: s.rating, bestRating: 5 },
-      reviewBody: s.textEn,
-    })),
-  };
+  // Reviews removed from structured data — Google doesn't support review snippets on EducationalOrganization
 
   return (
     <div className="min-h-screen bg-background font-body">

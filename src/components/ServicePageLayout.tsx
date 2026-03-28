@@ -169,21 +169,12 @@ const ServicePageJsonLd = ({ jsonLd, testimonials, faqJsonLd, breadcrumbJsonLd }
     };
   }, []);
 
-  // Strip aggregateRating from the course jsonLd — it lives only on organizationSchema
+  // aggregateRating removed — Google doesn't support review snippets on Course/EducationalOrganization
   const { aggregateRating: _removed, ...cleanJsonLd } = jsonLd as any;
 
   return (
     <div ref={containerRef} style={{ display: 'none' }}>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        ...cleanJsonLd,
-        review: testimonials.map((t, i) => ({
-          "@type": "Review",
-          author: { "@type": "Person", name: t.name },
-          datePublished: `2025-${String(i + 1).padStart(2, "0")}-15`,
-          reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
-          reviewBody: t.textEn,
-        })),
-      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
     </div>

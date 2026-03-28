@@ -489,7 +489,7 @@ export const allSchemas = {
     ...courseSchemas.map(stripContext),
     stripContext(faqSchema),
     stripContext(breadcrumbSchema),
-    stripContext(reviewSchema),
+    
     stripContext(speakableSchema),
     stripContext(serviceSchema),
     stripContext(howToSchema),
