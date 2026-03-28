@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useCallback, useEffect, useRef, forwardRef } from "react";
 import { getFlagUrl } from "@/data/countries";
-import avatarMale from "@/assets/avatar-male.png";
-import avatarFemale from "@/assets/avatar-female.png";
+import avatarMale from "@/assets/avatar-male.webp";
+import avatarFemale from "@/assets/avatar-female.webp";
 
 const testimonials = [
   {
