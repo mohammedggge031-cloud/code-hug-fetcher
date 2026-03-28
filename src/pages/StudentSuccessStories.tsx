@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import { Link } from "react-router-dom";
+import ApprovedReviewsSection from "@/components/ApprovedReviewsSection";
+import ReviewFormSection from "@/components/ReviewFormSection";
 
 const stories = [
   {
@@ -269,6 +271,9 @@ const StudentSuccessStories = () => {
           </div>
         </div>
       </section>
+
+      <ApprovedReviewsSection />
+      <ReviewFormSection />
 
       <Footer />
 
