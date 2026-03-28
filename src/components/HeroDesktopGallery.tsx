@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import EgyptFlag from "@/components/EgyptFlag";
 import heroStudent1 from "@/assets/hero-student1.webp";
@@ -11,7 +11,7 @@ const heroImages = [heroStudent1, heroStudent2, heroStudent3, heroStudent4, hero
 import logoImg from "@/assets/logo.webp";
 const logoImage = logoImg;
 
-const HeroDesktopGallery = () => {
+const HeroDesktopGallery = forwardRef<HTMLDivElement>((_, ref) => {
   const { t } = useLanguage();
   const [currentImage, setCurrentImage] = useState(0);
 
