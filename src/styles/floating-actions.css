@@ -49,10 +49,17 @@
 }
 
 /* Bounce animation for FABs */
+/* Bounce animation for FABs — faster on mobile for visibility */
 .fab-gentle-bounce {
-  animation: gentle-bounce 2.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
+  animation: gentle-bounce 1.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
+}
+
+@media (min-width: 768px) {
+  .fab-gentle-bounce {
+    animation-duration: 2.35s !important;
+  }
 }
 
 .fab-gentle-bounce:hover,
