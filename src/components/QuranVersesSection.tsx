@@ -155,7 +155,11 @@ const QuranVersesSection = () => {
                 </p>
 
                 {/* Reference */}
-                <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-accent/80 bg-accent/[0.08] px-4 py-1.5 rounded-full border border-accent/10">
+                <div className="inline-flex items-center gap-2">
+                  <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full ${verse.type === "quran" ? "bg-accent/20 text-accent" : "bg-primary-foreground/10 text-primary-foreground/60"}`}>
+                    {verse.type === "quran" ? t("Quran", "قرآن") : t("Hadith", "حديث")}
+                  </span>
+                  <span className="text-xs sm:text-sm font-semibold text-accent/80 bg-accent/[0.08] px-4 py-1.5 rounded-full border border-accent/10">
                   {t(verse.referenceEn, verse.referenceAr)}
                 </span>
               </motion.div>
