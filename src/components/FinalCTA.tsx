@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield } from "lucide-react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const FinalCTA = () => {
   const { t } = useLanguage();
