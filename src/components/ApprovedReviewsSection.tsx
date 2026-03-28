@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Star, MessageSquareQuote } from "lucide-react";
+import { Star, MessageSquareQuote, Quote } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
@@ -39,12 +39,18 @@ const ApprovedReviewsSection = () => {
     return (
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="bg-card rounded-2xl p-6 border border-border animate-pulse">
-                <div className="h-4 bg-muted rounded w-24 mb-4" />
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-muted rounded-full" />
+                  <div>
+                    <div className="h-4 bg-muted rounded w-24 mb-2" />
+                    <div className="h-3 bg-muted rounded w-16" />
+                  </div>
+                </div>
                 <div className="h-16 bg-muted rounded mb-4" />
-                <div className="h-4 bg-muted rounded w-32" />
+                <div className="h-3 bg-muted rounded w-20" />
               </div>
             ))}
           </div>
@@ -56,7 +62,7 @@ const ApprovedReviewsSection = () => {
   if (reviews.length === 0) return null;
 
   return (
-    <section id="student-reviews" className="py-16 sm:py-20 bg-background" aria-label="Student Reviews">
+    <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -78,7 +84,7 @@ const ApprovedReviewsSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review, idx) => {
             const countryCode = getCountryCode(review.country);
             const isFemale = review.gender === "female";
@@ -91,55 +97,61 @@ const ApprovedReviewsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.05 }}
-                className="bg-card rounded-2xl p-6 border border-border hover:border-accent/20 hover:shadow-md transition-all"
+                className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-all duration-300 group"
               >
-                {/* Stars */}
-                <div className="flex items-center gap-1 mb-3">
-                  {Array.from({ length: review.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-accent fill-accent" />
-                  ))}
-                  {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                    <Star key={`empty-${i}`} className="w-4 h-4 text-muted-foreground/20" />
-                  ))}
-                </div>
+                {/* Quote icon */}
+                <Quote className="absolute top-4 right-4 w-8 h-8 text-accent/10 group-hover:text-accent/20 transition-colors" />
 
-                {/* Review text */}
-                <div className="relative mb-4">
-                  <MessageSquareQuote className="w-5 h-5 text-accent/20 absolute -top-1 -left-1" />
-                  <p className="text-sm text-muted-foreground leading-relaxed pl-5 italic">
-                    "{review.review_text}"
-                  </p>
-                </div>
-
-                {/* Author with avatar + flag */}
-                <div className="flex items-center gap-3">
+                {/* Author header with avatar + flag */}
+                <div className="flex items-center gap-3 mb-4">
                   <div className="relative flex-shrink-0">
                     <img
                       src={avatar}
                       alt=""
-                      width={40}
-                      height={40}
+                      width={48}
+                      height={48}
                       loading="lazy"
-                      className="w-10 h-10 rounded-full object-cover border-2 border-accent/20"
+                      className="w-12 h-12 rounded-full object-cover border-2 border-accent/20"
                     />
-                    {/* Country flag badge */}
                     {countryCode && (
                       <img
-                        src={getFlagUrl(countryCode, 20)}
+                        src={getFlagUrl(countryCode, 40)}
                         alt={review.country}
-                        width={16}
-                        height={12}
+                        width={20}
+                        height={15}
                         loading="lazy"
-                        className="absolute -bottom-0.5 -right-0.5 w-4 h-3 rounded-sm shadow-sm border border-background object-cover"
+                        className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-background object-cover"
                       />
                     )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{review.name}</p>
+                    <p className="text-sm font-bold text-foreground">{review.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {review.country} · {review.course}
+                      {review.country}
                     </p>
                   </div>
+                </div>
+
+                {/* Stars */}
+                <div className="flex items-center gap-0.5 mb-3">
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-accent fill-accent" />
+                  ))}
+                  {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                    <Star key={`e-${i}`} className="w-4 h-4 text-muted-foreground/20" />
+                  ))}
+                </div>
+
+                {/* Review text */}
+                <p className="text-sm text-muted-foreground leading-relaxed italic">
+                  "{review.review_text}"
+                </p>
+
+                {/* Course badge */}
+                <div className="mt-4 pt-3 border-t border-border">
+                  <span className="text-xs font-medium text-accent bg-accent/10 px-2.5 py-1 rounded-full">
+                    {review.course}
+                  </span>
                 </div>
               </motion.div>
             );
@@ -150,7 +162,7 @@ const ApprovedReviewsSection = () => {
         <div className="text-center mt-10">
           <a
             href="#leave-review"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent/10 text-accent font-semibold hover:bg-accent/20 transition-colors border border-accent/20 text-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-colors text-sm shadow-md"
           >
             <Star className="w-4 h-4" />
             {t("Leave Your Review", "اترك مراجعتك")}
