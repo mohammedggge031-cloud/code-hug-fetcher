@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowLeft, Star } from "lucide-react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 import { courses } from "@/data/courses";
 import { Link, useLocation } from "react-router-dom";
 
@@ -159,6 +160,7 @@ const CoursesSection = () => {
           >
             <a
               href="#contact"
+              onClick={(e) => { e.preventDefault(); scrollToContactForm(); }}
               className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-card"
             >
               {t("Start Your Free Trial", "ابدأ تجربتك المجانية")}

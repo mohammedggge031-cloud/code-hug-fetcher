@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Check, Star, ChevronRight, MessageCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 import type { Course } from "@/data/courses";
 
 import courseQuran from "@/assets/course-quran.webp";
@@ -180,7 +181,7 @@ const CourseDetailDialog = forwardRef<HTMLDivElement, Props>(({ course, onClose 
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
                 <a
                   href="#contact"
-                  onClick={onClose}
+                  onClick={(e) => { e.preventDefault(); onClose(); scrollToContactForm(); }}
                   className="flex-1 text-center py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity text-sm"
                 >
                   {t("Start Free Trial", "ابدأ تجربة مجانية")}
