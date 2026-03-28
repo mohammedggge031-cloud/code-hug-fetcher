@@ -1,45 +1,51 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Users, Clock, Award, Headphones, ShieldCheck, Heart } from "lucide-react";
+
+import featureOneOnOne from "@/assets/features/one-on-one.png";
+import featureFlexible from "@/assets/features/flexible-schedule.png";
+import featureCertified from "@/assets/features/certified-teachers.png";
+import featureSupport from "@/assets/features/support-247.png";
+import featureSafe from "@/assets/features/safe-environment.png";
+import featureTrial from "@/assets/features/free-trial.png";
 
 const features = [
   {
-    icon: Users,
+    image: featureOneOnOne,
     titleEn: "One-on-One Classes",
     titleAr: "دروس فردية",
     descEn: "Personalized attention with dedicated teachers for maximum learning.",
     descAr: "اهتمام شخصي مع معلمين مخصصين لأقصى استفادة.",
   },
   {
-    icon: Clock,
+    image: featureFlexible,
     titleEn: "Flexible Scheduling",
     titleAr: "مواعيد مرنة",
     descEn: "Choose class times that fit your schedule, 7 days a week.",
     descAr: "اختر مواعيد تناسب جدولك، 7 أيام في الأسبوع.",
   },
   {
-    icon: Award,
+    image: featureCertified,
     titleEn: "Al-Azhar Certified · Native Arabic Speakers",
     titleAr: "خريجو الأزهر · متحدثون أصليون للعربية",
-    descEn: "All teachers are native Arabic speakers from Egypt, graduates of Al-Azhar University with Ijazah certification and 7+ years of experience. Arabic is their mother tongue.",
-    descAr: "جميع المعلمين متحدثون أصليون للغة العربية من مصر، خريجو جامعة الأزهر الشريف مع إجازات معتمدة وخبرة تزيد عن 7 سنوات. العربية هي لغتهم الأم.",
+    descEn: "All teachers are native Arabic speakers from Egypt, graduates of Al-Azhar University with Ijazah certification and 7+ years of experience.",
+    descAr: "جميع المعلمين متحدثون أصليون للغة العربية من مصر، خريجو جامعة الأزهر الشريف مع إجازات معتمدة وخبرة تزيد عن 7 سنوات.",
   },
   {
-    icon: Headphones,
+    image: featureSupport,
     titleEn: "24/7 Support",
     titleAr: "دعم على مدار الساعة",
     descEn: "Our support team is always available to assist you.",
     descAr: "فريق الدعم لدينا متاح دائمًا لمساعدتك.",
   },
   {
-    icon: ShieldCheck,
+    image: featureSafe,
     titleEn: "Safe Environment",
     titleAr: "بيئة آمنة",
     descEn: "Secure and family-friendly learning platform for all ages.",
     descAr: "منصة تعليمية آمنة ومناسبة للعائلة لجميع الأعمار.",
   },
   {
-    icon: Heart,
+    image: featureTrial,
     titleEn: "Free Trial Class",
     titleAr: "درس تجريبي مجاني",
     descEn: "Experience our teaching methodology with no commitment.",
@@ -75,15 +81,20 @@ const WhyChooseUs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="flex gap-5 p-6 rounded-2xl hover:bg-secondary/50 transition-colors"
+              className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:shadow-lg hover:border-accent/30 transition-all duration-300"
             >
-              <div className="w-12 h-12 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
-                <f.icon className="w-6 h-6 text-accent" />
+              <div className="w-24 h-24 mb-5 rounded-2xl overflow-hidden bg-accent/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                <img
+                  src={f.image}
+                  alt={f.titleEn}
+                  width={96}
+                  height={96}
+                  loading="lazy"
+                  className="w-full h-full object-contain p-1"
+                />
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground mb-1">{t(f.titleEn, f.titleAr)}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{t(f.descEn, f.descAr)}</p>
-              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">{t(f.titleEn, f.titleAr)}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{t(f.descEn, f.descAr)}</p>
             </motion.div>
           ))}
         </div>
