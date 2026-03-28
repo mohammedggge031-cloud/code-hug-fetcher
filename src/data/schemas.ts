@@ -37,12 +37,6 @@ export const courseSchemas = [
         "alumniOf": { "@type": "CollegeOrUniversity", "name": "Al-Azhar University" }
       }
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": 4.9,
-      "ratingCount": 85,
-      "bestRating": 5
-    }
   },
   {
     "@context": "https://schema.org",
