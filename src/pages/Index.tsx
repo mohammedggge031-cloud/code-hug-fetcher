@@ -112,10 +112,10 @@ const Index = () => {
         <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={500}><HowItWorks /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={700}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={900}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={1100}><PricingSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={2000}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={2200}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={2400}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1100}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1300}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={1500}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={1700}><PricingSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={2600}><AboutSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={3000}><TeachersSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={3500}><RecentArticlesSection /></DeferredSection></SectionErrorBoundary>
