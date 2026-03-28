@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import logo from "@/assets/logo.webp";
 import EgyptFlag from "@/components/EgyptFlag";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const AboutSection = () => {
   const { t } = useLanguage();
@@ -61,6 +62,7 @@ const AboutSection = () => {
             </div>
             <a
               href="#contact"
+              onClick={(e) => { e.preventDefault(); scrollToContactForm(); }}
               className="inline-flex px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity"
             >
               {t("Get Started Today", "ابدأ اليوم")}
