@@ -52,8 +52,7 @@ export const courseSchemas = [
     "teaches": "Tajweed rules, Makharij al-Huruf, Qiraat, and Ijazah preparation",
     "about": ["Tajweed", "Quran Recitation", "Ijazah", "Makharij"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.9, "ratingCount": 45, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
