@@ -83,7 +83,7 @@ const Videos = () => {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Islamic Video Library | Alhamd Academy - Prophet Stories & Quran Lessons"
+        title="Islamic Video Library | Alhamd Academy"
         description="Watch inspiring Prophet stories, Quran stories, and Islamic lessons in English and Arabic from trusted scholars. Free Islamic educational videos."
         canonical="https://alhamdacademy.net/videos"
         keywords="prophet stories, quran stories, islamic videos, islamic lessons, quran recitation videos, tajweed lessons, prophet adam story, prophet muhammad story, islamic education videos"

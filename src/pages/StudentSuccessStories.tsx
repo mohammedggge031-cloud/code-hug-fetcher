@@ -112,7 +112,7 @@ const StudentSuccessStories = () => {
     <div className="min-h-screen bg-background font-body">
       <SEOHead
         title="Student Success Stories | Real Results from Alhamd Academy"
-        description="Read inspiring success stories from Alhamd Academy students worldwide. From complete beginners to Ijazah holders — discover how our certified teachers help students achieve their Quran learning goals."
+        description="Real success stories from Alhamd Academy students. From beginners to Ijazah holders — see how certified teachers help achieve Quran goals."
         canonical="https://alhamdacademy.net/student-success-stories"
         keywords="quran student testimonials, online quran success stories, quran memorization results, hifz success stories, learn quran online reviews, alhamd academy reviews, quran academy testimonials"
         dynamicSeo={seo}

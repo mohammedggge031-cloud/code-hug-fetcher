@@ -98,7 +98,7 @@ const Index = () => {
     <div className="min-h-screen">
       <SEOHead
         title="Alhamd Academy | Online Quran, Arabic & Islamic Studies"
-        description="Alhamd Academy offers professional online Quran, Arabic and Islamic studies classes for kids and adults. Certified native Arabic teachers. Free trial class. Contact us on WhatsApp +201271134828."
+        description="Professional online Quran, Arabic & Islamic studies classes with certified Al-Azhar teachers for kids & adults. Free trial. WhatsApp +201271134828."
         canonical="https://alhamdacademy.net/"
         keywords="online quran classes, learn quran online, tajweed classes, arabic language course, hifz program, quran memorization, islamic studies online, quran classes for kids, quran classes for adults, best online quran academy, certified quran teacher, learn arabic online, quran classes for beginners, online quran tutor, quran teacher online, learn quran with tajweed, ijazah quran, noor al bayan"
         dynamicSeo={seo}

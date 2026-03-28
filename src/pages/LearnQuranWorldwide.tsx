@@ -28,8 +28,8 @@ const LearnQuranWorldwide = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEOHead
-        title="Learn Quran Online Worldwide | Certified Al-Azhar Teachers - Alhamd Academy"
-        description="Learn Quran online from anywhere in the world. Certified Al-Azhar teachers from Egypt. One-on-one classes for students in USA, Canada, UK, Australia, and Europe. Free trial."
+        title="Learn Quran Online Worldwide | Al-Azhar Teachers"
+        description="Learn Quran online from anywhere. Certified Al-Azhar teachers. One-on-one classes for students in USA, Canada, UK, Australia & Europe. Free trial."
         canonical="https://alhamdacademy.net/learn-quran-online-worldwide"
         keywords="learn quran online worldwide, online quran classes international, quran teacher online, learn quran from home, global quran education"
         structuredData={structuredData}
