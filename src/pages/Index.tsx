@@ -107,8 +107,8 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
-        <SectionErrorBoundary><DeferredSection minHeight={400} forceRender={forceEager} delayMs={200}><QuranVersesSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={560} forceRender={forceEager} delayMs={300}><CoursesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={560} forceRender={forceEager} delayMs={150}><CoursesSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={400} forceRender={forceEager} delayMs={300}><QuranVersesSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={500}><HowItWorks /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={800}><PricingSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={1200}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
