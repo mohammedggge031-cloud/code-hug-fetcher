@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { Star, Send, CheckCircle2, AlertCircle, MessageSquarePlus, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import { COUNTRIES } from "@/data/countries";
@@ -24,12 +24,12 @@ const COURSES = [
   { en: "Ijazah Program", ar: "برنامج الإجازة" },
 ];
 
-// Rate limiting
 const RATE_KEY = "review_submitted_at";
-const RATE_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
+const RATE_COOLDOWN = 24 * 60 * 60 * 1000;
 
 const ReviewFormSection = () => {
   const { t, lang } = useLanguage();
+  const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -42,7 +42,6 @@ const ReviewFormSection = () => {
     setError("");
     setFieldErrors({});
 
-    // Rate limit check
     const lastSubmit = localStorage.getItem(RATE_KEY);
     if (lastSubmit && Date.now() - parseInt(lastSubmit) < RATE_COOLDOWN) {
       setError(t(
@@ -112,59 +111,96 @@ const ReviewFormSection = () => {
   const inputClass = "w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm";
 
   return (
-    <section id="leave-review" className="py-16 sm:py-20 bg-muted/50" aria-label="Leave a Review">
-      <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <span className="text-sm font-semibold text-accent uppercase tracking-wider">
-            {t("Share Your Experience", "شارك تجربتك")}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-3">
-            {t("Leave a Review", "اترك مراجعة")}
-          </h2>
-          <p className="text-muted-foreground mt-3 max-w-lg mx-auto text-sm">
-            {t(
-              "Your feedback helps other students discover the right learning experience. Share your honest review!",
-              "ملاحظاتك تساعد الطلاب الآخرين في اكتشاف تجربة التعلم المناسبة. شارك مراجعتك الصادقة!"
-            )}
-          </p>
-        </motion.div>
+    <section id="leave-review" className="scroll-mt-20" aria-label="Leave a Review">
+      {/* Compact CTA - always visible */}
+      <AnimatePresence mode="wait">
+        {!isOpen && !submitted && (
+          <motion.div
+            key="cta"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="py-8 text-center"
+          >
+            <button
+              onClick={() => setIsOpen(true)}
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] text-sm"
+            >
+              <MessageSquarePlus className="w-5 h-5" />
+              {t("Share Your Experience", "شارك تجربتك")}
+            </button>
+            <p className="text-xs text-muted-foreground mt-3">
+              {t(
+                "Your feedback helps other students discover the right learning experience.",
+                "ملاحظاتك تساعد الطلاب الآخرين في اكتشاف تجربة التعلم المناسبة."
+              )}
+            </p>
+          </motion.div>
+        )}
 
-        <div className="max-w-xl mx-auto">
-          <AnimatePresence mode="wait">
-            {submitted ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-card rounded-2xl p-8 border border-border text-center"
+        {/* Success message */}
+        {submitted && (
+          <motion.div
+            key="success"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="py-8"
+          >
+            <div className="max-w-md mx-auto bg-card rounded-2xl p-8 border border-border text-center">
+              <div className="w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-7 h-7 text-accent" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground mb-2">
+                {t("Thank You! 🎉", "شكراً لك! 🎉")}
+              </h3>
+              <p className="text-muted-foreground text-sm">
+                {t(
+                  "Your review has been submitted and will be published after approval.",
+                  "تم إرسال مراجعتك وسيتم نشرها بعد الموافقة."
+                )}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Form dialog overlay */}
+        {isOpen && !submitted && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setIsOpen(false);
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 30, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative bg-card rounded-2xl p-6 sm:p-8 border border-border shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+            >
+              {/* Close button */}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors"
+                aria-label="Close"
               >
-                <div className="w-16 h-16 rounded-full bg-accent/15 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-accent" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-2">
-                  {t("Thank You! 🎉", "شكراً لك! 🎉")}
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="text-center mb-6">
+                <h3 className="text-xl font-bold text-foreground">
+                  {t("Leave a Review", "اترك مراجعة")}
                 </h3>
-                <p className="text-muted-foreground text-sm">
-                  {t(
-                    "Your review has been submitted successfully and will be published after approval. We appreciate your feedback!",
-                    "تم إرسال مراجعتك بنجاح وسيتم نشرها بعد الموافقة. نقدر ملاحظاتك!"
-                  )}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {t("Share your honest feedback!", "شارك ملاحظاتك الصادقة!")}
                 </p>
-              </motion.div>
-            ) : (
-              <motion.form
-                key="form"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                onSubmit={handleSubmit}
-                className="bg-card rounded-2xl p-6 sm:p-8 border border-border space-y-5"
-              >
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
                   <div className="flex items-center gap-2 text-destructive text-sm bg-destructive/10 p-3 rounded-lg">
                     <AlertCircle className="w-4 h-4 shrink-0" />
@@ -172,72 +208,72 @@ const ReviewFormSection = () => {
                   </div>
                 )}
 
-                {/* Name */}
-                <div>
-                  <label htmlFor="reviewer_name" className="text-sm font-medium text-foreground mb-1.5 block">
-                    {t("Your Name", "اسمك")} *
-                  </label>
-                  <input
-                    type="text"
-                    name="reviewer_name"
-                    id="reviewer_name"
-                    required
-                    maxLength={100}
-                    className={inputClass}
-                    placeholder={t("e.g. Ahmed M.", "مثال: أحمد م.")}
-                  />
-                  {fieldErrors.name && <p className="text-xs text-destructive mt-1">{fieldErrors.name}</p>}
+                {/* Two columns: Name + Gender */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="reviewer_name" className="text-xs font-medium text-foreground mb-1 block">
+                      {t("Your Name", "اسمك")} *
+                    </label>
+                    <input
+                      type="text"
+                      name="reviewer_name"
+                      id="reviewer_name"
+                      required
+                      maxLength={100}
+                      className={inputClass}
+                      placeholder={t("Ahmed M.", "أحمد م.")}
+                    />
+                    {fieldErrors.name && <p className="text-xs text-destructive mt-1">{fieldErrors.name}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="gender" className="text-xs font-medium text-foreground mb-1 block">
+                      {t("Gender", "الجنس")} *
+                    </label>
+                    <select name="gender" id="gender" required className={selectClass}>
+                      <option value="">{t("Select", "اختر")}</option>
+                      <option value="male">{t("Male", "ذكر")}</option>
+                      <option value="female">{t("Female", "أنثى")}</option>
+                    </select>
+                    {fieldErrors.gender && <p className="text-xs text-destructive mt-1">{fieldErrors.gender}</p>}
+                  </div>
                 </div>
 
-                {/* Gender */}
-                <div>
-                  <label htmlFor="gender" className="text-sm font-medium text-foreground mb-1.5 block">
-                    {t("Gender", "الجنس")} *
-                  </label>
-                  <select name="gender" id="gender" required className={selectClass}>
-                    <option value="">{t("Select", "اختر")}</option>
-                    <option value="male">{t("Male", "ذكر")}</option>
-                    <option value="female">{t("Female", "أنثى")}</option>
-                  </select>
-                  {fieldErrors.gender && <p className="text-xs text-destructive mt-1">{fieldErrors.gender}</p>}
-                </div>
-
-                {/* Country dropdown */}
-                <div>
-                  <label htmlFor="country" className="text-sm font-medium text-foreground mb-1.5 block">
-                    {t("Country", "الدولة")} *
-                  </label>
-                  <select name="country" id="country" required className={selectClass}>
-                    <option value="">{t("Select your country", "اختر دولتك")}</option>
-                    {COUNTRIES.map((c) => (
-                      <option key={c.code} value={c.en}>
-                        {lang === "ar" ? c.ar : c.en}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.country && <p className="text-xs text-destructive mt-1">{fieldErrors.country}</p>}
-                </div>
-
-                {/* Course */}
-                <div>
-                  <label htmlFor="review_course" className="text-sm font-medium text-foreground mb-1.5 block">
-                    {t("Course Taken", "الدورة التي درستها")} *
-                  </label>
-                  <select name="review_course" id="review_course" required className={selectClass}>
-                    <option value="">{t("Select a course", "اختر دورة")}</option>
-                    {COURSES.map((c) => (
-                      <option key={c.en} value={c.en}>{t(c.en, c.ar)}</option>
-                    ))}
-                  </select>
-                  {fieldErrors.course && <p className="text-xs text-destructive mt-1">{fieldErrors.course}</p>}
+                {/* Two columns: Country + Course */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="country" className="text-xs font-medium text-foreground mb-1 block">
+                      {t("Country", "الدولة")} *
+                    </label>
+                    <select name="country" id="country" required className={selectClass}>
+                      <option value="">{t("Select", "اختر")}</option>
+                      {COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.en}>
+                          {lang === "ar" ? c.ar : c.en}
+                        </option>
+                      ))}
+                    </select>
+                    {fieldErrors.country && <p className="text-xs text-destructive mt-1">{fieldErrors.country}</p>}
+                  </div>
+                  <div>
+                    <label htmlFor="review_course" className="text-xs font-medium text-foreground mb-1 block">
+                      {t("Course", "الدورة")} *
+                    </label>
+                    <select name="review_course" id="review_course" required className={selectClass}>
+                      <option value="">{t("Select", "اختر")}</option>
+                      {COURSES.map((c) => (
+                        <option key={c.en} value={c.en}>{t(c.en, c.ar)}</option>
+                      ))}
+                    </select>
+                    {fieldErrors.course && <p className="text-xs text-destructive mt-1">{fieldErrors.course}</p>}
+                  </div>
                 </div>
 
                 {/* Star Rating */}
                 <div>
-                  <label className="text-sm font-medium text-foreground mb-2 block">
+                  <label className="text-xs font-medium text-foreground mb-1.5 block">
                     {t("Your Rating", "تقييمك")} *
                   </label>
-                  <div className="flex gap-1.5">
+                  <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
@@ -245,7 +281,7 @@ const ReviewFormSection = () => {
                         onClick={() => setRating(star)}
                         onMouseEnter={() => setHoverRating(star)}
                         onMouseLeave={() => setHoverRating(0)}
-                        className="p-1 transition-transform hover:scale-110 focus:outline-none"
+                        className="p-0.5 transition-transform hover:scale-110 focus:outline-none"
                         aria-label={`${star} ${t("stars", "نجوم")}`}
                       >
                         <Star
@@ -263,14 +299,14 @@ const ReviewFormSection = () => {
 
                 {/* Review Text */}
                 <div>
-                  <label htmlFor="review_text" className="text-sm font-medium text-foreground mb-1.5 block">
+                  <label htmlFor="review_text" className="text-xs font-medium text-foreground mb-1 block">
                     {t("Your Review", "مراجعتك")} *
                   </label>
                   <textarea
                     name="review_text"
                     id="review_text"
                     required
-                    rows={4}
+                    rows={3}
                     maxLength={1000}
                     className={`${inputClass} resize-none`}
                     placeholder={t(
@@ -285,7 +321,7 @@ const ReviewFormSection = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity text-sm disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
                   {submitting
@@ -293,17 +329,17 @@ const ReviewFormSection = () => {
                     : t("Submit Review", "إرسال المراجعة")}
                 </button>
 
-                <p className="text-xs text-muted-foreground text-center">
+                <p className="text-[11px] text-muted-foreground text-center">
                   {t(
                     "Reviews are moderated and will appear after approval.",
                     "المراجعات تخضع للمراجعة وستظهر بعد الموافقة."
                   )}
                 </p>
-              </motion.form>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
