@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { Star, MessageSquareQuote } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getCountryCode, getFlagUrl } from "@/data/countries";
+import avatarMale from "@/assets/avatar-male.png";
+import avatarFemale from "@/assets/avatar-female.png";
 
 interface ApprovedReview {
   id: string;
@@ -11,6 +14,7 @@ interface ApprovedReview {
   course: string;
   rating: number;
   review_text: string;
+  gender?: string;
   created_at: string;
 }
 
@@ -75,47 +79,71 @@ const ApprovedReviewsSection = () => {
         </motion.div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((review, idx) => (
-            <motion.div
-              key={review.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.05 }}
-              className="bg-card rounded-2xl p-6 border border-border hover:border-accent/20 hover:shadow-md transition-all"
-            >
-              {/* Stars */}
-              <div className="flex items-center gap-1 mb-3">
-                {Array.from({ length: review.rating }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-accent fill-accent" />
-                ))}
-                {Array.from({ length: 5 - review.rating }).map((_, i) => (
-                  <Star key={`empty-${i}`} className="w-4 h-4 text-muted-foreground/20" />
-                ))}
-              </div>
+          {reviews.map((review, idx) => {
+            const countryCode = getCountryCode(review.country);
+            const isFemale = review.gender === "female";
+            const avatar = isFemale ? avatarFemale : avatarMale;
 
-              {/* Review text */}
-              <div className="relative mb-4">
-                <MessageSquareQuote className="w-5 h-5 text-accent/20 absolute -top-1 -left-1" />
-                <p className="text-sm text-muted-foreground leading-relaxed pl-5 italic">
-                  "{review.review_text}"
-                </p>
-              </div>
-
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary flex-shrink-0">
-                  {review.name.charAt(0).toUpperCase()}
+            return (
+              <motion.div
+                key={review.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.05 }}
+                className="bg-card rounded-2xl p-6 border border-border hover:border-accent/20 hover:shadow-md transition-all"
+              >
+                {/* Stars */}
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: review.rating }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-accent fill-accent" />
+                  ))}
+                  {Array.from({ length: 5 - review.rating }).map((_, i) => (
+                    <Star key={`empty-${i}`} className="w-4 h-4 text-muted-foreground/20" />
+                  ))}
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{review.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {review.country} · {review.course}
+
+                {/* Review text */}
+                <div className="relative mb-4">
+                  <MessageSquareQuote className="w-5 h-5 text-accent/20 absolute -top-1 -left-1" />
+                  <p className="text-sm text-muted-foreground leading-relaxed pl-5 italic">
+                    "{review.review_text}"
                   </p>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+
+                {/* Author with avatar + flag */}
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-shrink-0">
+                    <img
+                      src={avatar}
+                      alt=""
+                      width={40}
+                      height={40}
+                      loading="lazy"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-accent/20"
+                    />
+                    {/* Country flag badge */}
+                    {countryCode && (
+                      <img
+                        src={getFlagUrl(countryCode, 20)}
+                        alt={review.country}
+                        width={16}
+                        height={12}
+                        loading="lazy"
+                        className="absolute -bottom-0.5 -right-0.5 w-4 h-3 rounded-sm shadow-sm border border-background object-cover"
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{review.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {review.country} · {review.course}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
 
         {/* CTA to leave review */}

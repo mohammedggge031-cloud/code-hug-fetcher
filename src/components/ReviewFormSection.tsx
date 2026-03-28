@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { COUNTRIES } from "@/data/countries";
 
 const reviewSchema = z.object({
   name: z.string().trim().min(2).max(100),
-  country: z.string().trim().min(2).max(100),
+  country: z.string().min(1),
   course: z.string().min(1),
+  gender: z.enum(["male", "female"]),
   rating: z.number().int().min(1).max(5),
   review_text: z.string().trim().min(10).max(1000),
 });
@@ -27,7 +29,7 @@ const RATE_KEY = "review_submitted_at";
 const RATE_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 
 const ReviewFormSection = () => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [submitted, setSubmitted] = useState(false);
@@ -53,8 +55,9 @@ const ReviewFormSection = () => {
     const form = e.currentTarget;
     const rawData = {
       name: (form.querySelector('[name="reviewer_name"]') as HTMLInputElement)?.value || "",
-      country: (form.querySelector('[name="country"]') as HTMLInputElement)?.value || "",
+      country: (form.querySelector('[name="country"]') as HTMLSelectElement)?.value || "",
       course: (form.querySelector('[name="review_course"]') as HTMLSelectElement)?.value || "",
+      gender: (form.querySelector('[name="gender"]') as HTMLSelectElement)?.value as "male" | "female",
       rating,
       review_text: (form.querySelector('[name="review_text"]') as HTMLTextAreaElement)?.value || "",
     };
@@ -84,6 +87,7 @@ const ReviewFormSection = () => {
           name: result.data.name,
           country: result.data.country,
           course: result.data.course,
+          gender: result.data.gender,
           rating: result.data.rating,
           review_text: result.data.review_text,
           status: "pending",
@@ -103,6 +107,9 @@ const ReviewFormSection = () => {
       setSubmitting(false);
     }
   };
+
+  const selectClass = "w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm appearance-none";
+  const inputClass = "w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm";
 
   return (
     <section id="leave-review" className="py-16 sm:py-20 bg-muted/50" aria-label="Leave a Review">
@@ -176,26 +183,38 @@ const ReviewFormSection = () => {
                     id="reviewer_name"
                     required
                     maxLength={100}
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm"
+                    className={inputClass}
                     placeholder={t("e.g. Ahmed M.", "مثال: أحمد م.")}
                   />
                   {fieldErrors.name && <p className="text-xs text-destructive mt-1">{fieldErrors.name}</p>}
                 </div>
 
-                {/* Country */}
+                {/* Gender */}
+                <div>
+                  <label htmlFor="gender" className="text-sm font-medium text-foreground mb-1.5 block">
+                    {t("Gender", "الجنس")} *
+                  </label>
+                  <select name="gender" id="gender" required className={selectClass}>
+                    <option value="">{t("Select", "اختر")}</option>
+                    <option value="male">{t("Male", "ذكر")}</option>
+                    <option value="female">{t("Female", "أنثى")}</option>
+                  </select>
+                  {fieldErrors.gender && <p className="text-xs text-destructive mt-1">{fieldErrors.gender}</p>}
+                </div>
+
+                {/* Country dropdown */}
                 <div>
                   <label htmlFor="country" className="text-sm font-medium text-foreground mb-1.5 block">
                     {t("Country", "الدولة")} *
                   </label>
-                  <input
-                    type="text"
-                    name="country"
-                    id="country"
-                    required
-                    maxLength={100}
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm"
-                    placeholder={t("e.g. United States", "مثال: الولايات المتحدة")}
-                  />
+                  <select name="country" id="country" required className={selectClass}>
+                    <option value="">{t("Select your country", "اختر دولتك")}</option>
+                    {COUNTRIES.map((c) => (
+                      <option key={c.code} value={c.en}>
+                        {lang === "ar" ? c.ar : c.en}
+                      </option>
+                    ))}
+                  </select>
                   {fieldErrors.country && <p className="text-xs text-destructive mt-1">{fieldErrors.country}</p>}
                 </div>
 
@@ -204,12 +223,7 @@ const ReviewFormSection = () => {
                   <label htmlFor="review_course" className="text-sm font-medium text-foreground mb-1.5 block">
                     {t("Course Taken", "الدورة التي درستها")} *
                   </label>
-                  <select
-                    name="review_course"
-                    id="review_course"
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow text-sm"
-                  >
+                  <select name="review_course" id="review_course" required className={selectClass}>
                     <option value="">{t("Select a course", "اختر دورة")}</option>
                     {COURSES.map((c) => (
                       <option key={c.en} value={c.en}>{t(c.en, c.ar)}</option>
@@ -258,7 +272,7 @@ const ReviewFormSection = () => {
                     required
                     rows={4}
                     maxLength={1000}
-                    className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow resize-none text-sm"
+                    className={`${inputClass} resize-none`}
                     placeholder={t(
                       "Share your experience with Alhamd Academy...",
                       "شارك تجربتك مع أكاديمية الحمد..."
