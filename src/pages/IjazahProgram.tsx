@@ -105,7 +105,6 @@ const IjazahPricingSection = () => {
                   } else {
                     window.location.href = "/#contact";
                   }
-                }
                 }}
                 className="block w-full text-center px-6 py-4 rounded-xl bg-accent text-accent-foreground font-bold text-base hover:bg-accent/90 transition-colors shadow-lg"
               >
