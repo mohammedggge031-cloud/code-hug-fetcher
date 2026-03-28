@@ -37,12 +37,6 @@ export const courseSchemas = [
         "alumniOf": { "@type": "CollegeOrUniversity", "name": "Al-Azhar University" }
       }
     },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": 4.9,
-      "ratingCount": 85,
-      "bestRating": 5
-    }
   },
   {
     "@context": "https://schema.org",
@@ -58,8 +52,7 @@ export const courseSchemas = [
     "teaches": "Tajweed rules, Makharij al-Huruf, Qiraat, and Ijazah preparation",
     "about": ["Tajweed", "Quran Recitation", "Ijazah", "Makharij"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.9, "ratingCount": 45, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
@@ -74,8 +67,7 @@ export const courseSchemas = [
     "teaches": "Arabic reading, writing, grammar (Nahw & Sarf), and conversation skills",
     "about": ["Arabic Language", "Learn Arabic", "Arabic Grammar", "Arabic Conversation"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.8, "ratingCount": 40, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
@@ -90,8 +82,7 @@ export const courseSchemas = [
     "teaches": "Islamic jurisprudence, creed, Quran interpretation, Prophetic traditions, and Prophet's biography",
     "about": ["Islamic Studies", "Fiqh", "Aqeedah", "Tafseer", "Hadith", "Seerah"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 4.9, "ratingCount": 30, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "57", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/#pricing" }
   },
   {
     "@context": "https://schema.org",
@@ -107,8 +98,7 @@ export const courseSchemas = [
     "teaches": "Complete Quran recitation with Ijazah certification in Hafs 'an 'Asim and other Qiraat",
     "about": ["Ijazah", "Sanad", "Quran Certification", "Hafs an Asim"],
     "inLanguage": ["en", "ar"],
-    "offers": { "@type": "Offer", "price": "15", "priceCurrency": "USD", "unitText": "per hour", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/ijazah-program" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": 5.0, "ratingCount": 20, "bestRating": 5 }
+    "offers": { "@type": "Offer", "price": "15", "priceCurrency": "USD", "unitText": "per hour", "availability": "https://schema.org/InStock", "url": "https://alhamdacademy.net/ijazah-program" }
   }
 ];
 
@@ -296,15 +286,6 @@ export const organizationSchema = {
     "Islamic Studies", "Fiqh", "Aqeedah", "Tafseer", "Hadith",
     "Seerah", "Noor Al-Bayan", "Ijazah Certification"
   ],
-  "slogan": "One-on-One Quran & Arabic Classes — A Life-Changing Journey",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 4.9,
-    "bestRating": 5,
-    "worstRating": 1,
-    "ratingCount": 200,
-    "reviewCount": 150
-  }
 };
 
 export const websiteSchema = {
@@ -319,71 +300,7 @@ export const websiteSchema = {
   "about": "Online Quran, Arabic & Islamic education with certified Al-Azhar teachers"
 };
 
-export const reviewSchema = {
-  "@context": "https://schema.org",
-  "@type": "EducationalOrganization",
-  "@id": "https://alhamdacademy.net/#reviews",
-  "name": "Alhamd Academy",
-  "url": "https://alhamdacademy.net",
-  "review": [
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Dusa Ali" },
-      "datePublished": "2025-01-15",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "My children have made incredible progress in their Quran recitation. The teachers are patient, skilled, and truly passionate about teaching."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Zayan" },
-      "datePublished": "2025-02-20",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "As a busy professional, the flexible scheduling is a blessing. I've been able to consistently learn Arabic and Quran around my work schedule."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Izzan" },
-      "datePublished": "2025-03-10",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "I completed my Hifz journey with Alhamd Academy. The structured program and supportive teachers made what seemed impossible totally achievable."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Issa" },
-      "datePublished": "2025-04-05",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "The way the teachers treat my kids is outstanding. They make learning feel like fun, and my children actually look forward to their Quran classes every day."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Naveed Shahul" },
-      "datePublished": "2025-05-12",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "I was amazed by how organized and professional the system is. Everything from booking to class follow-ups runs so smoothly."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Hamza A." },
-      "datePublished": "2025-06-18",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "The teachers genuinely care about your progress. They celebrate every milestone with you and always encourage you to keep going."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Ruqayyah N." },
-      "datePublished": "2025-07-22",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "What sets Alhamd Academy apart is the personal attention. The teachers know each student's strengths and adapt their teaching accordingly."
-    },
-    {
-      "@type": "Review",
-      "author": { "@type": "Person", "name": "Tariq J." },
-      "datePublished": "2025-08-30",
-      "reviewRating": { "@type": "Rating", "ratingValue": 5, "bestRating": 5 },
-      "reviewBody": "The academy's structured curriculum and warm, welcoming environment made me feel comfortable from day one. Truly a world-class experience."
-    }
-  ]
-};
+
 
 export const speakableSchema = {
   "@context": "https://schema.org",
@@ -572,7 +489,7 @@ export const allSchemas = {
     ...courseSchemas.map(stripContext),
     stripContext(faqSchema),
     stripContext(breadcrumbSchema),
-    stripContext(reviewSchema),
+    
     stripContext(speakableSchema),
     stripContext(serviceSchema),
     stripContext(howToSchema),
