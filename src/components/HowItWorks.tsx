@@ -1,10 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 
-import stepBookTrial from "@/assets/features/step-book-trial.png";
-import stepMeetTeacher from "@/assets/features/step-meet-teacher.png";
-import stepStartJourney from "@/assets/features/step-start-journey.png";
-import stepProgress from "@/assets/features/step-progress.png";
+import stepBookTrial from "@/assets/features/step-book-trial.webp";
+import stepMeetTeacher from "@/assets/features/step-meet-teacher.webp";
+import stepStartJourney from "@/assets/features/step-start-journey.webp";
+import stepProgress from "@/assets/features/step-progress.webp";
 
 const steps = [
   {

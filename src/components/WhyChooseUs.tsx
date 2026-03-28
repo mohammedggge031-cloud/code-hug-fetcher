@@ -1,12 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 
-import featureOneOnOne from "@/assets/features/one-on-one.png";
-import featureFlexible from "@/assets/features/flexible-schedule.png";
-import featureCertified from "@/assets/features/certified-teachers.png";
-import featureSupport from "@/assets/features/support-247.png";
-import featureSafe from "@/assets/features/safe-environment.png";
-import featureTrial from "@/assets/features/free-trial.png";
+import featureOneOnOne from "@/assets/features/one-on-one.webp";
+import featureFlexible from "@/assets/features/flexible-schedule.webp";
+import featureCertified from "@/assets/features/certified-teachers.webp";
+import featureSupport from "@/assets/features/support-247.webp";
+import featureSafe from "@/assets/features/safe-environment.webp";
+import featureTrial from "@/assets/features/free-trial.webp";
 
 const features = [
   {

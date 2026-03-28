@@ -4,8 +4,8 @@ import { Star, MessageSquareQuote, Quote } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
-import avatarMale from "@/assets/avatar-male.png";
-import avatarFemale from "@/assets/avatar-female.png";
+import avatarMale from "@/assets/avatar-male.webp";
+import avatarFemale from "@/assets/avatar-female.webp";
 
 interface ApprovedReview {
   id: string;
