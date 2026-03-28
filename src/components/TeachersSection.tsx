@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 import type { Teacher } from "@/data/fallbackContent";
 import { loadTeachers } from "@/lib/teachersData";
 
@@ -300,7 +301,7 @@ const TeachersSection = () => {
                 {/* CTA */}
                 <a
                   href="#contact"
-                  onClick={() => setSelectedTeacher(null)}
+                  onClick={(e) => { e.preventDefault(); setSelectedTeacher(null); scrollToContactForm(); }}
                   className="block w-full text-center py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity shadow-card"
                 >
                   {t("Book a Free Trial", "احجز تجربة مجانية")}
