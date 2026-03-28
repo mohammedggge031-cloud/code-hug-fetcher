@@ -43,7 +43,7 @@ const IslamicStudies = lazy(() => import("./pages/IslamicStudies"));
 const IjazahProgram = lazy(() => import("./pages/IjazahProgram"));
 const FemaleQuranTeacher = lazy(() => import("./pages/FemaleQuranTeacher"));
 const FreeTrial = lazy(() => import("./pages/FreeTrial"));
-const StudentSuccessStories = lazy(() => import("./pages/StudentSuccessStories"));
+
 const CoursePage = lazy(() => import("./pages/CoursePage"));
 
 // Admin pages
@@ -98,7 +98,7 @@ const App = () => (
               <Route path="/ijazah-program" element={<IjazahProgram />} />
               <Route path="/female-quran-teacher" element={<FemaleQuranTeacher />} />
               <Route path="/free-trial" element={<FreeTrial />} />
-              <Route path="/student-success-stories" element={<StudentSuccessStories />} />
+              
               <Route path="/courses/:slug" element={<CoursePage />} />
               <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />

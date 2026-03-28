@@ -252,11 +252,10 @@ const Navbar = () => {
     {
       en: "About", ar: "من نحن", href: "#about",
       dropdown: [
+        { icon: <Award className="w-4 h-4" />, labelEn: "Why Choose Us", labelAr: "ليه احنا", href: "#why-us" },
+        { icon: <MessageCircle className="w-4 h-4" />, labelEn: "Testimonials", labelAr: "آراء الطلاب", href: "#testimonials" },
         { icon: <Users className="w-4 h-4" />, labelEn: "Our Team", labelAr: "فريقنا", href: "#about" },
         ...(hasTeachers ? [{ icon: <GraduationCap className="w-4 h-4" />, labelEn: "Our Teachers", labelAr: "معلمونا", href: "#teachers" }] : []),
-        { icon: <Award className="w-4 h-4" />, labelEn: "Why Choose Us", labelAr: "لماذا نحن", href: "#why-us" },
-        { icon: <MessageCircle className="w-4 h-4" />, labelEn: "Student Success Stories", labelAr: "قصص نجاح الطلاب", href: "/student-success-stories", isRoute: true },
-        { icon: <MessageCircle className="w-4 h-4" />, labelEn: "Testimonials", labelAr: "آراء الطلاب", href: "#testimonials" },
       ],
     },
     { en: "Blog", ar: "المدونة", href: "/blog", isRoute: true },
