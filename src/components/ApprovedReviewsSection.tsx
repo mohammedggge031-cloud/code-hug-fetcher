@@ -158,16 +158,6 @@ const ApprovedReviewsSection = () => {
           })}
         </div>
 
-        {/* CTA to leave review */}
-        <div className="text-center mt-10">
-          <a
-            href="#leave-review"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-colors text-sm shadow-md"
-          >
-            <Star className="w-4 h-4" />
-            {t("Leave Your Review", "اترك مراجعتك")}
-          </a>
-        </div>
       </div>
     </section>
   );
