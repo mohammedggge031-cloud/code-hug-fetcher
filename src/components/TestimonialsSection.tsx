@@ -2,6 +2,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useCallback, useEffect, useRef, forwardRef } from "react";
+import { getFlagUrl } from "@/data/countries";
+import avatarMale from "@/assets/avatar-male.png";
+import avatarFemale from "@/assets/avatar-female.png";
 
 const testimonials = [
   {
@@ -9,64 +12,80 @@ const testimonials = [
     nameAr: "دعاء علي",
     roleEn: "Parent",
     roleAr: "ولية أمر",
-    textEn: "My children have made incredible progress in their Quran recitation. The teachers are patient, skilled, and truly passionate about teaching.",
-    textAr: "أحرز أطفالي تقدمًا مذهلاً في تلاوة القرآن. المعلمون صبورون ومهرة ومتحمسون حقًا للتدريس.",
+    gender: "female",
+    country: "gb",
+    textEn: "Wa alaykum salam 😊 My children have made incredible progress in their Quran recitation. The teachers are patient, skilled, and truly passionate about teaching.",
+    textAr: "وعليكم السلام 😊 أحرز أطفالي تقدمًا مذهلاً في تلاوة القرآن. المعلمون صبورون ومهرة ومتحمسون حقًا للتدريس.",
   },
   {
     nameEn: "Zayan",
     nameAr: "زيان",
     roleEn: "Adult Student",
     roleAr: "طالب بالغ",
-    textEn: "As a busy professional, the flexible scheduling is a blessing. I've been able to consistently learn Arabic and Quran around my work schedule.",
-    textAr: "كمحترف مشغول، المواعيد المرنة نعمة. تمكنت من تعلم العربية والقرآن بانتظام حول جدول عملي.",
+    gender: "male",
+    country: "us",
+    textEn: "Assalamu alaykum! As a busy professional, the flexible scheduling is a blessing. I've been able to consistently learn Arabic and Quran around my work schedule 🤲",
+    textAr: "السلام عليكم! كمحترف مشغول، المواعيد المرنة نعمة. تمكنت من تعلم العربية والقرآن بانتظام حول جدول عملي 🤲",
   },
   {
     nameEn: "Izzan",
     nameAr: "عزان",
     roleEn: "Student",
     roleAr: "طالبة",
-    textEn: "I completed my Hifz journey with Alhamd Academy. The structured program and supportive teachers made what seemed impossible totally achievable.",
-    textAr: "أكملت رحلة حفظي مع أكاديمية الحمد. البرنامج المنظم والمعلمون الداعمون جعلوا ما بدا مستحيلاً قابلاً للتحقيق.",
+    gender: "female",
+    country: "au",
+    textEn: "Wa alaykum salam! I completed my Hifz journey with Alhamd Academy. The structured program and supportive teachers made what seemed impossible totally achievable 🎉",
+    textAr: "وعليكم السلام! أكملت رحلة حفظي مع أكاديمية الحمد. البرنامج المنظم والمعلمون الداعمون جعلوا ما بدا مستحيلاً قابلاً للتحقيق 🎉",
   },
   {
     nameEn: "Issa",
     nameAr: "عيسى",
     roleEn: "Parent",
     roleAr: "ولي أمر",
-    textEn: "The way the teachers treat my kids is outstanding. They make learning feel like fun, and my children actually look forward to their classes every day.",
-    textAr: "طريقة تعامل المعلمين مع أطفالي رائعة. يجعلون التعلم ممتعًا وأطفالي يتطلعون لحصصهم كل يوم.",
+    gender: "male",
+    country: "ca",
+    textEn: "Assalamu alaykum Sheikh! The way the teachers treat my kids is outstanding. They make learning feel like fun, and my children actually look forward to their classes every day 💚",
+    textAr: "السلام عليكم يا شيخ! طريقة تعامل المعلمين مع أطفالي رائعة. يجعلون التعلم ممتعًا وأطفالي يتطلعون لحصصهم كل يوم 💚",
   },
   {
     nameEn: "Naveed Shahul",
     nameAr: "نافيد شاهول",
     roleEn: "Student",
     roleAr: "طالب",
-    textEn: "I was amazed by how organized and professional the system is. Everything from booking to class follow-ups runs so smoothly.",
-    textAr: "أذهلني مدى تنظيم واحترافية النظام. كل شيء من الحجز إلى متابعة الحصص يسير بسلاسة تامة.",
+    gender: "male",
+    country: "bd",
+    textEn: "Wa alaykum salam 🙏 I was amazed by how organized and professional the system is. Everything from booking to class follow-ups runs so smoothly.",
+    textAr: "وعليكم السلام 🙏 أذهلني مدى تنظيم واحترافية النظام. كل شيء من الحجز إلى متابعة الحصص يسير بسلاسة تامة.",
   },
   {
     nameEn: "Hamza A.",
     nameAr: "حمزة أ.",
     roleEn: "Adult Student",
     roleAr: "طالب بالغ",
-    textEn: "The teachers genuinely care about your progress. They celebrate every milestone with you and always encourage you to keep going.",
-    textAr: "المعلمون يهتمون حقًا بتقدمك. يحتفلون معك بكل إنجاز ويشجعونك دائمًا على الاستمرار.",
+    gender: "male",
+    country: "ae",
+    textEn: "JazakAllah khair! The teachers genuinely care about your progress. They celebrate every milestone with you and always encourage you to keep going 🌟",
+    textAr: "جزاكم الله خيراً! المعلمون يهتمون حقًا بتقدمك. يحتفلون معك بكل إنجاز ويشجعونك دائمًا على الاستمرار 🌟",
   },
   {
     nameEn: "Ruqayyah N.",
     nameAr: "رقية ن.",
     roleEn: "Parent",
     roleAr: "ولية أمر",
-    textEn: "What sets Alhamd Academy apart is the personal attention. The teachers know each student's strengths and adapt their teaching accordingly.",
-    textAr: "ما يميز أكاديمية الحمد هو الاهتمام الشخصي. المعلمون يعرفون نقاط قوة كل طالب ويكيّفون تدريسهم وفقًا لذلك.",
+    gender: "female",
+    country: "se",
+    textEn: "Wa alaykum salam! What sets Alhamd Academy apart is the personal attention. The teachers know each student's strengths and adapt their teaching accordingly.",
+    textAr: "وعليكم السلام! ما يميز أكاديمية الحمد هو الاهتمام الشخصي. المعلمون يعرفون نقاط قوة كل طالب ويكيّفون تدريسهم وفقًا لذلك.",
   },
   {
     nameEn: "Tariq J.",
     nameAr: "طارق ج.",
     roleEn: "Student",
     roleAr: "طالب",
-    textEn: "The academy's structured curriculum and warm, welcoming environment made me feel comfortable from day one. Truly a world-class experience.",
-    textAr: "المنهج المنظم والبيئة الدافئة والمرحبة جعلتني أشعر بالراحة من اليوم الأول. تجربة عالمية المستوى حقًا.",
+    gender: "male",
+    country: "ng",
+    textEn: "Assalamu alaykum! The academy's structured curriculum and warm, welcoming environment made me feel comfortable from day one. Truly a world-class experience 🤲",
+    textAr: "السلام عليكم! المنهج المنظم والبيئة الدافئة والمرحبة جعلتني أشعر بالراحة من اليوم الأول. تجربة عالمية المستوى حقًا 🤲",
   },
 ];
 
@@ -97,7 +116,6 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   const itemsPerPage = viewMode === 'mobile' ? ITEMS_MOBILE : viewMode === 'tablet' ? ITEMS_TABLET : ITEMS_DESKTOP;
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
 
-  // Reset page when switching view modes
   useEffect(() => {
     setPage(0);
   }, [viewMode]);
@@ -115,7 +133,6 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
     });
   }, []);
 
-  // Auto-play every 5 seconds
   useEffect(() => {
     if (isPaused) return;
     intervalRef.current = setInterval(() => {
@@ -132,15 +149,9 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   );
 
   const variants = {
-    enter: (dir: number) => ({
-      x: dir > 0 ? 300 : -300,
-      opacity: 0,
-    }),
+    enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({
-      x: dir > 0 ? -300 : 300,
-      opacity: 0,
-    }),
+    exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
   };
 
   return (
@@ -194,25 +205,56 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
                 transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
-                {currentItems.map((item) => (
-                  <div
-                    key={item.nameEn}
-                    className="bg-card/15 rounded-2xl p-8 border border-primary-foreground/10"
-                  >
-                    <div className="flex gap-1 mb-4">
-                      {[...Array(5)].map((_, j) => (
-                        <Star key={j} className="w-4 h-4 fill-accent text-accent" />
-                      ))}
+                {currentItems.map((item) => {
+                  const avatar = item.gender === "female" ? avatarFemale : avatarMale;
+
+                  return (
+                    <div
+                      key={item.nameEn}
+                      className="bg-card/15 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-primary-foreground/10 hover:border-accent/20 transition-all duration-300"
+                    >
+                      {/* Author header with avatar + flag */}
+                      <div className="flex items-center gap-3 mb-5">
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={avatar}
+                            alt=""
+                            width={48}
+                            height={48}
+                            loading="lazy"
+                            className="w-12 h-12 rounded-full object-cover border-2 border-accent/30"
+                          />
+                          <img
+                            src={getFlagUrl(item.country, 40)}
+                            alt=""
+                            width={20}
+                            height={15}
+                            loading="lazy"
+                            className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-primary/50 object-cover"
+                          />
+                        </div>
+                        <div>
+                          <div className="font-bold text-primary-foreground text-sm">{t(item.nameEn, item.nameAr)}</div>
+                          <div className="text-xs text-primary-foreground/50">{t(item.roleEn, item.roleAr)}</div>
+                        </div>
+                      </div>
+
+                      {/* Stars */}
+                      <div className="flex gap-1 mb-4">
+                        {[...Array(5)].map((_, j) => (
+                          <Star key={j} className="w-4 h-4 fill-accent text-accent" />
+                        ))}
+                      </div>
+
+                      {/* WhatsApp-style message bubble */}
+                      <div className="relative bg-primary-foreground/8 rounded-xl rounded-tl-sm px-4 py-3 border border-primary-foreground/8">
+                        <p className="text-primary-foreground/80 leading-relaxed text-sm">
+                          {t(item.textEn, item.textAr)}
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-primary-foreground/80 leading-relaxed mb-6 text-sm">
-                      "{t(item.textEn, item.textAr)}"
-                    </p>
-                    <div>
-                      <div className="font-bold text-primary-foreground">{t(item.nameEn, item.nameAr)}</div>
-                      <div className="text-sm text-primary-foreground/60">{t(item.roleEn, item.roleAr)}</div>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -234,17 +276,6 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
                 }`} />
               </button>
             ))}
-          </div>
-
-          {/* CTA to leave a review */}
-          <div className="text-center mt-8">
-            <a
-              href="#leave-review"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-foreground/10 text-primary-foreground font-semibold hover:bg-primary-foreground/20 transition-colors border border-primary-foreground/20 text-sm"
-            >
-              <Star className="w-4 h-4 fill-accent text-accent" />
-              {t("Share Your Experience", "شارك تجربتك")}
-            </a>
           </div>
         </div>
       </div>
