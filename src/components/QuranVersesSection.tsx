@@ -8,18 +8,42 @@ const verses = [
     translationEn: "And recite the Quran with measured recitation.",
     referenceEn: "Surah Al-Muzzammil (73:4)",
     referenceAr: "سورة المزمل (٧٣:٤)",
+    type: "quran" as const,
   },
   {
     arabic: "إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ",
     translationEn: "Indeed, it is We who sent down the reminder, and indeed, We will be its guardian.",
     referenceEn: "Surah Al-Hijr (15:9)",
     referenceAr: "سورة الحجر (١٥:٩)",
+    type: "quran" as const,
   },
   {
     arabic: "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
     translationEn: "The best of you are those who learn the Quran and teach it.",
-    referenceEn: "Hadith — Sahih Al-Bukhari",
-    referenceAr: "حديث — صحيح البخاري",
+    referenceEn: "Sahih Al-Bukhari (5027)",
+    referenceAr: "صحيح البخاري (٥٠٢٧)",
+    type: "hadith" as const,
+  },
+  {
+    arabic: "فَاذْكُرُونِي أَذْكُرْكُمْ وَاشْكُرُوا لِي وَلَا تَكْفُرُونِ",
+    translationEn: "So remember Me; I will remember you. And be grateful to Me and do not deny Me.",
+    referenceEn: "Surah Al-Baqarah (2:152)",
+    referenceAr: "سورة البقرة (٢:١٥٢)",
+    type: "quran" as const,
+  },
+  {
+    arabic: "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ بِهِ طَرِيقًا إِلَى الْجَنَّةِ",
+    translationEn: "Whoever takes a path in search of knowledge, Allah will make easy for him a path to Paradise.",
+    referenceEn: "Sahih Muslim (2699)",
+    referenceAr: "صحيح مسلم (٢٦٩٩)",
+    type: "hadith" as const,
+  },
+  {
+    arabic: "اقْرَأْ بِاسْمِ رَبِّكَ الَّذِي خَلَقَ",
+    translationEn: "Read in the name of your Lord who created.",
+    referenceEn: "Surah Al-Alaq (96:1)",
+    referenceAr: "سورة العلق (٩٦:١)",
+    type: "quran" as const,
   },
 ];
 
@@ -81,7 +105,7 @@ const QuranVersesSection = () => {
             <span className="block w-8 h-px bg-accent/60" />
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight">
-            {t("Inspiration from the Quran", "إلهام من القرآن الكريم")}
+            {t("Inspiration from the Quran & Sunnah", "إلهام من القرآن والسنة")}
           </h2>
         </motion.div>
 
@@ -131,9 +155,14 @@ const QuranVersesSection = () => {
                 </p>
 
                 {/* Reference */}
-                <span className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-accent/80 bg-accent/[0.08] px-4 py-1.5 rounded-full border border-accent/10">
-                  {t(verse.referenceEn, verse.referenceAr)}
-                </span>
+                <div className="inline-flex items-center gap-2">
+                  <span className={`text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full ${verse.type === "quran" ? "bg-accent/20 text-accent" : "bg-primary-foreground/10 text-primary-foreground/60"}`}>
+                    {verse.type === "quran" ? t("Quran", "قرآن") : t("Hadith", "حديث")}
+                  </span>
+                  <span className="text-xs sm:text-sm font-semibold text-accent/80 bg-accent/[0.08] px-4 py-1.5 rounded-full border border-accent/10">
+                    {t(verse.referenceEn, verse.referenceAr)}
+                  </span>
+                </div>
               </motion.div>
             ))}
           </div>
