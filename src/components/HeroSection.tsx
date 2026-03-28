@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowRight, BookOpen, Shield } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useEffect, lazy, Suspense } from "react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const HERO_SRCSET = "/quran-hero-640.webp 640w, /quran-hero-1024.webp 1024w, /quran-hero.webp 1920w";
 const HERO_IMAGE_JPG = "/quran-hero.jpg";
@@ -88,7 +89,7 @@ const HeroSection = () => {
                 href="#contact"
                 onClick={(e) => {
                   e.preventDefault();
-                  document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                  scrollToContactForm();
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent/90 px-6 py-3.5 text-sm font-semibold text-accent-foreground shadow-card ring-1 ring-accent/15 transition-colors hover:bg-accent sm:px-8 sm:py-4 sm:text-base"
               >

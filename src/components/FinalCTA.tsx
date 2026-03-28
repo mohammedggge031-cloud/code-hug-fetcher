@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield } from "lucide-react";
+import { scrollToContactForm } from "@/lib/scrollToForm";
 
 const FinalCTA = () => {
   const { t } = useLanguage();
@@ -27,7 +28,7 @@ const FinalCTA = () => {
               href="#contact"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                scrollToContactForm();
               }}
               className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-semibold text-base hover:opacity-90 transition-opacity shadow-card"
             >
