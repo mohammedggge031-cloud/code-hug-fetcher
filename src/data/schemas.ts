@@ -234,6 +234,7 @@ export const programSchema = {
     "@type": "Offer",
     "price": "21",
     "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
     "priceSpecification": {
       "@type": "PriceSpecification",
       "price": "21",

@@ -16,6 +16,8 @@ const PrivacyPolicy = () => {
           "Read our privacy policy to understand how we collect, use, and protect your personal information.",
           "اقرأ سياسة الخصوصية الخاصة بنا لفهم كيفية جمعنا واستخدامنا وحمايتنا لمعلوماتك الشخصية."
         )}
+        canonical="https://alhamdacademy.net/privacy-policy"
+        keywords="privacy policy, data protection, alhamd academy privacy"
         dynamicSeo={seo}
       />
       <Navbar />
