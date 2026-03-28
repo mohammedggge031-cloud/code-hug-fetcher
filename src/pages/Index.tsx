@@ -24,6 +24,8 @@ const ContactSection = lazy(() => import("@/components/ContactSection"));
 const Footer = lazy(() => import("@/components/Footer"));
 const TeachersSection = lazy(() => import("@/components/TeachersSection"));
 const RecentArticlesSection = lazy(() => import("@/components/RecentArticlesSection"));
+const ApprovedReviewsSection = lazy(() => import("@/components/ApprovedReviewsSection"));
+const ReviewFormSection = lazy(() => import("@/components/ReviewFormSection"));
 
 const DeferredSection = ({ children, minHeight = 260, forceRender = false, delayMs = 0 }: { children: ReactNode; minHeight?: number; forceRender?: boolean; delayMs?: number }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
@@ -112,6 +114,8 @@ const Index = () => {
         <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={600}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={800}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1000}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1050}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={1100}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={1200}><AboutSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1400}><TeachersSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1600}><RecentArticlesSection /></DeferredSection></SectionErrorBoundary>

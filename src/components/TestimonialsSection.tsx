@@ -235,6 +235,17 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
               </button>
             ))}
           </div>
+
+          {/* CTA to leave a review */}
+          <div className="text-center mt-8">
+            <a
+              href="#leave-review"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-foreground/10 text-primary-foreground font-semibold hover:bg-primary-foreground/20 transition-colors border border-primary-foreground/20 text-sm"
+            >
+              <Star className="w-4 h-4 fill-accent text-accent" />
+              {t("Share Your Experience", "شارك تجربتك")}
+            </a>
+          </div>
         </div>
       </div>
     </section>
