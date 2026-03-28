@@ -81,16 +81,16 @@ const WhyChooseUs = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.08 }}
-              className="group flex flex-col items-center text-center p-6 rounded-2xl border border-border bg-card hover:shadow-lg hover:border-accent/30 transition-all duration-300"
+              className="group flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl border border-border bg-card hover:shadow-xl hover:border-accent/30 hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="w-24 h-24 mb-5 rounded-2xl overflow-hidden bg-accent/5 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+              <div className="w-28 h-28 mb-6 rounded-full bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/15 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/30 transition-all duration-300">
                 <img
                   src={f.image}
                   alt={f.titleEn}
                   width={96}
                   height={96}
                   loading="lazy"
-                  className="w-full h-full object-contain p-1"
+                  className="w-20 h-20 object-contain drop-shadow-sm"
                 />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">{t(f.titleEn, f.titleAr)}</h3>

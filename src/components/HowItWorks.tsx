@@ -1,31 +1,35 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { MessageCircle, UserCheck, CalendarCheck, Rocket } from "lucide-react";
+
+import stepBookTrial from "@/assets/features/step-book-trial.png";
+import stepMeetTeacher from "@/assets/features/step-meet-teacher.png";
+import stepStartJourney from "@/assets/features/step-start-journey.png";
+import stepProgress from "@/assets/features/step-progress.png";
 
 const steps = [
   {
-    icon: MessageCircle,
+    image: stepBookTrial,
     titleEn: "1. Book Your Free Trial",
     titleAr: "1. احجز حصتك المجانية",
     descEn: "Send us a WhatsApp message or fill out the form. Tell us your preferred course, schedule, and whether you'd like a male or female teacher.",
     descAr: "أرسل لنا رسالة واتساب أو املأ النموذج. أخبرنا بالدورة المفضلة والمواعيد وتفضيلك لمعلم أو معلمة.",
   },
   {
-    icon: UserCheck,
+    image: stepMeetTeacher,
     titleEn: "2. Meet Your Teacher",
     titleAr: "2. تعرّف على معلمك",
-    descEn: "Within 24 hours, we'll match you with a certified teacher who fits your goals. Your teacher will assess your current level during the trial. Not satisfied? You can request a different teacher anytime — no questions asked.",
-    descAr: "خلال 24 ساعة، نختار لك معلماً معتمداً يناسب أهدافك. سيقيّم معلمك مستواك الحالي خلال الحصة التجريبية. غير راضٍ؟ يمكنك طلب تغيير المعلم في أي وقت — بدون أي تعقيدات.",
+    descEn: "Within 24 hours, we'll match you with a certified teacher who fits your goals. Your teacher will assess your current level during the trial.",
+    descAr: "خلال 24 ساعة، نختار لك معلماً معتمداً يناسب أهدافك. سيقيّم معلمك مستواك الحالي خلال الحصة التجريبية.",
   },
   {
-    icon: CalendarCheck,
+    image: stepStartJourney,
     titleEn: "3. Start Your Journey",
     titleAr: "3. ابدأ رحلتك",
     descEn: "Choose a plan that fits your schedule. Your teacher creates a personalized curriculum and tracks your progress every step of the way.",
     descAr: "اختر خطة تناسب جدولك. يضع معلمك منهجاً مخصصاً ويتابع تقدمك في كل خطوة.",
   },
   {
-    icon: Rocket,
+    image: stepProgress,
     titleEn: "4. See Real Progress",
     titleAr: "4. شاهد تقدماً حقيقياً",
     descEn: "With structured one-on-one sessions and consistent practice, you'll notice measurable improvement in your recitation, memorization, or Arabic skills.",
@@ -71,11 +75,18 @@ const HowItWorks = () => {
             >
               {/* Connector line */}
               {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-accent/30 to-accent/10" />
+                <div className="hidden lg:block absolute top-16 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-accent/30 to-accent/10" />
               )}
 
-              <div className="w-20 h-20 mx-auto rounded-2xl bg-accent/10 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors">
-                <step.icon className="w-9 h-9 text-accent" />
+              <div className="w-28 h-28 mx-auto rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-center mb-5 group-hover:scale-105 group-hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <img
+                  src={step.image}
+                  alt={step.titleEn}
+                  width={112}
+                  height={112}
+                  loading="lazy"
+                  className="w-full h-full object-contain p-2"
+                />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 {t(step.titleEn, step.titleAr)}
