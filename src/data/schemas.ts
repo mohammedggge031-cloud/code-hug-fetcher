@@ -286,15 +286,6 @@ export const organizationSchema = {
     "Islamic Studies", "Fiqh", "Aqeedah", "Tafseer", "Hadith",
     "Seerah", "Noor Al-Bayan", "Ijazah Certification"
   ],
-  "slogan": "One-on-One Quran & Arabic Classes — A Life-Changing Journey",
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": 4.9,
-    "bestRating": 5,
-    "worstRating": 1,
-    "ratingCount": 200,
-    "reviewCount": 150
-  }
 };
 
 export const websiteSchema = {
