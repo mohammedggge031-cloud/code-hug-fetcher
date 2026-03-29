@@ -2,7 +2,9 @@
 export function scrollToContactForm() {
   const section = document.getElementById("contact");
   if (section) {
-    section.scrollIntoView({ behavior: "smooth" });
+    const headerOffset = 96;
+    const top = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
     // Wait for scroll to finish, then focus the name input
     setTimeout(() => {
       const nameInput = document.getElementById("fullName") as HTMLInputElement | null;
