@@ -180,8 +180,25 @@ const Navbar = () => {
       return;
     }
 
+    const targetId = href.slice(1);
+
+    // If mobile menu is open, body is position:fixed so scrollTo won't work.
+    // Always use pendingScrollTarget and let ScrollToTop handle it after body is restored.
+    if (mobileOpen) {
+      if (isHomePage) {
+        window.sessionStorage.setItem("pendingScrollTarget", targetId);
+        // Close menu first, then navigate to trigger ScrollToTop
+        setMobileOpen(false);
+        navigate(`/#${targetId}`);
+      } else {
+        window.sessionStorage.setItem("pendingScrollTarget", targetId);
+        setMobileOpen(false);
+        navigate("/");
+      }
+      return;
+    }
+
     if (isHomePage) {
-      const targetId = href.slice(1);
       const target = document.getElementById(targetId);
       if (target) {
         const headerOffset = 96;
@@ -192,7 +209,7 @@ const Navbar = () => {
       }
     }
 
-    window.sessionStorage.setItem("pendingScrollTarget", href.slice(1));
+    window.sessionStorage.setItem("pendingScrollTarget", targetId);
     navigate("/");
   };
 
@@ -524,7 +541,7 @@ const Navbar = () => {
                   ) : (
                     <a
                       href={l.href}
-                      onClick={(e) => { handleAnchorClick(e, l.href); setMobileOpen(false); }}
+                      onClick={(e) => { handleAnchorClick(e, l.href); }}
                       className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
@@ -575,7 +592,7 @@ const Navbar = () => {
                               ) : (
                                 <a
                                   href={item.href}
-                                  onClick={(e) => { handleAnchorClick(e, item.href); setMobileOpen(false); }}
+                                  onClick={(e) => { handleAnchorClick(e, item.href); }}
                                   className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                 >
                                   <span className="text-accent">{item.icon}</span>
@@ -599,7 +616,7 @@ const Navbar = () => {
                                     <a
                                       key={j}
                                       href={sub.href}
-                                      onClick={(e) => { handleAnchorClick(e, sub.href); setMobileOpen(false); }}
+                                      onClick={(e) => { handleAnchorClick(e, sub.href); }}
                                       className="block px-3 py-2 text-xs font-medium text-primary-foreground/50 hover:text-accent transition-colors"
                                     >
                                       {t(sub.labelEn, sub.labelAr)}
@@ -647,7 +664,7 @@ const Navbar = () => {
         <div className="px-6 pb-6 pt-2">
           <a
             href="#contact"
-            onClick={(e) => { handleAnchorClick(e, "#contact"); setMobileOpen(false); }}
+            onClick={(e) => { handleAnchorClick(e, "#contact"); }}
             className="block w-full py-3.5 text-center text-sm font-bold uppercase tracking-wider rounded-xl bg-accent text-accent-foreground hover:brightness-110 transition-all shadow-elevated"
           >
             {t("Book Your Free Trial", "احجز حصتك المجانية")}
