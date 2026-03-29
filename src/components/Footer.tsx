@@ -21,7 +21,6 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
     { en: "Pricing", ar: "الأسعار", href: "/#pricing" },
     { en: "About Us", ar: "من نحن", href: "/#about" },
     { en: "Free Trial", ar: "حصة تجريبية مجانية", href: "/free-trial" },
-    { en: "Student Success Stories", ar: "قصص نجاح الطلاب", href: "/student-success-stories" },
     { en: "Blog", ar: "المدونة", href: "/blog" },
     { en: "Videos", ar: "فيديوهات", href: "/videos" },
   ];

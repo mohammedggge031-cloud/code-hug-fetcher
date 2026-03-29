@@ -92,7 +92,7 @@ export const RelatedBlogPosts = React.forwardRef<HTMLElement, RelatedBlogPostsPr
                 <Link
                   key={post.slug}
                   to={`/blog/${post.slug}`}
-                  className="group bg-card rounded-xl border border-border overflow-hidden hover:border-accent/30 hover:shadow-card transition-all duration-300"
+                  className="group bg-card rounded-xl border border-border overflow-hidden hover:border-accent/30 hover:shadow-card transition-[border-color,box-shadow] duration-300"
                 >
                   <div className="aspect-[16/10] overflow-hidden">
                     <img
@@ -155,7 +155,7 @@ export const RelatedCoursesForBlog = ({ category, maxCourses = 3 }: RelatedCours
           <Link
             key={course!.slug}
             to={`/courses/${course!.slug}`}
-            className="group flex items-center gap-3 bg-card rounded-lg p-3 border border-border hover:border-accent/30 hover:shadow-soft transition-all"
+            className="group flex items-center gap-3 bg-card rounded-lg p-3 border border-border hover:border-accent/30 hover:shadow-soft transition-[border-color,box-shadow]"
           >
             <div className="flex-1">
               <h4 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">

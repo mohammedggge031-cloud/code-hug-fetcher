@@ -13,7 +13,7 @@ const ALL_URLS = [
   "/online-quran-classes", "/tajweed-course-online", "/quran-memorization-hifz",
   "/arabic-for-kids", "/arabic-for-adults", "/islamic-studies-online",
   "/ijazah-program", "/female-quran-teacher", "/free-trial",
-  "/student-success-stories", "/blog", "/videos",
+  "/blog", "/videos",
   // Location hub
   "/learn-quran-online-worldwide",
   // Countries
