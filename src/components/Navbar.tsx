@@ -197,14 +197,11 @@ const Navbar = () => {
     }
 
     if (isHomePage) {
-      const target = document.getElementById(targetId);
-      if (target) {
-        const headerOffset = 96;
-        const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-        window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
-        window.history.replaceState(null, "", `/#${targetId}`);
-        return;
-      }
+      // Use pendingScrollTarget + navigate so ScrollToTop handles
+      // the scroll with retry logic (sections may still be lazy-loading)
+      window.sessionStorage.setItem("pendingScrollTarget", targetId);
+      navigate(`/#${targetId}`);
+      return;
     }
 
     window.sessionStorage.setItem("pendingScrollTarget", targetId);
