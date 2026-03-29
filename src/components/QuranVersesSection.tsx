@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { motion } from "framer-motion";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const verses = [
@@ -91,12 +90,7 @@ const QuranVersesSection = () => {
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-16"
-        >
+        <div className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 mb-4">
             <span className="block w-8 h-px bg-accent/60" />
             <span className="text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-accent">
@@ -107,7 +101,7 @@ const QuranVersesSection = () => {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight">
             {t("Inspiration from the Quran & Sunnah", "إلهام من القرآن والسنة")}
           </h2>
-        </motion.div>
+        </div>
 
         {/* Main verse display */}
         <div className="max-w-4xl mx-auto text-center">
