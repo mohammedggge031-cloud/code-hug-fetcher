@@ -56,7 +56,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
 
   return (
     <div
-      className={`relative rounded-xl p-3 sm:p-5 md:p-4 lg:p-4 border transition-all ${
+      className={`relative rounded-xl p-3 sm:p-5 md:p-4 lg:p-4 border transition-shadow ${
         plan.popular
           ? "bg-primary text-primary-foreground border-primary shadow-elevated md:scale-[1.03]"
           : "bg-card border-border shadow-card hover:shadow-elevated"

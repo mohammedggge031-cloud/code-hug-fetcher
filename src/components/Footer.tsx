@@ -79,7 +79,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
                     href={s.href} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/8 text-primary-foreground/50 transition-all duration-200 hover:bg-primary-foreground/15 hover:text-accent" 
+                    className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-foreground/8 text-primary-foreground/50 transition-colors duration-200 hover:bg-primary-foreground/15 hover:text-accent" 
                     aria-label={s.label}
                   >
                     <Icon className="w-4 h-4" />
@@ -112,7 +112,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
                 <Link 
                   key={l.en} 
                   to={l.href} 
-                  className="flex items-center gap-2 text-sm text-primary-foreground/50 hover:text-accent hover:translate-x-1 rtl:hover:-translate-x-1 transition-all duration-200"
+                  className="flex items-center gap-2 text-sm text-primary-foreground/50 hover:text-accent hover:translate-x-1 rtl:hover:-translate-x-1 transition-[color,transform] duration-200"
                 >
                   <span className="w-1 h-1 rounded-full bg-accent/50 flex-shrink-0" />
                   {t(l.en, l.ar)}
@@ -132,7 +132,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
                 <Link 
                   key={l.en} 
                   to={l.href} 
-                  className="flex items-center gap-2 text-sm text-primary-foreground/50 hover:text-accent hover:translate-x-1 rtl:hover:-translate-x-1 transition-all duration-200"
+                  className="flex items-center gap-2 text-sm text-primary-foreground/50 hover:text-accent hover:translate-x-1 rtl:hover:-translate-x-1 transition-[color,transform] duration-200"
                 >
                   <span className="w-1 h-1 rounded-full bg-accent/50 flex-shrink-0" />
                   {t(l.en, l.ar)}

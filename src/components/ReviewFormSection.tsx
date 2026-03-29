@@ -124,7 +124,7 @@ const ReviewFormSection = () => {
           >
             <button
               onClick={() => setIsOpen(true)}
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] text-sm"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-accent text-accent-foreground font-semibold hover:bg-accent/90 transition-[background-color,box-shadow,transform] shadow-lg hover:shadow-xl hover:scale-[1.02] text-sm"
             >
               <MessageSquarePlus className="w-5 h-5" />
               {t("Share Your Experience", "شارك تجربتك")}
