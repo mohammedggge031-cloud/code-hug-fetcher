@@ -541,7 +541,7 @@ const Navbar = () => {
                   ) : (
                     <a
                       href={l.href}
-                      onClick={(e) => { handleAnchorClick(e, l.href); setMobileOpen(false); }}
+                      onClick={(e) => { handleAnchorClick(e, l.href); }}
                       className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
