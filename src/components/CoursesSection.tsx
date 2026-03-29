@@ -89,7 +89,7 @@ const CoursesSection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="group bg-card rounded-2xl shadow-card hover:shadow-elevated transition-all duration-300 border border-border cursor-pointer overflow-hidden flex flex-col items-center text-center h-full min-w-[260px] sm:min-w-0 snap-center"
+                className="group bg-card rounded-2xl shadow-card hover:shadow-elevated transition-shadow duration-300 border border-border cursor-pointer overflow-hidden flex flex-col items-center text-center h-full min-w-[260px] sm:min-w-0 snap-center"
               >
                 {/* Course Image */}
                 <div className="relative w-full pt-6 px-6">
@@ -137,7 +137,7 @@ const CoursesSection = () => {
                   </div>
 
                   {/* CTA */}
-                  <div className="flex items-center justify-center gap-2 text-accent font-semibold text-sm group-hover:gap-3 transition-all">
+                  <div className="flex items-center justify-center gap-2 text-accent font-semibold text-sm group-hover:gap-3 transition-[gap] duration-200">
                     {t("View Details", "عرض التفاصيل")}
                     <ArrowIcon className="w-4 h-4" />
                   </div>
