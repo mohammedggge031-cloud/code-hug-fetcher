@@ -388,9 +388,9 @@ const Navbar = () => {
 
   return (
     <>
-    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
+    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
       <div className="bg-primary shadow-sm">
-        <div className={`container mx-auto flex items-center justify-between px-4 transition-all duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
+        <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
           {/* Desktop: Logo left */}
           <Link to="/" onClick={handleHomeLogoClick} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
             <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" fetchPriority="high" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
@@ -473,7 +473,7 @@ const Navbar = () => {
     </header>
 
     {/* Mobile fullscreen menu - OUTSIDE header to escape stacking context */}
-    <div className={`lg:hidden fixed inset-x-0 bottom-0 z-[55] overscroll-none bg-primary transition-all duration-300 ${scrolled ? "top-[4.5rem]" : "top-16"} ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
+    <div className={`lg:hidden fixed inset-x-0 bottom-0 z-[55] overscroll-none bg-primary transition-[opacity,visibility,top] duration-300 ${scrolled ? "top-[4.5rem]" : "top-16"} ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
       <div className={`relative h-full flex flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
         {/* Top: Logo on right */}
         <div className="flex items-center justify-end px-6 pt-6 pb-4">
