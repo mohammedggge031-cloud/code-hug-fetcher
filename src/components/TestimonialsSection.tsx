@@ -221,7 +221,7 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
                   return (
                     <div
                       key={item.nameEn}
-                      className="bg-card/15 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-primary-foreground/10 hover:border-accent/20 transition-all duration-300"
+                      className="bg-card/15 rounded-2xl p-6 sm:p-8 border border-primary-foreground/10 hover:border-accent/20 transition-colors duration-300"
                     >
                       {/* Author header with avatar + flag */}
                       <div className="flex items-center gap-3 mb-5">
