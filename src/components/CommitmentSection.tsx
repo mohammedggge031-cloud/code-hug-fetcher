@@ -80,6 +80,7 @@ const CommitmentSection = () => {
                   width={96}
                   height={96}
                   loading="lazy"
+                  decoding="async"
                   className="w-20 h-20 object-contain drop-shadow-sm"
                 />
               </div>

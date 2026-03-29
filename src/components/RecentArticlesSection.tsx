@@ -108,6 +108,7 @@ const RecentArticlesSection = () => {
                     alt={lang === "ar" ? post.title_ar : post.title_en}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     loading="lazy"
+                    decoding="async"
                     width={320}
                     height={200}
                   />

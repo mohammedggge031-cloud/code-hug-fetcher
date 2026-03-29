@@ -87,7 +87,7 @@ const TeachersSection = () => {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 whileHover={{ y: -8, scale: 1.02 }}
                 onClick={() => setSelectedTeacher(teacher)}
-                className="group rounded-2xl bg-card border border-border p-6 text-center shadow-card hover:shadow-elevated transition-all duration-300 cursor-pointer"
+                className="group rounded-2xl bg-card border border-border p-6 text-center shadow-card hover:shadow-elevated transition-[box-shadow] duration-300 cursor-pointer"
               >
                 {/* Photo */}
                 <div className="relative mx-auto mb-4">
@@ -183,7 +183,7 @@ const TeachersSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70"
             onClick={() => setSelectedTeacher(null)}
           >
             <motion.div

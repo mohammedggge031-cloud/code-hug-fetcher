@@ -228,18 +228,20 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
                         <div className="relative flex-shrink-0">
                           <img
                             src={avatar}
-                            alt=""
+                            alt={t(item.nameEn, item.nameAr)}
                             width={48}
                             height={48}
                             loading="lazy"
+                            decoding="async"
                             className="w-12 h-12 rounded-full object-cover border-2 border-accent/30"
                           />
                           <img
                             src={getFlagUrl(item.country, 40)}
-                            alt=""
+                            alt={`${item.country.toUpperCase()} flag`}
                             width={20}
                             height={15}
                             loading="lazy"
+                            decoding="async"
                             className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-primary/50 object-cover"
                           />
                         </div>
