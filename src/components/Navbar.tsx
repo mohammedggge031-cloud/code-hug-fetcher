@@ -494,44 +494,42 @@ const Navbar = () => {
 
               return (
                 <div key={l.en} className="border-b border-primary-foreground/5 last:border-0">
-                  <div className="flex items-center">
-                    {hasDropdown ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          const next = isExpanded ? null : l.en;
-                          setExpandedMobile(next);
-                          setExpandedMobileSub(null);
-                          if (next) {
-                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
-                            if (target) {
-                              setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
-                            }
+                  {hasDropdown ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        const next = isExpanded ? null : l.en;
+                        setExpandedMobile(next);
+                        setExpandedMobileSub(null);
+                        if (next) {
+                          const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
+                          if (target) {
+                            setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
                           }
-                        }}
-                        className="flex-1 flex items-center justify-between py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
-                      >
-                        {t(l.en, l.ar)}
-                        <ChevronDown className={`w-4 h-4 text-primary-foreground/50 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                      </button>
-                    ) : l.isRoute ? (
-                      <Link
-                        to={l.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
-                      >
-                        {t(l.en, l.ar)}
-                      </Link>
-                    ) : (
-                      <a
-                        href={l.href}
-                        onClick={(e) => { handleAnchorClick(e, l.href); setMobileOpen(false); }}
-                        className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
-                      >
-                        {t(l.en, l.ar)}
-                      </a>
-                    )}
-                  </div>
+                        }
+                      }}
+                      className="w-full flex items-center justify-between py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                    >
+                      {t(l.en, l.ar)}
+                      <ChevronDown className={`w-4 h-4 text-primary-foreground/50 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                    </button>
+                  ) : l.isRoute ? (
+                    <Link
+                      to={l.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                    >
+                      {t(l.en, l.ar)}
+                    </Link>
+                  ) : (
+                    <a
+                      href={l.href}
+                      onClick={(e) => { handleAnchorClick(e, l.href); setMobileOpen(false); }}
+                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                    >
+                      {t(l.en, l.ar)}
+                    </a>
+                  )}
 
                   {hasDropdown && isExpanded && (
                     <div className="ps-3 pb-3 border-s-2 border-accent/30 ms-2">
