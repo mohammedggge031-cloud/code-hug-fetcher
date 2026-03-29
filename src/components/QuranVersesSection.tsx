@@ -111,17 +111,14 @@ const QuranVersesSection = () => {
 
         {/* Main verse display */}
         <div className="max-w-4xl mx-auto text-center">
-          <div className="relative min-h-[280px] sm:min-h-[260px] flex items-center justify-center">
+          <div className="relative min-h-[340px] sm:min-h-[300px] md:min-h-[280px] flex items-center justify-center">
             {verses.map((verse, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={false}
-                animate={{
+                style={{
                   opacity: active === i ? 1 : 0,
-                  scale: active === i ? 1 : 0.95,
-                  y: active === i ? 0 : 20,
+                  transition: "opacity 0.6s ease-in-out",
                 }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
                 className={`absolute inset-0 flex flex-col items-center justify-center px-4 ${active === i ? "pointer-events-auto" : "pointer-events-none"}`}
               >
                 {/* Ornament top */}
@@ -163,7 +160,7 @@ const QuranVersesSection = () => {
                     {t(verse.referenceEn, verse.referenceAr)}
                   </span>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
