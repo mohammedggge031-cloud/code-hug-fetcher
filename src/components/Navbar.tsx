@@ -180,8 +180,25 @@ const Navbar = () => {
       return;
     }
 
+    const targetId = href.slice(1);
+
+    // If mobile menu is open, body is position:fixed so scrollTo won't work.
+    // Always use pendingScrollTarget and let ScrollToTop handle it after body is restored.
+    if (mobileOpen) {
+      if (isHomePage) {
+        window.sessionStorage.setItem("pendingScrollTarget", targetId);
+        // Close menu first, then navigate to trigger ScrollToTop
+        setMobileOpen(false);
+        navigate(`/#${targetId}`);
+      } else {
+        window.sessionStorage.setItem("pendingScrollTarget", targetId);
+        setMobileOpen(false);
+        navigate("/");
+      }
+      return;
+    }
+
     if (isHomePage) {
-      const targetId = href.slice(1);
       const target = document.getElementById(targetId);
       if (target) {
         const headerOffset = 96;
@@ -192,7 +209,7 @@ const Navbar = () => {
       }
     }
 
-    window.sessionStorage.setItem("pendingScrollTarget", href.slice(1));
+    window.sessionStorage.setItem("pendingScrollTarget", targetId);
     navigate("/");
   };
 
