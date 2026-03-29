@@ -85,6 +85,7 @@ const HowItWorks = () => {
                   width={112}
                   height={112}
                   loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-contain p-2"
                 />
               </div>
