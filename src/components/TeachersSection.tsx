@@ -185,6 +185,10 @@ const TeachersSection = () => {
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70"
             onClick={() => setSelectedTeacher(null)}
+            onKeyDown={(e) => { if (e.key === "Escape") setSelectedTeacher(null); }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t(selectedTeacher.name_en, selectedTeacher.name_ar)}
           >
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
