@@ -24,8 +24,8 @@ const testimonials = [
     roleAr: "طالب",
     gender: "male",
     country: "bd",
-    textEn: "I started from zero — couldn't even read Arabic letters. Now I read Quran fluently thanks to the Noor Al-Bayan method. Took me only 2 weeks to learn the alphabet!",
-    textAr: "بدأت من الصفر — ما كنت أعرف أقرأ الحروف العربية. دلوقتي بأقرأ القرآن بطلاقة بفضل طريقة نور البيان. اتعلمت الحروف في أسبوعين بس!",
+    textEn: "I started from zero — couldn't even read Arabic letters. Now I read Quran fluently thanks to the Noor Al-Bayan method. The teachers are incredibly patient and make every lesson enjoyable!",
+    textAr: "بدأت من الصفر — ما كنت أعرف أقرأ الحروف العربية. دلوقتي بأقرأ القرآن بطلاقة بفضل طريقة نور البيان. المعلمين صبورين جداً وبيخلوا كل حصة ممتعة!",
   },
   {
     nameEn: "Aisha M.",
