@@ -163,7 +163,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
             console.error("Subscription sync error:", e);
           }
         }}
-        className={`block text-center py-3 sm:py-2.5 md:py-3 rounded-lg text-[13px] sm:text-xs md:text-sm font-semibold transition-all min-h-[44px] flex items-center justify-center ${
+        className={`w-full text-center py-3 sm:py-2.5 md:py-3 rounded-lg text-[13px] sm:text-xs md:text-sm font-semibold transition-opacity min-h-[44px] flex items-center justify-center ${
           plan.popular
             ? "bg-accent text-accent-foreground hover:opacity-90"
             : "bg-primary text-primary-foreground hover:opacity-90"

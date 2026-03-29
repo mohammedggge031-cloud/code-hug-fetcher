@@ -97,7 +97,7 @@ const ApprovedReviewsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.05 }}
-                className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-all duration-300 group"
+                className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-[border-color,box-shadow] duration-300 group"
               >
                 {/* Quote icon */}
                 <Quote className="absolute top-4 right-4 w-8 h-8 text-accent/10 group-hover:text-accent/20 transition-colors" />
@@ -107,19 +107,21 @@ const ApprovedReviewsSection = () => {
                   <div className="relative flex-shrink-0">
                     <img
                       src={avatar}
-                      alt=""
+                      alt={review.name}
                       width={48}
                       height={48}
                       loading="lazy"
+                      decoding="async"
                       className="w-12 h-12 rounded-full object-cover border-2 border-accent/20"
                     />
                     {countryCode && (
                       <img
                         src={getFlagUrl(countryCode, 40)}
-                        alt={review.country}
+                        alt={`${review.country} flag`}
                         width={20}
                         height={15}
                         loading="lazy"
+                        decoding="async"
                         className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-background object-cover"
                       />
                     )}
