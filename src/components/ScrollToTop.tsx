@@ -138,18 +138,24 @@ const ScrollToTop = () => {
     };
 
     if (targetId) {
-      const scrollToHashTarget = (attempt = 0) => {
+      const scrollToHashTarget = (attempt = 0, lastTop = -1) => {
         if (navTokenRef.current !== navToken) return;
         const target = document.getElementById(targetId);
         if (target) {
           const headerOffset = 96;
-          const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+          const top = Math.round(target.getBoundingClientRect().top + window.scrollY - headerOffset);
           window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: "auto" });
+          
+          // Re-check position after lazy sections may have shifted the layout
+          if (attempt < 60 && top !== lastTop) {
+            pendingTimeoutRef.current = window.setTimeout(() => scrollToHashTarget(attempt + 1, top), 80);
+            return;
+          }
           window.sessionStorage.removeItem("pendingScrollTarget");
           return;
         }
         if (attempt < 100) {
-          pendingTimeoutRef.current = window.setTimeout(() => scrollToHashTarget(attempt + 1), 50);
+          pendingTimeoutRef.current = window.setTimeout(() => scrollToHashTarget(attempt + 1, lastTop), 50);
         } else {
           window.scrollTo({ top: 0, left: 0, behavior: "auto" });
           window.sessionStorage.removeItem("pendingScrollTarget");
