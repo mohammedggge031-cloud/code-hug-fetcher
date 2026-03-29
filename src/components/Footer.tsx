@@ -1,11 +1,10 @@
-import { forwardRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Mail, Phone, GraduationCap, BookOpen, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
 import logo from "@/assets/logo.webp";
 
-const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
+const Footer = () => {
   const { t } = useLanguage();
 
   const courseLinks = [
@@ -34,7 +33,7 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
   ];
 
   return (
-    <footer ref={ref} className="relative bg-primary overflow-hidden" role="contentinfo" aria-label="Alhamd Academy Footer">
+    <footer className="relative bg-primary overflow-hidden" role="contentinfo" aria-label="Alhamd Academy Footer">
       {/* Decorative top border */}
       <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-accent" />
 
@@ -196,8 +195,6 @@ const Footer = forwardRef<HTMLElement>(function Footer(_, ref) {
       </div>
     </footer>
   );
-});
-
-Footer.displayName = "Footer";
+};
 
 export default Footer;
