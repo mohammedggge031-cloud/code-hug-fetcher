@@ -174,6 +174,10 @@ const ReviewFormSection = () => {
             onClick={(e) => {
               if (e.target === e.currentTarget) setIsOpen(false);
             }}
+            onKeyDown={(e) => { if (e.key === "Escape") setIsOpen(false); }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={t("Leave a Review", "اترك مراجعة")}
           >
             <motion.div
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
