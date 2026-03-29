@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useCallback, useEffect, useRef, forwardRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
@@ -103,7 +103,7 @@ const ITEMS_DESKTOP = 3;
 const ITEMS_TABLET = 2;
 const ITEMS_MOBILE = 1;
 
-const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
+const TestimonialsSection = () => {
   const { t, lang } = useLanguage();
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -165,7 +165,7 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
   };
 
   return (
-    <section ref={ref} id="testimonials" className="py-16 sm:py-20 md:py-24 bg-hero geometric-pattern" aria-label="Student Testimonials and Reviews">
+    <section id="testimonials" className="py-16 sm:py-20 md:py-24 bg-hero geometric-pattern" aria-label="Student Testimonials and Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -293,8 +293,6 @@ const TestimonialsSection = forwardRef<HTMLElement>((_, ref) => {
       </div>
     </section>
   );
-});
-
-TestimonialsSection.displayName = "TestimonialsSection";
+};
 
 export default TestimonialsSection;

@@ -50,9 +50,10 @@
 /* Bounce animation for FABs */
 /* Bounce animation for FABs — faster on mobile for visibility */
 .fab-gentle-bounce {
-  animation: gentle-bounce 1.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
+  animation: gentle-bounce 2.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
+  will-change: transform;
 }
 
 @media (min-width: 768px) {
@@ -69,7 +70,7 @@
 
 /* Badge breathing animation */
 .badge-breathe {
-  animation: badge-breathe 1.2s ease-in-out infinite !important;
+  animation: badge-breathe 2s ease-in-out infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
 }
@@ -78,13 +79,13 @@
   pointer-events: none;
 }
 
-/* Mobile-first: larger, more noticeable bounce */
+/* Mobile-first: subtle, non-distracting bounce */
 @keyframes gentle-bounce {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  20% { transform: translate3d(0, -14px, 0) scale(1.08); }
-  40% { transform: translate3d(0, -3px, 0) scale(1); }
-  55% { transform: translate3d(0, -8px, 0) scale(1.04); }
-  75% { transform: translate3d(0, -1px, 0) scale(1); }
+  20% { transform: translate3d(0, -6px, 0) scale(1.03); }
+  40% { transform: translate3d(0, -1px, 0) scale(1); }
+  55% { transform: translate3d(0, -3px, 0) scale(1.01); }
+  75% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
 @keyframes badge-breathe {
