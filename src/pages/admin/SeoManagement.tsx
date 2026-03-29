@@ -44,7 +44,7 @@ const SITE_PAGES = [
   { path: "/free-trial", name: "Free Trial" },
   { path: "/blog", name: "Blog" },
   { path: "/videos", name: "Videos" },
-  { path: "/student-success-stories", name: "Student Success Stories" },
+  
   { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide" },
   { path: "/privacy-policy", name: "Privacy Policy" },
   // Course detail pages
