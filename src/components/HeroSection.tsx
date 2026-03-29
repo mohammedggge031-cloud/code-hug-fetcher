@@ -98,6 +98,15 @@ const HeroSection = () => {
               </a>
               <a
                 href="#courses"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById("courses");
+                  if (target) {
+                    const headerOffset = 96;
+                    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+                    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+                  }
+                }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-foreground/30 px-6 py-3.5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10 sm:px-8 sm:py-4"
               >
                 <BookOpen className="h-5 w-5" />
