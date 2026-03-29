@@ -81,9 +81,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const body = document.body;
-    const scrollY = window.scrollY;
 
     if (mobileOpen) {
+      const scrollY = window.scrollY;
+      body.dataset.scrollY = String(scrollY);
       body.classList.add("menu-open");
       body.style.position = "fixed";
       body.style.top = `-${scrollY}px`;
@@ -92,7 +93,7 @@ const Navbar = () => {
       body.style.width = "100%";
       body.style.overscrollBehavior = "none";
     } else {
-      const offset = Number.parseInt(body.style.top || "0", 10) || 0;
+      const savedY = Number(body.dataset.scrollY || "0");
       body.classList.remove("menu-open");
       body.style.position = "";
       body.style.top = "";
@@ -100,13 +101,13 @@ const Navbar = () => {
       body.style.right = "";
       body.style.width = "";
       body.style.overscrollBehavior = "";
-      if (offset) {
-        window.scrollTo({ top: Math.abs(offset), left: 0, behavior: "auto" });
+      delete body.dataset.scrollY;
+      if (savedY > 0) {
+        window.scrollTo({ top: savedY, left: 0, behavior: "auto" });
       }
     }
 
     return () => {
-      const offset = Number.parseInt(body.style.top || "0", 10) || 0;
       body.classList.remove("menu-open");
       body.style.position = "";
       body.style.top = "";
@@ -114,9 +115,6 @@ const Navbar = () => {
       body.style.right = "";
       body.style.width = "";
       body.style.overscrollBehavior = "";
-      if (offset && !mobileOpen) {
-        window.scrollTo({ top: Math.abs(offset), left: 0, behavior: "auto" });
-      }
     };
   }, [mobileOpen]);
 
