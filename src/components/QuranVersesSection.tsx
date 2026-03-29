@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 const verses = [
