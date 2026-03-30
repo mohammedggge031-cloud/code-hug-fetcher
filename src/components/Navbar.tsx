@@ -41,7 +41,13 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bodyScrollYRef = useRef(0);
+  const lastPathnameRef = useRef(location.pathname);
   const isHomePage = location.pathname === "/";
+
+  // Track the current pathname so the menu-close effect knows if we navigated
+  useEffect(() => {
+    lastPathnameRef.current = location.pathname;
+  }, [location.pathname]);
   const isCourseDetailPage = location.pathname.startsWith("/courses/");
   const { hasTeachers } = useHasTeachers();
 
