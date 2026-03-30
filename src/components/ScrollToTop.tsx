@@ -97,8 +97,19 @@ const ScrollToTop = () => {
     const isFreshLoad = isFirstLoad;
     if (isFirstLoad) isFirstLoad = false;
 
+    const navigationEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    const isReload = isFreshLoad && navigationEntry?.type === "reload";
+
+    if (isReload) {
+      window.sessionStorage.removeItem("pendingScrollTarget");
+      window.sessionStorage.removeItem(FORCE_SCROLL_RESTORE_KEY);
+      window.sessionStorage.removeItem(HOMEPAGE_SCROLL_KEY);
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
+    }
+
     const saved = scrollPositions.get(routeKey) ?? scrollPositions.get(`${pathname}${search}`) ?? 0;
-    const pendingTarget = pathname === "/" ? window.sessionStorage.getItem("pendingScrollTarget") : null;
+    const pendingTarget = pathname === "/" && !isFreshLoad ? window.sessionStorage.getItem("pendingScrollTarget") : null;
     const hashTarget = hash ? decodeURIComponent(hash.replace("#", "")) : null;
     const targetId = pendingTarget || hashTarget;
 
@@ -136,6 +147,13 @@ const ScrollToTop = () => {
         restoreScrollPosition(targetY, attempt + 1, maxScrollTop, maxScrollTop === lastMaxScroll ? stableAttempts + 1 : 0),
       delay);
     };
+
+    if (targetId === "home") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      window.sessionStorage.removeItem("pendingScrollTarget");
+      window.sessionStorage.removeItem(FORCE_SCROLL_RESTORE_KEY);
+      return;
+    }
 
     if (targetId) {
       const scrollToHashTarget = (attempt = 0, lastTop = -1) => {
