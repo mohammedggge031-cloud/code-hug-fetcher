@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Mail, Phone, BookOpen, Moon, Languages, GraduationCap, Sparkles, Users, Award, MessageCircle, Clock, ChevronDown, Globe } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useHasTeachers } from "@/hooks/useHasTeachers";
@@ -40,6 +40,7 @@ const Navbar = () => {
   const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const bodyScrollYRef = useRef(0);
   const isHomePage = location.pathname === "/";
   const isCourseDetailPage = location.pathname.startsWith("/courses/");
   const { hasTeachers } = useHasTeachers();
@@ -84,6 +85,7 @@ const Navbar = () => {
 
     if (mobileOpen) {
       const scrollY = window.scrollY;
+      bodyScrollYRef.current = scrollY;
       body.dataset.scrollY = String(scrollY);
       body.classList.add("menu-open");
       body.style.position = "fixed";
@@ -93,7 +95,7 @@ const Navbar = () => {
       body.style.width = "100%";
       body.style.overscrollBehavior = "none";
     } else {
-      const savedY = Number(body.dataset.scrollY || "0");
+      const savedY = Number(body.dataset.scrollY || bodyScrollYRef.current || "0");
       body.classList.remove("menu-open");
       body.style.position = "";
       body.style.top = "";
@@ -102,7 +104,7 @@ const Navbar = () => {
       body.style.width = "";
       body.style.overscrollBehavior = "";
       delete body.dataset.scrollY;
-      if (savedY > 0) {
+      if (savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
         window.scrollTo({ top: savedY, left: 0, behavior: "auto" });
       }
     }
@@ -173,7 +175,15 @@ const Navbar = () => {
 
     e.preventDefault();
 
-    if (href === "#home" && isCourseDetailPage) {
+    if (href === "#home") {
+      window.sessionStorage.removeItem("pendingScrollTarget");
+      window.sessionStorage.removeItem("forceScrollRestore");
+      window.sessionStorage.removeItem("homepageScrollY");
+      scrollToTopRoute();
+      return;
+    }
+
+    if (isCourseDetailPage && href === "#courses") {
       goHomeToCoursesSection();
       return;
     }
@@ -205,6 +215,25 @@ const Navbar = () => {
     }
 
     window.sessionStorage.setItem("pendingScrollTarget", targetId);
+    navigate("/");
+  };
+
+  const scrollToTopRoute = () => {
+    if (mobileOpen) {
+      setMobileOpen(false);
+      requestAnimationFrame(() => {
+        navigate("/", { replace: location.pathname === "/" && !location.hash });
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      });
+      return;
+    }
+
+    if (location.pathname === "/") {
+      navigate("/", { replace: true });
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
+    }
+
     navigate("/");
   };
 
@@ -404,7 +433,7 @@ const Navbar = () => {
       <div className="bg-primary shadow-sm">
         <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
           {/* Desktop: Logo left */}
-          <Link to="/" onClick={handleHomeLogoClick} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
+          <Link to="/" onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
             <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" fetchPriority="high" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
             <span className="text-[11px] font-heading font-bold text-primary-foreground uppercase tracking-widest">
               {t("Alhamd Academy", "أكاديمية الحمد")}
@@ -443,7 +472,7 @@ const Navbar = () => {
           {/* Mobile/Tablet: Logo (left) | Nav center | Book Trial (right) */}
           <div className="flex lg:hidden items-center justify-between w-full gap-2">
             {/* Left: Large Logo */}
-            <Link to="/" onClick={handleHomeLogoClick} className="flex items-center gap-2.5 shrink-0">
+             <Link to="/" onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }} className="flex items-center gap-2.5 shrink-0">
               <img src={logo} alt="Alhamd Academy" width={48} height={48} loading="eager" decoding="async" className="h-12 w-12 object-cover rounded-xl shadow-soft border-2 border-accent/20" />
               <div className="flex flex-col leading-tight">
                 <span className="text-[13px] font-heading font-extrabold text-primary-foreground uppercase tracking-wider">
@@ -489,7 +518,7 @@ const Navbar = () => {
       <div className={`relative h-full flex flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
         {/* Top: Logo on right */}
         <div className="flex items-center justify-end px-6 pt-6 pb-4">
-          <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5">
+          <Link to="/" onClick={(e) => { e.preventDefault(); scrollToTopRoute(); }} className="flex items-center gap-2.5">
             <span className="text-xs font-heading font-bold text-primary-foreground/80 uppercase tracking-widest">
               {t("Alhamd Academy", "أكاديمية الحمد")}
             </span>

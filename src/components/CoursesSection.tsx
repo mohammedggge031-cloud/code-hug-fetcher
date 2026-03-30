@@ -20,11 +20,15 @@ const CoursesSection = () => {
   const location = useLocation();
 
   const saveCourseReturnState = useCallback(() => {
-    // Store without hash so browser back (which may drop hash) still restores correctly.
     const path = `${location.pathname}${location.search}`;
+    const section = document.getElementById("courses");
+    const sectionTop = section
+      ? Math.max(Math.round(section.getBoundingClientRect().top + window.scrollY - 96), 0)
+      : Math.max(Math.round(window.scrollY), 0);
+
     window.sessionStorage.setItem(
       "courseReturnState",
-      JSON.stringify({ path, y: window.scrollY, ts: Date.now() })
+      JSON.stringify({ path, y: sectionTop, ts: Date.now() })
     );
   }, [location.pathname, location.search]);
 
