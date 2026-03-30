@@ -1,7 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Mail, Phone, GraduationCap, BookOpen, Star } from "lucide-react";
 import { Link } from "react-router-dom";
-import { FacebookIcon, InstagramIcon, WhatsAppIcon } from "@/components/icons/SocialIcons";
+import { FacebookIcon, InstagramIcon, WhatsAppIcon, YoutubeIcon, TikTokIcon } from "@/components/icons/SocialIcons";
 import logo from "@/assets/logo.webp";
 
 const Footer = () => {
@@ -28,7 +28,8 @@ const Footer = () => {
     { icon: WhatsAppIcon, href: "https://wa.me/201271134828?text=Salam%20Alhamd%20Academy", label: "WhatsApp" },
     { icon: FacebookIcon, href: "https://www.facebook.com/share/1BFyf4qMm8/", label: "Facebook" },
     { icon: InstagramIcon, href: "https://www.instagram.com/alhamdacademy_official", label: "Instagram" },
-    
+    { icon: YoutubeIcon, href: "https://www.youtube.com/@alhamdacademy_official", label: "YouTube" },
+    { icon: TikTokIcon, href: "https://www.tiktok.com/@alhamdacademy_official", label: "TikTok" },
     { icon: Mail, href: "mailto:info@alhamdacademy.net", label: "Email" },
   ];
 
