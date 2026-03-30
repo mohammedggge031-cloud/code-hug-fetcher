@@ -8,8 +8,8 @@ import avatarFemale from "@/assets/avatar-female.webp";
 
 const testimonials = [
   {
-    nameEn: "Dusa Ali",
-    nameAr: "دوسا علي",
+    nameEn: "Dursa ali",
+    nameAr: "درسة علي",
     roleEn: "Student",
     roleAr: "طالب",
     gender: "male",

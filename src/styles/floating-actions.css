@@ -7,6 +7,7 @@
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   transform: translateZ(0);
+  will-change: transform;
   contain: layout;
   overflow: visible;
   /* Do NOT add transition-transform here — it conflicts with animation on mobile */
@@ -50,7 +51,7 @@
 /* Bounce animation for FABs */
 /* Bounce animation for FABs — faster on mobile for visibility */
 .fab-gentle-bounce {
-  animation: gentle-bounce 2.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
+  animation: gentle-bounce 4.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
   will-change: transform;
@@ -58,7 +59,7 @@
 
 @media (min-width: 768px) {
   .fab-gentle-bounce {
-    animation-duration: 2.35s !important;
+    animation-duration: 4.2s !important;
   }
 }
 
@@ -82,9 +83,9 @@
 /* Mobile-first: subtle, non-distracting bounce */
 @keyframes gentle-bounce {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-  20% { transform: translate3d(0, -6px, 0) scale(1.03); }
-  40% { transform: translate3d(0, -1px, 0) scale(1); }
-  55% { transform: translate3d(0, -3px, 0) scale(1.01); }
+  20% { transform: translate3d(0, -3px, 0) scale(1.01); }
+  40% { transform: translate3d(0, -0.5px, 0) scale(1); }
+  55% { transform: translate3d(0, -1.5px, 0) scale(1.005); }
   75% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
@@ -97,9 +98,9 @@
 @media (min-width: 768px) {
   @keyframes gentle-bounce {
     0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
-    20% { transform: translate3d(0, -10px, 0) scale(1.05); }
-    40% { transform: translate3d(0, -2px, 0) scale(1); }
-    55% { transform: translate3d(0, -5px, 0) scale(1.02); }
+    20% { transform: translate3d(0, -5px, 0) scale(1.02); }
+    40% { transform: translate3d(0, -1px, 0) scale(1); }
+    55% { transform: translate3d(0, -2.5px, 0) scale(1.01); }
     75% { transform: translate3d(0, 0, 0) scale(1); }
   }
 
