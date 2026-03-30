@@ -104,7 +104,10 @@ const Navbar = () => {
       body.style.width = "";
       body.style.overscrollBehavior = "";
       delete body.dataset.scrollY;
-      if (savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
+      // Only restore scroll if we're still on the same page (not navigating away).
+      // If the user clicked a link to a new page, ScrollToTop handles scroll position.
+      const stayedOnSamePage = location.pathname === lastPathnameRef.current;
+      if (stayedOnSamePage && savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
         window.scrollTo({ top: savedY, left: 0, behavior: "auto" });
       }
     }
