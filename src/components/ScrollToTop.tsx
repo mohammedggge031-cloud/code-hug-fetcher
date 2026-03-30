@@ -184,6 +184,13 @@ const ScrollToTop = () => {
       return;
     }
 
+    // --- NON-HOMEPAGE: always open from the top (even on Back) ---
+    if (pathname !== "/") {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
+    }
+
+    // --- HOMEPAGE only: restore scroll position ---
     if (explicitRestore && explicitRestore.y > 0) {
       restoreScrollPosition(explicitRestore.y);
       window.sessionStorage.removeItem(FORCE_SCROLL_RESTORE_KEY);
@@ -198,7 +205,7 @@ const ScrollToTop = () => {
       return;
     }
 
-    if (!isFreshLoad && navigationType === "POP" && pathname === "/" && saved === 0) {
+    if (!isFreshLoad && navigationType === "POP" && saved === 0) {
       const persistedY = parseInt(window.sessionStorage.getItem(HOMEPAGE_SCROLL_KEY) || "0", 10);
       if (persistedY > 0) {
         restoreScrollPosition(persistedY);
