@@ -187,6 +187,12 @@ const ScrollToTop = () => {
     // --- NON-HOMEPAGE: always open from the top (even on Back) ---
     if (pathname !== "/") {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      // Double-tap: beat any async body-scroll restoration from mobile menu closing
+      pendingRafRef.current = requestAnimationFrame(() => {
+        if (navTokenRef.current === navToken) {
+          window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+        }
+      });
       return;
     }
 
