@@ -102,7 +102,7 @@ export const videos: VideoItem[] = [
     titleAr: "قصة سيدنا سليمان عليه السلام",
     descriptionEn: "The king who commanded jinn, wind, and understood the language of animals.",
     descriptionAr: "الملك الذي سخر الجن والريح وفهم لغة الحيوانات.",
-    youtubeId: "919gjcqIey4",
+    youtubeId: "gvHdq3t4YBE",
     category: "Prophet Stories",
     categoryAr: "قصص الأنبياء",
     language: "en",
