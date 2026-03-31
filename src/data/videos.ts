@@ -91,7 +91,7 @@ export const videos: VideoItem[] = [
     titleAr: "حياة النبي محمد ﷺ",
     descriptionEn: "The complete biography of the final Messenger of Allah.",
     descriptionAr: "السيرة الكاملة لخاتم الأنبياء والمرسلين.",
-    youtubeId: "2uswXeBLszU",
+    youtubeId: "p7bKfAJuRBg",
     category: "Prophet Stories",
     categoryAr: "قصص الأنبياء",
     language: "en",

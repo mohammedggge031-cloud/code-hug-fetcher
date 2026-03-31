@@ -66,9 +66,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    // Immediately restore body when route changes (before React re-render)
-    // This prevents blank pages caused by body still being position:fixed
+  // useLayoutEffect ensures body is unfixed BEFORE ScrollToTop's useLayoutEffect
+  // runs, preventing the "jitter" where scroll commands fire while body is still fixed
+  useLayoutEffect(() => {
     const body = document.body;
     if (body.classList.contains("menu-open")) {
       body.classList.remove("menu-open");
