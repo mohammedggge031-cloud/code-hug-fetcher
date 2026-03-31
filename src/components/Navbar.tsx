@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Mail, Phone, BookOpen, Moon, Languages, GraduationCap, Sparkles, Users, Award, MessageCircle, Clock, ChevronDown, Globe } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useHasTeachers } from "@/hooks/useHasTeachers";
