@@ -28,9 +28,9 @@ const Footer = () => {
     { icon: WhatsAppIcon, href: "https://wa.me/201271134828?text=Salam%20Alhamd%20Academy", label: "WhatsApp" },
     { icon: FacebookIcon, href: "https://www.facebook.com/share/1BFyf4qMm8/", label: "Facebook" },
     { icon: InstagramIcon, href: "https://www.instagram.com/alhamdacademy_official", label: "Instagram" },
+    { icon: Mail, href: "mailto:info@alhamdacademy.net", label: "Email" },
     { icon: YoutubeIcon, href: "https://www.youtube.com/@alhamdacademy_official", label: "YouTube" },
     { icon: TikTokIcon, href: "https://www.tiktok.com/@alhamdacademy_official", label: "TikTok" },
-    { icon: Mail, href: "mailto:info@alhamdacademy.net", label: "Email" },
   ];
 
   return (
