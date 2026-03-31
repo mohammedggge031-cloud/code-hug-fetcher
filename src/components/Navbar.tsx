@@ -67,6 +67,19 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
+    // Immediately restore body when route changes (before React re-render)
+    // This prevents blank pages caused by body still being position:fixed
+    const body = document.body;
+    if (body.classList.contains("menu-open")) {
+      body.classList.remove("menu-open");
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.width = "";
+      body.style.overscrollBehavior = "";
+      delete body.dataset.scrollY;
+    }
     setMobileOpen(false);
     setExpandedMobile(null);
     setExpandedMobileSub(null);
