@@ -36,7 +36,7 @@ export const videos: VideoItem[] = [
     titleAr: "قصة سيدنا نوح عليه السلام",
     descriptionEn: "Prophet Nuh's 950 years of dawah and the great flood.",
     descriptionAr: "دعوة سيدنا نوح ٩٥٠ سنة والطوفان العظيم.",
-    youtubeId: "x-1SFDuyK18",
+    youtubeId: "3OLD2V1SjUc",
     category: "Prophet Stories",
     categoryAr: "قصص الأنبياء",
     language: "en",
