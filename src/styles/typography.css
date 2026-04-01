@@ -1,7 +1,7 @@
 html,
 body,
 #root {
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 body {
@@ -31,6 +31,15 @@ li {
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
+}
+
+@media (max-width: 767px) {
+  .site-fixed-layer {
+    -webkit-transform: none;
+    transform: none;
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+  }
 }
 
 .text-balance {
