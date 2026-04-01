@@ -64,7 +64,12 @@
   animation: gentle-bounce 4.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
-  will-change: transform;
+}
+
+@media (min-width: 768px) {
+  .fab-gentle-bounce {
+    will-change: transform;
+  }
 }
 
 @media (min-width: 768px) {

@@ -178,6 +178,13 @@
     content-visibility: auto;
     contain-intrinsic-size: auto 500px;
   }
+
+  @media (max-width: 767px) {
+    .content-auto {
+      content-visibility: visible;
+      contain-intrinsic-size: none;
+    }
+  }
 }
 
 @layer utilities {
