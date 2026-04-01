@@ -116,6 +116,17 @@
     overflow-x: clip;
   }
 
+  @media (max-width: 767px) {
+    html {
+      scroll-behavior: auto;
+    }
+    body {
+      -webkit-overflow-scrolling: touch;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+  }
+
   body.menu-open {
     overflow: hidden;
     height: 100svh;
