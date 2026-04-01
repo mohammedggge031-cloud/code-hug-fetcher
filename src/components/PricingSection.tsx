@@ -35,9 +35,9 @@ const pricing: Record<Duration, Plan[]> = {
   "60": [
     { days: 1, hoursPerMonth: 4, monthly: 38, was: 46, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
     { days: 2, hoursPerMonth: 8, monthly: 74, was: 87, semi: 417, semiSave: "6%", annual: 764, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 12, monthly: 107, was: 124, semi: 603, semiSave: "6%", annual: 1104, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 16, monthly: 140, was: 161, semi: 790, semiSave: "6%", annual: 1445, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 20, monthly: 173, was: 197, semi: 976, semiSave: "6%", annual: 1785, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 12, monthly: 95, was: 112, semi: 536, semiSave: "6%", annual: 980, annualSave: "14%" },
+    { days: 4, hoursPerMonth: 16, monthly: 125, was: 146, semi: 705, semiSave: "6%", annual: 1290, annualSave: "14%", popular: true },
+    { days: 5, hoursPerMonth: 20, monthly: 155, was: 179, semi: 874, semiSave: "6%", annual: 1600, annualSave: "14%" },
   ],
 };
 
