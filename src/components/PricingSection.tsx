@@ -18,42 +18,42 @@ interface Plan {
 }
 
 /*
- * Hourly-rate matrix ($/hr) — strictly descending both across durations & tiers:
+ * Hourly-rate matrix ($/hr) — range $8–$10, strictly descending:
  *
  *              30 min   45 min   60 min
- * Starter      10.50     9.67     9.50
- * Light         9.75     9.17     8.88
- * Basic         8.17     7.78     7.42
- * Standard      7.75     7.33     6.94
- * Premium       7.40     6.93     6.50
+ * Explorer     10.00     9.67     9.50
+ * Learner       9.50     9.17     9.00
+ * Scholar       9.00     8.67     8.50
+ * Achiever      8.63     8.25     8.19
+ * Master        8.30     8.13     8.00
  */
 const pricing: Record<Duration, Plan[]> = {
   "30": [
-    { days: 1, hoursPerMonth: 2, monthly: 21, was: 25, semi: 118, semiSave: "6%", annual: 217, annualSave: "14%" },
-    { days: 2, hoursPerMonth: 4, monthly: 39, was: 46, semi: 220, semiSave: "6%", annual: 402, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 6, monthly: 49, was: 58, semi: 276, semiSave: "6%", annual: 506, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 8, monthly: 62, was: 73, semi: 350, semiSave: "6%", annual: 640, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 10, monthly: 74, was: 87, semi: 417, semiSave: "6%", annual: 764, annualSave: "14%" },
+    { days: 1, hoursPerMonth: 2, monthly: 20, was: 24, semi: 113, semiSave: "6%", annual: 206, annualSave: "14%" },
+    { days: 2, hoursPerMonth: 4, monthly: 38, was: 45, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 6, monthly: 54, was: 64, semi: 305, semiSave: "6%", annual: 557, annualSave: "14%", popular: true },
+    { days: 4, hoursPerMonth: 8, monthly: 69, was: 82, semi: 389, semiSave: "6%", annual: 712, annualSave: "14%" },
+    { days: 5, hoursPerMonth: 10, monthly: 83, was: 98, semi: 468, semiSave: "6%", annual: 857, annualSave: "14%" },
   ],
   "45": [
     { days: 1, hoursPerMonth: 3, monthly: 29, was: 35, semi: 164, semiSave: "6%", annual: 299, annualSave: "14%" },
     { days: 2, hoursPerMonth: 6, monthly: 55, was: 65, semi: 310, semiSave: "6%", annual: 567, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 9, monthly: 70, was: 83, semi: 395, semiSave: "6%", annual: 722, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 12, monthly: 88, was: 104, semi: 496, semiSave: "6%", annual: 908, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 15, monthly: 104, was: 123, semi: 587, semiSave: "6%", annual: 1073, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 9, monthly: 78, was: 92, semi: 440, semiSave: "6%", annual: 805, annualSave: "14%", popular: true },
+    { days: 4, hoursPerMonth: 12, monthly: 99, was: 117, semi: 558, semiSave: "6%", annual: 1022, annualSave: "14%" },
+    { days: 5, hoursPerMonth: 15, monthly: 122, was: 144, semi: 688, semiSave: "6%", annual: 1259, annualSave: "14%" },
   ],
   "60": [
-    { days: 1, hoursPerMonth: 4, monthly: 38, was: 46, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
-    { days: 2, hoursPerMonth: 8, monthly: 71, was: 84, semi: 400, semiSave: "6%", annual: 733, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 12, monthly: 89, was: 106, semi: 501, semiSave: "6%", annual: 918, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 16, monthly: 111, was: 132, semi: 626, semiSave: "6%", annual: 1146, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 20, monthly: 130, was: 154, semi: 733, semiSave: "6%", annual: 1342, annualSave: "14%" },
+    { days: 1, hoursPerMonth: 4, monthly: 38, was: 45, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
+    { days: 2, hoursPerMonth: 8, monthly: 72, was: 85, semi: 406, semiSave: "6%", annual: 743, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 12, monthly: 102, was: 121, semi: 575, semiSave: "6%", annual: 1053, annualSave: "14%", popular: true },
+    { days: 4, hoursPerMonth: 16, monthly: 131, was: 155, semi: 739, semiSave: "6%", annual: 1352, annualSave: "14%" },
+    { days: 5, hoursPerMonth: 20, monthly: 160, was: 189, semi: 902, semiSave: "6%", annual: 1651, annualSave: "14%" },
   ],
 };
 
 const tierNames = {
-  en: ["Starter", "Light", "Basic", "Standard", "Premium"],
-  ar: ["مبتدئ", "خفيف", "أساسي", "متقدم", "بريميوم"],
+  en: ["Explorer", "Learner", "Scholar", "Achiever", "Master"],
+  ar: ["مستكشف", "متعلم", "باحث", "متفوق", "متقن"],
 };
 
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
