@@ -59,7 +59,7 @@ const tierNames = {
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
   const features = [
     t(`${duration} minutes per session`, `${duration} دقيقة لكل حصة`),
-    t(`${plan.days} sessions per week`, `${plan.days} حصص في الأسبوع`),
+    plan.days === 1 ? t(`${plan.days} session per week`, `${plan.days} حصة في الأسبوع`) : t(`${plan.days} sessions per week`, `${plan.days} حصص في الأسبوع`),
     t("One-on-one with teacher", "حصة فردية مع المعلم"),
     t("Free trial class included", "حصة تجريبية مجانية"),
   ];
@@ -84,7 +84,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
           {t(tierNames.en[i], tierNames.ar[i])}
         </h3>
         <p className={`text-[13px] sm:text-xs md:text-xs lg:text-sm ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-          {plan.days} {t("days per week", "يوم في الأسبوع")}
+          {plan.days} {plan.days === 1 ? t("day per week", "يوم في الأسبوع") : t("days per week", "أيام في الأسبوع")}
         </p>
       </div>
 
