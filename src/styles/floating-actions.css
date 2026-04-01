@@ -13,6 +13,16 @@
   /* Do NOT add transition-transform here — it conflicts with animation on mobile */
 }
 
+@media (max-width: 767px) {
+  .floating-action-shell {
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+    transform: none;
+    will-change: auto;
+    contain: none;
+  }
+}
+
 .floating-fab-booking,
 .floating-fab-whatsapp {
   position: fixed;
