@@ -59,7 +59,7 @@ const tierNames = {
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
   const features = [
     t(`${duration} minutes per session`, `${duration} دقيقة لكل حصة`),
-    t(`${plan.days} sessions per week`, `${plan.days} حصص في الأسبوع`),
+    plan.days === 1 ? t(`${plan.days} session per week`, `${plan.days} حصة في الأسبوع`) : t(`${plan.days} sessions per week`, `${plan.days} حصص في الأسبوع`),
     t("One-on-one with teacher", "حصة فردية مع المعلم"),
     t("Free trial class included", "حصة تجريبية مجانية"),
   ];
