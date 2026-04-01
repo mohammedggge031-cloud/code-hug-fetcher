@@ -21,9 +21,9 @@ const pricing: Record<Duration, Plan[]> = {
   "30": [
     { days: 1, hoursPerMonth: 2, monthly: 21, was: 25, semi: 118, semiSave: "6%", annual: 217, annualSave: "14%" },
     { days: 2, hoursPerMonth: 4, monthly: 39, was: 46, semi: 220, semiSave: "6%", annual: 402, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 6, monthly: 57, was: 66, semi: 321, semiSave: "6%", annual: 588, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 8, monthly: 74, was: 85, semi: 417, semiSave: "6%", annual: 764, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 10, monthly: 91, was: 104, semi: 513, semiSave: "6%", annual: 939, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 6, monthly: 56, was: 65, semi: 316, semiSave: "6%", annual: 578, annualSave: "14%" },
+    { days: 4, hoursPerMonth: 8, monthly: 73, was: 84, semi: 412, semiSave: "6%", annual: 753, annualSave: "14%", popular: true },
+    { days: 5, hoursPerMonth: 10, monthly: 90, was: 103, semi: 508, semiSave: "6%", annual: 929, annualSave: "14%" },
   ],
   "45": [
     { days: 1, hoursPerMonth: 3, monthly: 29, was: 35, semi: 164, semiSave: "6%", annual: 299, annualSave: "14%" },
