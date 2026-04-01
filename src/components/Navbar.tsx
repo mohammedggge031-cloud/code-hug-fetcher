@@ -192,6 +192,26 @@ const Navbar = () => {
     goHomeToCoursesSection();
   };
 
+  const scrollToSection = (targetId: string) => {
+    const headerOffset = 96;
+    const scrollToTarget = (attempt = 0, lastTop = -1) => {
+      const target = document.getElementById(targetId);
+      if (target) {
+        const top = Math.round(target.getBoundingClientRect().top + window.scrollY - headerOffset);
+        window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: "smooth" });
+        // Re-check after lazy sections shift layout
+        if (attempt < 30 && top !== lastTop) {
+          setTimeout(() => scrollToTarget(attempt + 1, top), 80);
+        }
+        return;
+      }
+      if (attempt < 60) {
+        setTimeout(() => scrollToTarget(attempt + 1, lastTop), 50);
+      }
+    };
+    scrollToTarget();
+  };
+
   const handleAnchorClick = (e: React.MouseEvent, href: string) => {
     if (!href.startsWith("#")) return;
 
@@ -212,27 +232,24 @@ const Navbar = () => {
 
     const targetId = href.slice(1);
 
-    // If mobile menu is open, body is position:fixed so scrollTo won't work.
-    // Always use pendingScrollTarget and let ScrollToTop handle it after body is restored.
+    // If mobile menu is open, close it first then scroll
     if (mobileOpen) {
+      setMobileOpen(false);
       if (isHomePage) {
-        window.sessionStorage.setItem("pendingScrollTarget", targetId);
-        // Close menu first, then navigate to trigger ScrollToTop
-        setMobileOpen(false);
-        navigate(`/#${targetId}`);
+        // Body is position:fixed, so scroll after menu close restores body
+        requestAnimationFrame(() => {
+          scrollToSection(targetId);
+        });
       } else {
         window.sessionStorage.setItem("pendingScrollTarget", targetId);
-        setMobileOpen(false);
         navigate("/");
       }
       return;
     }
 
     if (isHomePage) {
-      // Use pendingScrollTarget + navigate so ScrollToTop handles
-      // the scroll with retry logic (sections may still be lazy-loading)
-      window.sessionStorage.setItem("pendingScrollTarget", targetId);
-      navigate(`/#${targetId}`);
+      // Already on homepage — scroll directly instead of navigating
+      scrollToSection(targetId);
       return;
     }
 
