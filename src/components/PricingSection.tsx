@@ -84,7 +84,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
           {t(tierNames.en[i], tierNames.ar[i])}
         </h3>
         <p className={`text-[13px] sm:text-xs md:text-xs lg:text-sm ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-          {plan.days} {t("days per week", "يوم في الأسبوع")}
+          {plan.days} {plan.days === 1 ? t("day per week", "يوم في الأسبوع") : t("days per week", "أيام في الأسبوع")}
         </p>
       </div>
 
