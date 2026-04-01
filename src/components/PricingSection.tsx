@@ -21,23 +21,23 @@ const pricing: Record<Duration, Plan[]> = {
   "30": [
     { days: 1, hoursPerMonth: 2, monthly: 21, was: 25, semi: 118, semiSave: "6%", annual: 217, annualSave: "14%" },
     { days: 2, hoursPerMonth: 4, monthly: 39, was: 46, semi: 220, semiSave: "6%", annual: 402, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 6, monthly: 57, was: 66, semi: 321, semiSave: "6%", annual: 588, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 8, monthly: 74, was: 85, semi: 417, semiSave: "6%", annual: 764, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 10, monthly: 91, was: 104, semi: 513, semiSave: "6%", annual: 939, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 6, monthly: 56, was: 65, semi: 316, semiSave: "6%", annual: 578, annualSave: "14%" },
+    { days: 4, hoursPerMonth: 8, monthly: 73, was: 84, semi: 412, semiSave: "6%", annual: 753, annualSave: "14%", popular: true },
+    { days: 5, hoursPerMonth: 10, monthly: 90, was: 103, semi: 508, semiSave: "6%", annual: 929, annualSave: "14%" },
   ],
   "45": [
     { days: 1, hoursPerMonth: 3, monthly: 29, was: 35, semi: 164, semiSave: "6%", annual: 299, annualSave: "14%" },
     { days: 2, hoursPerMonth: 6, monthly: 55, was: 65, semi: 310, semiSave: "6%", annual: 567, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 9, monthly: 83, was: 96, semi: 468, semiSave: "6%", annual: 857, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 12, monthly: 108, was: 124, semi: 609, semiSave: "6%", annual: 1115, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 15, monthly: 132, was: 151, semi: 744, semiSave: "6%", annual: 1362, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 9, monthly: 82, was: 95, semi: 462, semiSave: "6%", annual: 849, annualSave: "14%" },
+    { days: 4, hoursPerMonth: 12, monthly: 107, was: 123, semi: 603, semiSave: "6%", annual: 1104, annualSave: "14%", popular: true },
+    { days: 5, hoursPerMonth: 15, monthly: 131, was: 150, semi: 739, semiSave: "6%", annual: 1352, annualSave: "14%" },
   ],
   "60": [
     { days: 1, hoursPerMonth: 4, monthly: 38, was: 46, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
     { days: 2, hoursPerMonth: 8, monthly: 74, was: 87, semi: 417, semiSave: "6%", annual: 764, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 12, monthly: 108, was: 125, semi: 609, semiSave: "6%", annual: 1115, annualSave: "14%" },
-    { days: 4, hoursPerMonth: 16, monthly: 141, was: 162, semi: 795, semiSave: "6%", annual: 1455, annualSave: "14%", popular: true },
-    { days: 5, hoursPerMonth: 20, monthly: 174, was: 198, semi: 981, semiSave: "6%", annual: 1795, annualSave: "14%" },
+    { days: 3, hoursPerMonth: 12, monthly: 107, was: 124, semi: 603, semiSave: "6%", annual: 1104, annualSave: "14%" },
+    { days: 4, hoursPerMonth: 16, monthly: 140, was: 161, semi: 790, semiSave: "6%", annual: 1445, annualSave: "14%", popular: true },
+    { days: 5, hoursPerMonth: 20, monthly: 173, was: 197, semi: 976, semiSave: "6%", annual: 1785, annualSave: "14%" },
   ],
 };
 
