@@ -52,8 +52,8 @@ const pricing: Record<Duration, Plan[]> = {
 };
 
 const tierNames = {
-  en: ["Explorer", "Learner", "Scholar", "Achiever", "Master"],
-  ar: ["مستكشف", "متعلم", "باحث", "متفوق", "متقن"],
+  en: ["Basic", "Plus", "Standard", "Premium", "Ultimate"],
+  ar: ["أساسي", "بلس", "ستاندرد", "بريميوم", "ألتيميت"],
 };
 
 const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; duration: Duration; t: (en: string, ar: string) => string }) => {
