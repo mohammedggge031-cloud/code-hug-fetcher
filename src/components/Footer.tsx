@@ -179,11 +179,11 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary-foreground/8 mt-12 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="border-t border-primary-foreground/8 mt-12 pt-6 pb-16 md:pb-0 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-xs text-primary-foreground/30">
             © {new Date().getFullYear()} Alhamd Academy. {t("All rights reserved.", "جميع الحقوق محفوظة.")}
           </p>
-          <div className="flex items-center gap-3 text-xs text-primary-foreground/30">
+          <div className="flex items-center gap-3 text-xs text-primary-foreground/30 flex-wrap justify-center">
             <Link to="/free-trial" className="hover:text-accent transition-colors">{t("Free Trial", "تجربة مجانية")}</Link>
             <span className="text-primary-foreground/15">|</span>
             <Link to="/#pricing" className="hover:text-accent transition-colors">{t("Pricing", "الأسعار")}</Link>
