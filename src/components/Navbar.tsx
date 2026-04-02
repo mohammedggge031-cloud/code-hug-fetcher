@@ -487,7 +487,7 @@ const Navbar = () => {
 
   return (
     <>
-    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-shadow duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
+    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-[box-shadow] duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
       <div className="bg-primary shadow-sm">
         <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
           {/* Desktop: Logo left */}
