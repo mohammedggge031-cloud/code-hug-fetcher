@@ -544,7 +544,7 @@ const Navbar = () => {
 
             {/* Center: hamburger */}
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => { cancelPendingScroll(); setMobileOpen(!mobileOpen); }}
               className="w-10 h-10 rounded-xl flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-all duration-300"
               aria-label="Toggle menu"
             >
