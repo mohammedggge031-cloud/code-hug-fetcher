@@ -60,6 +60,13 @@ const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const QuranClassesForKids = lazy(() => import("./pages/QuranClassesForKids"));
+const QuranClassesForAdults = lazy(() => import("./pages/QuranClassesForAdults"));
+const BestOnlineQuranClasses = lazy(() => import("./pages/BestOnlineQuranClasses"));
+const OneOnOneQuranClasses = lazy(() => import("./pages/OneOnOneQuranClasses"));
+const QuranClassesPricing = lazy(() => import("./pages/QuranClassesPricing"));
+const QuranClassesForBeginners = lazy(() => import("./pages/QuranClassesForBeginners"));
+const QuranClassesWithCertificate = lazy(() => import("./pages/QuranClassesWithCertificate"));
 const AdminErrorBoundary = lazy(() => import("./components/admin/AdminErrorBoundary"));
 
 const queryClient = new QueryClient({
