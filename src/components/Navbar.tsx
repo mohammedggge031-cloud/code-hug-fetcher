@@ -489,7 +489,7 @@ const Navbar = () => {
     <>
     <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-[box-shadow] duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
       <div className="bg-primary shadow-sm">
-        <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-300 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
+        <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-200 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
           {/* Desktop: Logo left */}
           <Link to="/" onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
             <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" fetchPriority="high" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
