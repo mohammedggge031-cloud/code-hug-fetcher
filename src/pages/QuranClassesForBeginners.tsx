@@ -143,7 +143,7 @@ const QuranClassesForBeginners = () => (
     heroSubtitleEn="Patient Teachers · Step-by-Step Progress · No Prior Knowledge Needed"
     heroSubtitleAr="معلمون صبورون · تقدم تدريجي · لا حاجة لمعرفة سابقة"
     heroDescEn="Never read Arabic before? Starting Quran as a complete beginner? You're in the right place. Our beginner program takes you from zero — from the very first Arabic letter — to reading Quran fluently. Patient, certified teachers guide you every step of the way."
-    heroDescAr: "لم تقرأ العربية من قبل؟ تبدأ القرآن كمبتدئ تماماً؟ أنت في المكان الصحيح. برنامج المبتدئين يأخذك من الصفر — من أول حرف عربي — إلى قراءة القرآن بطلاقة."
+    heroDescAr="لم تقرأ العربية من قبل؟ تبدأ القرآن كمبتدئ تماماً؟ أنت في المكان الصحيح. برنامج المبتدئين يأخذك من الصفر — من أول حرف عربي — إلى قراءة القرآن بطلاقة."
     aboutTitleEn="Your Complete Beginner's Roadmap to Reading Quran"
     aboutTitleAr="خريطة طريقك الشاملة كمبتدئ لقراءة القرآن"
     aboutContentEn={[

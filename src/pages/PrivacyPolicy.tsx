@@ -19,6 +19,7 @@ const PrivacyPolicy = () => {
         canonical="https://alhamdacademy.net/privacy-policy"
         keywords="privacy policy, data protection, alhamd academy privacy"
         dynamicSeo={seo}
+        noIndex
       />
       <Navbar />
       <main className="container mx-auto px-4 py-16 max-w-4xl">

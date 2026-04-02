@@ -60,6 +60,13 @@ const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const QuranClassesForKids = lazy(() => import("./pages/QuranClassesForKids"));
+const QuranClassesForAdults = lazy(() => import("./pages/QuranClassesForAdults"));
+const BestOnlineQuranClasses = lazy(() => import("./pages/BestOnlineQuranClasses"));
+const OneOnOneQuranClasses = lazy(() => import("./pages/OneOnOneQuranClasses"));
+const QuranClassesPricing = lazy(() => import("./pages/QuranClassesPricing"));
+const QuranClassesForBeginners = lazy(() => import("./pages/QuranClassesForBeginners"));
+const QuranClassesWithCertificate = lazy(() => import("./pages/QuranClassesWithCertificate"));
 const AdminErrorBoundary = lazy(() => import("./components/admin/AdminErrorBoundary"));
 
 const queryClient = new QueryClient({
@@ -101,6 +108,13 @@ const App = () => (
               
               <Route path="/courses/:slug" element={<CoursePage />} />
               <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
+              <Route path="/quran-classes-for-kids" element={<QuranClassesForKids />} />
+              <Route path="/quran-classes-for-adults" element={<QuranClassesForAdults />} />
+              <Route path="/best-online-quran-classes" element={<BestOnlineQuranClasses />} />
+              <Route path="/one-on-one-quran-classes" element={<OneOnOneQuranClasses />} />
+              <Route path="/quran-classes-pricing" element={<QuranClassesPricing />} />
+              <Route path="/quran-classes-for-beginners" element={<QuranClassesForBeginners />} />
+              <Route path="/online-quran-classes-with-certificate" element={<QuranClassesWithCertificate />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/:slug" element={<LocationPage />} />
 
