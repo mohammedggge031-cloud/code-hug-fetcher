@@ -41,6 +41,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bodyScrollYRef = useRef(0);
+  const scrollTimerRef = useRef<number | null>(null);
   const lastPathnameRef = useRef(location.pathname);
   const isHomePage = location.pathname === "/";
 
@@ -192,21 +193,37 @@ const Navbar = () => {
     goHomeToCoursesSection();
   };
 
+  const cancelPendingScroll = () => {
+    if (scrollTimerRef.current) {
+      window.clearTimeout(scrollTimerRef.current);
+      scrollTimerRef.current = null;
+    }
+  };
+
   const scrollToSection = (targetId: string) => {
+    cancelPendingScroll();
     const headerOffset = 96;
     const scrollToTarget = (attempt = 0, lastTop = -1) => {
+      // Abort if menu opened during retry loop
+      if (document.body.classList.contains("menu-open")) {
+        scrollTimerRef.current = null;
+        return;
+      }
       const target = document.getElementById(targetId);
       if (target) {
         const top = Math.round(target.getBoundingClientRect().top + window.scrollY - headerOffset);
         window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: "smooth" });
-        // Re-check after lazy sections shift layout
         if (attempt < 30 && top !== lastTop) {
-          setTimeout(() => scrollToTarget(attempt + 1, top), 80);
+          scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, top), 80);
+        } else {
+          scrollTimerRef.current = null;
         }
         return;
       }
       if (attempt < 60) {
-        setTimeout(() => scrollToTarget(attempt + 1, lastTop), 50);
+        scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, lastTop), 50);
+      } else {
+        scrollTimerRef.current = null;
       }
     };
     scrollToTarget();
@@ -527,7 +544,7 @@ const Navbar = () => {
 
             {/* Center: hamburger */}
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => { cancelPendingScroll(); setMobileOpen(!mobileOpen); }}
               className="w-10 h-10 rounded-xl flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-all duration-300"
               aria-label="Toggle menu"
             >
