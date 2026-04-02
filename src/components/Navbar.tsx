@@ -41,6 +41,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bodyScrollYRef = useRef(0);
+  const scrollTimerRef = useRef<number | null>(null);
   const lastPathnameRef = useRef(location.pathname);
   const isHomePage = location.pathname === "/";
 
