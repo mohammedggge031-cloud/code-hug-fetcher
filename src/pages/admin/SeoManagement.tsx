@@ -32,6 +32,7 @@ const defaultEntry: Partial<SeoEntry> = {
 };
 
 const SITE_PAGES = [
+  // Main pages
   { path: "/", name: "Home" },
   { path: "/online-quran-classes", name: "Online Quran Classes" },
   { path: "/tajweed-course-online", name: "Tajweed Course" },
@@ -60,6 +61,52 @@ const SITE_PAGES = [
   { path: "/courses/arabic-course", name: "Arabic Course" },
   { path: "/courses/islamic-studies", name: "Islamic Studies Course" },
   { path: "/courses/all-in-one-course", name: "All-in-One Course" },
+  // Location pages — Countries
+  { path: "/learn-quran-online-usa", name: "Learn Quran Online - USA" },
+  { path: "/learn-quran-online-canada", name: "Learn Quran Online - Canada" },
+  { path: "/learn-quran-online-uk", name: "Learn Quran Online - UK" },
+  { path: "/learn-quran-online-australia", name: "Learn Quran Online - Australia" },
+  { path: "/learn-quran-online-germany", name: "Learn Quran Online - Germany" },
+  { path: "/learn-quran-online-france", name: "Learn Quran Online - France" },
+  { path: "/learn-quran-online-netherlands", name: "Learn Quran Online - Netherlands" },
+  { path: "/learn-quran-online-sweden", name: "Learn Quran Online - Sweden" },
+  { path: "/learn-quran-online-norway", name: "Learn Quran Online - Norway" },
+  { path: "/learn-quran-online-denmark", name: "Learn Quran Online - Denmark" },
+  { path: "/learn-quran-online-belgium", name: "Learn Quran Online - Belgium" },
+  { path: "/learn-quran-online-switzerland", name: "Learn Quran Online - Switzerland" },
+  { path: "/learn-quran-online-ireland", name: "Learn Quran Online - Ireland" },
+  // Location pages — US Cities
+  { path: "/learn-quran-online-new-york", name: "Learn Quran Online - New York" },
+  { path: "/learn-quran-online-los-angeles", name: "Learn Quran Online - Los Angeles" },
+  { path: "/learn-quran-online-chicago", name: "Learn Quran Online - Chicago" },
+  { path: "/learn-quran-online-houston", name: "Learn Quran Online - Houston" },
+  { path: "/learn-quran-online-dallas", name: "Learn Quran Online - Dallas" },
+  { path: "/learn-quran-online-san-francisco", name: "Learn Quran Online - San Francisco" },
+  { path: "/learn-quran-online-miami", name: "Learn Quran Online - Miami" },
+  { path: "/learn-quran-online-seattle", name: "Learn Quran Online - Seattle" },
+  { path: "/learn-quran-online-boston", name: "Learn Quran Online - Boston" },
+  { path: "/learn-quran-online-washington-dc", name: "Learn Quran Online - Washington DC" },
+  // Location pages — Canada Cities
+  { path: "/learn-quran-online-toronto", name: "Learn Quran Online - Toronto" },
+  { path: "/learn-quran-online-vancouver", name: "Learn Quran Online - Vancouver" },
+  { path: "/learn-quran-online-montreal", name: "Learn Quran Online - Montreal" },
+  { path: "/learn-quran-online-calgary", name: "Learn Quran Online - Calgary" },
+  { path: "/learn-quran-online-ottawa", name: "Learn Quran Online - Ottawa" },
+  // Location pages — UK Cities
+  { path: "/learn-quran-online-london", name: "Learn Quran Online - London" },
+  { path: "/learn-quran-online-manchester", name: "Learn Quran Online - Manchester" },
+  { path: "/learn-quran-online-birmingham", name: "Learn Quran Online - Birmingham" },
+  { path: "/learn-quran-online-leeds", name: "Learn Quran Online - Leeds" },
+  { path: "/learn-quran-online-glasgow", name: "Learn Quran Online - Glasgow" },
+  // Location pages — Europe Cities
+  { path: "/learn-quran-online-berlin", name: "Learn Quran Online - Berlin" },
+  { path: "/learn-quran-online-paris", name: "Learn Quran Online - Paris" },
+  { path: "/learn-quran-online-amsterdam", name: "Learn Quran Online - Amsterdam" },
+  { path: "/learn-quran-online-stockholm", name: "Learn Quran Online - Stockholm" },
+  { path: "/learn-quran-online-oslo", name: "Learn Quran Online - Oslo" },
+  { path: "/learn-quran-online-zurich", name: "Learn Quran Online - Zurich" },
+  { path: "/learn-quran-online-brussels", name: "Learn Quran Online - Brussels" },
+  { path: "/learn-quran-online-dublin", name: "Learn Quran Online - Dublin" },
 ];
 
 const SeoManagement = () => {
