@@ -202,7 +202,13 @@ const BlogManagement = () => {
               {isFetching ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="relative h-8 w-8">
+                        <div className="absolute inset-0 rounded-full border-2 border-muted" />
+                        <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                      </div>
+                      <span className="text-xs text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</span>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
