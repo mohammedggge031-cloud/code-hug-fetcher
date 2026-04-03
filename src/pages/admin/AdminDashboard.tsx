@@ -71,7 +71,7 @@ const AdminDashboard = () => {
               <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold tracking-tight">{card.value}</div>
+              <div className="text-3xl font-bold tracking-tight tabular-nums">{card.value}</div>
               <p className="text-sm font-medium text-foreground mt-1">{card.title}</p>
               <p className="text-xs text-muted-foreground">{card.desc}</p>
             </CardContent>
