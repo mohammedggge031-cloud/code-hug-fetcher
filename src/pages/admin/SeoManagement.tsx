@@ -170,6 +170,7 @@ const SeoManagement = () => {
                 <TableHead>{t("seo.col.page")}</TableHead>
                 <TableHead className="hidden md:table-cell">{t("seo.col.path")}</TableHead>
                 <TableHead className="hidden lg:table-cell">{t("seo.col.title")}</TableHead>
+                <TableHead className="hidden md:table-cell">{lang === "ar" ? "آخر تعديل" : "Last Updated"}</TableHead>
                 <TableHead className="w-24">{t("seo.col.actions")}</TableHead>
               </TableRow>
             </TableHeader>
