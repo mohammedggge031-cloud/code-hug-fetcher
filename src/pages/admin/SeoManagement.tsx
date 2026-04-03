@@ -188,6 +188,9 @@ const SeoManagement = () => {
                   <TableCell className="font-medium">{entry.page_name}</TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{entry.page_path}</TableCell>
                   <TableCell className="hidden lg:table-cell text-sm truncate max-w-[200px]">{entry.title || "—"}</TableCell>
+                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
+                    {entry.updated_at ? new Date(entry.updated_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(entry); setIsNew(false); }}><Pencil className="h-4 w-4" /></Button>
