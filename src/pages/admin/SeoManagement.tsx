@@ -44,9 +44,16 @@ const SITE_PAGES = [
   { path: "/free-trial", name: "Free Trial" },
   { path: "/blog", name: "Blog" },
   { path: "/videos", name: "Videos" },
-  
   { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide" },
   { path: "/privacy-policy", name: "Privacy Policy" },
+  // SEO landing pages
+  { path: "/quran-classes-for-kids", name: "Quran Classes for Kids" },
+  { path: "/quran-classes-for-adults", name: "Quran Classes for Adults" },
+  { path: "/best-online-quran-classes", name: "Best Online Quran Classes" },
+  { path: "/one-on-one-quran-classes", name: "One-on-One Quran Classes" },
+  { path: "/quran-classes-pricing", name: "Quran Classes Pricing" },
+  { path: "/quran-classes-for-beginners", name: "Quran Classes for Beginners" },
+  { path: "/online-quran-classes-with-certificate", name: "Quran Classes with Certificate" },
   // Course detail pages
   { path: "/courses/quran-course", name: "Quran Course" },
   { path: "/courses/tajweed-course", name: "Tajweed Course Detail" },
