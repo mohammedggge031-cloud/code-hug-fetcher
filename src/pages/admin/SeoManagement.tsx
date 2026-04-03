@@ -44,9 +44,16 @@ const SITE_PAGES = [
   { path: "/free-trial", name: "Free Trial" },
   { path: "/blog", name: "Blog" },
   { path: "/videos", name: "Videos" },
-  
   { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide" },
   { path: "/privacy-policy", name: "Privacy Policy" },
+  // SEO landing pages
+  { path: "/quran-classes-for-kids", name: "Quran Classes for Kids" },
+  { path: "/quran-classes-for-adults", name: "Quran Classes for Adults" },
+  { path: "/best-online-quran-classes", name: "Best Online Quran Classes" },
+  { path: "/one-on-one-quran-classes", name: "One-on-One Quran Classes" },
+  { path: "/quran-classes-pricing", name: "Quran Classes Pricing" },
+  { path: "/quran-classes-for-beginners", name: "Quran Classes for Beginners" },
+  { path: "/online-quran-classes-with-certificate", name: "Quran Classes with Certificate" },
   // Course detail pages
   { path: "/courses/quran-course", name: "Quran Course" },
   { path: "/courses/tajweed-course", name: "Tajweed Course Detail" },
@@ -163,23 +170,33 @@ const SeoManagement = () => {
                 <TableHead>{t("seo.col.page")}</TableHead>
                 <TableHead className="hidden md:table-cell">{t("seo.col.path")}</TableHead>
                 <TableHead className="hidden lg:table-cell">{t("seo.col.title")}</TableHead>
+                <TableHead className="hidden md:table-cell">{lang === "ar" ? "آخر تعديل" : "Last Updated"}</TableHead>
                 <TableHead className="w-24">{t("seo.col.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isFetching ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-12">
-                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-muted-foreground" />
+                  <TableCell colSpan={5} className="text-center py-12">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="relative h-8 w-8">
+                        <div className="absolute inset-0 rounded-full border-2 border-muted" />
+                        <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                      </div>
+                      <span className="text-xs text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</span>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
-                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-8">{t("seo.empty")}</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-8">{t("seo.empty")}</TableCell></TableRow>
               ) : filtered.map(entry => (
                 <TableRow key={entry.id}>
                   <TableCell className="font-medium">{entry.page_name}</TableCell>
                   <TableCell className="hidden md:table-cell text-muted-foreground text-xs">{entry.page_path}</TableCell>
                   <TableCell className="hidden lg:table-cell text-sm truncate max-w-[200px]">{entry.title || "—"}</TableCell>
+                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
+                    {entry.updated_at ? new Date(entry.updated_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { year: "numeric", month: "short", day: "numeric" }) : "—"}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => { setEditing(entry); setIsNew(false); }}><Pencil className="h-4 w-4" /></Button>

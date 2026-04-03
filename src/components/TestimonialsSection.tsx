@@ -158,7 +158,12 @@ const TestimonialsSection = () => {
     page * itemsPerPage + itemsPerPage
   );
 
-  const variants = {
+  // On mobile, use opacity-only to prevent horizontal overflow jitter on iOS
+  const variants = viewMode === 'mobile' ? {
+    enter: () => ({ opacity: 0 }),
+    center: { opacity: 1 },
+    exit: () => ({ opacity: 0 }),
+  } : {
     enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
@@ -212,7 +217,7 @@ const TestimonialsSection = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.4, ease: "easeInOut" }}
+                transition={{ duration: viewMode === 'mobile' ? 0.3 : 0.4, ease: "easeInOut" }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
                 {currentItems.map((item) => {
