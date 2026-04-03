@@ -227,7 +227,10 @@ const BlogManagement = () => {
                   </TableCell>
                   <TableCell className="text-sm">{getCategoryName(post.category_id)}</TableCell>
                   <TableCell><Badge variant={post.status === "published" ? "default" : "secondary"}>{post.status === "published" ? t("blog.published") : t("blog.draft")}</Badge></TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{new Date(post.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}</TableCell>
+                  <TableCell className="text-sm text-muted-foreground">
+                    <div>{new Date(post.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}</div>
+                    {post.published_at && <div className="text-xs text-muted-foreground/60">{lang === "ar" ? "نُشر: " : "Pub: "}{new Date(post.published_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}</div>}
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(post)}><Pencil className="h-4 w-4" /></Button>
