@@ -81,11 +81,8 @@ const CoursesSection = () => {
                 key={course.titleEn}
               >
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                {...fadeInUp(i, 0.1)}
+                {...(isMobile ? {} : { whileHover: { y: -8, scale: 1.02 } })}
                 className="group bg-card rounded-2xl shadow-card hover:shadow-elevated transition-shadow duration-300 border border-border cursor-pointer overflow-hidden flex flex-col items-center text-center h-full min-w-[260px] sm:min-w-0 snap-center"
               >
                 {/* Course Image */}
