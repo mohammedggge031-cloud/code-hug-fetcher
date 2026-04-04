@@ -67,6 +67,7 @@ const OneOnOneQuranClasses = lazy(() => import("./pages/OneOnOneQuranClasses"));
 const QuranClassesPricing = lazy(() => import("./pages/QuranClassesPricing"));
 const QuranClassesForBeginners = lazy(() => import("./pages/QuranClassesForBeginners"));
 const QuranClassesWithCertificate = lazy(() => import("./pages/QuranClassesWithCertificate"));
+const LearnQuranForReverts = lazy(() => import("./pages/LearnQuranForReverts"));
 const AdminErrorBoundary = lazy(() => import("./components/admin/AdminErrorBoundary"));
 
 const queryClient = new QueryClient({
