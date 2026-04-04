@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,7 @@ interface RecentPost {
 
 const RecentArticlesSection = () => {
   const { t, lang } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
   const [posts, setPosts] = useState<RecentPost[]>([]);
 
   useEffect(() => {
@@ -70,9 +72,7 @@ const RecentArticlesSection = () => {
     <section className="py-16 sm:py-20 bg-secondary/30" aria-label="Latest Blog Articles from Alhamd Academy">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeIn()}
           className="text-center mb-12"
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
@@ -93,10 +93,7 @@ const RecentArticlesSection = () => {
           {posts.map((post, i) => (
             <motion.div
               key={post.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
+              {...fadeInUp(i)}
             >
               <Link
                 to={`/blog/${post.slug}`}

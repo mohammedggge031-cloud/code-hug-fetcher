@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
@@ -105,6 +106,7 @@ const ITEMS_MOBILE = 1;
 
 const TestimonialsSection = () => {
   const { t, lang } = useLanguage();
+  const { fadeIn } = useMobileSafeMotion();
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -158,24 +160,22 @@ const TestimonialsSection = () => {
     page * itemsPerPage + itemsPerPage
   );
 
-  // On mobile, use opacity-only to prevent horizontal overflow jitter on iOS
-  const variants = viewMode === 'mobile' ? {
-    enter: () => ({ opacity: 0 }),
-    center: { opacity: 1 },
-    exit: () => ({ opacity: 0 }),
-  } : {
+  // On mobile & tablet, use opacity-only to prevent horizontal overflow jitter on iOS
+  const variants = viewMode === 'desktop' ? {
     enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
+  } : {
+    enter: () => ({ opacity: 0 }),
+    center: { opacity: 1 },
+    exit: () => ({ opacity: 0 }),
   };
 
   return (
     <section id="testimonials" className="py-16 sm:py-20 md:py-24 bg-hero geometric-pattern" aria-label="Student Testimonials and Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeIn()}
           className="text-center mb-16"
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">

@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { scrollToContactForm } from "@/lib/scrollToForm";
@@ -9,6 +10,7 @@ import { loadTeachers } from "@/lib/teachersData";
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
+  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
@@ -40,17 +42,11 @@ const TeachersSection = () => {
 
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            {...fadeIn()}
             className="text-center mb-16"
           >
             <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, type: "spring" }}
+              {...(isMobile ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } } : { initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { duration: 0.5, type: "spring" } })}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 mb-4"
             >
               <GraduationCap className="w-4 h-4 text-accent" />
@@ -81,11 +77,8 @@ const TeachersSection = () => {
             {teachers.map((teacher, i) => (
               <motion.div
                 key={teacher.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                {...fadeInUp(i, 0.1)}
+                {...(!isMobile && { whileHover: { y: -8, scale: 1.02 } })}
                 onClick={() => setSelectedTeacher(teacher)}
                 className="group rounded-2xl bg-card border border-border p-6 text-center shadow-card hover:shadow-elevated transition-[box-shadow] duration-300 cursor-pointer"
               >
@@ -107,10 +100,7 @@ const TeachersSection = () => {
                   )}
                   {/* Floating badge */}
                   <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.1, type: "spring" }}
+                    {...(isMobile ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } } : { initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { delay: 0.3 + i * 0.1, type: "spring" } })}
                     className="absolute -top-1 -end-1 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md"
                   >
                     <Award className="w-4 h-4 text-accent-foreground" />

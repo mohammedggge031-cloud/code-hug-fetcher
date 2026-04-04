@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Mail, Phone, Send, CalendarIcon, Clock, Globe, AlertCircle } from "lucide-react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useRef } from "react";
 import { format } from "date-fns";
@@ -94,6 +95,7 @@ const isRateLimited = (): boolean => {
 
 const ContactSection = () => {
   const { t } = useLanguage();
+  const { fadeIn } = useMobileSafeMotion();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTz, setSelectedTz] = useState("UTC+2");
@@ -108,9 +110,7 @@ const ContactSection = () => {
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...fadeIn()}
             className="text-center mb-16"
           >
             <span className="text-sm font-semibold text-accent uppercase tracking-wider">
@@ -128,9 +128,7 @@ const ContactSection = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...fadeIn(0.1)}
             className="bg-card rounded-2xl md:rounded-3xl shadow-elevated p-5 sm:p-8 md:p-12 border border-border"
           >
             <form className="grid md:grid-cols-2 gap-6" onSubmit={(e) => {

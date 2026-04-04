@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Star, MessageSquareQuote, Quote } from "lucide-react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
@@ -20,6 +21,7 @@ interface ApprovedReview {
 
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
@@ -65,9 +67,7 @@ const ApprovedReviewsSection = () => {
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeIn()}
           className="text-center mb-12"
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
@@ -93,10 +93,7 @@ const ApprovedReviewsSection = () => {
             return (
               <motion.div
                 key={review.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.05 }}
+                {...fadeInUp(idx, 0.05)}
                 className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-[border-color,box-shadow] duration-300 group"
               >
                 {/* Quote icon */}
