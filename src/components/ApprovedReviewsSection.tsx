@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Star, MessageSquareQuote, Quote } from "lucide-react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
