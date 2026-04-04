@@ -22,6 +22,7 @@ interface RecentPost {
 
 const RecentArticlesSection = () => {
   const { t, lang } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
   const [posts, setPosts] = useState<RecentPost[]>([]);
 
   useEffect(() => {
