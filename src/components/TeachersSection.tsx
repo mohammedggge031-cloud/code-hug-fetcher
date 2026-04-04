@@ -77,11 +77,8 @@ const TeachersSection = () => {
             {teachers.map((teacher, i) => (
               <motion.div
                 key={teacher.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                {...fadeInUp(i, 0.1)}
+                {...(!isMobile && { whileHover: { y: -8, scale: 1.02 } })}
                 onClick={() => setSelectedTeacher(teacher)}
                 className="group rounded-2xl bg-card border border-border p-6 text-center shadow-card hover:shadow-elevated transition-[box-shadow] duration-300 cursor-pointer"
               >
