@@ -178,21 +178,48 @@ const SeoManagement = () => {
   };
 
   const handleInitialize = async () => {
-    const existing = entries.map(e => e.page_path);
-    const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({
-      page_path: p.path,
-      page_name: p.name,
-      title: p.title || null,
-      description: p.description || null,
-      keywords: p.keywords || null,
-      canonical_url: `https://alhamdacademy.net${p.path === '/' ? '/' : p.path}`,
-      updated_by: user?.id,
-    }));
-    if (toInsert.length === 0) { toast({ title: t("ok.done"), description: lang === "ar" ? "جميع الصفحات مهيأة بالفعل" : "All pages already initialized" }); return; }
+    const existingMap = new Map(entries.map(e => [e.page_path, e]));
+    const toInsert: any[] = [];
+    const toUpdate: { id: string; data: any }[] = [];
+
+    for (const p of SITE_PAGES) {
+      const existing = existingMap.get(p.path);
+      if (!existing) {
+        toInsert.push({
+          page_path: p.path, page_name: p.name,
+          title: p.title || null, description: p.description || null,
+          keywords: p.keywords || null,
+          canonical_url: `https://alhamdacademy.net${p.path === '/' ? '/' : p.path}`,
+          updated_by: user?.id,
+        });
+      } else if (!existing.title && p.title) {
+        toUpdate.push({
+          id: existing.id,
+          data: {
+            title: p.title, description: p.description || existing.description,
+            keywords: p.keywords || existing.keywords,
+            canonical_url: existing.canonical_url || `https://alhamdacademy.net${p.path === '/' ? '/' : p.path}`,
+            updated_by: user?.id,
+          },
+        });
+      }
+    }
+
+    if (toInsert.length === 0 && toUpdate.length === 0) {
+      toast({ title: t("ok.done"), description: lang === "ar" ? "جميع الصفحات مهيأة بالفعل" : "All pages already initialized" });
+      return;
+    }
+
     try {
-      const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
-      if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages with SEO defaults` });
+      if (toInsert.length > 0) {
+        const { error } = await supabase.from("seo_metadata").insert(toInsert);
+        if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      }
+      for (const item of toUpdate) {
+        const { error } = await supabase.from("seo_metadata").update(item.data).eq("id", item.id);
+        if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
+      }
+      toast({ title: t("ok.done"), description: `Added ${toInsert.length}, updated ${toUpdate.length} pages` });
       void fetchEntries();
     } catch {
       toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
