@@ -87,11 +87,7 @@ const CoursesSection = () => {
               >
                 {/* Course Image */}
                 <div className="relative w-full pt-6 px-6">
-                  <motion.div
-                    whileHover={{ rotate: [0, -3, 3, 0] }}
-                    transition={{ duration: 0.5 }}
-                    className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-accent/20 shadow-lg group-hover:border-accent/50 transition-colors"
-                  >
+                  <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-accent/20 shadow-lg group-hover:border-accent/50 transition-colors">
                     <img
                       src={courseImages[i]}
                       alt={`${t(course.titleEn, course.titleAr)} - Online ${course.titleEn} at Alhamd Academy`}
@@ -102,17 +98,11 @@ const CoursesSection = () => {
                       decoding="async"
                       fetchPriority="low"
                     />
-                  </motion.div>
+                  </div>
                   {/* Floating badge */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.1, type: "spring" }}
-                    className="absolute top-4 end-4 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md"
-                  >
+                  <div className="absolute top-4 end-4 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md">
                     <course.icon className="w-4 h-4 text-accent-foreground" />
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Course Info */}
