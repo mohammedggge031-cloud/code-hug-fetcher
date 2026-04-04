@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 import stepBookTrial from "@/assets/features/step-book-trial.webp";
 import stepMeetTeacher from "@/assets/features/step-meet-teacher.webp";
@@ -39,16 +40,12 @@ const steps = [
 
 const HowItWorks = () => {
   const { t } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
 
   return (
     <section id="how-it-works" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="How It Works - Join Alhamd Academy">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <motion.div {...fadeIn()} className="text-center mb-16">
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Simple Process", "خطوات بسيطة")}
           </span>
@@ -67,10 +64,7 @@ const HowItWorks = () => {
           {steps.map((step, i) => (
             <motion.div
               key={step.titleEn}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.12 }}
+              {...fadeInUp(i, 0.12)}
               className="relative text-center group"
             >
               {/* Connector line */}
