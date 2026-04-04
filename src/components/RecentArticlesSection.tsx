@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
