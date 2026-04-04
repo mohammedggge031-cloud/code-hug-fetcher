@@ -311,7 +311,7 @@ const SeoManagement = () => {
               <Textarea value={typeof editing.structured_data === "string" ? editing.structured_data : JSON.stringify(editing.structured_data, null, 2) || ""} onChange={e => setEditing({ ...editing, structured_data: e.target.value })} rows={6} className="font-mono text-xs" dir="ltr" />
               <div className="flex gap-2 pt-2">
                 <Button onClick={handleSave} className="flex-1" disabled={isSaving}>
-                  {isSaving ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : t("seo.save")}
+                  {isSaving ? <><LoadingSpinner size="sm" className="inline-flex me-1" />{t("login.loading")}</> : t("seo.save")}
                 </Button>
                 <Button variant="outline" onClick={() => setEditing(null)}>{t("seo.cancel")}</Button>
               </div>
