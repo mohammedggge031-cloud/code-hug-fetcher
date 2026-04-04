@@ -100,10 +100,7 @@ const TeachersSection = () => {
                   )}
                   {/* Floating badge */}
                   <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.1, type: "spring" }}
+                    {...(isMobile ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } } : { initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { delay: 0.3 + i * 0.1, type: "spring" } })}
                     className="absolute -top-1 -end-1 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md"
                   >
                     <Award className="w-4 h-4 text-accent-foreground" />

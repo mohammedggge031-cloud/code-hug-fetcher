@@ -160,15 +160,15 @@ const TestimonialsSection = () => {
     page * itemsPerPage + itemsPerPage
   );
 
-  // On mobile, use opacity-only to prevent horizontal overflow jitter on iOS
-  const variants = viewMode === 'mobile' ? {
-    enter: () => ({ opacity: 0 }),
-    center: { opacity: 1 },
-    exit: () => ({ opacity: 0 }),
-  } : {
+  // On mobile & tablet, use opacity-only to prevent horizontal overflow jitter on iOS
+  const variants = viewMode === 'desktop' ? {
     enter: (dir: number) => ({ x: dir > 0 ? 300 : -300, opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
+  } : {
+    enter: () => ({ opacity: 0 }),
+    center: { opacity: 1 },
+    exit: () => ({ opacity: 0 }),
   };
 
   return (

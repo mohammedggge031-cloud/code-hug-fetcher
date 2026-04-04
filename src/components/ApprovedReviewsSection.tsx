@@ -93,10 +93,7 @@ const ApprovedReviewsSection = () => {
             return (
               <motion.div
                 key={review.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.05 }}
+                {...fadeInUp(idx, 0.05)}
                 className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-[border-color,box-shadow] duration-300 group"
               >
                 {/* Quote icon */}
