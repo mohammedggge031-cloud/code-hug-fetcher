@@ -19,6 +19,7 @@ const CoursesSection = () => {
   const { t, lang } = useLanguage();
   const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
   const location = useLocation();
+  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
 
   const saveCourseReturnState = useCallback(() => {
     const path = `${location.pathname}${location.search}`;
