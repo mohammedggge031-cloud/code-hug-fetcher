@@ -178,12 +178,20 @@ const SeoManagement = () => {
 
   const handleInitialize = async () => {
     const existing = entries.map(e => e.page_path);
-    const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({ page_path: p.path, page_name: p.name, updated_by: user?.id }));
+    const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({
+      page_path: p.path,
+      page_name: p.name,
+      title: p.title || null,
+      description: p.description || null,
+      keywords: p.keywords || null,
+      canonical_url: `https://alhamdacademy.net${p.path === '/' ? '/' : p.path}`,
+      updated_by: user?.id,
+    }));
     if (toInsert.length === 0) { toast({ title: t("ok.done"), description: lang === "ar" ? "جميع الصفحات مهيأة بالفعل" : "All pages already initialized" }); return; }
     try {
       const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages` });
+      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages with SEO defaults` });
       void fetchEntries();
     } catch {
       toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
