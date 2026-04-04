@@ -128,9 +128,7 @@ const ContactSection = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            {...fadeIn(0.1)}
             className="bg-card rounded-2xl md:rounded-3xl shadow-elevated p-5 sm:p-8 md:p-12 border border-border"
           >
             <form className="grid md:grid-cols-2 gap-6" onSubmit={(e) => {
