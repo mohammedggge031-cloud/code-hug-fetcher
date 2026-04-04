@@ -210,7 +210,7 @@ export const videoSchema = {
   "name": "Learn Quran Online with Alhamd Academy — Introduction",
   "description": "Watch how Alhamd Academy provides one-on-one online Quran, Arabic & Islamic studies classes with certified Al-Azhar teachers for kids and adults worldwide.",
   "thumbnailUrl": "https://alhamdacademy.net/og-image.jpg",
-  "uploadDate": "2024-01-01",
+  "uploadDate": "2024-01-01T00:00:00+00:00",
   "contentUrl": "https://alhamdacademy.net/videos",
   "embedUrl": "https://alhamdacademy.net/videos",
   "publisher": { "@id": "https://alhamdacademy.net/#organization" },
@@ -375,8 +375,8 @@ export const speakableSchema = {
   },
   "url": "https://alhamdacademy.net/",
   "inLanguage": "en",
-  "datePublished": "2020-01-01",
-  "dateModified": "2026-03-28",
+  "datePublished": "2020-01-01T00:00:00+00:00",
+  "dateModified": "2026-04-04T00:00:00+00:00",
   "breadcrumb": { "@id": "https://alhamdacademy.net/#breadcrumb" }
 };
 

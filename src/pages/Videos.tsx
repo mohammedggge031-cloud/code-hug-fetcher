@@ -16,8 +16,8 @@ const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: num
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
       className="group rounded-xl border border-border bg-card overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1 cursor-pointer"
@@ -121,7 +121,7 @@ const Videos = () => {
                   "name": video.titleEn,
                   "description": video.descriptionEn,
                   "thumbnailUrl": `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
-                  "uploadDate": "2025-01-01",
+                  "uploadDate": "2025-01-01T00:00:00+00:00",
                   "duration": "PT10M",
                   "contentUrl": `https://www.youtube.com/watch?v=${video.youtubeId}`,
                   "embedUrl": `https://www.youtube.com/embed/${video.youtubeId}`,
