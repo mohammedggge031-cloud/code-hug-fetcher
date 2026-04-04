@@ -11,7 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Plus, Trash2, Search, Loader2 } from "lucide-react";
+import { Pencil, Plus, Trash2, Search } from "lucide-react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
