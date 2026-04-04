@@ -67,9 +67,7 @@ const ApprovedReviewsSection = () => {
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          {...fadeIn()}
           className="text-center mb-12"
         >
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
