@@ -10,6 +10,7 @@ import { loadTeachers } from "@/lib/teachersData";
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
+  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
