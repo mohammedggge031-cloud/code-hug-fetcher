@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { scrollToContactForm } from "@/lib/scrollToForm";
