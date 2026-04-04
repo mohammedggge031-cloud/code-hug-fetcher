@@ -21,6 +21,7 @@ interface ApprovedReview {
 
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
