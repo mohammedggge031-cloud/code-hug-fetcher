@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
