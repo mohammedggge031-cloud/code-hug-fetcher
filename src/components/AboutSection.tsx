@@ -3,20 +3,25 @@ import { motion } from "framer-motion";
 import logo from "@/assets/logo.webp";
 import EgyptFlag from "@/components/EgyptFlag";
 import { scrollToContactForm } from "@/lib/scrollToForm";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 const AboutSection = () => {
   const { t } = useLanguage();
+  const { isMobile, fadeIn } = useMobileSafeMotion();
+
+  const slideLeft = isMobile
+    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } }
+    : { initial: { opacity: 0, x: -30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true } };
+
+  const slideRight = isMobile
+    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } }
+    : { initial: { opacity: 0, x: 30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true } };
 
   return (
     <section id="about" className="py-16 sm:py-20 md:py-24 bg-section" aria-label="About Alhamd Academy">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex justify-center"
-          >
+          <motion.div {...slideLeft} className="flex justify-center">
             <div className="relative">
               <div className="w-72 h-72 md:w-96 md:h-96 rounded-3xl bg-primary/5 flex items-center justify-center border border-border shadow-card">
                 <img src={logo} alt="Alhamd Academy - Professional Online Quran, Arabic and Islamic Studies Academy" width={256} height={256} className="w-48 md:w-64 object-contain" loading="lazy" decoding="async" />
@@ -26,11 +31,7 @@ const AboutSection = () => {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-          >
+          <motion.div {...slideRight}>
             <span className="text-sm font-semibold text-accent uppercase tracking-wider">
               {t("About Us", "من نحن")}
             </span>

@@ -2,18 +2,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { ArrowRight, Shield } from "lucide-react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 const FinalCTA = () => {
   const { t } = useLanguage();
+  const { fadeIn } = useMobileSafeMotion();
 
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-primary/[0.03] border-y border-border" aria-label="Final Call to Action">
       <div className="container mx-auto px-4 sm:px-6 text-center max-w-3xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <motion.div {...fadeIn()}>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">
             {t("Your Journey Starts with One Free Class", "رحلتك تبدأ بحصة مجانية واحدة")}
           </h2>

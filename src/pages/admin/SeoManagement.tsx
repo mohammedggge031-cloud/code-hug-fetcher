@@ -11,7 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Plus, Trash2, Search, Loader2 } from "lucide-react";
+import { Pencil, Plus, Trash2, Search } from "lucide-react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
@@ -31,30 +32,31 @@ const defaultEntry: Partial<SeoEntry> = {
   twitter_description: "", twitter_image: "", structured_data: null, no_index: false,
 };
 
-const SITE_PAGES = [
+const SITE_PAGES: { path: string; name: string; title?: string; description?: string; keywords?: string }[] = [
   // Main pages
-  { path: "/", name: "Home" },
-  { path: "/online-quran-classes", name: "Online Quran Classes" },
-  { path: "/tajweed-course-online", name: "Tajweed Course" },
-  { path: "/quran-memorization-hifz", name: "Quran Memorization" },
-  { path: "/arabic-for-kids", name: "Arabic for Kids" },
-  { path: "/arabic-for-adults", name: "Arabic for Adults" },
-  { path: "/islamic-studies-online", name: "Islamic Studies" },
-  { path: "/ijazah-program", name: "Ijazah Program" },
-  { path: "/female-quran-teacher", name: "Female Quran Teacher" },
-  { path: "/free-trial", name: "Free Trial" },
-  { path: "/blog", name: "Blog" },
-  { path: "/videos", name: "Videos" },
-  { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide" },
-  { path: "/privacy-policy", name: "Privacy Policy" },
+  { path: "/", name: "Home", title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies", description: "Professional online Quran, Arabic & Islamic studies classes with certified Al-Azhar teachers for kids & adults. Free trial.", keywords: "online quran classes, learn quran online, tajweed classes, arabic language course, hifz program" },
+  { path: "/online-quran-classes", name: "Online Quran Classes", title: "Online Quran Classes for Kids & Adults | Alhamd Academy", description: "Learn Quran online with certified native Arabic teachers. One-on-one online Quran classes for kids and adults. Free trial class.", keywords: "online quran classes, learn quran online, quran classes online with teacher" },
+  { path: "/tajweed-course-online", name: "Tajweed Course", title: "Tajweed Course Online | Learn Quran with Tajweed | Alhamd Academy", description: "Master Quran recitation with our comprehensive online Tajweed course. Certified Al-Azhar teachers. Free trial.", keywords: "tajweed course online, learn tajweed online, quran tajweed rules" },
+  { path: "/quran-memorization-hifz", name: "Quran Memorization", title: "Quran Memorization (Hifz) Online | Alhamd Academy", description: "Memorize the Quran online with certified Huffaz from Al-Azhar. Personalized Hifz program. Free trial.", keywords: "quran memorization, hifz quran online, memorize quran, hifz program" },
+  { path: "/arabic-for-kids", name: "Arabic for Kids", title: "Arabic Classes for Kids Online | Alhamd Academy", description: "Fun and engaging Arabic classes for kids online. Native Arabic-speaking teachers. Ages 4-14. Free trial.", keywords: "arabic classes for kids, learn arabic for children, online arabic classes for kids" },
+  { path: "/arabic-for-adults", name: "Arabic for Adults", title: "Arabic Classes for Adults Online | Alhamd Academy", description: "Learn Arabic online with native-speaking teachers. Conversational, MSA, and Quranic Arabic. Free trial.", keywords: "arabic classes for adults, learn arabic online, arabic language course" },
+  { path: "/islamic-studies-online", name: "Islamic Studies", title: "Islamic Studies Online | Learn Islam | Alhamd Academy", description: "Comprehensive Islamic Studies courses online. Learn Fiqh, Seerah, Aqeedah with certified teachers. Free trial.", keywords: "islamic studies online, learn islam online, islamic education" },
+  { path: "/ijazah-program", name: "Ijazah Program", title: "Ijazah Program Online | Quran Ijazah Certification | Alhamd Academy", description: "Get your Quran Ijazah online with certified Al-Azhar scholars. Connected Sanad certification. Free trial.", keywords: "ijazah program, quran ijazah online, ijazah certification, sanad quran" },
+  { path: "/female-quran-teacher", name: "Female Quran Teacher", title: "Female Quran Teacher Online | Women & Girls Quran Classes | Alhamd Academy", description: "Learn Quran with experienced female teachers. Private one-on-one classes for women and girls. Free trial.", keywords: "female quran teacher, women quran classes, girls quran teacher" },
+  { path: "/free-trial", name: "Free Trial", title: "Free Trial Class | Try Online Quran Classes Free | Alhamd Academy", description: "Book your free trial Quran class today. No commitment, no payment. Experience one-on-one learning.", keywords: "free quran class, free trial quran lesson, try quran classes free" },
+  { path: "/blog", name: "Blog", title: "Quran & Islamic Education Blog | Alhamd Academy", description: "Read articles about Quran learning, Tajweed tips, Islamic education from expert teachers.", keywords: "quran blog, islamic education blog, tajweed tips" },
+  { path: "/videos", name: "Videos", title: "Educational Videos | Quran Recitation & Tajweed | Alhamd Academy", description: "Watch educational videos on Quran recitation, Tajweed rules, and Islamic education.", keywords: "quran videos, tajweed videos, quran recitation videos" },
+  { path: "/learn-quran-online-worldwide", name: "Learn Quran Worldwide", title: "Learn Quran Online Worldwide | Global Quran Academy | Alhamd Academy", description: "Learn Quran online from anywhere in the world. Certified Al-Azhar teachers available 24/7. Free trial.", keywords: "learn quran online worldwide, global quran classes" },
+  { path: "/privacy-policy", name: "Privacy Policy", title: "Privacy Policy | Alhamd Academy", description: "Read Alhamd Academy's privacy policy.", keywords: "privacy policy" },
   // SEO landing pages
-  { path: "/quran-classes-for-kids", name: "Quran Classes for Kids" },
-  { path: "/quran-classes-for-adults", name: "Quran Classes for Adults" },
-  { path: "/best-online-quran-classes", name: "Best Online Quran Classes" },
-  { path: "/one-on-one-quran-classes", name: "One-on-One Quran Classes" },
-  { path: "/quran-classes-pricing", name: "Quran Classes Pricing" },
-  { path: "/quran-classes-for-beginners", name: "Quran Classes for Beginners" },
-  { path: "/online-quran-classes-with-certificate", name: "Quran Classes with Certificate" },
+  { path: "/quran-classes-for-kids", name: "Quran Classes for Kids", title: "Quran Classes for Kids Online | Alhamd Academy", description: "Fun online Quran classes for kids ages 4–14. Certified child-specialist teachers. Free trial.", keywords: "quran classes for kids online, learn quran for kids" },
+  { path: "/quran-classes-for-adults", name: "Quran Classes for Adults", title: "Quran Classes for Adults Online | Alhamd Academy", description: "Start learning Quran as an adult with patient, certified teachers. Free trial.", keywords: "quran classes for adults, adult quran classes online" },
+  { path: "/best-online-quran-classes", name: "Best Online Quran Classes", title: "Best Online Quran Classes 2025 | Alhamd Academy", description: "Discover the best online Quran classes with certified Al-Azhar teachers. 4.9/5 rating. Free trial.", keywords: "best online quran classes, best quran academy online" },
+  { path: "/one-on-one-quran-classes", name: "One-on-One Quran Classes", title: "One-on-One Quran Classes Online | Alhamd Academy", description: "Personalized one-on-one Quran classes with dedicated teachers. Free trial.", keywords: "one on one quran classes, private quran tutor" },
+  { path: "/quran-classes-pricing", name: "Quran Classes Pricing", title: "Quran Classes Pricing | Affordable Online Quran Lessons | Alhamd Academy", description: "Affordable online Quran classes starting from $8/hour. Flexible plans. Free trial.", keywords: "quran classes pricing, online quran class cost" },
+  { path: "/quran-classes-for-beginners", name: "Quran Classes for Beginners", title: "Quran Classes for Beginners | Alhamd Academy", description: "Start your Quran learning journey from scratch. Patient teachers, Noor Al-Bayan method. Free trial.", keywords: "quran classes for beginners, learn quran from scratch" },
+  { path: "/online-quran-classes-with-certificate", name: "Quran Classes with Certificate", title: "Online Quran Classes with Certificate | Alhamd Academy", description: "Earn a recognized certificate in Quran recitation, Tajweed, or Hifz. Free trial.", keywords: "quran classes with certificate, certified quran course" },
+  { path: "/learn-quran-for-reverts", name: "Learn Quran for Reverts", title: "Learn Quran for Reverts & New Muslims | Alhamd Academy", description: "Welcoming online Quran classes designed for reverts and new Muslims. Patient Al-Azhar teachers. Free trial.", keywords: "quran for reverts, quran classes for new muslims, learn quran as a convert" },
   // Course detail pages
   { path: "/courses/quran-course", name: "Quran Course" },
   { path: "/courses/tajweed-course", name: "Tajweed Course Detail" },
@@ -177,12 +179,20 @@ const SeoManagement = () => {
 
   const handleInitialize = async () => {
     const existing = entries.map(e => e.page_path);
-    const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({ page_path: p.path, page_name: p.name, updated_by: user?.id }));
+    const toInsert = SITE_PAGES.filter(p => !existing.includes(p.path)).map(p => ({
+      page_path: p.path,
+      page_name: p.name,
+      title: p.title || null,
+      description: p.description || null,
+      keywords: p.keywords || null,
+      canonical_url: `https://alhamdacademy.net${p.path === '/' ? '/' : p.path}`,
+      updated_by: user?.id,
+    }));
     if (toInsert.length === 0) { toast({ title: t("ok.done"), description: lang === "ar" ? "جميع الصفحات مهيأة بالفعل" : "All pages already initialized" }); return; }
     try {
       const { error } = await supabase.from("seo_metadata").insert(toInsert as any);
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages` });
+      toast({ title: t("ok.done"), description: `Added ${toInsert.length} pages with SEO defaults` });
       void fetchEntries();
     } catch {
       toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
@@ -225,13 +235,7 @@ const SeoManagement = () => {
               {isFetching ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="relative h-8 w-8">
-                        <div className="absolute inset-0 rounded-full border-2 border-muted" />
-                        <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</span>
-                    </div>
+                    <LoadingSpinner label={lang === "ar" ? "جاري التحميل..." : "Loading..."} />
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
@@ -301,7 +305,7 @@ const SeoManagement = () => {
               <Textarea value={typeof editing.structured_data === "string" ? editing.structured_data : JSON.stringify(editing.structured_data, null, 2) || ""} onChange={e => setEditing({ ...editing, structured_data: e.target.value })} rows={6} className="font-mono text-xs" dir="ltr" />
               <div className="flex gap-2 pt-2">
                 <Button onClick={handleSave} className="flex-1" disabled={isSaving}>
-                  {isSaving ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : t("seo.save")}
+                  {isSaving ? <><LoadingSpinner size="sm" className="inline-flex me-1" />{t("login.loading")}</> : t("seo.save")}
                 </Button>
                 <Button variant="outline" onClick={() => setEditing(null)}>{t("seo.cancel")}</Button>
               </div>

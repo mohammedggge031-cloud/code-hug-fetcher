@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft, Star } from "lucide-react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
 import { courses } from "@/data/courses";
 import { Link, useLocation } from "react-router-dom";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 import courseQuran from "@/assets/course-quran.webp";
 import courseTajweed from "@/assets/course-tajweed.webp";
@@ -18,6 +19,7 @@ const CoursesSection = () => {
   const { t, lang } = useLanguage();
   const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
   const location = useLocation();
+  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
 
   const saveCourseReturnState = useCallback(() => {
     const path = `${location.pathname}${location.search}`;
@@ -43,18 +45,9 @@ const CoursesSection = () => {
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
+          <motion.div {...fadeIn()} className="text-center mb-16">
             <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, type: "spring" }}
+              {...(isMobile ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } } : { initial: { scale: 0 }, whileInView: { scale: 1 }, viewport: { once: true }, transition: { duration: 0.5, type: "spring" } })}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 mb-4"
             >
               <Star className="w-4 h-4 text-accent" />
@@ -88,20 +81,13 @@ const CoursesSection = () => {
                 key={course.titleEn}
               >
               <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                {...fadeInUp(i, 0.1)}
+                {...(isMobile ? {} : { whileHover: { y: -8, scale: 1.02 } })}
                 className="group bg-card rounded-2xl shadow-card hover:shadow-elevated transition-shadow duration-300 border border-border cursor-pointer overflow-hidden flex flex-col items-center text-center h-full min-w-[260px] sm:min-w-0 snap-center"
               >
                 {/* Course Image */}
                 <div className="relative w-full pt-6 px-6">
-                  <motion.div
-                    whileHover={{ rotate: [0, -3, 3, 0] }}
-                    transition={{ duration: 0.5 }}
-                    className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-accent/20 shadow-lg group-hover:border-accent/50 transition-colors"
-                  >
+                  <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-accent/20 shadow-lg group-hover:border-accent/50 transition-colors">
                     <img
                       src={courseImages[i]}
                       alt={`${t(course.titleEn, course.titleAr)} - Online ${course.titleEn} at Alhamd Academy`}
@@ -112,17 +98,11 @@ const CoursesSection = () => {
                       decoding="async"
                       fetchPriority="low"
                     />
-                  </motion.div>
+                  </div>
                   {/* Floating badge */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.1, type: "spring" }}
-                    className="absolute top-4 end-4 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md"
-                  >
+                  <div className="absolute top-4 end-4 w-8 h-8 rounded-full bg-accent flex items-center justify-center shadow-md">
                     <course.icon className="w-4 h-4 text-accent-foreground" />
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Course Info */}
@@ -157,10 +137,7 @@ const CoursesSection = () => {
 
           {/* Bottom CTA */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            {...fadeIn(0.5)}
             className="text-center mt-12"
           >
             <a

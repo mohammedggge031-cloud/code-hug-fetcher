@@ -235,8 +235,17 @@ export const Loader = () => {
 
   if (!timedOut) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="relative h-10 w-10">
+            <div className="absolute inset-0 rounded-full border-2 border-accent/20" />
+            <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-accent border-r-accent/50 animate-spin" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="h-1.5 w-1.5 rounded-full bg-accent/60 animate-pulse" />
+            </div>
+          </div>
+          <span className="text-xs font-medium text-muted-foreground animate-pulse">Loading...</span>
+        </div>
       </div>
     );
   }

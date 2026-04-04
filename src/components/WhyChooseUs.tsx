@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 import featureOneOnOne from "@/assets/features/one-on-one.webp";
 import featureFlexible from "@/assets/features/flexible-schedule.webp";
@@ -55,16 +56,12 @@ const features = [
 
 const WhyChooseUs = () => {
   const { t } = useLanguage();
+  const { fadeIn, fadeInUp } = useMobileSafeMotion();
 
   return (
     <section id="why-us" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="Why Choose Alhamd Academy for Online Quran Classes">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
+        <motion.div {...fadeIn()} className="text-center mb-16">
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Why Alhamd Academy", "لماذا أكاديمية الحمد")}
           </span>
@@ -77,10 +74,7 @@ const WhyChooseUs = () => {
           {features.map((f, i) => (
             <motion.div
               key={f.titleEn}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
+              {...fadeInUp(i)}
               className="group flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl border border-border bg-card hover:shadow-xl hover:border-accent/30 hover:-translate-y-1 transition-[box-shadow,border-color,transform] duration-300"
             >
               <div className="w-28 h-28 mb-6 rounded-full bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/15 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/30 transition-[transform,box-shadow,border-color] duration-300">

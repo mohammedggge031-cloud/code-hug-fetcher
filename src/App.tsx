@@ -67,6 +67,7 @@ const OneOnOneQuranClasses = lazy(() => import("./pages/OneOnOneQuranClasses"));
 const QuranClassesPricing = lazy(() => import("./pages/QuranClassesPricing"));
 const QuranClassesForBeginners = lazy(() => import("./pages/QuranClassesForBeginners"));
 const QuranClassesWithCertificate = lazy(() => import("./pages/QuranClassesWithCertificate"));
+const LearnQuranForReverts = lazy(() => import("./pages/LearnQuranForReverts"));
 const AdminErrorBoundary = lazy(() => import("./components/admin/AdminErrorBoundary"));
 
 const queryClient = new QueryClient({
@@ -115,6 +116,7 @@ const App = () => (
               <Route path="/quran-classes-pricing" element={<QuranClassesPricing />} />
               <Route path="/quran-classes-for-beginners" element={<QuranClassesForBeginners />} />
               <Route path="/online-quran-classes-with-certificate" element={<QuranClassesWithCertificate />} />
+              <Route path="/learn-quran-for-reverts" element={<LearnQuranForReverts />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/:slug" element={<LocationPage />} />
 
