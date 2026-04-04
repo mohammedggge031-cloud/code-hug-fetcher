@@ -5,6 +5,7 @@ import { ArrowRight, ArrowLeft, Star } from "lucide-react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
 import { courses } from "@/data/courses";
 import { Link, useLocation } from "react-router-dom";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 import courseQuran from "@/assets/course-quran.webp";
 import courseTajweed from "@/assets/course-tajweed.webp";
