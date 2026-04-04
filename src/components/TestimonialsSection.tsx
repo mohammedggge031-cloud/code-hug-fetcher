@@ -106,6 +106,7 @@ const ITEMS_MOBILE = 1;
 
 const TestimonialsSection = () => {
   const { t, lang } = useLanguage();
+  const { fadeIn } = useMobileSafeMotion();
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
