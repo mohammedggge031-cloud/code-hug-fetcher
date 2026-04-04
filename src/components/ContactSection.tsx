@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Mail, Phone, Send, CalendarIcon, Clock, Globe, AlertCircle } from "lucide-react";
+import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useRef } from "react";
 import { format } from "date-fns";
