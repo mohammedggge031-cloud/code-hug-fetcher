@@ -121,7 +121,7 @@ const Videos = () => {
                   "name": video.titleEn,
                   "description": video.descriptionEn,
                   "thumbnailUrl": `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
-                  "uploadDate": "2025-01-01",
+                  "uploadDate": "2025-01-01T00:00:00+00:00",
                   "duration": "PT10M",
                   "contentUrl": `https://www.youtube.com/watch?v=${video.youtubeId}`,
                   "embedUrl": `https://www.youtube.com/embed/${video.youtubeId}`,

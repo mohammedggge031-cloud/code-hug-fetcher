@@ -375,8 +375,8 @@ export const speakableSchema = {
   },
   "url": "https://alhamdacademy.net/",
   "inLanguage": "en",
-  "datePublished": "2020-01-01",
-  "dateModified": "2026-03-28",
+  "datePublished": "2020-01-01T00:00:00+00:00",
+  "dateModified": "2026-04-04T00:00:00+00:00",
   "breadcrumb": { "@id": "https://alhamdacademy.net/#breadcrumb" }
 };
 
