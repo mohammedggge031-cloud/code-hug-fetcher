@@ -235,13 +235,7 @@ const SeoManagement = () => {
               {isFetching ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-12">
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="relative h-8 w-8">
-                        <div className="absolute inset-0 rounded-full border-2 border-muted" />
-                        <div className="absolute inset-0 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-                      </div>
-                      <span className="text-xs text-muted-foreground">{lang === "ar" ? "جاري التحميل..." : "Loading..."}</span>
-                    </div>
+                    <LoadingSpinner label={lang === "ar" ? "جاري التحميل..." : "Loading..."} />
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
