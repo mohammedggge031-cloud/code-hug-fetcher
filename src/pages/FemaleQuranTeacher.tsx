@@ -92,7 +92,7 @@ const FemaleQuranTeacher = () => (
       { questionEn: "Can my daughter learn with a female teacher?", questionAr: "هل يمكن لابنتي التعلم مع معلمة؟", answerEn: "Absolutely! Many parents specifically request female teachers for their daughters. Our female teachers are experienced in working with girls of all ages, from 4 years old to teenagers. They create a supportive and encouraging environment for young girls.", answerAr: "بالتأكيد! كثير من الآباء يطلبون معلمات خصيصاً لبناتهم. معلماتنا ذوات خبرة في العمل مع البنات من جميع الأعمار." },
       { questionEn: "Are the classes completely private?", questionAr: "هل الحصص خاصة تماماً؟", answerEn: "Yes, all classes are one-on-one between the student and the female teacher via a private video call. No other students or staff are present during the session. Your privacy is fully protected.", answerAr: "نعم، جميع الحصص فردية بين الطالبة والمعلمة عبر مكالمة فيديو خاصة. لا يوجد طلاب أو موظفون آخرون." },
       { questionEn: "What courses can I take with a female teacher?", questionAr: "ما الدورات التي يمكنني أخذها مع معلمة؟", answerEn: "All courses are available with female teachers: Quran Reading, Tajweed (all levels), Quran Memorization (Hifz), Arabic Language (for kids and adults), Islamic Studies, and even Ijazah certification with a female sheikha.", answerAr: "جميع الدورات متاحة مع معلمات: قراءة القرآن، التجويد، الحفظ، اللغة العربية، الدراسات الإسلامية، وحتى شهادة الإجازة مع شيخة." },
-      { questionEn: "Is the pricing different for female teachers?", questionAr: "هل الأسعار مختلفة للمعلمات؟", answerEn: "No, the pricing is the same regardless of teacher gender. All our programs have the same affordable rates starting from $6/hour.", answerAr: "لا، الأسعار نفسها بغض النظر عن جنس المعلم. جميع برامجنا بنفس الأسعار المعقولة تبدأ من 6$/الساعة." },
+      { questionEn: "Is the pricing different for female teachers?", questionAr: "هل الأسعار مختلفة للمعلمات؟", answerEn: "No, the pricing is the same regardless of teacher gender. All our programs have the same affordable rates starting best value per session.", answerAr: "لا، الأسعار نفسها بغض النظر عن جنس المعلم. جميع برامجنا بنفس الأسعار المعقولة تبدأ أفضل قيمة لكل جلسة." },
     ]}
     testimonials={[
       { name: "Safiya H.", country: "United States", textEn: "As a niqabi woman, having a female teacher was essential for me. My teacher at Alhamd Academy is wonderful — knowledgeable, patient, and truly understands the importance of a comfortable learning environment.", textAr: "كامرأة منتقبة، وجود معلمة كان أساسياً لي. معلمتي في أكاديمية الحمد رائعة ومعرفة وصبورة.", rating: 5 },
@@ -126,7 +126,6 @@ const FemaleQuranTeacher = () => (
       description: "Learn Quran, Tajweed, and Arabic with certified female teachers online. Private one-on-one sessions for women and girls.",
       provider: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
       inLanguage: ["en", "ar"],
-      offers: { "@type": "Offer", price: "57", priceCurrency: "USD", description: "Starting from $57/month for 3 sessions/week" },
     }}
   />
 );

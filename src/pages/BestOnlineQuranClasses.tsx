@@ -18,7 +18,7 @@ const COMPARISON: ComparisonRow[] = [
   { featureEn: "Teaching Method", featureAr: "المنهجية", usEn: "✅ Noor Al-Bayan (proven)", usAr: "✅ نور البيان (مثبتة)", othersEn: "⚠️ No standard method", othersAr: "⚠️ بدون طريقة موحدة" },
   { featureEn: "Scheduling", featureAr: "المواعيد", usEn: "✅ 24/7 all time zones", usAr: "✅ 24/7 كل المناطق", othersEn: "❌ Limited hours", othersAr: "❌ ساعات محدودة" },
   { featureEn: "Progress Tracking", featureAr: "تتبع التقدم", usEn: "✅ After-class reports", usAr: "✅ تقارير بعد كل حصة", othersEn: "❌ None or monthly", othersAr: "❌ بدون أو شهرياً" },
-  { featureEn: "Price per Hour", featureAr: "السعر بالساعة", usEn: "✅ From $6/hour", usAr: "✅ من 6$/ساعة", othersEn: "⚠️ $15–30/hour", othersAr: "⚠️ 15–30$/ساعة" },
+  { featureEn: "Price per Hour", featureAr: "السعر بالساعة", usEn: "✅ Best value per session", usAr: "✅ أفضل قيمة لكل جلسة", othersEn: "⚠️ Significantly higher", othersAr: "⚠️ أعلى بكثير" },
   { featureEn: "Free Trial", featureAr: "تجربة مجانية", usEn: "✅ Yes — no payment needed", usAr: "✅ نعم — بدون دفع", othersEn: "⚠️ Requires credit card", othersAr: "⚠️ تتطلب بطاقة ائتمان" },
 ];
 
@@ -38,8 +38,8 @@ const CHALLENGES: Challenge[] = [
   {
     problemEn: "\"Best online Quran classes are probably expensive\"",
     problemAr: "\"أفضل دروس القرآن أونلاين غالباً مكلفة\"",
-    solutionEn: "Not at Alhamd Academy. Because our teachers are based in Egypt, we offer Al-Azhar quality at prices that undercut most competitors. Plans start from $57/month for 8 sessions — that's just $7.12 per private one-on-one session with a certified teacher.",
-    solutionAr: "ليس في أكاديمية الحمد. لأن معلمينا مقيمون في مصر، نقدم جودة الأزهر بأسعار أقل من المنافسين. الخطط تبدأ من 57$/شهرياً لـ 8 حصص.",
+    solutionEn: "Not at Alhamd Academy. Because our teachers are based in Egypt, we offer Al-Azhar quality at prices that undercut most competitors. Flexible plans to suit every budget for 8 sessions — with incredible value per session.",
+    solutionAr: "ليس في أكاديمية الحمد. لأن معلمينا مقيمون في مصر، نقدم جودة الأزهر بأسعار أقل من المنافسين. خطط مرنة تناسب كل ميزانية لـ 8 حصص.",
   },
 ];
 
@@ -63,7 +63,7 @@ const BestOnlineQuranClasses = () => (
       "2. Class Format: Group classes (5–20 students) are cheaper to provide but dramatically less effective. The best online Quran classes are one-on-one, where every minute of class time is dedicated to one student. At Alhamd Academy, 100% of our classes are private one-on-one sessions.",
       "3. Structured Curriculum: Random teaching produces random results. The best academies use proven methodologies like Noor Al-Bayan with clear learning stages, assessments, and progression criteria. We provide a complete roadmap from alphabet to Ijazah.",
       "4. Accountability: The best programs provide measurable progress through regular assessments, after-class reports, and clear milestone tracking. Parents of children and adult learners alike should know exactly where they stand and what's next.",
-      "5. Value for Money: The best doesn't have to mean the most expensive. Because Alhamd Academy's teachers are based in Egypt, we offer certified Al-Azhar quality starting from just $6/hour — a fraction of what Western-based academies charge for comparable quality.",
+      "5. Value for Money: The best doesn't have to mean the most expensive. Because Alhamd Academy's teachers are based in Egypt, we offer certified Al-Azhar quality starting from just competitive rates — a fraction of what Western-based academies charge for comparable quality.",
     ]}
     aboutContentAr={[
       "ليست كل دروس القرآن أونلاين متساوية. لقب 'الأفضل' يُستخدم من كل أكاديمية، لكن عند النظر لما يحدد الجودة فعلاً، تتضح الفروقات. إليك الأركان الخمسة:",
@@ -71,7 +71,7 @@ const BestOnlineQuranClasses = () => (
       "2. نوع الحصة: الحصص الجماعية (5–20 طالب) أرخص لكنها أقل فعالية بكثير. أفضل الدروس فردية حيث كل دقيقة مخصصة لطالب واحد. في أكاديمية الحمد، 100% من حصصنا فردية.",
       "3. منهج منظم: التدريس العشوائي ينتج نتائج عشوائية. أفضل الأكاديميات تستخدم منهجيات مثبتة كنور البيان مع مراحل ومعايير تقدم واضحة.",
       "4. المساءلة: أفضل البرامج توفر تقدماً قابلاً للقياس من خلال تقييمات منتظمة وتقارير بعد الحصة وتتبع معالم واضح.",
-      "5. القيمة مقابل المال: الأفضل لا يعني الأغلى. لأن معلمي أكاديمية الحمد مقيمون في مصر، نقدم جودة الأزهر من 6$/ساعة فقط.",
+      "5. القيمة مقابل المال: الأفضل لا يعني الأغلى. لأن معلمي أكاديمية الحمد مقيمون في مصر، نقدم جودة الأزهر أفضل قيمة لكل جلسة فقط.",
     ]}
     methodTitleEn="Our Teaching Standards — Why Students Rate Us 4.9/5"
     methodTitleAr="معايير تدريسنا — لماذا يقيمنا الطلاب 4.9/5"
@@ -124,7 +124,7 @@ const BestOnlineQuranClasses = () => (
       "Proven Noor Al-Bayan teaching methodology",
       "After-class WhatsApp progress reports",
       "24/7 scheduling — all time zones covered",
-      "Plans from $57/month (8 sessions)",
+      "Flexible plans to suit every budget (8 sessions)",
       "Free trial class — no credit card required",
       "Both male and female teachers available",
     ]}
@@ -134,13 +134,13 @@ const BestOnlineQuranClasses = () => (
       "منهجية نور البيان المثبتة",
       "تقارير تقدم عبر واتساب بعد كل حصة",
       "مواعيد 24/7 — كل المناطق الزمنية",
-      "خطط من 57$/شهرياً (8 حصص)",
+      "خطط مرنة تناسب كل ميزانية (8 حصص)",
       "حصة تجريبية مجانية — بدون بطاقة ائتمان",
       "معلمون ومعلمات متاحون",
     ]}
     faqs={[
       { questionEn: "What makes Alhamd Academy the best online Quran academy?", questionAr: "ما الذي يجعل أكاديمية الحمد أفضل أكاديمية قرآن أونلاين؟", answerEn: "Three things: 100% Al-Azhar certified native Arabic teachers (we reject 85% of applicants), 100% one-on-one classes (never groups), and a structured Noor Al-Bayan curriculum with after-class progress reports. Our 4.9/5 rating from 200+ students in 8+ countries speaks for itself.", answerAr: "ثلاثة أشياء: 100% معلمون معتمدون من الأزهر (نرفض 85% من المتقدمين)، 100% حصص فردية (ليست جماعية أبداً)، ومنهج نور البيان المنظم مع تقارير تقدم. تقييمنا 4.9/5 من 200+ طالب يتحدث عن نفسه." },
-      { questionEn: "How much do the best online Quran classes cost?", questionAr: "كم تكلفة أفضل دروس القرآن أونلاين؟", answerEn: "Quality doesn't have to be expensive. Our plans start from $57/month for 8 sessions — that's around $7 per session with a certified Al-Azhar teacher. Most Western-based academies charge $15–30/hour for similar quality.", answerAr: "الجودة لا تعني الغلاء. خططنا تبدأ من 57$/شهرياً لـ 8 حصص — حوالي 7$ لكل حصة مع معلم معتمد من الأزهر. معظم الأكاديميات الغربية تتقاضى 15–30$/ساعة." },
+      { questionEn: "How much do the best online Quran classes cost?", questionAr: "كم تكلفة أفضل دروس القرآن أونلاين؟", answerEn: "Quality doesn't have to be expensive. Our flexible plans to suit every budget for 8 sessions — with incredible value per session. Most Western-based academies charge significantly higher rates for similar quality.", answerAr: "الجودة لا تعني الغلاء. خططنا تبدأ من خطط شهرية معقولة لـ 8 حصص — بقيمة ممتازة لكل جلسة. معظم الأكاديميات الغربية تتقاضى أسعار أعلى بكثير." },
       { questionEn: "Can I try before I commit?", questionAr: "هل يمكنني التجربة قبل الالتزام؟", answerEn: "Absolutely. We offer a completely free trial class with no payment information required. You'll experience a full 30-minute session with your assigned teacher so you can judge our quality firsthand before making any commitment.", answerAr: "بالتأكيد. نقدم حصة تجريبية مجانية تماماً بدون الحاجة لمعلومات دفع. ستختبر جلسة 30 دقيقة كاملة مع معلمك المخصص." },
       { questionEn: "Do you offer classes for both kids and adults?", questionAr: "هل تقدمون حصصاً للأطفال والبالغين؟", answerEn: "Yes. We have specialized teachers for children (ages 4+) who use games and rewards, and experienced teachers for adults who use analytical, mature teaching approaches. Each age group gets an appropriate learning experience.", answerAr: "نعم. لدينا معلمون متخصصون للأطفال (من سن 4+) يستخدمون ألعاباً ومكافآت، ومعلمون ذوو خبرة للبالغين بنهج تحليلي ناضج." },
     ]}

@@ -88,7 +88,7 @@ const COMPARISON: ComparisonRow[] = [
   { featureEn: "Schedule Flexibility", featureAr: "مرونة المواعيد", usEn: "✅ 24/7 — any timezone", usAr: "✅ 24/7 — أي منطقة زمنية", othersEn: "❌ Fixed evening/weekend only", othersAr: "❌ مساء أو عطلة أسبوع فقط" },
   { featureEn: "Pace", featureAr: "السرعة", usEn: "✅ Fully personalized to you", usAr: "✅ مخصصة لك بالكامل", othersEn: "⚠️ One pace for everyone", othersAr: "⚠️ سرعة واحدة للجميع" },
   { featureEn: "Teacher Expertise", featureAr: "خبرة المعلم", usEn: "✅ Al-Azhar certified + adult teaching experience", usAr: "✅ معتمد من الأزهر + خبرة تعليم البالغين", othersEn: "⚠️ Often trained for kids only", othersAr: "⚠️ غالباً مدربون للأطفال فقط" },
-  { featureEn: "Starting Price", featureAr: "السعر المبدئي", usEn: "✅ From $6/hour", usAr: "✅ من 6$/ساعة", othersEn: "⚠️ $15–30/hour typical", othersAr: "⚠️ 15–30$/ساعة عادة" },
+  { featureEn: "Starting Price", featureAr: "السعر المبدئي", usEn: "✅ Best value per session", usAr: "✅ أفضل قيمة لكل جلسة", othersEn: "⚠️ Significantly higher", othersAr: "⚠️ أعلى بكثير },
 ];
 
 const QuranClassesForAdults = () => (
@@ -183,7 +183,7 @@ const QuranClassesForAdults = () => (
       "24/7 flexible scheduling for all time zones",
       "Male and female teachers available",
       "Personalized curriculum based on your goals",
-      "Plans starting from $57/month",
+      "Flexible plans to suit every budget",
       "Free trial class with no commitment",
       "Easy rescheduling with 6 hours' notice",
     ]}
@@ -193,7 +193,7 @@ const QuranClassesForAdults = () => (
       "مواعيد مرنة 24/7 لجميع المناطق الزمنية",
       "معلمون ومعلمات متاحون",
       "منهج مخصص بناءً على أهدافك",
-      "خطط تبدأ من 57$/شهرياً",
+      "خطط تبدأ من خطط شهرية معقولة",
       "حصة تجريبية مجانية بدون التزام",
       "إعادة جدولة سهلة بإشعار 6 ساعات",
     ]}

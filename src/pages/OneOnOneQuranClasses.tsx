@@ -60,8 +60,8 @@ const CHALLENGES: Challenge[] = [
   {
     problemEn: "\"One-on-one classes must be much more expensive than group classes\"",
     problemAr: "\"الحصص الفردية بالتأكيد أغلى بكثير من الجماعية\"",
-    solutionEn: "At Alhamd Academy, one-on-one classes start from just $6/hour. Many group-class academies charge $10–15/hour for a shared teacher. Our private sessions actually cost less than many group alternatives, while delivering far better results.",
-    solutionAr: "في أكاديمية الحمد، الحصص الفردية تبدأ من 6$/ساعة فقط. كثير من أكاديميات الحصص الجماعية تتقاضى 10–15$/ساعة لمعلم مشترك. حصصنا الخاصة تكلف أقل مع نتائج أفضل بكثير.",
+    solutionEn: "At Alhamd Academy, one-on-one classes start from just competitive rates. Many group-class academies charge higher rates for a shared teacher. Our private sessions actually cost less than many group alternatives, while delivering far better results.",
+    solutionAr: "في أكاديمية الحمد، الحصص الفردية تبدأ أفضل قيمة لكل جلسة فقط. كثير من أكاديميات الحصص الجماعية تتقاضى 10–أسعار تنافسية لمعلم مشترك. حصصنا الخاصة تكلف أقل مع نتائج أفضل بكثير.",
   },
   {
     problemEn: "\"My child needs social interaction — won't they miss out?\"",
@@ -89,7 +89,7 @@ const COMPARISON: ComparisonRow[] = [
 const OneOnOneQuranClasses = () => (
   <ServicePageLayout
     seoTitle="One-on-One Quran Classes Online | Private Quran Lessons | Alhamd Academy"
-    seoDescription="Private one-on-one Quran classes with certified teachers. 100% personalized attention, 3–5x faster progress than group classes. Kids & adults. From $6/hour. Free trial."
+    seoDescription="Private one-on-one Quran classes with certified teachers. 100% personalized attention, 3–5x faster progress than group classes. Kids & adults. Best value per session. Free trial."
     seoKeywords="one on one quran classes, private quran lessons online, one on one quran classes for kids, private quran tutor, one to one quran classes, personal quran teacher, individual quran classes, private quran lessons, quran private tutor online"
     canonical="https://alhamdacademy.net/one-on-one-quran-classes"
     heroTitleEn="One-on-One Quran Classes — 100% Personalized Attention"
@@ -144,11 +144,11 @@ const OneOnOneQuranClasses = () => (
     ]}
     outcomesEn={["3–5x faster progress than group classes", "Every pronunciation error caught immediately", "Curriculum tailored to your exact level", "Flexible scheduling that works for you", "Measurable progress with regular assessments"]}
     outcomesAr={["تقدم أسرع 3–5 مرات من الجماعي", "التقاط كل خطأ نطق فوراً", "منهج مصمم لمستواك تماماً", "مواعيد مرنة تناسبك", "تقدم قابل للقياس بتقييمات منتظمة"]}
-    featuresEn={["100% one-on-one private sessions", "Certified Al-Azhar teachers", "Adaptive pace matching your level", "Real-time error correction", "24/7 scheduling flexibility", "From $6/hour", "Free trial — no commitment", "Male & female teachers available"]}
-    featuresAr={["100% حصص فردية خاصة", "معلمون معتمدون من الأزهر", "سرعة متكيفة مع مستواك", "تصحيح أخطاء فوري", "مواعيد مرنة 24/7", "من 6$/ساعة", "تجربة مجانية — بدون التزام", "معلمون ومعلمات متاحون"]}
+    featuresEn={["100% one-on-one private sessions", "Certified Al-Azhar teachers", "Adaptive pace matching your level", "Real-time error correction", "24/7 scheduling flexibility", "Best value per session", "Free trial — no commitment", "Male & female teachers available"]}
+    featuresAr={["100% حصص فردية خاصة", "معلمون معتمدون من الأزهر", "سرعة متكيفة مع مستواك", "تصحيح أخطاء فوري", "مواعيد مرنة 24/7", "أفضل قيمة لكل جلسة", "تجربة مجانية — بدون التزام", "معلمون ومعلمات متاحون"]}
     faqs={[
       { questionEn: "Are one-on-one Quran classes really better than group classes?", questionAr: "هل الحصص الفردية أفضل فعلاً من الجماعية؟", answerEn: "Yes, significantly. In a group class, you get about 6 minutes of teacher attention per hour. In one-on-one, you get the full session. Our students progress 3–5x faster and retain more because every minute is active learning, not passive watching.", answerAr: "نعم، بشكل كبير. في الحصة الجماعية تحصل على 6 دقائق من الاهتمام بالساعة. في الفردية تحصل على الجلسة كاملة. طلابنا يتقدمون أسرع 3–5 مرات." },
-      { questionEn: "How much do private Quran lessons cost?", questionAr: "كم تكلفة دروس القرآن الخاصة؟", answerEn: "Our one-on-one sessions start from $6/hour. Plans start at $57/month for 8 sessions. This is actually cheaper than many group-class academies that charge $10–15/hour for shared attention.", answerAr: "جلساتنا الفردية تبدأ من 6$/ساعة. الخطط من 57$/شهرياً لـ 8 حصص. هذا فعلاً أرخص من كثير من الأكاديميات الجماعية." },
+      { questionEn: "How much do private Quran lessons cost?", questionAr: "كم تكلفة دروس القرآن الخاصة؟", answerEn: "Our one-on-one sessions start best value per session. Flexible plans to suit every budget for 8 sessions. This is actually cheaper than many group-class academies that charge higher rates for shared attention.", answerAr: "جلساتنا الفردية تبدأ أفضل قيمة لكل جلسة. الخطط مرنة تناسب كل ميزانية لـ 8 حصص. هذا فعلاً أرخص من كثير من الأكاديميات الجماعية." },
     ]}
     testimonials={[
       { name: "Yusuf M.", country: "USA", textEn: "My son was in a group Quran class for a year and barely progressed. After 3 months of one-on-one at Alhamd Academy, he's reading Quran independently. The difference is incredible.", textAr: "ابني كان في حصة جماعية لسنة وبالكاد تقدم. بعد 3 أشهر فردية في أكاديمية الحمد، يقرأ القرآن بشكل مستقل. الفرق لا يصدق.", rating: 5 },

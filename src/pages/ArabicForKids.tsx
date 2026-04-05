@@ -374,7 +374,6 @@ const ArabicForKids = () => (
       provider: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
       educationalLevel: ["Ages 4-7", "Ages 8-12", "Ages 13-16"],
       inLanguage: ["en", "ar"],
-      offers: { "@type": "Offer", price: "57", priceCurrency: "USD", description: "Starting from $57/month for 3 sessions/week" },
     }}
   />
 );
