@@ -245,14 +245,14 @@ const IjazahProgram = () => (
         { questionEn: "Is the online Ijazah certification recognized worldwide?", questionAr: "هل شهادة الإجازة أونلاين معترف بها عالمياً؟", answerEn: "Yes, online Ijazah certification is recognized worldwide in the Islamic scholarly community. The authenticity of an Ijazah lies in the qualification of the granting sheikh and the connected Sanad. Our sheikhs are internationally recognized scholars.", answerAr: "نعم، شهادة الإجازة أونلاين معترف بها عالمياً في المجتمع العلمي الإسلامي. شيوخنا علماء معترف بهم دولياً." },
       ]}
       testimonials={[
-        { name: "Abdullah S.", country: "United States", textEn: "Alhamdulillah, I received my Quran Ijazah online in Hafs an Asim through Alhamd Academy's Ijazah course. The sheikh was thorough, patient, and genuinely invested in my success. The Sanad is authentic and connected. And the price — competitive rates — is unbeatable for an online Ijazah program.", textAr: "الحمد لله، حصلت على إجازة القرآن أونلاين في حفص عن عاصم من خلال دورة الإجازة في أكاديمية الحمد. السعر — أسعار تنافسية — لا يُضاهى.", rating: 5 },
+        { name: "Abdullah S.", country: "United States", textEn: "Alhamdulillah, I received my Quran Ijazah online in Hafs an Asim through Alhamd Academy's Ijazah course. The sheikh was thorough, patient, and genuinely invested in my success. The Sanad is authentic and connected. The value is truly unbeatable for an online Ijazah program.", textAr: "الحمد لله، حصلت على إجازة القرآن أونلاين في حفص عن عاصم من خلال دورة الإجازة في أكاديمية الحمد. القيمة لا تُضاهى.", rating: 5 },
         { name: "Maryam K.", country: "United Kingdom", textEn: "Getting my Ijazah online was something I never thought possible. Alhamd Academy's online Ijazah program made it happen. The preparation was rigorous and the Ijazah certification process was authentic — a true Ijazah in Quran with Sanad.", textAr: "الحصول على إجازتي أونلاين شيء لم أكن أظنه ممكناً. برنامج الإجازة أونلاين في أكاديمية الحمد جعله حقيقة.", rating: 5 },
       ]}
       relatedPages={RELATED}
       midCtaTitleEn="Earn Your Ijazah — Book a Free Readiness Assessment"
       midCtaTitleAr="احصل على إجازتك — احجز تقييم جاهزية مجاني"
-      midCtaDescEn="Assessment with certified sheikh • Only competitive rates • Connected Sanad"
-      midCtaDescAr="تقييم مع شيخ معتمد • فقط أسعار تنافسية • سند متصل"
+      midCtaDescEn="Free assessment with certified sheikh • Most affordable Ijazah • Connected Sanad"
+      midCtaDescAr="تقييم مجاني مع شيخ معتمد • أقل سعر للإجازة • سند متصل"
       levelsTitleEn="Your Path to Ijazah Certification"
       levelsTitleAr="مسارك نحو شهادة الإجازة"
       outcomesTitleEn="What Earning Your Ijazah Means"
