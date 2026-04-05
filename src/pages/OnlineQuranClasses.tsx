@@ -285,7 +285,7 @@ const COMPARISON: ComparisonRow[] = [
     usEn: "✅ Starting best value per session",
     usAr: "✅ يبدأ أفضل قيمة لكل جلسة",
     othersEn: "⚠️ Significantly higher",
-    othersAr: "⚠️ أعلى بكثير
+    othersAr: "⚠️ أعلى بكثير",
   },
   {
     featureEn: "Free Trial",

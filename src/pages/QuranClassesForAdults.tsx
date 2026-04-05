@@ -88,7 +88,7 @@ const COMPARISON: ComparisonRow[] = [
   { featureEn: "Schedule Flexibility", featureAr: "مرونة المواعيد", usEn: "✅ 24/7 — any timezone", usAr: "✅ 24/7 — أي منطقة زمنية", othersEn: "❌ Fixed evening/weekend only", othersAr: "❌ مساء أو عطلة أسبوع فقط" },
   { featureEn: "Pace", featureAr: "السرعة", usEn: "✅ Fully personalized to you", usAr: "✅ مخصصة لك بالكامل", othersEn: "⚠️ One pace for everyone", othersAr: "⚠️ سرعة واحدة للجميع" },
   { featureEn: "Teacher Expertise", featureAr: "خبرة المعلم", usEn: "✅ Al-Azhar certified + adult teaching experience", usAr: "✅ معتمد من الأزهر + خبرة تعليم البالغين", othersEn: "⚠️ Often trained for kids only", othersAr: "⚠️ غالباً مدربون للأطفال فقط" },
-  { featureEn: "Starting Price", featureAr: "السعر المبدئي", usEn: "✅ Best value per session", usAr: "✅ أفضل قيمة لكل جلسة", othersEn: "⚠️ Significantly higher", othersAr: "⚠️ أعلى بكثير },
+  { featureEn: "Starting Price", featureAr: "السعر المبدئي", usEn: "✅ Best value per session", usAr: "✅ أفضل قيمة لكل جلسة", othersEn: "⚠️ Significantly higher", othersAr: "⚠️ أعلى بكثير" },
 ];
 
 const QuranClassesForAdults = () => (
