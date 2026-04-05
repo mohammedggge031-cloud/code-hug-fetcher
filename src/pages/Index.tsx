@@ -80,10 +80,21 @@ const Index = () => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const { seo } = useSeoMetadata("/");
+  const [mobileEagerRender, setMobileEagerRender] = useState(
+    typeof window !== "undefined" ? window.innerWidth < 1024 : false,
+  );
 
   // On back navigation (POP) or hash targets, force all sections to render immediately
   // so scroll restoration can reach the saved position
-  const forceEager = navigationType === "POP" || !!location.hash || !!window.sessionStorage.getItem("pendingScrollTarget");
+  const forceEager = mobileEagerRender || navigationType === "POP" || !!location.hash || !!window.sessionStorage.getItem("pendingScrollTarget");
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 1023px)");
+    const sync = () => setMobileEagerRender(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     if (location.hash) {

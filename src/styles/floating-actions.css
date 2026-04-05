@@ -12,13 +12,18 @@
   overflow: visible;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .floating-action-shell {
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
     transform: none;
     will-change: auto;
     contain: none;
+  }
+
+  .fab-gentle-bounce,
+  .badge-breathe {
+    animation: none !important;
   }
 }
 

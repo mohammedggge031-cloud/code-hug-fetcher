@@ -127,6 +127,8 @@ const TestimonialsSection = () => {
 
   const itemsPerPage = viewMode === 'mobile' ? ITEMS_MOBILE : viewMode === 'tablet' ? ITEMS_TABLET : ITEMS_DESKTOP;
   const totalPages = Math.ceil(testimonials.length / itemsPerPage);
+  const isCompactView = viewMode !== 'desktop';
+  const carouselMinHeightClass = viewMode === 'mobile' ? 'min-h-[360px]' : viewMode === 'tablet' ? 'min-h-[400px]' : '';
 
   useEffect(() => {
     setPage(0);
@@ -146,14 +148,14 @@ const TestimonialsSection = () => {
   }, []);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || isCompactView) return;
     intervalRef.current = setInterval(() => {
       paginate(lang === "ar" ? -1 : 1);
     }, 5000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, paginate, lang]);
+  }, [isPaused, paginate, lang, isCompactView]);
 
   const currentItems = testimonials.slice(
     page * itemsPerPage,
@@ -208,7 +210,7 @@ const TestimonialsSection = () => {
           </button>
 
           {/* Cards — relative container prevents height collapse during AnimatePresence swap */}
-          <div className="overflow-hidden px-8 md:px-2">
+          <div className={`overflow-hidden px-8 md:px-2 ${carouselMinHeightClass}`}>
             <AnimatePresence initial={false} mode="popLayout" custom={direction}>
               <motion.div
                 key={page}
@@ -217,7 +219,7 @@ const TestimonialsSection = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: viewMode === 'mobile' ? 0.25 : 0.35, ease: "easeOut" }}
+                transition={{ duration: isCompactView ? 0.2 : 0.35, ease: "easeOut" }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
                 {currentItems.map((item) => {
@@ -264,7 +266,7 @@ const TestimonialsSection = () => {
                       </div>
 
                       {/* WhatsApp-style message bubble */}
-                      <div className="relative bg-primary-foreground/8 rounded-xl rounded-tl-sm px-4 py-3 border border-primary-foreground/8">
+                      <div className="relative min-h-[156px] bg-primary-foreground/8 rounded-xl rounded-tl-sm px-4 py-3 border border-primary-foreground/8 sm:min-h-[170px]">
                         <p className="text-primary-foreground/80 leading-relaxed text-sm">
                           {t(item.textEn, item.textAr)}
                         </p>

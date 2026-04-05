@@ -89,6 +89,7 @@ export interface ServicePageProps {
   seoDescription: string;
   seoKeywords: string;
   canonical: string;
+  breadcrumbJsonLd?: object;
   ogImage?: string;
   heroTitleEn: string;
   heroTitleAr: string;
@@ -213,7 +214,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
     })),
   };
 
-  const breadcrumbJsonLd = {
+  const breadcrumbJsonLd = props.breadcrumbJsonLd || {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
