@@ -1,9 +1,21 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle, Star, Users, Award, Clock, BookOpen, ArrowRight, AlertTriangle, Lightbulb, type LucideIcon } from "lucide-react";
+import { CheckCircle, Star, Users, Award, Clock, BookOpen, ArrowRight, AlertTriangle, Lightbulb, type LucideIcon, GraduationCap, CalendarCheck, ShieldCheck, Headphones, UserCheck, Target, Zap, Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+import imgCertified from "@/assets/features/certified-teachers.webp";
+import imgFlexible from "@/assets/features/flexible-schedule.webp";
+import imgOneOnOne from "@/assets/features/one-on-one.webp";
+import imgFreeTrial from "@/assets/features/free-trial.webp";
+import imgSafe from "@/assets/features/safe-environment.webp";
+import imgSupport from "@/assets/features/support-247.webp";
+import imgAuthentic from "@/assets/features/authentic-education.webp";
+import imgResults from "@/assets/features/results-driven.webp";
+
+const featureIcons: LucideIcon[] = [GraduationCap, UserCheck, CalendarCheck, ShieldCheck, Heart, Target, Zap, Headphones, BookOpen, Award];
+const featureImages = [imgCertified, imgOneOnOne, imgFlexible, imgSafe, imgFreeTrial, imgResults, imgAuthentic, imgSupport, imgCertified, imgOneOnOne];
 
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
@@ -249,7 +261,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
                 <ArrowRight className="w-5 h-5" />
               </a>
               <Link
-                to="/#pricing"
+                to="/quran-classes-pricing"
                 className="inline-flex items-center gap-2 border-2 border-primary-foreground/30 text-primary-foreground px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary-foreground/10 transition-colors"
               >
                 {t("View Pricing", "عرض الأسعار")}
@@ -554,14 +566,26 @@ const ServicePageLayout = (props: ServicePageProps) => {
             )}
           </h2>
           <div className="grid sm:grid-cols-2 gap-6">
-            {(lang === "en" ? props.featuresEn : props.featuresAr).map((f, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                  <BookOpen className="w-4 h-4 text-accent" />
+            {(lang === "en" ? props.featuresEn : props.featuresAr).map((f, i) => {
+              const Icon = featureIcons[i % featureIcons.length];
+              const img = featureImages[i % featureImages.length];
+              return (
+                <div key={i} className="flex items-center gap-4 bg-card border border-border rounded-xl p-5 shadow-sm hover:border-accent/30 hover:shadow-md transition-[border-color,box-shadow] duration-300">
+                  <div className="w-14 h-14 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                    <img
+                      src={img}
+                      alt=""
+                      width={40}
+                      height={40}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-10 h-10 object-contain"
+                    />
+                  </div>
+                  <span className="text-foreground font-medium">{f}</span>
                 </div>
-                <span className="text-foreground">{f}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

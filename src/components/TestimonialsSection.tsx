@@ -207,9 +207,9 @@ const TestimonialsSection = () => {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Cards */}
+          {/* Cards — relative container prevents height collapse during AnimatePresence swap */}
           <div className="overflow-hidden px-8 md:px-2">
-            <AnimatePresence mode="wait" custom={direction}>
+            <AnimatePresence initial={false} mode="popLayout" custom={direction}>
               <motion.div
                 key={page}
                 custom={direction}
@@ -217,7 +217,7 @@ const TestimonialsSection = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: viewMode === 'mobile' ? 0.3 : 0.4, ease: "easeInOut" }}
+                transition={{ duration: viewMode === 'mobile' ? 0.25 : 0.35, ease: "easeOut" }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
                 {currentItems.map((item) => {
