@@ -277,8 +277,8 @@ const COMPARISON: ComparisonRow[] = [
   {
     featureEn: "Price Per Hour",
     featureAr: "السعر بالساعة",
-    usEn: "✅ Starting best value per session",
-    usAr: "✅ يبدأ أفضل قيمة لكل جلسة",
+    usEn: "✅ Best value per session",
+    usAr: "✅ أفضل قيمة لكل جلسة",
     othersEn: "⚠️ Significantly higher private Tajweed",
     othersAr: "⚠️ أعلى بكثير خاص",
   },

@@ -63,7 +63,7 @@ const BestOnlineQuranClasses = () => (
       "2. Class Format: Group classes (5–20 students) are cheaper to provide but dramatically less effective. The best online Quran classes are one-on-one, where every minute of class time is dedicated to one student. At Alhamd Academy, 100% of our classes are private one-on-one sessions.",
       "3. Structured Curriculum: Random teaching produces random results. The best academies use proven methodologies like Noor Al-Bayan with clear learning stages, assessments, and progression criteria. We provide a complete roadmap from alphabet to Ijazah.",
       "4. Accountability: The best programs provide measurable progress through regular assessments, after-class reports, and clear milestone tracking. Parents of children and adult learners alike should know exactly where they stand and what's next.",
-      "5. Value for Money: The best doesn't have to mean the most expensive. Because Alhamd Academy's teachers are based in Egypt, we offer certified Al-Azhar quality starting from just competitive rates — a fraction of what Western-based academies charge for comparable quality.",
+      "5. Value for Money: The best doesn't have to mean the most expensive. Because Alhamd Academy's teachers are based in Egypt, we offer certified Al-Azhar quality at the most competitive rates — a fraction of what Western-based academies charge for comparable quality.",
     ]}
     aboutContentAr={[
       "ليست كل دروس القرآن أونلاين متساوية. لقب 'الأفضل' يُستخدم من كل أكاديمية، لكن عند النظر لما يحدد الجودة فعلاً، تتضح الفروقات. إليك الأركان الخمسة:",
@@ -71,7 +71,7 @@ const BestOnlineQuranClasses = () => (
       "2. نوع الحصة: الحصص الجماعية (5–20 طالب) أرخص لكنها أقل فعالية بكثير. أفضل الدروس فردية حيث كل دقيقة مخصصة لطالب واحد. في أكاديمية الحمد، 100% من حصصنا فردية.",
       "3. منهج منظم: التدريس العشوائي ينتج نتائج عشوائية. أفضل الأكاديميات تستخدم منهجيات مثبتة كنور البيان مع مراحل ومعايير تقدم واضحة.",
       "4. المساءلة: أفضل البرامج توفر تقدماً قابلاً للقياس من خلال تقييمات منتظمة وتقارير بعد الحصة وتتبع معالم واضح.",
-      "5. القيمة مقابل المال: الأفضل لا يعني الأغلى. لأن معلمي أكاديمية الحمد مقيمون في مصر، نقدم جودة الأزهر أفضل قيمة لكل جلسة فقط.",
+      "5. القيمة مقابل المال: الأفضل لا يعني الأغلى. لأن معلمي أكاديمية الحمد مقيمون في مصر، نقدم جودة الأزهر بأسعار لا تُقارن.",
     ]}
     methodTitleEn="Our Teaching Standards — Why Students Rate Us 4.9/5"
     methodTitleAr="معايير تدريسنا — لماذا يقيمنا الطلاب 4.9/5"
