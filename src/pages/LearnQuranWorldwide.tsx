@@ -169,9 +169,9 @@ const LearnQuranWorldwide = () => {
                 "24/7 availability across all time zones worldwide",
                 "Structured curriculum from Noor Al-Bayan to Ijazah",
                 "Male and female teachers available",
-                "Plans starting from just $57/month",
+                "Affordable plans — check our pricing for details",
                 "Free trial with no commitment required",
-                "Ijazah certification with Sanad for only $15/hour",
+                "Ijazah certification with Sanad — best value online",
               ].map((r, i) => (
                 <div key={i} className="flex items-start gap-3 bg-background rounded-lg p-4 shadow-sm">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 shrink-0" />

@@ -262,10 +262,10 @@ const ServicePageLayout = (props: ServicePageProps) => {
                 <ArrowRight className="w-5 h-5" />
               </a>
               <Link
-                to="/quran-classes-pricing"
+                to="/#pricing"
                 className="inline-flex items-center gap-2 border-2 border-primary-foreground/30 text-primary-foreground px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary-foreground/10 transition-colors"
               >
-                {t("View Pricing", "عرض الأسعار")}
+                {t("View Pricing Plans", "عرض خطط الأسعار")}
               </Link>
             </div>
             <div className="flex flex-wrap gap-6 justify-center mt-10 text-primary-foreground/60 text-sm">

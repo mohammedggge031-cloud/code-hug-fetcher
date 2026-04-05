@@ -142,7 +142,6 @@ const FreeTrial = () => (
           endDate: "2027-12-31",
           location: { "@type": "VirtualLocation", url: "https://alhamdacademy.net/free-trial" },
           organizer: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
-          offers: { "@type": "Offer", price: "0", priceCurrency: "USD", availability: "https://schema.org/InStock", url: "https://alhamdacademy.net/free-trial" },
           isAccessibleForFree: true,
         }
       ]

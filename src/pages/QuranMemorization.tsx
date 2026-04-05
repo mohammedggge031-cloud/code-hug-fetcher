@@ -274,10 +274,10 @@ const COMPARISON: ComparisonRow[] = [
   {
     featureEn: "Price Per Hour",
     featureAr: "السعر بالساعة",
-    usEn: "✅ Starting from $6/hr",
-    usAr: "✅ يبدأ من 6$/الساعة",
-    othersEn: "⚠️ $12–25/hr for private Hifz",
-    othersAr: "⚠️ 12–25$/الساعة لحفظ خاص",
+    usEn: "✅ Starting best value per session",
+    usAr: "✅ يبدأ أفضل قيمة لكل جلسة",
+    othersEn: "⚠️ Significantly higher private Hifz",
+    othersAr: "⚠️ أعلى بكثير خاص",
   },
 ];
 
@@ -483,7 +483,6 @@ const QuranMemorization = () => (
       provider: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
       educationalLevel: ["Foundation", "Regular", "Intensive"],
       inLanguage: ["en", "ar"],
-      offers: { "@type": "Offer", price: "57", priceCurrency: "USD", description: "Starting from $57/month for 3 sessions/week" },
     }}
   />
 );
