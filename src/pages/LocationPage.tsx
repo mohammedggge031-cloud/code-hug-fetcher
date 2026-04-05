@@ -35,10 +35,8 @@ const LocationPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const location = slug ? getLocationBySlug(slug) : null;
 
-  if (!location) return <Navigate to="/404" replace />;
-
-  const childCities = location.type === 'country' ? getCitiesByCountry(location.slug) : [];
-  const parentCountry = location.type === 'city' && location.countrySlug
+  const childCities = location?.type === 'country' ? getCitiesByCountry(location.slug) : [];
+  const parentCountry = location?.type === 'city' && location.countrySlug
     ? allLocations.find(l => l.slug === location.countrySlug)
     : null;
 
@@ -89,14 +87,16 @@ const LocationPage = () => {
   };
 
   const faqs: FAQ[] = useMemo(
-    () => location.faqs.map((faq) => ({
+    () => location?.faqs.map((faq) => ({
       questionEn: faq.q,
       questionAr: faq.q,
       answerEn: faq.a,
       answerAr: faq.a,
-    })),
-    [location.faqs],
+    })) || [],
+    [location],
   );
+
+  if (!location) return <Navigate to="/404" replace />;
 
   const trustBadges: TrustBadge[] = [
     { icon: Award, textEn: "Certified Al-Azhar Teachers", textAr: "معلمون معتمدون من الأزهر" },
