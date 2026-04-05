@@ -336,7 +336,7 @@ const CoursePage = () => {
                           </h3>
                           {sub.titleEn.toLowerCase().includes("ijazah") && (
                             <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-accent/15 text-accent text-[10px] font-bold border border-accent/20">
-                              💰 {t("Best Value", "أفضل قيمة")} /{t("hour", "ساعة")}
+                              🏅 {t("Best Value", "أفضل قيمة")}
                             </span>
                           )}
                         </div>
