@@ -209,76 +209,78 @@ const TestimonialsSection = () => {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Cards — on mobile use no animation to prevent iOS jitter */}
+          {/* Cards — on mobile render statically to prevent iOS jitter */}
           <div className={`overflow-hidden px-8 md:px-2 ${carouselMinHeightClass}`}>
             {isCompactView ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-            ) : (
-            <AnimatePresence initial={false} mode="popLayout" custom={direction}>
-              <motion.div
-                key={page}
-                custom={direction}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.35, ease: "easeOut" }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
-              >
                 {currentItems.map((item) => {
                   const avatar = item.gender === "female" ? avatarFemale : avatarMale;
-
                   return (
                     <div
                       key={item.nameEn}
-                      className="bg-card/15 rounded-2xl p-6 sm:p-8 border border-primary-foreground/10 hover:border-accent/20 transition-colors duration-300"
+                      className="bg-card/15 rounded-2xl p-6 sm:p-8 border border-primary-foreground/10"
                     >
-                      {/* Author header with avatar + flag */}
                       <div className="flex items-center gap-3 mb-5">
                         <div className="relative flex-shrink-0">
-                          <img
-                            src={avatar}
-                            alt={t(item.nameEn, item.nameAr)}
-                            width={48}
-                            height={48}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-12 h-12 rounded-full object-cover border-2 border-accent/30"
-                          />
-                          <img
-                            src={getFlagUrl(item.country, 40)}
-                            alt={`${item.country.toUpperCase()} flag`}
-                            width={20}
-                            height={15}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-primary/50 object-cover"
-                          />
+                          <img src={avatar} alt={t(item.nameEn, item.nameAr)} width={48} height={48} loading="lazy" decoding="async" className="w-12 h-12 rounded-full object-cover border-2 border-accent/30" />
+                          <img src={getFlagUrl(item.country, 40)} alt={`${item.country.toUpperCase()} flag`} width={20} height={15} loading="lazy" decoding="async" className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-primary/50 object-cover" />
                         </div>
                         <div>
                           <div className="font-bold text-primary-foreground text-sm">{t(item.nameEn, item.nameAr)}</div>
                           <div className="text-xs text-primary-foreground/50">{t(item.roleEn, item.roleAr)}</div>
                         </div>
                       </div>
-
-                      {/* Stars */}
                       <div className="flex gap-1 mb-4">
-                        {[...Array(5)].map((_, j) => (
-                          <Star key={j} className="w-4 h-4 fill-accent text-accent" />
-                        ))}
+                        {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-accent text-accent" />)}
                       </div>
-
-                      {/* WhatsApp-style message bubble */}
                       <div className="relative min-h-[156px] bg-primary-foreground/8 rounded-xl rounded-tl-sm px-4 py-3 border border-primary-foreground/8 sm:min-h-[170px]">
-                        <p className="text-primary-foreground/80 leading-relaxed text-sm">
-                          {t(item.textEn, item.textAr)}
-                        </p>
+                        <p className="text-primary-foreground/80 leading-relaxed text-sm">{t(item.textEn, item.textAr)}</p>
                       </div>
                     </div>
                   );
                 })}
-              </motion.div>
-            </AnimatePresence>
+              </div>
+            ) : (
+              <AnimatePresence initial={false} mode="popLayout" custom={direction}>
+                <motion.div
+                  key={page}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.35, ease: "easeOut" }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
+                >
+                  {currentItems.map((item) => {
+                    const avatar = item.gender === "female" ? avatarFemale : avatarMale;
+                    return (
+                      <div
+                        key={item.nameEn}
+                        className="bg-card/15 rounded-2xl p-6 sm:p-8 border border-primary-foreground/10 hover:border-accent/20 transition-colors duration-300"
+                      >
+                        <div className="flex items-center gap-3 mb-5">
+                          <div className="relative flex-shrink-0">
+                            <img src={avatar} alt={t(item.nameEn, item.nameAr)} width={48} height={48} loading="lazy" decoding="async" className="w-12 h-12 rounded-full object-cover border-2 border-accent/30" />
+                            <img src={getFlagUrl(item.country, 40)} alt={`${item.country.toUpperCase()} flag`} width={20} height={15} loading="lazy" decoding="async" className="absolute -bottom-0.5 -right-1 w-5 h-[15px] rounded-sm shadow-sm border border-primary/50 object-cover" />
+                          </div>
+                          <div>
+                            <div className="font-bold text-primary-foreground text-sm">{t(item.nameEn, item.nameAr)}</div>
+                            <div className="text-xs text-primary-foreground/50">{t(item.roleEn, item.roleAr)}</div>
+                          </div>
+                        </div>
+                        <div className="flex gap-1 mb-4">
+                          {[...Array(5)].map((_, j) => <Star key={j} className="w-4 h-4 fill-accent text-accent" />)}
+                        </div>
+                        <div className="relative min-h-[156px] bg-primary-foreground/8 rounded-xl rounded-tl-sm px-4 py-3 border border-primary-foreground/8 sm:min-h-[170px]">
+                          <p className="text-primary-foreground/80 leading-relaxed text-sm">{t(item.textEn, item.textAr)}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </motion.div>
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Dots */}
