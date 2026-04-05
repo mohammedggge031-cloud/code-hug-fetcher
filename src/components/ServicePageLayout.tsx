@@ -547,12 +547,25 @@ const ServicePageLayout = (props: ServicePageProps) => {
             {t(props.outcomesTitleEn || "What You Will Achieve", props.outcomesTitleAr || "ما ستحققه")}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {(lang === "en" ? props.outcomesEn : props.outcomesAr).map((outcome, i) => (
-              <div key={i} className="flex items-start gap-3 bg-card p-4 rounded-lg border border-border">
-                <CheckCircle className="w-5 h-5 text-accent mt-0.5 shrink-0" />
-                <span className="text-foreground">{outcome}</span>
-              </div>
-            ))}
+            {(lang === "en" ? props.outcomesEn : props.outcomesAr).map((outcome, i) => {
+              const img = featureImages[i % featureImages.length];
+              return (
+                <div key={i} className="flex items-center gap-4 bg-card p-4 rounded-xl border border-border shadow-sm hover:border-accent/30 hover:shadow-md transition-[border-color,box-shadow] duration-300">
+                  <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                    <img
+                      src={img}
+                      alt=""
+                      width={32}
+                      height={32}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-8 h-8 object-contain"
+                    />
+                  </div>
+                  <span className="text-foreground font-medium">{outcome}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
