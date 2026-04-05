@@ -566,14 +566,26 @@ const ServicePageLayout = (props: ServicePageProps) => {
             )}
           </h2>
           <div className="grid sm:grid-cols-2 gap-6">
-            {(lang === "en" ? props.featuresEn : props.featuresAr).map((f, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                  <BookOpen className="w-4 h-4 text-accent" />
+            {(lang === "en" ? props.featuresEn : props.featuresAr).map((f, i) => {
+              const Icon = featureIcons[i % featureIcons.length];
+              const img = featureImages[i % featureImages.length];
+              return (
+                <div key={i} className="flex items-center gap-4 bg-card border border-border rounded-xl p-5 shadow-sm hover:border-accent/30 hover:shadow-md transition-[border-color,box-shadow] duration-300">
+                  <div className="w-14 h-14 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+                    <img
+                      src={img}
+                      alt=""
+                      width={40}
+                      height={40}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-10 h-10 object-contain"
+                    />
+                  </div>
+                  <span className="text-foreground font-medium">{f}</span>
                 </div>
-                <span className="text-foreground">{f}</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
