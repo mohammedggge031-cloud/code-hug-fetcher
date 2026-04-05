@@ -58,17 +58,13 @@ const IjazahPricingSection = () => {
 
             <div className="p-8">
               <div className="text-center mb-8">
-                <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-5xl md:text-6xl font-heading font-bold text-foreground">$15</span>
-                  <span className="text-lg text-muted-foreground font-medium">
-                    / {t("hour", "ساعة")}
-                  </span>
-                </div>
+                <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
+                  {t("Unbeatable Value", "قيمة لا تُضاهى")}
+                </h3>
                 <p className="text-sm text-muted-foreground mt-2">
                   {t("One-on-one sessions with a certified sheikh", "جلسات فردية مع شيخ معتمد")}
                 </p>
                 <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold">
-                  <DollarSign className="w-3 h-3" />
                   {t("Most affordable Ijazah program online", "أقل سعر لبرنامج إجازة أونلاين")}
                 </div>
               </div>
@@ -138,16 +134,16 @@ const IjazahPricingSection = () => {
 const IjazahProgram = () => (
   <>
     <ServicePageLayout
-      seoTitle="Quran Ijazah Online — Get Ijazah Certification | $15/Hour | Alhamd Academy"
-      seoDescription="Get Quran Ijazah online for just $15/hour with certified sheikhs and connected Sanad to Prophet Muhammad ﷺ. Ijazah course online in Hafs an Asim. Online Ijazah program with Sanad. Free assessment."
-      seoKeywords="quran ijazah online, ijazah course online, quran certification program, ijazah in quran recitation, get ijazah online, ijazah in quran with sanad, online ijazah program, ijazah certification, ijazah hafs, qiraat course online, quran sanad, connected chain quran, affordable ijazah online, ijazah price"
+      seoTitle="Quran Ijazah Online — Get Ijazah Certification | Alhamd Academy"
+      seoDescription="Get Quran Ijazah online with certified sheikhs and connected Sanad to Prophet Muhammad ﷺ. Ijazah course online in Hafs an Asim. Online Ijazah program with Sanad. Free assessment."
+      seoKeywords="quran ijazah online, ijazah course online, quran certification program, ijazah in quran recitation, get ijazah online, ijazah in quran with sanad, online ijazah program, ijazah certification, ijazah hafs, qiraat course online, quran sanad, connected chain quran, affordable ijazah online"
       canonical="https://alhamdacademy.net/ijazah-program"
       heroTitleEn="Quran Ijazah Online — Get Your Ijazah Certification"
       heroTitleAr="الإجازة القرآنية أونلاين — احصل على شهادة الإجازة"
-      heroSubtitleEn="Get Ijazah Online with Connected Sanad to Prophet Muhammad ﷺ — Only $15/Hour"
-      heroSubtitleAr="احصل على إجازة أونلاين بسند متصل إلى النبي محمد ﷺ — فقط 15$/ساعة"
-      heroDescEn="The Quran Ijazah is the highest certification in Quran recitation — a license that connects you through an unbroken chain of scholars back to Prophet Muhammad ﷺ. At Alhamd Academy, our Ijazah course online guides you through the entire process at just $15/hour — the most affordable online Ijazah program available."
-      heroDescAr="الإجازة القرآنية هي أعلى شهادة في تلاوة القرآن — رخصة تصلك بسلسلة غير منقطعة من العلماء وصولاً إلى النبي محمد ﷺ. في أكاديمية الحمد، برنامج الإجازة أونلاين بسعر 15$/ساعة فقط."
+      heroSubtitleEn="Get Ijazah Online with Connected Sanad to Prophet Muhammad ﷺ — Most Affordable Program"
+      heroSubtitleAr="احصل على إجازة أونلاين بسند متصل إلى النبي محمد ﷺ — أقل الأسعار"
+      heroDescEn="The Quran Ijazah is the highest certification in Quran recitation — a license that connects you through an unbroken chain of scholars back to Prophet Muhammad ﷺ. At Alhamd Academy, our Ijazah course online guides you through the entire process at the most competitive rates available."
+      heroDescAr="الإجازة القرآنية هي أعلى شهادة في تلاوة القرآن — رخصة تصلك بسلسلة غير منقطعة من العلماء وصولاً إلى النبي محمد ﷺ. في أكاديمية الحمد، برنامج الإجازة أونلاين بأسعار تنافسية لا تُقارن."
       aboutTitleEn="What Is a Quran Ijazah & How to Get Ijazah Online"
       aboutTitleAr="ما هي إجازة القرآن وكيف تحصل على الإجازة أونلاين"
       aboutContentEn={[
@@ -222,7 +218,7 @@ const IjazahProgram = () => (
       ]}
       featuresEn={[
         "Certified senior sheikhs with multiple Ijazah and connected Sanad",
-        "Only $15/hour — the most affordable online Ijazah program",
+        "The most affordable online Ijazah program — unmatched value",
         "One-on-one sessions with the certifying sheikh throughout your Ijazah course",
         "Quran Ijazah online available in Hafs an Asim and other Qiraat",
         "Complete Sanad documentation — authentic Ijazah in Quran with Sanad",
@@ -232,7 +228,7 @@ const IjazahProgram = () => (
       ]}
       featuresAr={[
         "شيوخ كبار معتمدون بإجازات متعددة وسند متصل",
-        "فقط 15$/ساعة — أقل سعر لبرنامج إجازة أونلاين",
+        "أقل سعر لبرنامج إجازة أونلاين — قيمة لا تُضاهى",
         "جلسات فردية مع الشيخ المُجيز طوال دورة الإجازة",
         "إجازة القرآن أونلاين متاحة في حفص عن عاصم وقراءات أخرى",
         "توثيق السند الكامل — إجازة أصيلة في القرآن بالسند",
@@ -241,7 +237,7 @@ const IjazahProgram = () => (
         "إرشاد ما بعد الإجازة وخيارات القراءات المتقدمة",
       ]}
       faqs={[
-        { questionEn: "How much does the online Ijazah program cost?", questionAr: "كم يكلف برنامج الإجازة أونلاين؟", answerEn: "Our Ijazah course online costs only $15 per hour for one-on-one sessions with a certified sheikh. This makes it one of the most affordable ways to get Ijazah online. The total cost depends on your current level and how many hours you need to complete the Quran certification process.", answerAr: "دورة الإجازة أونلاين تكلف فقط 15$/ساعة لجلسات فردية مع شيخ معتمد. هذا يجعلها من أقل الطرق تكلفة للحصول على الإجازة أونلاين." },
+        { questionEn: "How much does the online Ijazah program cost?", questionAr: "كم يكلف برنامج الإجازة أونلاين؟", answerEn: "Our Ijazah course online is one of the most affordable ways to get Ijazah online. We offer competitive per-hour rates for one-on-one sessions with a certified sheikh. Contact us or check our pricing page for current plans.", answerAr: "دورة الإجازة أونلاين من أقل الطرق تكلفة للحصول على الإجازة أونلاين. نقدم أسعاراً تنافسية لجلسات فردية مع شيخ معتمد. تواصل معنا أو راجع صفحة الأسعار." },
         { questionEn: "Can I really get Ijazah online?", questionAr: "هل يمكنني فعلاً الحصول على الإجازة أونلاين؟", answerEn: "Yes! Getting Ijazah online is fully recognized in the Islamic scholarly community. Our online Ijazah program is conducted via video conferencing with certified sheikhs. The authenticity of a Quran Ijazah lies in the sheikh's qualification and the connected Sanad, not the medium of instruction.", answerAr: "نعم! الحصول على الإجازة أونلاين معترف به تماماً. برنامجنا يُجرى عبر مكالمات فيديو مع شيوخ معتمدين. أصالة الإجازة في مؤهلات الشيخ والسند المتصل." },
         { questionEn: "How to get Ijazah in Quran with Sanad?", questionAr: "كيف أحصل على إجازة في القرآن بالسند؟", answerEn: "To get Ijazah in Quran with Sanad, you need to read the entire Quran to a certified sheikh who holds Ijazah with connected Sanad. At Alhamd Academy, our Ijazah course online includes preparation, reading sessions, and upon completion, you receive your Ijazah certificate with the complete Sanad chain back to Prophet Muhammad ﷺ.", answerAr: "للحصول على إجازة في القرآن بالسند، تحتاج لقراءة القرآن كاملاً على شيخ معتمد يحمل إجازة بسند متصل. في أكاديمية الحمد، تحصل على الإجازة مع سلسلة السند الكاملة." },
         { questionEn: "What are the prerequisites for the Ijazah course online?", questionAr: "ما المتطلبات المسبقة لدورة الإجازة أونلاين؟", answerEn: "You need either complete Quran memorization (for Ijazah from memory) or the ability to read the Quran fluently (for Ijazah from reading). Strong Tajweed knowledge is essential for our Quran certification program. We assess your readiness before enrollment.", answerAr: "تحتاج إما حفظ القرآن كاملاً (لإجازة الحفظ) أو القدرة على قراءة القرآن بطلاقة (لإجازة التلاوة). معرفة التجويد القوية ضرورية." },
@@ -269,8 +265,8 @@ const IjazahProgram = () => (
       faqTitleAr="برنامج الإجازة — إجابات تفصيلية"
       ctaTitleEn="Your Ijazah Awaits — Take the First Step"
       ctaTitleAr="إجازتك في انتظارك — اتخذ الخطوة الأولى"
-      ctaDescEn="Join the legacy of Quran preservation. Get your Ijazah with connected Sanad at just $15/hour."
-      ctaDescAr="انضم لإرث حفظ القرآن. احصل على إجازتك بسند متصل بسعر 15$/ساعة فقط."
+      ctaDescEn="Join the legacy of Quran preservation. Get your Ijazah with connected Sanad at the most competitive rates."
+      ctaDescAr="انضم لإرث حفظ القرآن. احصل على إجازتك بسند متصل بأسعار تنافسية."
       ctaButtonEn="Begin Your Ijazah Journey"
       ctaButtonAr="ابدأ رحلة الإجازة"
       relatedTitleEn="Prepare for Your Ijazah with These Courses"
@@ -279,20 +275,11 @@ const IjazahProgram = () => (
         "@context": "https://schema.org",
         "@type": "Course",
         name: "Quran Ijazah Online — Ijazah Course with Connected Sanad",
-        description: "Get Quran Ijazah online with connected Sanad to Prophet Muhammad ﷺ. Affordable Ijazah course at $15/hour with certified sheikhs.",
+        description: "Get Quran Ijazah online with connected Sanad to Prophet Muhammad ﷺ. Affordable Ijazah course with certified sheikhs.",
         provider: { "@type": "EducationalOrganization", name: "Alhamd Academy", url: "https://alhamdacademy.net" },
         educationalLevel: "Advanced",
         inLanguage: ["en", "ar"],
         educationalCredentialAwarded: "Ijazah Certification with Connected Sanad",
-        offers: {
-          "@type": "Offer",
-          price: "15",
-          priceCurrency: "USD",
-          unitText: "HOUR",
-          availability: "https://schema.org/InStock",
-          url: "https://alhamdacademy.net/ijazah-program",
-          description: "One-on-one Ijazah course online with certified sheikh — $15 per hour"
-        },
         
       }}
       extraSection={<IjazahPricingSection />}
