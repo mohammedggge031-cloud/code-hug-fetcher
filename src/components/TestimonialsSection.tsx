@@ -209,8 +209,11 @@ const TestimonialsSection = () => {
             <ChevronRight className="w-5 h-5" />
           </button>
 
-          {/* Cards — relative container prevents height collapse during AnimatePresence swap */}
+          {/* Cards — on mobile use no animation to prevent iOS jitter */}
           <div className={`overflow-hidden px-8 md:px-2 ${carouselMinHeightClass}`}>
+            {isCompactView ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+            ) : (
             <AnimatePresence initial={false} mode="popLayout" custom={direction}>
               <motion.div
                 key={page}
@@ -219,7 +222,7 @@ const TestimonialsSection = () => {
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: isCompactView ? 0.2 : 0.35, ease: "easeOut" }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
                 className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
               >
                 {currentItems.map((item) => {
