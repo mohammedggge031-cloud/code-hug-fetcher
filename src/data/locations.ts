@@ -637,7 +637,7 @@ const cities: LocationData[] = [
     localContext: 'Toronto\'s multicultural Muslim community includes families from South Asian, Arab, African, and Somali backgrounds. While the GTA has many Islamic centers, traffic congestion makes commuting difficult. Online Quran classes offer consistent quality without the commute.',
     whyStudentsChoose: [
       'No commute through GTA traffic — learn from any neighborhood',
-      'More affordable than Toronto-area private Quran tutors (CAD $40-70/hour)',
+      'More affordable than local Toronto-area private Quran tutors',
       'Serve the entire GTA including Mississauga, Brampton, and Scarborough',
       'Year-round learning unaffected by Canadian winter storms',
       'EST evening classes work perfectly with Egyptian mornings',
