@@ -5,6 +5,18 @@ import { CheckCircle, Star, Users, Award, Clock, BookOpen, ArrowRight, AlertTria
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+import imgCertified from "@/assets/features/certified-teachers.webp";
+import imgFlexible from "@/assets/features/flexible-schedule.webp";
+import imgOneOnOne from "@/assets/features/one-on-one.webp";
+import imgFreeTrial from "@/assets/features/free-trial.webp";
+import imgSafe from "@/assets/features/safe-environment.webp";
+import imgSupport from "@/assets/features/support-247.webp";
+import imgAuthentic from "@/assets/features/authentic-education.webp";
+import imgResults from "@/assets/features/results-driven.webp";
+
+const featureIcons: LucideIcon[] = [GraduationCap, UserCheck, CalendarCheck, ShieldCheck, Heart, Target, Zap, Headphones, BookOpen, Award];
+const featureImages = [imgCertified, imgOneOnOne, imgFlexible, imgSafe, imgFreeTrial, imgResults, imgAuthentic, imgSupport, imgCertified, imgOneOnOne];
+
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 
@@ -249,7 +261,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
                 <ArrowRight className="w-5 h-5" />
               </a>
               <Link
-                to="/#pricing"
+                to="/quran-classes-pricing"
                 className="inline-flex items-center gap-2 border-2 border-primary-foreground/30 text-primary-foreground px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary-foreground/10 transition-colors"
               >
                 {t("View Pricing", "عرض الأسعار")}
