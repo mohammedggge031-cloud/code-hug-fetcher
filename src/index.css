@@ -113,12 +113,13 @@
   }
 
   html, body {
-    overflow-x: clip;
+    overflow-x: hidden;
   }
 
   @media (max-width: 767px) {
     html {
       scroll-behavior: auto;
+      -webkit-overflow-scrolling: touch;
     }
   }
 
