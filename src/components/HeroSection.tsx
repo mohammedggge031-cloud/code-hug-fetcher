@@ -45,7 +45,7 @@ const HeroSection = () => {
           sizes="100vw"
           data-hero-bg=""
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/60 will-change-[opacity]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-primary/40" />
       </div>
 
