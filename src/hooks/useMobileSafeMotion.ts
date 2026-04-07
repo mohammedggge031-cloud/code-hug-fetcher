@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
 
 /**
- * Returns mobile-safe framer-motion props.
- * On mobile (< 640px), disables y/x transforms to prevent iOS jitter,
- * using opacity-only animations instead.
+ * Returns touch-device-safe framer-motion props.
+ * On tablets, phones, and coarse-pointer devices, disables y/x transforms
+ * to prevent Safari/iOS compositing jitter and text/image flicker.
  */
 export const useMobileSafeMotion = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640);
+    const media = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)");
+    const check = () => setIsMobile(media.matches);
     check();
-    window.addEventListener("resize", check, { passive: true });
-    return () => window.removeEventListener("resize", check);
+    media.addEventListener("change", check);
+    return () => media.removeEventListener("change", check);
   }, []);
 
   /** Safe whileInView entrance animation */

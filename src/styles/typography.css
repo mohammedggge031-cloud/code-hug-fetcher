@@ -33,7 +33,7 @@ li {
   backface-visibility: hidden;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .site-fixed-layer {
     -webkit-transform: none;
     transform: none;
