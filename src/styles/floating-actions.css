@@ -10,23 +10,15 @@
   will-change: auto;
   contain: layout;
   overflow: visible;
-  isolation: isolate;
-}
-
-.touch-fixed-ui {
-  isolation: isolate;
 }
 
 @media (max-width: 1023px) {
-  .floating-action-shell,
-  .touch-fixed-ui {
+  .floating-action-shell {
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
     transform: none;
     will-change: auto;
-    contain: paint;
-    filter: none;
-    transition: none !important;
+    contain: none;
   }
 
   .fab-gentle-bounce,
@@ -36,9 +28,7 @@
 
   .floating-fab-booking,
   .floating-fab-whatsapp,
-  .floating-fab-booking .shadow-elevated,
-  .touch-fixed-ui.shadow-elevated,
-  .touch-fixed-ui .shadow-elevated {
+  .floating-fab-booking .shadow-elevated {
     box-shadow: var(--shadow-soft);
   }
 }
