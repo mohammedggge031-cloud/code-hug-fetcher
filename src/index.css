@@ -112,6 +112,10 @@
     outline: none;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   html, body {
     overflow-x: hidden;
   }
@@ -253,6 +257,9 @@
 
   @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
     .text-gradient-gold {
+      background: none;
+      color: hsl(var(--accent));
+      -webkit-text-fill-color: hsl(var(--accent));
       filter: none;
     }
   }
