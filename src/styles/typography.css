@@ -34,11 +34,17 @@ li {
 }
 
 @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
+  body {
+    -webkit-font-smoothing: auto;
+  }
+
   .site-fixed-layer {
     -webkit-transform: none;
     transform: none;
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
+    contain: paint;
+    isolation: isolate;
   }
 
   h1,

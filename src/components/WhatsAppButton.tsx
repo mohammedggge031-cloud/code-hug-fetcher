@@ -9,7 +9,7 @@ const WhatsAppButton = () => {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="floating-action-shell floating-fab-whatsapp fab-gentle-bounce whatsapp-fab flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-elevated md:h-14 md:w-14"
+      className="touch-fixed-ui floating-action-shell floating-fab-whatsapp fab-gentle-bounce whatsapp-fab flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-soft md:h-14 md:w-14 lg:shadow-elevated"
       aria-label="Chat on WhatsApp"
     >
       <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
