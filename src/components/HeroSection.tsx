@@ -30,7 +30,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="home" className="relative flex min-h-screen items-center overflow-hidden" aria-label="Hero - Learn Quran Online with Alhamd Academy">
+    <section id="home" className="relative flex min-h-svh lg:min-h-screen items-center overflow-hidden" aria-label="Hero - Learn Quran Online with Alhamd Academy">
       <div className="absolute inset-0" aria-hidden="true">
         <img
           srcSet={HERO_SRCSET}
