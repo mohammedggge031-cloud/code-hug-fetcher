@@ -25,12 +25,6 @@
   .badge-breathe {
     animation: none !important;
   }
-
-  .floating-fab-booking,
-  .floating-fab-whatsapp,
-  .floating-fab-booking .shadow-elevated {
-    box-shadow: var(--shadow-soft);
-  }
 }
 
 .floating-fab-booking,
