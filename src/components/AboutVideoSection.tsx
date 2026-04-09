@@ -18,7 +18,7 @@ const AboutVideoSection = () => {
   const [videos, setVideos] = useState<PlacementVideo[]>([]);
 
   useEffect(() => {
-    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "About Alhamd Academy", titleAr: "عن أكاديمية الحمد" }];
+    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "Non-Arab Student Reciting Quran", titleAr: "طالب غير عربي يقرأ القرآن" }];
     supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
       .then(({ data, error }) => {
         if (error || !data?.script_content) { setVideos(fallback); return; }

@@ -188,7 +188,7 @@ const TestimonialsSection = () => {
 
   // Load videos with "testimonials" placement from DB
   useEffect(() => {
-    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "About Alhamd Academy", titleAr: "عن أكاديمية الحمد", placement: ["testimonials"] }];
+    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "Non-Arab Student Reciting Quran", titleAr: "طالب غير عربي يقرأ القرآن", placement: ["testimonials"] }];
     supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
       .then(({ data, error }) => {
         if (error || !data?.script_content) {
