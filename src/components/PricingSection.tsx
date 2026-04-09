@@ -212,7 +212,7 @@ const PricingSection = () => {
           <p className="text-muted-foreground text-sm sm:text-base mt-3 max-w-xl mx-auto">
             {t(
               "Flexible pricing to fit your schedule. All plans include a free trial.",
-              "أسعار مرنة تناسب جدولك. جميع الخطط تتضمن درس تجريبي مجاني."
+              "أسعار مرنة تناسب جدولك. جميع الخطط تشمل حصة تجريبية مجانية."
             )}
           </p>
         </div>
