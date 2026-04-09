@@ -14,14 +14,17 @@ export function useCountUp(end: number, duration = 1800) {
     const el = ref.current;
     if (!el) return;
 
-    const shouldReduceMotion = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // On mobile, use a shorter/faster count-up; on desktop full duration
+    const isMobile = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)").matches;
+    const effectiveDuration = prefersReducedMotion ? 0 : isMobile ? Math.min(duration, 1200) : duration;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !started.current) {
           started.current = true;
 
-          if (shouldReduceMotion) {
+          if (effectiveDuration === 0) {
             setValue(end);
             observer.disconnect();
             return;
@@ -29,7 +32,7 @@ export function useCountUp(end: number, duration = 1800) {
 
           const start = performance.now();
           const step = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
+            const progress = Math.min((now - start) / effectiveDuration, 1);
             // easeOutQuart for a satisfying deceleration
             const eased = 1 - Math.pow(1 - progress, 4);
             setValue(Math.round(eased * end));
@@ -42,7 +45,7 @@ export function useCountUp(end: number, duration = 1800) {
           frameRef.current = requestAnimationFrame(step);
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.15 }
     );
 
     observer.observe(el);
