@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import { allSchemas } from "@/data/schemas";
 import SectionErrorBoundary from "@/components/SectionErrorBoundary";
+import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 
 const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
 
@@ -127,8 +128,7 @@ const Index = () => {
     const timer = window.setTimeout(() => {
       const el = document.querySelector(location.hash);
       if (el) {
-        const isTouch = window.matchMedia(TOUCH_QUERY).matches;
-        el.scrollIntoView({ behavior: isTouch ? "auto" : "smooth", block: "start" });
+          el.scrollIntoView({ behavior: getSafeScrollBehavior(), block: "start" });
       }
     }, 100);
 
