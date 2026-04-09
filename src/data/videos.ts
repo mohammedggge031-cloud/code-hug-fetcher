@@ -8,16 +8,31 @@ export interface VideoItem {
   category: string;
   categoryAr: string;
   language: "en" | "ar";
+  isOurs?: boolean;
 }
 
 export const videoCategories = [
   { en: "All", ar: "الكل" },
+  { en: "About Us", ar: "عنّا" },
   { en: "Prophet Stories", ar: "قصص الأنبياء" },
   { en: "Quran Stories", ar: "قصص القرآن" },
   { en: "Islamic Lessons", ar: "دروس إسلامية" },
 ];
 
 export const videos: VideoItem[] = [
+  // === About Us (Our Videos) ===
+  {
+    id: "about-alhamd",
+    titleEn: "About Alhamd Academy",
+    titleAr: "عن أكاديمية الحمد",
+    descriptionEn: "Learn about Alhamd Academy, our mission, and how we teach Quran online.",
+    descriptionAr: "تعرف على أكاديمية الحمد ورسالتنا وطريقة تعليم القرآن أونلاين.",
+    youtubeId: "ki2Nqq_HJ6U",
+    category: "About Us",
+    categoryAr: "عنّا",
+    language: "en",
+    isOurs: true,
+  },
   // === English - Prophet Stories ===
   {
     id: "adam-story",
@@ -102,7 +117,7 @@ export const videos: VideoItem[] = [
     titleAr: "قصة سيدنا سليمان عليه السلام",
     descriptionEn: "The king who commanded jinn, wind, and understood the language of animals.",
     descriptionAr: "الملك الذي سخر الجن والريح وفهم لغة الحيوانات.",
-    youtubeId: "gvHdq3t4YBE",
+    youtubeId: "gvHdq4YBE",
     category: "Prophet Stories",
     categoryAr: "قصص الأنبياء",
     language: "en",
