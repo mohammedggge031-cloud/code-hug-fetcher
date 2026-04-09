@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense, useRef, type ReactNode } from "react";
+import { useEffect, lazy, Suspense, useRef, useState, type ReactNode } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
