@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense, useRef, useState, type ReactNode } from "react";
+import { useEffect, lazy, Suspense, useRef, type ReactNode } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
@@ -80,21 +80,10 @@ const Index = () => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const { seo } = useSeoMetadata("/");
-  const [mobileEagerRender, setMobileEagerRender] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 1024 : false,
-  );
 
   // On back navigation (POP) or hash targets, force all sections to render immediately
   // so scroll restoration can reach the saved position
-  const forceEager = mobileEagerRender || navigationType === "POP" || !!location.hash || !!window.sessionStorage.getItem("pendingScrollTarget");
-
-  useEffect(() => {
-    const media = window.matchMedia("(max-width: 1023px)");
-    const sync = () => setMobileEagerRender(media.matches);
-    sync();
-    media.addEventListener("change", sync);
-    return () => media.removeEventListener("change", sync);
-  }, []);
+  const forceEager = navigationType === "POP" || !!location.hash || !!window.sessionStorage.getItem("pendingScrollTarget");
 
   useEffect(() => {
     if (location.hash) {

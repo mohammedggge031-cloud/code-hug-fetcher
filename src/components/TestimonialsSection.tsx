@@ -110,7 +110,9 @@ const TestimonialsSection = () => {
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [isInView, setIsInView] = useState(false);
   const [viewMode, setViewMode] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
 
   useEffect(() => {
@@ -134,6 +136,19 @@ const TestimonialsSection = () => {
     setPage(0);
   }, [viewMode]);
 
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInView(entry.isIntersecting),
+      { rootMargin: "200px 0px" },
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
   const paginate = useCallback((newDirection: number) => {
     setDirection(newDirection);
     setPage((prev) => {
@@ -148,14 +163,14 @@ const TestimonialsSection = () => {
   }, []);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !isInView) return;
     intervalRef.current = setInterval(() => {
       paginate(lang === "ar" ? -1 : 1);
     }, 5000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, paginate, lang]);
+  }, [isPaused, isInView, paginate, lang]);
 
   const currentItems = testimonials.slice(
     page * itemsPerPage,
@@ -174,7 +189,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section id="testimonials" className="py-16 sm:py-20 md:py-24 bg-hero geometric-pattern" aria-label="Student Testimonials and Reviews">
+    <section ref={sectionRef} id="testimonials" className="bg-hero geometric-pattern py-16 sm:py-20 md:py-24" aria-label="Student Testimonials and Reviews">
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           {...fadeIn()}

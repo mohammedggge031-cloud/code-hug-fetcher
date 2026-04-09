@@ -31,7 +31,7 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="home" className="relative flex min-h-screen items-center overflow-hidden" aria-label="Hero - Learn Quran Online with Alhamd Academy">
+    <section id="home" className="relative flex min-h-[100svh] items-center overflow-hidden lg:min-h-screen" aria-label="Hero - Learn Quran Online with Alhamd Academy">
       <div className="absolute inset-0" aria-hidden="true">
         <img
           srcSet={HERO_SRCSET}

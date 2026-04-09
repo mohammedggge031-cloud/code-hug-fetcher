@@ -487,9 +487,9 @@ const Navbar = () => {
 
   return (
     <>
-    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-[box-shadow] duration-300 ${scrolled ? "shadow-elevated" : ""}`}>
+    <header className={`site-fixed-layer fixed left-0 right-0 top-0 z-50 transition-none lg:transition-[box-shadow] lg:duration-300 ${scrolled ? "lg:shadow-elevated" : ""}`}>
       <div className="bg-primary shadow-sm">
-        <div className={`container mx-auto flex items-center justify-between px-4 transition-[height] duration-200 ${scrolled ? "h-[4.5rem] lg:h-20" : "h-16 lg:h-20"}`}>
+        <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:h-20">
           {/* Desktop: Logo left */}
           <Link to="/" onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }} className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden">
             <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" fetchPriority="high" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
@@ -507,7 +507,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-1 shrink-0">
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-primary-foreground hover:text-accent hover:bg-primary-foreground/10 transition-all text-sm font-bold"
+                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary-foreground/10 hover:text-accent"
               aria-label="Toggle language"
             >
               <Globe className="w-4 h-4" />
@@ -519,7 +519,7 @@ const Navbar = () => {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-primary-foreground hover:text-accent hover:bg-primary-foreground/10 transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-primary-foreground transition-colors hover:bg-primary-foreground/10 hover:text-accent"
                 aria-label={s.label}
               >
                 {s.icon}
@@ -560,7 +560,7 @@ const Navbar = () => {
               <a
                 href="#contact"
                 onClick={(e) => handleAnchorClick(e, "#contact")}
-                className="flex items-center whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-elevated transition-all hover:brightness-110"
+                className="flex items-center whitespace-nowrap rounded-xl bg-accent px-4 py-2.5 text-xs font-bold uppercase tracking-wide text-accent-foreground shadow-card transition-[filter,box-shadow] hover:brightness-110 lg:shadow-elevated"
               >
                 <Sparkles className="me-1.5 h-3.5 w-3.5" />
                 {t("Free Trial", "تجربة مجانية")}
@@ -572,8 +572,8 @@ const Navbar = () => {
     </header>
 
     {/* Mobile fullscreen menu - OUTSIDE header to escape stacking context */}
-    <div className={`lg:hidden fixed inset-x-0 bottom-0 z-[55] overscroll-none bg-primary transition-[opacity,visibility,top] duration-300 ${scrolled ? "top-[4.5rem]" : "top-16"} ${mobileOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"}`}>
-      <div className={`relative h-full flex flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
+    <div className={`fixed inset-x-0 bottom-0 top-16 z-[55] bg-primary overscroll-none transition-[opacity,visibility] duration-300 lg:hidden ${mobileOpen ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>
+      <div className={`relative flex h-full flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
         {/* Top: Logo on right */}
         <div className="flex items-center justify-end px-6 pt-6 pb-4">
           <Link to="/" onClick={(e) => { e.preventDefault(); scrollToTopRoute(); }} className="flex items-center gap-2.5">
