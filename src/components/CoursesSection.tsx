@@ -67,6 +67,13 @@ const CoursesSection = () => {
             </p>
           </motion.div>
 
+          {/* Swipe hint for mobile */}
+          <div className="flex items-center justify-center gap-2 mb-3 sm:hidden text-muted-foreground/60 text-xs animate-pulse">
+            <span>←</span>
+            <span>{t("Swipe to explore courses", "اسحب لاستكشاف الدورات")}</span>
+            <span>→</span>
+          </div>
+
           {/* Course Cards Grid */}
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scrollbar-hide sm:grid sm:grid-cols-2 sm:overflow-visible sm:snap-none lg:grid-cols-3 xl:grid-cols-5 sm:gap-6 max-w-7xl mx-auto -mx-2 px-2 sm:mx-auto sm:px-0" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x pan-y' }}>
             {courses.map((course, i) => (

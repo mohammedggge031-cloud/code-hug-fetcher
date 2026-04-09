@@ -23,10 +23,10 @@ export const videos: VideoItem[] = [
   // === About Us (Our Videos) ===
   {
     id: "about-alhamd",
-    titleEn: "About Alhamd Academy",
-    titleAr: "عن أكاديمية الحمد",
-    descriptionEn: "Learn about Alhamd Academy, our mission, and how we teach Quran online.",
-    descriptionAr: "تعرف على أكاديمية الحمد ورسالتنا وطريقة تعليم القرآن أونلاين.",
+    titleEn: "Non-Arab Student Reciting Quran at Alhamd Academy",
+    titleAr: "طالب غير عربي يقرأ القرآن في أكاديمية الحمد",
+    descriptionEn: "Watch one of our non-Arab students beautifully reciting the Quran after learning with our certified teachers.",
+    descriptionAr: "شاهد أحد طلابنا غير العرب يتلو القرآن بشكل جميل بعد التعلم مع معلمينا المعتمدين.",
     youtubeId: "ki2Nqq_HJ6U",
     category: "About Us",
     categoryAr: "عنّا",

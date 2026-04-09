@@ -181,20 +181,7 @@
   }
 }
 
-/* GPU-accelerated sections for below-fold content */
-@layer base {
-  .content-auto {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 500px;
-  }
-
-  @media (max-width: 1023px), (hover: none) and (pointer: coarse) {
-    .content-auto {
-      content-visibility: visible;
-      contain-intrinsic-size: none;
-    }
-  }
-}
+/* content-visibility removed — caused white-screen flashes on iOS Safari */
 
 @layer utilities {
   .scrollbar-hide {

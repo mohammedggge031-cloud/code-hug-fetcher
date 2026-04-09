@@ -272,11 +272,14 @@ const Navbar = () => {
     if (mobileOpen) {
       closeMobileMenu(isHomePage ? "anchor" : "navigate");
       if (isHomePage) {
+        // Use two rAF frames to guarantee body is fully unfixed before scrolling
         window.setTimeout(() => {
           requestAnimationFrame(() => {
-            scrollToSection(targetId);
+            requestAnimationFrame(() => {
+              scrollToSection(targetId);
+            });
           });
-        }, isTouchDevice() ? 32 : 80);
+        }, 60);
       } else {
         window.sessionStorage.setItem("pendingScrollTarget", targetId);
         navigate("/");
