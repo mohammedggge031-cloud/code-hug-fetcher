@@ -7,10 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
-import { Play, X, Globe } from "lucide-react";
+import { Play, X, Globe, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { VideoItem } from "@/data/videos";
+import { Button } from "@/components/ui/button";
 
 const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: number; onOpen: (youtubeId: string) => void }) => {
   const { t } = useLanguage();
@@ -62,6 +63,7 @@ const Videos = () => {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const [videos, setVideos] = useState(hardcodedVideos);
+  const [showOtherVideos, setShowOtherVideos] = useState(false);
 
   useEffect(() => {
     supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
@@ -79,19 +81,34 @@ const Videos = () => {
     setActiveVideo(youtubeId);
   }, []);
 
-  const filteredVideos = useMemo(
-    () => videos.filter((video) => activeCategory === "All" || video.category === activeCategory),
-    [activeCategory],
+  const ourVideos = useMemo(
+    () => videos.filter((v) => v.isOurs || v.category === "About Us"),
+    [videos],
   );
 
-  const englishVideos = useMemo(
-    () => filteredVideos.filter((video) => video.language === "en"),
-    [filteredVideos],
+  const otherVideos = useMemo(
+    () => videos.filter((v) => !v.isOurs && v.category !== "About Us"),
+    [videos],
   );
 
-  const arabicVideos = useMemo(
-    () => filteredVideos.filter((video) => video.language === "ar"),
-    [filteredVideos],
+  const filteredOtherVideos = useMemo(
+    () => otherVideos.filter((video) => activeCategory === "All" || video.category === activeCategory),
+    [activeCategory, otherVideos],
+  );
+
+  const otherCategories = useMemo(
+    () => videoCategories.filter((c) => c.en !== "About Us"),
+    [],
+  );
+
+  const englishOther = useMemo(
+    () => filteredOtherVideos.filter((v) => v.language === "en"),
+    [filteredOtherVideos],
+  );
+
+  const arabicOther = useMemo(
+    () => filteredOtherVideos.filter((v) => v.language === "ar"),
+    [filteredOtherVideos],
   );
 
   return (
@@ -116,154 +133,170 @@ const Videos = () => {
           })
         }}
       />
-      {filteredVideos.length > 0 && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "ItemList",
-              "name": "Islamic Video Library - Alhamd Academy",
-              "description": "Watch inspiring Prophet stories, Quran stories, and Islamic lessons in English and Arabic",
-              "url": "https://alhamdacademy.net/videos",
-              "numberOfItems": filteredVideos.length,
-              "itemListElement": filteredVideos.slice(0, 20).map((video, i) => ({
-                "@type": "ListItem",
-                "position": i + 1,
-                "item": {
-                  "@type": "VideoObject",
-                  "name": video.titleEn,
-                  "description": video.descriptionEn,
-                  "thumbnailUrl": `https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`,
-                  "uploadDate": "2025-01-01T00:00:00+00:00",
-                  "duration": "PT10M",
-                  "contentUrl": `https://www.youtube.com/watch?v=${video.youtubeId}`,
-                  "embedUrl": `https://www.youtube.com/embed/${video.youtubeId}`,
-                  "publisher": { "@id": "https://alhamdacademy.net/#organization" },
-                  "inLanguage": video.language === "ar" ? "ar" : "en"
-                }
-              }))
-            })
-          }}
-        />
-      )}
       <Navbar />
 
       <main>
-      <section className="bg-hero geometric-pattern pt-32 pb-16 md:pt-40 md:pb-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-primary-foreground mb-4">
-            {t("Islamic Video Library", "المكتبة المرئية الإسلامية")}
-          </h1>
-          <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
-            {t(
-              "Watch inspiring stories of the Prophets, Quran stories, and Islamic lessons from trusted scholars.",
-              "شاهد قصص الأنبياء الملهمة وقصص القرآن والدروس الإسلامية من علماء موثوقين."
-            )}
-          </p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          {/* Category Filter */}
-          <div className="flex flex-wrap gap-2 mb-10 justify-center">
-            {videoCategories.map((cat) => (
-              <button
-                key={cat.en}
-                onClick={() => setActiveCategory(cat.en)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                  activeCategory === cat.en
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-secondary-foreground hover:bg-primary/10"
-                }`}
-              >
-                {t(cat.en, cat.ar)}
-              </button>
-            ))}
+        <section className="bg-hero geometric-pattern pt-32 pb-16 md:pt-40 md:pb-20">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-primary-foreground mb-4">
+              {t("Islamic Video Library", "المكتبة المرئية الإسلامية")}
+            </h1>
+            <p className="text-primary-foreground/70 text-lg max-w-2xl mx-auto">
+              {t(
+                "Watch inspiring stories of the Prophets, Quran stories, and Islamic lessons from trusted scholars.",
+                "شاهد قصص الأنبياء الملهمة وقصص القرآن والدروس الإسلامية من علماء موثوقين."
+              )}
+            </p>
           </div>
+        </section>
 
-          {/* English Videos Section */}
-          {englishVideos.length > 0 && (
-            <div className="mb-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Globe className="w-6 h-6 text-primary" />
-                <h2 className="text-2xl font-heading font-bold text-foreground">
-                  {t("English Videos", "فيديوهات باللغة الإنجليزية")}
+        {/* Our Videos Section */}
+        {ourVideos.length > 0 && (
+          <section className="py-12 sm:py-16 bg-secondary/30">
+            <div className="container mx-auto px-4">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="w-1.5 h-8 bg-accent rounded-full" />
+                <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
+                  {t("Our Videos", "فيديوهاتنا")}
                 </h2>
-                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
-                  {englishVideos.length}
-                </span>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {englishVideos.map((video, i) => (
+                {ourVideos.map((video, i) => (
                   <VideoCard key={video.id} video={video} index={i} onOpen={handleOpenVideo} />
                 ))}
               </div>
             </div>
-          )}
-
-          {/* Arabic Videos Section */}
-          {arabicVideos.length > 0 && (
-            <div>
-              <div className="flex items-center gap-3 mb-6">
-                <Globe className="w-6 h-6 text-accent" />
-                <h2 className="text-2xl font-heading font-bold text-foreground">
-                  {t("Arabic Videos", "فيديوهات باللغة العربية")}
-                </h2>
-                <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold">
-                  {arabicVideos.length}
-                </span>
-              </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {arabicVideos.map((video, i) => (
-                  <VideoCard key={video.id} video={video} index={i} onOpen={handleOpenVideo} />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Video Modal */}
-      <AnimatePresence>
-        {activeVideo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setActiveVideo(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-elevated"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setActiveVideo(null)}
-                className="absolute -top-10 end-0 text-primary-foreground hover:text-accent transition-colors z-10"
-              >
-                <X className="w-8 h-8" />
-              </button>
-              <iframe
-                src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&rel=0`}
-                title="Video Player"
-                className="w-full h-full"
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </motion.div>
-          </motion.div>
+          </section>
         )}
-      </AnimatePresence>
+
+        {/* Toggle for Other Videos */}
+        <section className="py-12 sm:py-16 bg-background">
+          <div className="container mx-auto px-4">
+            {!showOtherVideos ? (
+              <div className="text-center">
+                <Button
+                  onClick={() => setShowOtherVideos(true)}
+                  size="lg"
+                  className="gap-2 text-base px-8 py-6 rounded-xl shadow-md"
+                >
+                  {t("Browse More Islamic Videos", "تصفح المزيد من الفيديوهات الإسلامية")}
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+                <p className="text-muted-foreground text-sm mt-3">
+                  {t(
+                    `${otherVideos.length} curated videos from trusted scholars`,
+                    `${otherVideos.length} فيديو مختار من علماء موثوقين`
+                  )}
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1.5 h-8 bg-primary rounded-full" />
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground">
+                    {t("Islamic Educational Videos", "فيديوهات تعليمية إسلامية")}
+                  </h2>
+                </div>
+
+                {/* Category Filter */}
+                <div className="flex flex-wrap gap-2 mb-10 justify-center">
+                  {otherCategories.map((cat) => (
+                    <button
+                      key={cat.en}
+                      onClick={() => setActiveCategory(cat.en)}
+                      className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                        activeCategory === cat.en
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-secondary text-secondary-foreground hover:bg-primary/10"
+                      }`}
+                    >
+                      {t(cat.en, cat.ar)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* English Videos */}
+                {englishOther.length > 0 && (
+                  <div className="mb-16">
+                    <div className="flex items-center gap-3 mb-6">
+                      <Globe className="w-6 h-6 text-primary" />
+                      <h3 className="text-xl font-heading font-bold text-foreground">
+                        {t("English Videos", "فيديوهات باللغة الإنجليزية")}
+                      </h3>
+                      <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold">
+                        {englishOther.length}
+                      </span>
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {englishOther.map((video, i) => (
+                        <VideoCard key={video.id} video={video} index={i} onOpen={handleOpenVideo} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Arabic Videos */}
+                {arabicOther.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <Globe className="w-6 h-6 text-accent" />
+                      <h3 className="text-xl font-heading font-bold text-foreground">
+                        {t("Arabic Videos", "فيديوهات باللغة العربية")}
+                      </h3>
+                      <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold">
+                        {arabicOther.length}
+                      </span>
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {arabicOther.map((video, i) => (
+                        <VideoCard key={video.id} video={video} index={i} onOpen={handleOpenVideo} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+
+        {/* Video Modal */}
+        <AnimatePresence>
+          {activeVideo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[100] bg-foreground/80 backdrop-blur-sm flex items-center justify-center p-4"
+              onClick={() => setActiveVideo(null)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="relative w-full max-w-4xl aspect-video rounded-xl overflow-hidden shadow-elevated"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  onClick={() => setActiveVideo(null)}
+                  className="absolute -top-10 end-0 text-primary-foreground hover:text-accent transition-colors z-10"
+                >
+                  <X className="w-8 h-8" />
+                </button>
+                <iframe
+                  src={`https://www.youtube.com/embed/${activeVideo}?autoplay=1&rel=0`}
+                  title="Video Player"
+                  className="w-full h-full"
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       <ExploreMoreSection />
-
       <Footer />
     </div>
   );

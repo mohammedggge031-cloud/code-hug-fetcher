@@ -24,6 +24,7 @@ const ContactSection = lazy(() => import("@/components/ContactSection"));
 const Footer = lazy(() => import("@/components/Footer"));
 const TeachersSection = lazy(() => import("@/components/TeachersSection"));
 const RecentArticlesSection = lazy(() => import("@/components/RecentArticlesSection"));
+const AboutVideoSection = lazy(() => import("@/components/AboutVideoSection"));
 const ApprovedReviewsSection = lazy(() => import("@/components/ApprovedReviewsSection"));
 const ReviewFormSection = lazy(() => import("@/components/ReviewFormSection"));
 
