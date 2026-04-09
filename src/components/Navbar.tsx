@@ -31,6 +31,13 @@ interface NavLinkWithDropdown {
   dropdown?: DropdownItem[];
 }
 
+type MobileCloseReason = "restore" | "anchor" | "navigate" | "top";
+
+const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
+
+const isTouchDevice = () =>
+  typeof window !== "undefined" && window.matchMedia(TOUCH_QUERY).matches;
+
 const Navbar = () => {
   const { t, lang, toggleLang } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
@@ -43,6 +50,8 @@ const Navbar = () => {
   const bodyScrollYRef = useRef(0);
   const scrollTimerRef = useRef<number | null>(null);
   const lastPathnameRef = useRef(location.pathname);
+  const menuOpenPathRef = useRef(location.pathname);
+  const mobileCloseReasonRef = useRef<MobileCloseReason>("restore");
   const isHomePage = location.pathname === "/";
 
   // Track the current pathname so the menu-close effect knows if we navigated
@@ -104,6 +113,8 @@ const Navbar = () => {
     const body = document.body;
 
     if (mobileOpen) {
+      menuOpenPathRef.current = location.pathname;
+      mobileCloseReasonRef.current = "restore";
       const scrollY = window.scrollY;
       bodyScrollYRef.current = scrollY;
       body.dataset.scrollY = String(scrollY);
@@ -124,12 +135,14 @@ const Navbar = () => {
       body.style.width = "";
       body.style.overscrollBehavior = "";
       delete body.dataset.scrollY;
-      // Only restore scroll if we're still on the same page (not navigating away).
-      // If the user clicked a link to a new page, ScrollToTop handles scroll position.
-      const stayedOnSamePage = location.pathname === lastPathnameRef.current;
-      if (stayedOnSamePage && savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
+      const shouldRestoreScroll =
+        mobileCloseReasonRef.current === "restore" && menuOpenPathRef.current === location.pathname;
+
+      if (shouldRestoreScroll && savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
         window.scrollTo({ top: savedY, left: 0, behavior: "auto" });
       }
+
+      mobileCloseReasonRef.current = "restore";
     }
 
     return () => {
@@ -141,7 +154,7 @@ const Navbar = () => {
       body.style.width = "";
       body.style.overscrollBehavior = "";
     };
-  }, [mobileOpen]);
+  }, [location.pathname, mobileOpen]);
 
   // Close desktop dropdown on outside click
   useEffect(() => {
@@ -200,9 +213,15 @@ const Navbar = () => {
     }
   };
 
+  const closeMobileMenu = (reason: MobileCloseReason = "restore") => {
+    mobileCloseReasonRef.current = reason;
+    setMobileOpen(false);
+  };
+
   const scrollToSection = (targetId: string) => {
     cancelPendingScroll();
     const headerOffset = 96;
+    const touch = isTouchDevice();
     const scrollToTarget = (attempt = 0, lastTop = -1) => {
       // Abort if menu opened during retry loop
       if (document.body.classList.contains("menu-open")) {
@@ -212,16 +231,16 @@ const Navbar = () => {
       const target = document.getElementById(targetId);
       if (target) {
         const top = Math.round(target.getBoundingClientRect().top + window.scrollY - headerOffset);
-        window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: "smooth" });
-        if (attempt < 30 && top !== lastTop) {
-          scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, top), 80);
+        window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: touch ? "auto" : "smooth" });
+        if (attempt < (touch ? 18 : 30) && Math.abs(top - lastTop) > 1) {
+          scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, top), touch ? 96 : 80);
         } else {
           scrollTimerRef.current = null;
         }
         return;
       }
       if (attempt < 60) {
-        scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, lastTop), 50);
+        scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, lastTop), touch ? 64 : 50);
       } else {
         scrollTimerRef.current = null;
       }
@@ -251,15 +270,13 @@ const Navbar = () => {
 
     // If mobile menu is open, close it first then scroll after body unfixes
     if (mobileOpen) {
-      setMobileOpen(false);
+      closeMobileMenu(isHomePage ? "anchor" : "navigate");
       if (isHomePage) {
-        // Wait for body position:fixed to be removed and scroll restored,
-        // then scroll to the target section
-        setTimeout(() => {
+        window.setTimeout(() => {
           requestAnimationFrame(() => {
             scrollToSection(targetId);
           });
-        }, 80);
+        }, isTouchDevice() ? 32 : 80);
       } else {
         window.sessionStorage.setItem("pendingScrollTarget", targetId);
         navigate("/");
@@ -279,7 +296,7 @@ const Navbar = () => {
 
   const scrollToTopRoute = () => {
     if (mobileOpen) {
-      setMobileOpen(false);
+      closeMobileMenu("top");
       requestAnimationFrame(() => {
         navigate("/", { replace: location.pathname === "/" && !location.hash });
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -547,7 +564,14 @@ const Navbar = () => {
 
             {/* Center: hamburger */}
             <button
-              onClick={() => { cancelPendingScroll(); setMobileOpen(!mobileOpen); }}
+              onClick={() => {
+                cancelPendingScroll();
+                if (mobileOpen) {
+                  closeMobileMenu("restore");
+                } else {
+                  setMobileOpen(true);
+                }
+              }}
                 className="flex h-10 w-10 items-center justify-center rounded-xl text-primary-foreground transition-colors duration-200 hover:bg-primary-foreground/10"
               aria-label="Toggle menu"
             >
@@ -597,28 +621,49 @@ const Navbar = () => {
               return (
                 <div key={l.en} className="border-b border-primary-foreground/5 last:border-0">
                   {hasDropdown ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        const next = isExpanded ? null : l.en;
-                        setExpandedMobile(next);
-                        setExpandedMobileSub(null);
-                        if (next) {
-                          const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
-                          if (target) {
-                            setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+                    <div className="flex items-center gap-2">
+                      {l.isRoute ? (
+                        <Link
+                          to={l.href}
+                          onClick={() => closeMobileMenu("navigate")}
+                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                        >
+                          {t(l.en, l.ar)}
+                        </Link>
+                      ) : (
+                        <a
+                          href={l.href}
+                          onClick={(e) => { handleAnchorClick(e, l.href); }}
+                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                        >
+                          {t(l.en, l.ar)}
+                        </a>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          const next = isExpanded ? null : l.en;
+                          setExpandedMobile(next);
+                          setExpandedMobileSub(null);
+                          if (next) {
+                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
+                            if (target) {
+                              setTimeout(() => target.scrollIntoView({ behavior: isTouchDevice() ? "auto" : "smooth", block: "start" }), 50);
+                            }
                           }
-                        }
-                      }}
-                      className="w-full flex items-center justify-between py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
-                    >
-                      {t(l.en, l.ar)}
-                      <ChevronDown className={`w-4 h-4 text-primary-foreground/50 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                    </button>
+                        }}
+                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-primary-foreground/50 transition-colors duration-200 hover:bg-primary-foreground/5 hover:text-accent"
+                        aria-expanded={isExpanded}
+                        aria-label={t(`Expand ${l.en}`, `افتح ${l.ar}`)}
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                      </button>
+                    </div>
                   ) : l.isRoute ? (
                     <Link
                       to={l.href}
-                      onClick={() => setMobileOpen(false)}
+                       onClick={() => closeMobileMenu("navigate")}
                       className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
@@ -646,7 +691,7 @@ const Navbar = () => {
                                 <>
                                   <Link
                                     to={item.href}
-                                    onClick={() => setMobileOpen(false)}
+                                     onClick={() => closeMobileMenu("navigate")}
                                     className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                   >
                                     <span className="text-accent">{item.icon}</span>
@@ -664,7 +709,7 @@ const Navbar = () => {
                               ) : item.isRoute ? (
                                 <Link
                                   to={item.href}
-                                  onClick={() => setMobileOpen(false)}
+                                   onClick={() => closeMobileMenu("navigate")}
                                   className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                 >
                                   <span className="text-accent">{item.icon}</span>
@@ -675,7 +720,7 @@ const Navbar = () => {
                                   href={item.href}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  onClick={() => setMobileOpen(false)}
+                                   onClick={() => closeMobileMenu("navigate")}
                                   className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                 >
                                   <span className="text-accent">{item.icon}</span>
@@ -699,7 +744,7 @@ const Navbar = () => {
                                     <Link
                                       key={j}
                                       to={sub.href}
-                                      onClick={() => setMobileOpen(false)}
+                                       onClick={() => closeMobileMenu("navigate")}
                                       className="block px-3 py-2 text-xs font-medium text-primary-foreground/50 hover:text-accent transition-colors"
                                     >
                                       {t(sub.labelEn, sub.labelAr)}
