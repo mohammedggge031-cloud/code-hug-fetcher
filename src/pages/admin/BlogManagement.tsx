@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Eye, Search, Loader2 } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
+import TranslateButton from "@/components/admin/TranslateButton";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
@@ -261,8 +262,20 @@ const BlogManagement = () => {
           <DialogHeader><DialogTitle>{editing.id ? t("blog.edit") : t("blog.create")}</DialogTitle></DialogHeader>
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>{t("blog.title_en")}</Label><Input value={editing.title_en} onChange={e => { setEditing(prev => ({ ...prev, title_en: e.target.value, slug: prev.id ? prev.slug : generateSlug(e.target.value) })); }} /></div>
-              <div className="space-y-2"><Label>{t("blog.title_ar")}</Label><Input value={editing.title_ar} onChange={e => setEditing(prev => ({ ...prev, title_ar: e.target.value }))} dir="rtl" /></div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.title_en")}</Label>
+                  <TranslateButton sourceText={editing.title_ar} from="ar" to="en" fieldType="title" onTranslated={text => setEditing(prev => ({ ...prev, title_en: text, slug: prev.id ? prev.slug : generateSlug(text) }))} />
+                </div>
+                <Input value={editing.title_en} onChange={e => { setEditing(prev => ({ ...prev, title_en: e.target.value, slug: prev.id ? prev.slug : generateSlug(e.target.value) })); }} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.title_ar")}</Label>
+                  <TranslateButton sourceText={editing.title_en} from="en" to="ar" fieldType="title" onTranslated={text => setEditing(prev => ({ ...prev, title_ar: text }))} />
+                </div>
+                <Input value={editing.title_ar} onChange={e => setEditing(prev => ({ ...prev, title_ar: e.target.value }))} dir="rtl" />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2"><Label>{t("blog.slug")}</Label><Input value={editing.slug} onChange={e => setEditing(prev => ({ ...prev, slug: e.target.value }))} dir="ltr" /></div>
@@ -280,8 +293,20 @@ const BlogManagement = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>{t("blog.excerpt_en")}</Label><Textarea value={editing.excerpt_en} onChange={e => setEditing(prev => ({ ...prev, excerpt_en: e.target.value }))} rows={2} /></div>
-              <div className="space-y-2"><Label>{t("blog.excerpt_ar")}</Label><Textarea value={editing.excerpt_ar} onChange={e => setEditing(prev => ({ ...prev, excerpt_ar: e.target.value }))} dir="rtl" rows={2} /></div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.excerpt_en")}</Label>
+                  <TranslateButton sourceText={editing.excerpt_ar} from="ar" to="en" fieldType="excerpt" onTranslated={text => setEditing(prev => ({ ...prev, excerpt_en: text }))} />
+                </div>
+                <Textarea value={editing.excerpt_en} onChange={e => setEditing(prev => ({ ...prev, excerpt_en: e.target.value }))} rows={2} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.excerpt_ar")}</Label>
+                  <TranslateButton sourceText={editing.excerpt_en} from="en" to="ar" fieldType="excerpt" onTranslated={text => setEditing(prev => ({ ...prev, excerpt_ar: text }))} />
+                </div>
+                <Textarea value={editing.excerpt_ar} onChange={e => setEditing(prev => ({ ...prev, excerpt_ar: e.target.value }))} dir="rtl" rows={2} />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2"><Label>{t("blog.image")}</Label><Input value={editing.featured_image} onChange={e => setEditing(prev => ({ ...prev, featured_image: e.target.value }))} dir="ltr" placeholder="https://..." /></div>
@@ -290,9 +315,15 @@ const BlogManagement = () => {
             </div>
             <div className="space-y-2"><Label>{t("blog.tags")}</Label><Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="tajweed, quran, learning" /></div>
             <div>
-              <div className="flex gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Button variant={activeTab === "en" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("en")}>{t("blog.content_en")}</Button>
                 <Button variant={activeTab === "ar" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("ar")}>{t("blog.content_ar")}</Button>
+                <div className="flex-1" />
+                {activeTab === "en" ? (
+                  <TranslateButton sourceText={editing.content_ar} from="ar" to="en" fieldType="content" onTranslated={text => setEditing(prev => ({ ...prev, content_en: text }))} />
+                ) : (
+                  <TranslateButton sourceText={editing.content_en} from="en" to="ar" fieldType="content" onTranslated={text => setEditing(prev => ({ ...prev, content_ar: text }))} />
+                )}
               </div>
               {activeTab === "en" ? (
                 <TipTapEditor key={`en-${editing.id || "new"}`} content={editing.content_en} onChange={html => setEditing(prev => ({ ...prev, content_en: html }))} placeholder="Write your article in English..." />
