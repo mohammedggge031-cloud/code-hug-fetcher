@@ -1,11 +1,13 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
+
+const YOUTUBE_ID = "ki2Nqq_HJ6U";
 
 const testimonials = [
   {
@@ -191,6 +193,9 @@ const TestimonialsSection = () => {
   return (
     <section ref={sectionRef} id="testimonials" className="bg-hero geometric-pattern py-16 sm:py-20 md:py-24" aria-label="Student Testimonials and Reviews">
       <div className="container mx-auto px-4 sm:px-6">
+        {/* Intro Video */}
+        <IntroVideo t={t} fadeIn={fadeIn} />
+
         <motion.div
           {...fadeIn()}
           className="text-center mb-16"
