@@ -262,8 +262,20 @@ const BlogManagement = () => {
           <DialogHeader><DialogTitle>{editing.id ? t("blog.edit") : t("blog.create")}</DialogTitle></DialogHeader>
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>{t("blog.title_en")}</Label><Input value={editing.title_en} onChange={e => { setEditing(prev => ({ ...prev, title_en: e.target.value, slug: prev.id ? prev.slug : generateSlug(e.target.value) })); }} /></div>
-              <div className="space-y-2"><Label>{t("blog.title_ar")}</Label><Input value={editing.title_ar} onChange={e => setEditing(prev => ({ ...prev, title_ar: e.target.value }))} dir="rtl" /></div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.title_en")}</Label>
+                  <TranslateButton sourceText={editing.title_ar} from="ar" to="en" fieldType="title" onTranslated={text => setEditing(prev => ({ ...prev, title_en: text, slug: prev.id ? prev.slug : generateSlug(text) }))} />
+                </div>
+                <Input value={editing.title_en} onChange={e => { setEditing(prev => ({ ...prev, title_en: e.target.value, slug: prev.id ? prev.slug : generateSlug(e.target.value) })); }} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.title_ar")}</Label>
+                  <TranslateButton sourceText={editing.title_en} from="en" to="ar" fieldType="title" onTranslated={text => setEditing(prev => ({ ...prev, title_ar: text }))} />
+                </div>
+                <Input value={editing.title_ar} onChange={e => setEditing(prev => ({ ...prev, title_ar: e.target.value }))} dir="rtl" />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2"><Label>{t("blog.slug")}</Label><Input value={editing.slug} onChange={e => setEditing(prev => ({ ...prev, slug: e.target.value }))} dir="ltr" /></div>
