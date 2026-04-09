@@ -1,11 +1,13 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
+
+const YOUTUBE_ID = "ki2Nqq_HJ6U";
 
 const testimonials = [
   {
@@ -100,6 +102,55 @@ const testimonials = [
   },
 ];
 
+const IntroVideo = ({ t, fadeIn }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any }) => {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <motion.div {...fadeIn()} className="max-w-3xl mx-auto mb-16">
+      <div className="text-center mb-6">
+        <span className="text-sm font-semibold text-accent uppercase tracking-wider">
+          {t("Get to Know Us", "تعرف علينا")}
+        </span>
+        <h3 className="text-2xl md:text-3xl font-bold text-primary-foreground mt-2">
+          {t("Watch Our Story", "شاهد قصتنا")}
+        </h3>
+      </div>
+      <div className="rounded-2xl overflow-hidden shadow-lg border border-primary-foreground/10">
+        {playing ? (
+          <div className="aspect-video">
+            <iframe
+              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`}
+              title={t("About Alhamd Academy", "عن أكاديمية الحمد")}
+              className="w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : (
+          <button
+            onClick={() => setPlaying(true)}
+            className="relative w-full aspect-video group focus:outline-none"
+            aria-label={t("Play video", "تشغيل الفيديو")}
+          >
+            <img
+              src={`https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`}
+              alt={t("About Alhamd Academy", "عن أكاديمية الحمد")}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Play className="w-7 h-7 sm:w-9 sm:h-9 text-accent-foreground fill-current ms-1" />
+              </div>
+            </div>
+          </button>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
 const ITEMS_DESKTOP = 3;
 const ITEMS_TABLET = 2;
 const ITEMS_MOBILE = 1;
@@ -191,6 +242,9 @@ const TestimonialsSection = () => {
   return (
     <section ref={sectionRef} id="testimonials" className="bg-hero geometric-pattern py-16 sm:py-20 md:py-24" aria-label="Student Testimonials and Reviews">
       <div className="container mx-auto px-4 sm:px-6">
+        {/* Intro Video */}
+        <IntroVideo t={t} fadeIn={fadeIn} />
+
         <motion.div
           {...fadeIn()}
           className="text-center mb-16"
