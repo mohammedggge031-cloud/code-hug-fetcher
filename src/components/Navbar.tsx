@@ -621,24 +621,45 @@ const Navbar = () => {
               return (
                 <div key={l.en} className="border-b border-primary-foreground/5 last:border-0">
                   {hasDropdown ? (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        const next = isExpanded ? null : l.en;
-                        setExpandedMobile(next);
-                        setExpandedMobileSub(null);
-                        if (next) {
-                          const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
-                          if (target) {
-                            setTimeout(() => target.scrollIntoView({ behavior: isTouchDevice() ? "auto" : "smooth", block: "start" }), 50);
+                    <div className="flex items-center gap-2">
+                      {l.isRoute ? (
+                        <Link
+                          to={l.href}
+                          onClick={() => closeMobileMenu("navigate")}
+                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                        >
+                          {t(l.en, l.ar)}
+                        </Link>
+                      ) : (
+                        <a
+                          href={l.href}
+                          onClick={(e) => { handleAnchorClick(e, l.href); }}
+                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                        >
+                          {t(l.en, l.ar)}
+                        </a>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          const next = isExpanded ? null : l.en;
+                          setExpandedMobile(next);
+                          setExpandedMobileSub(null);
+                          if (next) {
+                            const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
+                            if (target) {
+                              setTimeout(() => target.scrollIntoView({ behavior: isTouchDevice() ? "auto" : "smooth", block: "start" }), 50);
+                            }
                           }
-                        }
-                      }}
-                      className="w-full flex items-center justify-between py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
-                    >
-                      {t(l.en, l.ar)}
-                      <ChevronDown className={`w-4 h-4 text-primary-foreground/50 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
-                    </button>
+                        }}
+                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-primary-foreground/50 transition-colors duration-200 hover:bg-primary-foreground/5 hover:text-accent"
+                        aria-expanded={isExpanded}
+                        aria-label={t(`Expand ${l.en}`, `افتح ${l.ar}`)}
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                      </button>
+                    </div>
                   ) : l.isRoute ? (
                     <Link
                       to={l.href}
