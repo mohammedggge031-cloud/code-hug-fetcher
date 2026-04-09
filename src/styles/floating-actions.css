@@ -33,16 +33,6 @@
   }
 }
 
-/* Hide all FABs when mobile menu is open */
-body.menu-open .floating-fab-whatsapp,
-body.menu-open .floating-fab-booking,
-body.menu-open .scroll-top-fab {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  visibility: hidden !important;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
 .floating-fab-booking,
 .floating-fab-whatsapp {
   position: fixed;
