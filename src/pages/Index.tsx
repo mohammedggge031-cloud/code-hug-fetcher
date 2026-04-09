@@ -114,7 +114,7 @@ const Index = () => {
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={700}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={900}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1100}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1300}><AboutVideoSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1300}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={1400}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={1600}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={1700}><PricingSection /></DeferredSection></SectionErrorBoundary>
