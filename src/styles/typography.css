@@ -19,11 +19,18 @@ h6,
 .font-heading {
   font-feature-settings: "kern" 1, "liga" 1;
   text-wrap: balance;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 p,
 li {
   text-wrap: pretty;
+}
+
+.section-heading-stable {
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 .site-fixed-layer {
@@ -57,6 +64,11 @@ li {
   li,
   .text-pretty {
     text-wrap: auto;
+  }
+
+  .section-heading-stable {
+    transform: none;
+    will-change: auto;
   }
 }
 
