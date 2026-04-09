@@ -315,9 +315,15 @@ const BlogManagement = () => {
             </div>
             <div className="space-y-2"><Label>{t("blog.tags")}</Label><Input value={tagsInput} onChange={e => setTagsInput(e.target.value)} placeholder="tajweed, quran, learning" /></div>
             <div>
-              <div className="flex gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3 flex-wrap">
                 <Button variant={activeTab === "en" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("en")}>{t("blog.content_en")}</Button>
                 <Button variant={activeTab === "ar" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("ar")}>{t("blog.content_ar")}</Button>
+                <div className="flex-1" />
+                {activeTab === "en" ? (
+                  <TranslateButton sourceText={editing.content_ar} from="ar" to="en" fieldType="content" onTranslated={text => setEditing(prev => ({ ...prev, content_en: text }))} />
+                ) : (
+                  <TranslateButton sourceText={editing.content_en} from="en" to="ar" fieldType="content" onTranslated={text => setEditing(prev => ({ ...prev, content_ar: text }))} />
+                )}
               </div>
               {activeTab === "en" ? (
                 <TipTapEditor key={`en-${editing.id || "new"}`} content={editing.content_en} onChange={html => setEditing(prev => ({ ...prev, content_en: html }))} placeholder="Write your article in English..." />
