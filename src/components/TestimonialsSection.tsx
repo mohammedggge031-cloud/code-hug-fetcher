@@ -106,7 +106,7 @@ const ITEMS_MOBILE = 1;
 
 const TestimonialsSection = () => {
   const { t, lang } = useLanguage();
-  const { fadeIn } = useMobileSafeMotion();
+  const { fadeIn, slideInLeft } = useMobileSafeMotion();
   const [page, setPage] = useState(0);
   const [direction, setDirection] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -183,9 +183,9 @@ const TestimonialsSection = () => {
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Testimonials", "آراء الطلاب")}
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-primary-foreground mt-3">
+          <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-primary-foreground mt-3">
             {t("What Our Students Say", "ماذا يقول طلابنا")}
-          </h2>
+          </motion.h2>
         </motion.div>
 
         <div

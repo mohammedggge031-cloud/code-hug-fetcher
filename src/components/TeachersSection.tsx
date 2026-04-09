@@ -10,7 +10,7 @@ import { loadTeachers } from "@/lib/teachersData";
 
 const TeachersSection = () => {
   const { t, lang } = useLanguage();
-  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { isMobile, fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
@@ -55,9 +55,9 @@ const TeachersSection = () => {
               </span>
               <GraduationCap className="w-4 h-4 text-accent" />
             </motion.div>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3">
+            <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
               {t("Meet Our ", "تعرف على ")}<span className="text-primary">{t("Expert Instructors", "معلمينا المتميزين")}</span>
-            </h2>
+            </motion.h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
               {t(
                 "Our certified Al-Azhar graduate teachers are native Arabic speakers from Egypt, bringing years of experience and passion to every lesson.",
