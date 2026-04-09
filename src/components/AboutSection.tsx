@@ -35,9 +35,9 @@ const AboutSection = () => {
             <span className="text-sm font-semibold text-accent uppercase tracking-wider">
               {t("About Us", "من نحن")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3 mb-6">
+            <motion.h2 {...slideRight} className="text-3xl md:text-5xl font-bold text-foreground mt-3 mb-6">
               {t("Alhamd Academy", "أكاديمية الحمد")}
-            </h2>
+            </motion.h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
               {t(
                 "Alhamd Academy is dedicated to providing high-quality online Quran, Arabic, and Islamic studies education. Our certified teachers are native Arabic speakers from Egypt, ensuring authentic pronunciation, deep understanding of Tajweed rules, and genuine connection with the language of the Quran.",
