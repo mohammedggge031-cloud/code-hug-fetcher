@@ -293,8 +293,20 @@ const BlogManagement = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2"><Label>{t("blog.excerpt_en")}</Label><Textarea value={editing.excerpt_en} onChange={e => setEditing(prev => ({ ...prev, excerpt_en: e.target.value }))} rows={2} /></div>
-              <div className="space-y-2"><Label>{t("blog.excerpt_ar")}</Label><Textarea value={editing.excerpt_ar} onChange={e => setEditing(prev => ({ ...prev, excerpt_ar: e.target.value }))} dir="rtl" rows={2} /></div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.excerpt_en")}</Label>
+                  <TranslateButton sourceText={editing.excerpt_ar} from="ar" to="en" fieldType="excerpt" onTranslated={text => setEditing(prev => ({ ...prev, excerpt_en: text }))} />
+                </div>
+                <Textarea value={editing.excerpt_en} onChange={e => setEditing(prev => ({ ...prev, excerpt_en: e.target.value }))} rows={2} />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label>{t("blog.excerpt_ar")}</Label>
+                  <TranslateButton sourceText={editing.excerpt_en} from="en" to="ar" fieldType="excerpt" onTranslated={text => setEditing(prev => ({ ...prev, excerpt_ar: text }))} />
+                </div>
+                <Textarea value={editing.excerpt_ar} onChange={e => setEditing(prev => ({ ...prev, excerpt_ar: e.target.value }))} dir="rtl" rows={2} />
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2"><Label>{t("blog.image")}</Label><Input value={editing.featured_image} onChange={e => setEditing(prev => ({ ...prev, featured_image: e.target.value }))} dir="ltr" placeholder="https://..." /></div>
