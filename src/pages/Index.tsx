@@ -25,7 +25,6 @@ const Footer = lazy(() => import("@/components/Footer"));
 const TeachersSection = lazy(() => import("@/components/TeachersSection"));
 const RecentArticlesSection = lazy(() => import("@/components/RecentArticlesSection"));
 const ApprovedReviewsSection = lazy(() => import("@/components/ApprovedReviewsSection"));
-const ApprovedReviewsSection = lazy(() => import("@/components/ApprovedReviewsSection"));
 const ReviewFormSection = lazy(() => import("@/components/ReviewFormSection"));
 
 const DeferredSection = ({ children, minHeight = 260, forceRender = false, delayMs = 0 }: { children: ReactNode; minHeight?: number; forceRender?: boolean; delayMs?: number }) => {
