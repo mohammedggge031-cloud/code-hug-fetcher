@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight } from "lucide-react";
+import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight, Video } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +53,10 @@ const AdminDashboard = () => {
     { title: t("dash.media"), value: stats.media, icon: Image, desc: t("dash.media.desc"), href: "/admin/media", color: "text-violet-600 bg-violet-500/10" },
     { title: t("dash.categories"), value: stats.categories, icon: FolderOpen, desc: t("dash.categories.desc"), href: "/admin/categories", color: "text-orange-600 bg-orange-500/10" },
     { title: t("dash.scripts"), value: stats.scripts, icon: Code, desc: t("dash.scripts.desc"), href: "/admin/scripts", color: "text-rose-600 bg-rose-500/10" },
-    ...(role === "admin" ? [{ title: t("dash.team"), value: stats.users, icon: Users, desc: t("dash.team.desc"), href: "/admin/users", color: "text-amber-600 bg-amber-500/10" }] : []),
+    ...(role === "admin" ? [
+      { title: t("dash.videos"), value: 0, icon: Video, desc: t("dash.videos.desc"), href: "/admin/videos", color: "text-pink-600 bg-pink-500/10" },
+      { title: t("dash.team"), value: stats.users, icon: Users, desc: t("dash.team.desc"), href: "/admin/users", color: "text-amber-600 bg-amber-500/10" },
+    ] : []),
   ];
 
   return (
@@ -87,6 +90,7 @@ const AdminDashboard = () => {
           <p>🖼️ <strong className="text-foreground">{t("dash.media")}</strong> — {t("dash.guide.media")}</p>
           <p>📊 <strong className="text-foreground">{t("dash.scripts")}</strong> — {t("dash.guide.scripts")}</p>
           {role === "admin" && <p>👥 <strong className="text-foreground">{t("dash.team")}</strong> — {t("dash.guide.team")}</p>}
+          {role === "admin" && <p>🎬 <strong className="text-foreground">{t("dash.videos")}</strong> — {t("dash.guide.videos")}</p>}
         </CardContent>
       </Card>
     </div>

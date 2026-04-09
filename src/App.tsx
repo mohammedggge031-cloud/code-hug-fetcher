@@ -56,6 +56,7 @@ const UserRolesManagement = lazy(() => import("./pages/admin/UserRolesManagement
 const BlogManagement = lazy(() => import("./pages/admin/BlogManagement"));
 const CategoriesManagement = lazy(() => import("./pages/admin/CategoriesManagement"));
 const MediaLibrary = lazy(() => import("./pages/admin/MediaLibrary"));
+const VideoManagement = lazy(() => import("./pages/admin/VideoManagement"));
 const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazy(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
@@ -129,6 +130,7 @@ const App = () => (
                 <Route path="media" element={<MediaLibrary />} />
                 <Route path="seo" element={<SeoManagement />} />
                 <Route path="scripts" element={<ScriptsManagement />} />
+                <Route path="videos" element={<VideoManagement />} />
                 <Route path="users" element={<UserRolesManagement />} />
               </Route>
 

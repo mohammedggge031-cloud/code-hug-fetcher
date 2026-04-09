@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
@@ -40,6 +40,12 @@ const UserRolesManagement = () => {
   const [addLoading, setAddLoading] = useState(false);
   const [loadingEmails, setLoadingEmails] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<UserRole | null>(null);
+
+  // Reset password dialog state
+  const [resetTarget, setResetTarget] = useState<UserRole | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [showResetPwd, setShowResetPwd] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
 
   // Check super admin from database: first admin role by created_at
   const [superAdminId, setSuperAdminId] = useState<string | null>(null);
@@ -111,7 +117,6 @@ const UserRolesManagement = () => {
       let wasCreated = false;
 
       if (createNew) {
-        // Save current admin session before signUp
         const { data: currentSessionData } = await withPromiseTimeout(
           supabase.auth.getSession(),
           { markGlobalFallbackOnError: false }
@@ -127,7 +132,6 @@ const UserRolesManagement = () => {
           { markGlobalFallbackOnError: false }
         );
 
-        // Restore admin session immediately after signUp
         if (adminRefreshToken) {
           await supabase.auth.refreshSession({ refresh_token: adminRefreshToken }).catch(() => {});
         }
@@ -188,6 +192,34 @@ const UserRolesManagement = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!resetTarget) return;
+    if (resetPassword.length < 6) {
+      toast({ title: t("err.error"), description: t("pwd.min_length"), variant: "destructive" });
+      return;
+    }
+    setResetLoading(true);
+    try {
+      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
+      const token = sessionData?.session?.access_token;
+      const res = await fetchSupabaseFunction("admin-reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ user_id: resetTarget.user_id, new_password: resetPassword }),
+      });
+      const result = await res.json();
+      if (!res.ok) {
+        toast({ title: t("err.error"), description: result.error || "Failed", variant: "destructive" });
+        return;
+      }
+      toast({ title: `✅ ${t("ok.done")}`, description: t("pwd.reset_success") });
+      setResetTarget(null);
+      setResetPassword("");
+    } catch {
+      toast({ title: t("err.error"), description: "Request timed out.", variant: "destructive" });
+    } finally { setResetLoading(false); }
+  };
+
   const getInitials = (email: string) => email.split("@")[0].slice(0, 2).toUpperCase();
 
   const getRoleBadge = (role: string, userId: string) => {
@@ -214,7 +246,7 @@ const UserRolesManagement = () => {
                 <TableHead>{t("team.member")}</TableHead>
                 <TableHead>{t("team.role")}</TableHead>
                 <TableHead>{t("team.date")}</TableHead>
-                <TableHead className="w-16"></TableHead>
+                <TableHead className="w-24"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -233,11 +265,19 @@ const UserRolesManagement = () => {
                       {new Date(r.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
                     </TableCell>
                     <TableCell>
-                      {r.user_id !== superAdminId && isSuperAdmin && (
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(r)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {/* Reset password - super admin can reset for others */}
+                        {isSuperAdmin && r.user_id !== superAdminId && (
+                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => { setResetTarget(r); setResetPassword(""); setShowResetPwd(false); }} title={t("pwd.reset_btn")}>
+                            <KeyRound className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {r.user_id !== superAdminId && isSuperAdmin && (
+                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(r)}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -260,6 +300,37 @@ const UserRolesManagement = () => {
         confirmLabel={t("ok.deleted")}
         cancelLabel={t("blog.cancel")}
       />
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetTarget} onOpenChange={(v) => { if (!v) { setResetTarget(null); setResetPassword(""); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5" /> {t("pwd.reset_title")}</DialogTitle>
+            <DialogDescription>{t("pwd.reset_desc")} {emailMap[resetTarget?.user_id || ""] || ""}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>{t("pwd.new")}</Label>
+              <div className="relative">
+                <Input
+                  type={showResetPwd ? "text" : "password"}
+                  value={resetPassword}
+                  onChange={(e) => setResetPassword(e.target.value)}
+                  placeholder="••••••••"
+                  dir="ltr"
+                />
+                <Button type="button" variant="ghost" size="icon" className="absolute end-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setShowResetPwd(!showResetPwd)}>
+                  {showResetPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">{t("pwd.hint")}</p>
+            </div>
+            <Button onClick={handleResetPassword} className="w-full" disabled={resetLoading}>
+              {resetLoading ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : t("pwd.reset_save")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>

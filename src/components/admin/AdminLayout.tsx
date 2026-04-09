@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound } from "lucide-react";
+import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,6 +22,7 @@ const AdminLayout = () => {
     { to: "/admin/media", icon: Image, label: t("nav.media"), end: false },
     { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false },
     { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false },
+    { to: "/admin/videos", icon: Video, label: t("nav.videos"), adminOnly: true, end: false },
     { to: "/admin/users", icon: Users, label: t("nav.team"), adminOnly: true, end: false },
   ];
 
