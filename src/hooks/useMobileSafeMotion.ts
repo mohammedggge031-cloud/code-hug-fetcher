@@ -35,5 +35,17 @@ export const useMobileSafeMotion = () => {
   /** Safe card entrance with staggered delay */
   const fadeInUp = (index: number, baseDelay = 0.08) => fadeIn(index * baseDelay);
 
-  return { isMobile, fadeIn, fadeInUp };
+  /** Slide in from left — opacity-only on touch devices */
+  const slideInLeft = (delay = 0) =>
+    isMobile
+      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
+      : { initial: { opacity: 0, x: -40 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+
+  /** Slide in from right — opacity-only on touch devices */
+  const slideInRight = (delay = 0) =>
+    isMobile
+      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
+      : { initial: { opacity: 0, x: 40 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+
+  return { isMobile, fadeIn, fadeInUp, slideInLeft, slideInRight };
 };

@@ -22,7 +22,7 @@ interface RecentPost {
 
 const RecentArticlesSection = () => {
   const { t, lang } = useLanguage();
-  const { fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
   const [posts, setPosts] = useState<RecentPost[]>([]);
 
   useEffect(() => {
@@ -78,9 +78,9 @@ const RecentArticlesSection = () => {
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Knowledge Hub", "مركز المعرفة")}
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-3">
+          <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-4xl font-bold text-foreground mt-3">
             {t("Latest Articles & Guides", "أحدث المقالات والأدلة")}
-          </h2>
+          </motion.h2>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
             {t(
               "Expert insights on Quran learning, Tajweed rules, Arabic language tips, and Islamic education — written by our certified teachers.",

@@ -19,7 +19,7 @@ const CoursesSection = () => {
   const { t, lang } = useLanguage();
   const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
   const location = useLocation();
-  const { isMobile, fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { isMobile, fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
 
   const saveCourseReturnState = useCallback(() => {
     const path = `${location.pathname}${location.search}`;
@@ -56,9 +56,9 @@ const CoursesSection = () => {
               </span>
               <Star className="w-4 h-4 text-accent" />
             </motion.div>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3">
+            <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
               {t("Check Our ", "اكتشف ")}<span className="text-primary">{t("Courses", "دوراتنا")}</span>
-            </h2>
+            </motion.h2>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
               {t(
                 "Comprehensive Islamic education tailored to your goals, schedule, and level.",

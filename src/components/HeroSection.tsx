@@ -1,6 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ArrowRight, BookOpen, Shield } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
+import CountUpStat from "@/components/CountUpStat";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
 
@@ -123,10 +124,7 @@ const HeroSection = () => {
             <div className="animate-fade-up motion-delay-500 mt-10 sm:mt-12 lg:mx-0">
               <div className="grid grid-cols-2 gap-y-5 gap-x-2 sm:grid-cols-5 lg:justify-items-start justify-items-center">
                 {stats.map((s) => (
-                  <div key={s.num} className="text-center lg:text-start sm:border-e sm:last:border-e-0 border-primary-foreground/20 px-2">
-                    <div className="text-2xl font-bold text-accent md:text-3xl">{s.num}</div>
-                    <div className="mt-0.5 text-xs font-medium text-primary-foreground/85 sm:text-sm">{t(s.labelEn, s.labelAr)}</div>
-                  </div>
+                  <CountUpStat key={s.num} num={s.num} labelEn={s.labelEn} labelAr={s.labelAr} />
                 ))}
               </div>
             </div>

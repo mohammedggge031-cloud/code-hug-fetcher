@@ -95,7 +95,7 @@ const isRateLimited = (): boolean => {
 
 const ContactSection = () => {
   const { t } = useLanguage();
-  const { fadeIn } = useMobileSafeMotion();
+  const { fadeIn, slideInLeft } = useMobileSafeMotion();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTz, setSelectedTz] = useState("UTC+2");
@@ -116,9 +116,9 @@ const ContactSection = () => {
             <span className="text-sm font-semibold text-accent uppercase tracking-wider">
               {t("Contact Us", "تواصل معنا")}
             </span>
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3">
+            <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
               {t("Start Your Journey Today", "ابدأ رحلتك اليوم")}
-            </h2>
+            </motion.h2>
             <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
               {t(
                 "Book your free trial class and experience the difference.",
