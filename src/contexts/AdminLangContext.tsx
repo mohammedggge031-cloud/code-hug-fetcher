@@ -243,6 +243,8 @@ const translations: Record<string, Record<AdminLang, string>> = {
   "vid.confirm_delete": { ar: "حذف هذا الفيديو؟", en: "Delete this video?" },
   "vid.confirm_delete_desc": { ar: "سيتم حذف الفيديو نهائياً", en: "This video will be permanently removed" },
   "vid.admin_only": { ar: "صلاحيات المدير فقط", en: "Admin Only" },
+  "vid.col_placement": { ar: "مكان العرض", en: "Placement" },
+  "vid.placement_hint": { ar: "اختر أين يظهر الفيديو على الموقع", en: "Choose where this video appears on the site" },
   "dash.videos": { ar: "الفيديوهات", en: "Videos" },
   "dash.videos.desc": { ar: "مكتبة الفيديوهات", en: "Video library" },
   "dash.guide.videos": { ar: "أضف وعدل فيديوهات المكتبة الإسلامية", en: "Add and manage Islamic video library content" },

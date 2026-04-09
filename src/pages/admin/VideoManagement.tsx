@@ -8,11 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Edit, Play, Video, Loader2, Shield } from "lucide-react";
+import { Plus, Trash2, Edit, Video, Loader2, Shield } from "lucide-react";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import { Badge } from "@/components/ui/badge";
 
 interface VideoEntry {
   id: string;
@@ -24,12 +26,21 @@ interface VideoEntry {
   category: string;
   categoryAr: string;
   language: "en" | "ar";
+  isOurs?: boolean;
+  placement?: string[];
 }
 
 const CATEGORIES = [
+  { en: "About Us", ar: "عنّا" },
   { en: "Prophet Stories", ar: "قصص الأنبياء" },
   { en: "Quran Stories", ar: "قصص القرآن" },
   { en: "Islamic Lessons", ar: "دروس إسلامية" },
+];
+
+const PLACEMENTS = [
+  { value: "about_us", labelEn: "About Us Section", labelAr: "قسم عنّا" },
+  { value: "testimonials", labelEn: "Student Reviews", labelAr: "آراء الطلاب" },
+  { value: "other", labelEn: "Videos Page Only", labelAr: "صفحة الفيديوهات فقط" },
 ];
 
 const STORAGE_KEY = "video_library";
@@ -46,16 +57,15 @@ const VideoManagement = () => {
   const [deleteTarget, setDeleteTarget] = useState<VideoEntry | null>(null);
   const [filterCat, setFilterCat] = useState("All");
 
-  // Form state
   const [form, setForm] = useState({
     titleEn: "", titleAr: "", descriptionEn: "", descriptionAr: "",
-    youtubeId: "", category: "Prophet Stories", categoryAr: "قصص الأنبياء", language: "en" as "en" | "ar",
+    youtubeId: "", category: "About Us", categoryAr: "عنّا", language: "en" as "en" | "ar",
+    placement: ["other"] as string[],
   });
 
   const loadVideos = async () => {
     setLoading(true);
     try {
-      // Try loading from custom_scripts
       const stored = await safeDataRequest<string | null>({
         fallback: null,
         markGlobalFallbackOnError: false,
@@ -75,7 +85,6 @@ const VideoManagement = () => {
         const parsed = JSON.parse(stored);
         setVideos(Array.isArray(parsed) ? parsed : []);
       } else {
-        // Seed from hardcoded data
         const { videos: hardcoded } = await import("@/data/videos");
         const mapped: VideoEntry[] = hardcoded.map(v => ({
           id: v.id,
@@ -87,20 +96,20 @@ const VideoManagement = () => {
           category: v.category,
           categoryAr: v.categoryAr,
           language: v.language,
+          isOurs: v.isOurs,
+          placement: v.isOurs ? ["testimonials", "about_us"] : ["other"],
         }));
         setVideos(mapped);
-        // Save initial data
         await saveToDb(mapped);
       }
     } catch {
       const { videos: hardcoded } = await import("@/data/videos");
-      setVideos(hardcoded.map(v => ({ ...v })));
+      setVideos(hardcoded.map(v => ({ ...v, placement: v.isOurs ? ["testimonials", "about_us"] : ["other"] })));
     } finally { setLoading(false); }
   };
 
   const saveToDb = async (data: VideoEntry[]) => {
     const json = JSON.stringify(data);
-    // Upsert: check if exists
     const { data: existing } = await supabase
       .from("custom_scripts")
       .select("id")
@@ -135,7 +144,7 @@ const VideoManagement = () => {
 
   const openNew = () => {
     setEditVideo(null);
-    setForm({ titleEn: "", titleAr: "", descriptionEn: "", descriptionAr: "", youtubeId: "", category: "Prophet Stories", categoryAr: "قصص الأنبياء", language: "en" });
+    setForm({ titleEn: "", titleAr: "", descriptionEn: "", descriptionAr: "", youtubeId: "", category: "About Us", categoryAr: "عنّا", language: "en", placement: ["other"] });
     setShowEdit(true);
   };
 
@@ -146,8 +155,17 @@ const VideoManagement = () => {
       descriptionEn: v.descriptionEn, descriptionAr: v.descriptionAr,
       youtubeId: v.youtubeId, category: v.category,
       categoryAr: v.categoryAr, language: v.language,
+      placement: v.placement || ["other"],
     });
     setShowEdit(true);
+  };
+
+  const togglePlacement = (value: string) => {
+    setForm(prev => {
+      const has = prev.placement.includes(value);
+      const updated = has ? prev.placement.filter(p => p !== value) : [...prev.placement, value];
+      return { ...prev, placement: updated.length > 0 ? updated : ["other"] };
+    });
   };
 
   const handleSave = async () => {
@@ -162,7 +180,7 @@ const VideoManagement = () => {
         updated = videos.map(v => v.id === editVideo.id ? { ...v, ...form } : v);
       } else {
         const newId = `video-${Date.now()}`;
-        updated = [...videos, { id: newId, ...form }];
+        updated = [...videos, { id: newId, ...form, isOurs: form.placement.includes("about_us") || form.placement.includes("testimonials") }];
       }
       await saveToDb(updated);
       setVideos(updated);
@@ -181,6 +199,14 @@ const VideoManagement = () => {
   };
 
   const filtered = filterCat === "All" ? videos : videos.filter(v => v.category === filterCat);
+
+  const placementBadges = (v: VideoEntry) => {
+    const p = v.placement || ["other"];
+    return p.map(pl => {
+      const found = PLACEMENTS.find(x => x.value === pl);
+      return found ? (lang === "ar" ? found.labelAr : found.labelEn) : pl;
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -212,6 +238,7 @@ const VideoManagement = () => {
                   <TableHead className="w-16"></TableHead>
                   <TableHead>{t("vid.col_title")}</TableHead>
                   <TableHead>{t("vid.col_category")}</TableHead>
+                  <TableHead>{t("vid.col_placement")}</TableHead>
                   <TableHead>{t("vid.col_lang")}</TableHead>
                   <TableHead className="w-20"></TableHead>
                 </TableRow>
@@ -232,6 +259,13 @@ const VideoManagement = () => {
                       <p className="text-xs text-muted-foreground">{v.youtubeId}</p>
                     </TableCell>
                     <TableCell className="text-sm">{lang === "ar" ? v.categoryAr : v.category}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {placementBadges(v).map((label, i) => (
+                          <Badge key={i} variant="secondary" className="text-[10px]">{label}</Badge>
+                        ))}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-sm">{v.language === "ar" ? "🇸🇦 AR" : "🇺🇸 EN"}</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -242,7 +276,7 @@ const VideoManagement = () => {
                   </TableRow>
                 ))}
                 {filtered.length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground py-12"><Video className="h-8 w-8 mx-auto mb-2 opacity-40" />{t("vid.empty")}</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground py-12"><Video className="h-8 w-8 mx-auto mb-2 opacity-40" />{t("vid.empty")}</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
@@ -317,6 +351,24 @@ const VideoManagement = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Placement Options */}
+            <div className="space-y-3">
+              <Label>{t("vid.col_placement")} *</Label>
+              <p className="text-xs text-muted-foreground">{t("vid.placement_hint")}</p>
+              <div className="space-y-2">
+                {PLACEMENTS.map(pl => (
+                  <label key={pl.value} className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors cursor-pointer">
+                    <Checkbox
+                      checked={form.placement.includes(pl.value)}
+                      onCheckedChange={() => togglePlacement(pl.value)}
+                    />
+                    <span className="text-sm font-medium">{lang === "ar" ? pl.labelAr : pl.labelEn}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             <Button onClick={handleSave} className="w-full gap-2" disabled={saving}>
               {saving ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("team.submitting")}</> : editVideo ? t("blog.update") : t("blog.save")}
             </Button>

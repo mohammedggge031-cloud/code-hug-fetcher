@@ -82,12 +82,16 @@ const Videos = () => {
   }, []);
 
   const ourVideos = useMemo(
-    () => videos.filter((v) => v.isOurs || v.category === "About Us"),
+    () => videos.filter((v) => v.isOurs || v.category === "About Us" || (v as any).placement?.includes("about_us") || (v as any).placement?.includes("testimonials")),
     [videos],
   );
 
   const otherVideos = useMemo(
-    () => videos.filter((v) => !v.isOurs && v.category !== "About Us"),
+    () => videos.filter((v) => {
+      const p = (v as any).placement;
+      if (p && Array.isArray(p)) return p.includes("other") && !p.includes("about_us") && !p.includes("testimonials");
+      return !v.isOurs && v.category !== "About Us";
+    }),
     [videos],
   );
 
