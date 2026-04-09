@@ -1,21 +1,33 @@
 import { useEffect, useState } from "react";
 
+const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+
+const getTouchMatch = () =>
+  typeof window !== "undefined" ? window.matchMedia(TOUCH_QUERY).matches : false;
+
+const getLowMotionMatch = () =>
+  typeof window !== "undefined"
+    ? window.matchMedia(TOUCH_QUERY).matches || window.matchMedia(REDUCED_QUERY).matches
+    : false;
+
 /**
  * Returns touch-device-safe framer-motion props.
- * On tablets, phones, and coarse-pointer devices, disables y/x transforms
- * to prevent Safari/iOS compositing jitter and text/image flicker.
+ * On tablets, phones, and coarse-pointer devices, disables x/y transforms
+ * and uses short opacity-only reveals to prevent Safari/iOS jitter.
  */
 export const useMobileSafeMotion = () => {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isLowMotion, setIsLowMotion] = useState(false);
+  const [isMobile, setIsMobile] = useState(getTouchMatch);
+  const [isLowMotion, setIsLowMotion] = useState(getLowMotionMatch);
 
   useEffect(() => {
-    const touchMedia = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)");
-    const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const touchMedia = window.matchMedia(TOUCH_QUERY);
+    const reducedMotionMedia = window.matchMedia(REDUCED_QUERY);
 
     const check = () => {
-      setIsMobile(touchMedia.matches);
-      setIsLowMotion(touchMedia.matches || reducedMotionMedia.matches);
+      const touch = touchMedia.matches;
+      setIsMobile(touch);
+      setIsLowMotion(touch || reducedMotionMedia.matches);
     };
 
     check();
@@ -28,38 +40,46 @@ export const useMobileSafeMotion = () => {
     };
   }, []);
 
-  const safeViewport = { once: true, amount: 0.18 };
+  const safeViewport = { once: true, amount: isLowMotion ? 0.08 : 0.18 };
 
-  /** Safe whileInView entrance animation */
+  const opacityOnly = (delay = 0, duration = 0.28) => ({
+    initial: { opacity: 0 },
+    whileInView: { opacity: 1 },
+    viewport: safeViewport,
+    transition: { duration, delay, ease: "easeOut" },
+  });
+
   const fadeIn = (delay = 0) =>
     isLowMotion
-      ? {
-          initial: { opacity: 0 },
-          whileInView: { opacity: 1 },
-          viewport: safeViewport,
-          transition: { duration: 0.28, delay, ease: "easeOut" },
-        }
+      ? opacityOnly(delay, 0.26)
       : {
-          initial: { opacity: 0, y: 20 },
+          initial: { opacity: 0, y: 18 },
           whileInView: { opacity: 1, y: 0 },
           viewport: safeViewport,
-          transition: { duration: 0.46, delay, ease: "easeOut" },
+          transition: { duration: 0.42, delay, ease: "easeOut" },
         };
 
-  /** Safe card entrance with staggered delay */
-  const fadeInUp = (index: number, baseDelay = 0.08) => fadeIn(index * baseDelay);
+  const fadeInUp = (index: number, baseDelay = 0.07) => fadeIn(index * baseDelay);
 
-  /** Slide in from left — opacity-only on touch devices */
   const slideInLeft = (delay = 0) =>
     isLowMotion
-      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: safeViewport, transition: { duration: 0.3, delay, ease: "easeOut" } }
-      : { initial: { opacity: 0, x: -40 }, whileInView: { opacity: 1, x: 0 }, viewport: safeViewport, transition: { duration: 0.52, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+      ? opacityOnly(delay, 0.3)
+      : {
+          initial: { opacity: 0, x: -34 },
+          whileInView: { opacity: 1, x: 0 },
+          viewport: safeViewport,
+          transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+        };
 
-  /** Slide in from right — opacity-only on touch devices */
   const slideInRight = (delay = 0) =>
     isLowMotion
-      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: safeViewport, transition: { duration: 0.3, delay, ease: "easeOut" } }
-      : { initial: { opacity: 0, x: 40 }, whileInView: { opacity: 1, x: 0 }, viewport: safeViewport, transition: { duration: 0.52, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+      ? opacityOnly(delay, 0.3)
+      : {
+          initial: { opacity: 0, x: 34 },
+          whileInView: { opacity: 1, x: 0 },
+          viewport: safeViewport,
+          transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] },
+        };
 
   return { isMobile, isLowMotion, fadeIn, fadeInUp, slideInLeft, slideInRight };
 };

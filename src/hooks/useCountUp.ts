@@ -9,15 +9,15 @@ export function useCountUp(end: number, duration = 1800) {
   const [value, setValue] = useState(0);
   const started = useRef(false);
   const frameRef = useRef<number | null>(null);
+  const lastRenderedValueRef = useRef(-1);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // On mobile, use a shorter/faster count-up; on desktop full duration
     const isMobile = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)").matches;
-    const effectiveDuration = prefersReducedMotion ? 0 : isMobile ? Math.min(duration, 1200) : duration;
+    const effectiveDuration = prefersReducedMotion ? 0 : isMobile ? Math.min(duration, 900) : duration;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -25,6 +25,7 @@ export function useCountUp(end: number, duration = 1800) {
           started.current = true;
 
           if (effectiveDuration === 0) {
+            lastRenderedValueRef.current = end;
             setValue(end);
             observer.disconnect();
             return;
@@ -33,9 +34,14 @@ export function useCountUp(end: number, duration = 1800) {
           const start = performance.now();
           const step = (now: number) => {
             const progress = Math.min((now - start) / effectiveDuration, 1);
-            // easeOutQuart for a satisfying deceleration
             const eased = 1 - Math.pow(1 - progress, 4);
-            setValue(Math.round(eased * end));
+            const nextValue = Math.round(eased * end);
+
+            if (nextValue !== lastRenderedValueRef.current) {
+              lastRenderedValueRef.current = nextValue;
+              setValue(nextValue);
+            }
+
             if (progress < 1) {
               frameRef.current = requestAnimationFrame(step);
             } else {
@@ -45,7 +51,7 @@ export function useCountUp(end: number, duration = 1800) {
           frameRef.current = requestAnimationFrame(step);
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.18 }
     );
 
     observer.observe(el);

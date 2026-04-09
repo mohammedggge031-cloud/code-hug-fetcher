@@ -7,14 +7,12 @@ import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import { allSchemas } from "@/data/schemas";
 import SectionErrorBoundary from "@/components/SectionErrorBoundary";
 
-// Eagerly load only the hero for fastest first paint
-// Lazy load everything below the fold
+const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
+
 const QuranVersesSection = lazy(() => import("@/components/QuranVersesSection"));
 const CoursesSection = lazy(() => import("@/components/CoursesSection"));
 const HowItWorks = lazy(() => import("@/components/HowItWorks"));
 const PricingSection = lazy(() => import("@/components/PricingSection"));
-
-// Lazy load further-down sections
 const WhyChooseUs = lazy(() => import("@/components/WhyChooseUs"));
 const CommitmentSection = lazy(() => import("@/components/CommitmentSection"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
@@ -30,6 +28,15 @@ const ReviewFormSection = lazy(() => import("@/components/ReviewFormSection"));
 const DeferredSection = ({ children, minHeight = 260, forceRender = false, delayMs = 0 }: { children: ReactNode; minHeight?: number; forceRender?: boolean; delayMs?: number }) => {
   const markerRef = useRef<HTMLDivElement | null>(null);
   const [shouldRender, setShouldRender] = useState(forceRender);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(TOUCH_QUERY);
+    const update = () => setIsTouch(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     if (forceRender || shouldRender) {
@@ -37,27 +44,26 @@ const DeferredSection = ({ children, minHeight = 260, forceRender = false, delay
       return;
     }
 
-    // Two triggers: IntersectionObserver (scroll-based) OR timer (time-based)
-    // Whichever fires first wins
     let cancelled = false;
     const marker = markerRef.current;
+    const shouldUseTimer = !isTouch;
 
-    // Timer: auto-load after delayMs from page load
-    const timer = delayMs > 0
-      ? window.setTimeout(() => { if (!cancelled) setShouldRender(true); }, delayMs)
+    const timer = shouldUseTimer && delayMs > 0
+      ? window.setTimeout(() => {
+          if (!cancelled) setShouldRender(true);
+        }, delayMs)
       : null;
 
-    // Observer: load when near viewport
     let observer: IntersectionObserver | null = null;
     if (marker) {
       observer = new IntersectionObserver(
         (entries) => {
-          if (entries.some((e) => e.isIntersecting)) {
+          if (entries.some((entry) => entry.isIntersecting)) {
             if (!cancelled) setShouldRender(true);
             observer?.disconnect();
           }
         },
-        { rootMargin: "400px 0px" },
+        { rootMargin: isTouch ? "900px 0px" : "400px 0px" },
       );
       observer.observe(marker);
     }
@@ -67,7 +73,7 @@ const DeferredSection = ({ children, minHeight = 260, forceRender = false, delay
       if (timer) window.clearTimeout(timer);
       observer?.disconnect();
     };
-  }, [shouldRender, forceRender, delayMs]);
+  }, [delayMs, forceRender, isTouch, shouldRender]);
 
   return (
     <div ref={markerRef} className={shouldRender ? "content-auto" : ""}>
@@ -80,18 +86,53 @@ const Index = () => {
   const location = useLocation();
   const navigationType = useNavigationType();
   const { seo } = useSeoMetadata("/");
-
-  // On back navigation (POP) or hash targets, force all sections to render immediately
-  // so scroll restoration can reach the saved position
-  const forceEager = navigationType === "POP" || !!location.hash || !!window.sessionStorage.getItem("pendingScrollTarget");
+  const [touchStabilized, setTouchStabilized] = useState(false);
 
   useEffect(() => {
-    if (location.hash) {
+    const media = window.matchMedia(TOUCH_QUERY);
+    let timer: number | null = null;
+
+    const schedule = () => {
+      if (timer !== null) {
+        window.clearTimeout(timer);
+        timer = null;
+      }
+
+      if (media.matches) {
+        setTouchStabilized(false);
+        timer = window.setTimeout(() => setTouchStabilized(true), 280);
+      } else {
+        setTouchStabilized(false);
+      }
+    };
+
+    schedule();
+    media.addEventListener("change", schedule);
+
+    return () => {
+      media.removeEventListener("change", schedule);
+      if (timer !== null) window.clearTimeout(timer);
+    };
+  }, []);
+
+  const forceEager =
+    touchStabilized ||
+    navigationType === "POP" ||
+    !!location.hash ||
+    !!window.sessionStorage.getItem("pendingScrollTarget");
+
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const timer = window.setTimeout(() => {
       const el = document.querySelector(location.hash);
       if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 100);
+        const isTouch = window.matchMedia(TOUCH_QUERY).matches;
+        el.scrollIntoView({ behavior: isTouch ? "auto" : "smooth", block: "start" });
       }
-    }
+    }, 100);
+
+    return () => window.clearTimeout(timer);
   }, [location.hash]);
 
   return (
