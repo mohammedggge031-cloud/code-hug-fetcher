@@ -12,7 +12,7 @@
   overflow: visible;
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1023px), (hover: none) and (pointer: coarse) {
   .floating-action-shell {
     -webkit-backface-visibility: visible;
     backface-visibility: visible;
@@ -24,6 +24,12 @@
   .fab-gentle-bounce,
   .badge-breathe {
     animation: none !important;
+  }
+
+  .floating-fab-booking,
+  .floating-fab-whatsapp,
+  .scroll-top-fab {
+    filter: none;
   }
 }
 
