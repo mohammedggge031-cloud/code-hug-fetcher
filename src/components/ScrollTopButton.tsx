@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 
 const ScrollTopButton = () => {
   const { pathname } = useLocation();
@@ -39,7 +40,7 @@ const ScrollTopButton = () => {
   return (
     <button
       type="button"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      onClick={() => window.scrollTo({ top: 0, behavior: getSafeScrollBehavior() })}
       className="floating-action-shell scroll-top-fab fixed bottom-[1.35rem] start-4 z-[60] flex h-11 w-11 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-card transition-none hover:brightness-110 md:bottom-[1.85rem] md:start-6 md:h-12 md:w-12 md:shadow-elevated md:transition-[filter] md:duration-200"
       aria-label={t("Back to top", "العودة لأعلى الصفحة")}
     >

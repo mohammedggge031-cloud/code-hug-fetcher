@@ -4,6 +4,7 @@ import { Mail, Phone, BookOpen, Moon, Languages, GraduationCap, Sparkles, Users,
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useHasTeachers } from "@/hooks/useHasTeachers";
 import { FacebookIcon, InstagramIcon, WhatsAppIcon, YoutubeIcon, TikTokIcon } from "@/components/icons/SocialIcons";
+import { getSafeScrollBehavior, isTouchScrollDevice, runAfterNextPaint } from "@/lib/scrollBehavior";
 import logo from "@/assets/logo.webp";
 
 interface SubItem {
@@ -31,13 +32,6 @@ interface NavLinkWithDropdown {
   dropdown?: DropdownItem[];
 }
 
-type MobileCloseReason = "restore" | "anchor" | "navigate" | "top";
-
-const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
-
-const isTouchDevice = () =>
-  typeof window !== "undefined" && window.matchMedia(TOUCH_QUERY).matches;
-
 const Navbar = () => {
   const { t, lang, toggleLang } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
@@ -47,17 +41,9 @@ const Navbar = () => {
   const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  const bodyScrollYRef = useRef(0);
   const scrollTimerRef = useRef<number | null>(null);
-  const lastPathnameRef = useRef(location.pathname);
-  const menuOpenPathRef = useRef(location.pathname);
-  const mobileCloseReasonRef = useRef<MobileCloseReason>("restore");
   const isHomePage = location.pathname === "/";
 
-  // Track the current pathname so the menu-close effect knows if we navigated
-  useEffect(() => {
-    lastPathnameRef.current = location.pathname;
-  }, [location.pathname]);
   const isCourseDetailPage = location.pathname.startsWith("/courses/");
   const { hasTeachers } = useHasTeachers();
 
@@ -80,15 +66,11 @@ const Navbar = () => {
   // runs, preventing the "jitter" where scroll commands fire while body is still fixed
   useLayoutEffect(() => {
     const body = document.body;
+    const root = document.documentElement;
     if (body.classList.contains("menu-open")) {
       body.classList.remove("menu-open");
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
       body.style.overscrollBehavior = "";
-      delete body.dataset.scrollY;
+      root.style.overscrollBehavior = "";
     }
     setMobileOpen(false);
     setExpandedMobile(null);
@@ -111,48 +93,22 @@ const Navbar = () => {
 
   useEffect(() => {
     const body = document.body;
+    const root = document.documentElement;
 
     if (mobileOpen) {
-      menuOpenPathRef.current = location.pathname;
-      mobileCloseReasonRef.current = "restore";
-      const scrollY = window.scrollY;
-      bodyScrollYRef.current = scrollY;
-      body.dataset.scrollY = String(scrollY);
       body.classList.add("menu-open");
-      body.style.position = "fixed";
-      body.style.top = `-${scrollY}px`;
-      body.style.left = "0";
-      body.style.right = "0";
-      body.style.width = "100%";
       body.style.overscrollBehavior = "none";
+      root.style.overscrollBehavior = "none";
     } else {
-      const savedY = Number(body.dataset.scrollY || bodyScrollYRef.current || "0");
       body.classList.remove("menu-open");
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
       body.style.overscrollBehavior = "";
-      delete body.dataset.scrollY;
-      const shouldRestoreScroll =
-        mobileCloseReasonRef.current === "restore" && menuOpenPathRef.current === location.pathname;
-
-      if (shouldRestoreScroll && savedY > 0 && Math.abs(window.scrollY - savedY) > 1) {
-        window.scrollTo({ top: savedY, left: 0, behavior: "auto" });
-      }
-
-      mobileCloseReasonRef.current = "restore";
+      root.style.overscrollBehavior = "";
     }
 
     return () => {
       body.classList.remove("menu-open");
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.width = "";
       body.style.overscrollBehavior = "";
+      root.style.overscrollBehavior = "";
     };
   }, [location.pathname, mobileOpen]);
 
@@ -213,15 +169,13 @@ const Navbar = () => {
     }
   };
 
-  const closeMobileMenu = (reason: MobileCloseReason = "restore") => {
-    mobileCloseReasonRef.current = reason;
-    setMobileOpen(false);
-  };
+  const closeMobileMenu = () => setMobileOpen(false);
 
   const scrollToSection = (targetId: string) => {
     cancelPendingScroll();
     const headerOffset = 96;
-    const touch = isTouchDevice();
+    const touch = isTouchScrollDevice();
+    const behavior = getSafeScrollBehavior();
     const scrollToTarget = (attempt = 0, lastTop = -1) => {
       // Abort if menu opened during retry loop
       if (document.body.classList.contains("menu-open")) {
@@ -231,7 +185,7 @@ const Navbar = () => {
       const target = document.getElementById(targetId);
       if (target) {
         const top = Math.round(target.getBoundingClientRect().top + window.scrollY - headerOffset);
-        window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: touch ? "auto" : "smooth" });
+        window.scrollTo({ top: Math.max(top, 0), left: 0, behavior });
         if (attempt < (touch ? 18 : 30) && Math.abs(top - lastTop) > 1) {
           scrollTimerRef.current = window.setTimeout(() => scrollToTarget(attempt + 1, top), touch ? 96 : 80);
         } else {
@@ -270,19 +224,12 @@ const Navbar = () => {
 
     // If mobile menu is open, close it first then scroll after body unfixes
     if (mobileOpen) {
-      closeMobileMenu(isHomePage ? "anchor" : "navigate");
+      closeMobileMenu();
       if (isHomePage) {
-        // Use two rAF frames to guarantee body is fully unfixed before scrolling
-        window.setTimeout(() => {
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              scrollToSection(targetId);
-            });
-          });
-        }, 60);
+        runAfterNextPaint(() => scrollToSection(targetId), isTouchScrollDevice() ? 180 : 80);
       } else {
         window.sessionStorage.setItem("pendingScrollTarget", targetId);
-        navigate("/");
+        runAfterNextPaint(() => navigate("/"), isTouchScrollDevice() ? 40 : 0);
       }
       return;
     }
@@ -299,11 +246,11 @@ const Navbar = () => {
 
   const scrollToTopRoute = () => {
     if (mobileOpen) {
-      closeMobileMenu("top");
-      requestAnimationFrame(() => {
+      closeMobileMenu();
+      runAfterNextPaint(() => {
         navigate("/", { replace: location.pathname === "/" && !location.hash });
         window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      });
+      }, isTouchScrollDevice() ? 120 : 0);
       return;
     }
 
@@ -570,7 +517,7 @@ const Navbar = () => {
               onClick={() => {
                 cancelPendingScroll();
                 if (mobileOpen) {
-                  closeMobileMenu("restore");
+                  closeMobileMenu();
                 } else {
                   setMobileOpen(true);
                 }
@@ -615,7 +562,7 @@ const Navbar = () => {
         </div>
 
         {/* Menu items - scrollable */}
-        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-24 scrollbar-hide" aria-label="Mobile navigation">
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-24 scrollbar-hide touch-pan-y [-webkit-overflow-scrolling:touch]" aria-label="Mobile navigation">
           <div className="space-y-0.5">
             {links.map((l) => {
               const hasDropdown = l.dropdown && l.dropdown.length > 0;
@@ -628,7 +575,7 @@ const Navbar = () => {
                       {l.isRoute ? (
                         <Link
                           to={l.href}
-                          onClick={() => closeMobileMenu("navigate")}
+                            onClick={closeMobileMenu}
                           className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
@@ -652,7 +599,7 @@ const Navbar = () => {
                           if (next) {
                             const target = (e.currentTarget as HTMLElement).closest('[class*="border-b"]');
                             if (target) {
-                              setTimeout(() => target.scrollIntoView({ behavior: isTouchDevice() ? "auto" : "smooth", block: "start" }), 50);
+                                setTimeout(() => target.scrollIntoView({ behavior: getSafeScrollBehavior(), block: "start" }), 50);
                             }
                           }
                         }}
@@ -666,7 +613,7 @@ const Navbar = () => {
                   ) : l.isRoute ? (
                     <Link
                       to={l.href}
-                       onClick={() => closeMobileMenu("navigate")}
+                       onClick={closeMobileMenu}
                       className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
@@ -694,7 +641,7 @@ const Navbar = () => {
                                 <>
                                   <Link
                                     to={item.href}
-                                     onClick={() => closeMobileMenu("navigate")}
+                                     onClick={closeMobileMenu}
                                     className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                   >
                                     <span className="text-accent">{item.icon}</span>
@@ -712,7 +659,7 @@ const Navbar = () => {
                               ) : item.isRoute ? (
                                 <Link
                                   to={item.href}
-                                   onClick={() => closeMobileMenu("navigate")}
+                                   onClick={closeMobileMenu}
                                   className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                 >
                                   <span className="text-accent">{item.icon}</span>
@@ -723,7 +670,7 @@ const Navbar = () => {
                                   href={item.href}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                   onClick={() => closeMobileMenu("navigate")}
+                                   onClick={closeMobileMenu}
                                   className="flex-1 flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                 >
                                   <span className="text-accent">{item.icon}</span>
@@ -747,7 +694,7 @@ const Navbar = () => {
                                     <Link
                                       key={j}
                                       to={sub.href}
-                                       onClick={() => closeMobileMenu("navigate")}
+                                        onClick={closeMobileMenu}
                                       className="block px-3 py-2 text-xs font-medium text-primary-foreground/50 hover:text-accent transition-colors"
                                     >
                                       {t(sub.labelEn, sub.labelAr)}

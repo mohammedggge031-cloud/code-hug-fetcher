@@ -4,6 +4,7 @@ import EgyptFlag from "@/components/EgyptFlag";
 import CountUpStat from "@/components/CountUpStat";
 import { useState, useEffect, lazy, Suspense } from "react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
+import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 
 const HERO_SRCSET = "/quran-hero-640.webp 640w, /quran-hero-1024.webp 1024w, /quran-hero.webp 1920w";
 const HERO_IMAGE_JPG = "/quran-hero.jpg";
@@ -105,7 +106,7 @@ const HeroSection = () => {
                   if (target) {
                     const headerOffset = 96;
                     const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
-                    window.scrollTo({ top: Math.max(top, 0), behavior: "smooth" });
+                    window.scrollTo({ top: Math.max(top, 0), behavior: getSafeScrollBehavior() });
                   }
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-foreground/30 px-6 py-3.5 text-base font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/10 sm:px-8 sm:py-4"

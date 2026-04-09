@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
+import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { Calendar, Clock, ArrowRight, ArrowLeft, Search } from "lucide-react";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
@@ -250,7 +251,7 @@ const Blog = () => {
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button
                     key={page}
-                    onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    onClick={() => { setCurrentPage(page); window.scrollTo({ top: 0, behavior: getSafeScrollBehavior() }); }}
                     className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
                       currentPage === page
                         ? "bg-primary text-primary-foreground"

@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Award, Clock, DollarSign, CheckCircle, Star, Sparkles } from "lucide-react";
 import { scrollToContactForm } from "@/lib/scrollToForm";
+import { getSafeScrollBehavior, isTouchScrollDevice } from "@/lib/scrollBehavior";
 
 const RELATED = [
   { titleEn: "Tajweed Course Online", titleAr: "دورة التجويد", href: "/tajweed-course-online" },
@@ -93,11 +94,12 @@ const IjazahPricingSection = () => {
                   e.preventDefault();
                   const contactEl = document.getElementById("contact-section") || document.querySelector("[data-contact]");
                   if (contactEl) {
-                    contactEl.scrollIntoView({ behavior: "smooth" });
+                    const top = contactEl.getBoundingClientRect().top + window.scrollY - 96;
+                    window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: getSafeScrollBehavior() });
                     setTimeout(() => {
                       const nameInput = document.getElementById("fullName") as HTMLInputElement | null;
                       nameInput?.focus({ preventScroll: true });
-                    }, 600);
+                    }, isTouchScrollDevice() ? 140 : 600);
                   } else {
                     window.location.href = "/#contact";
                   }
