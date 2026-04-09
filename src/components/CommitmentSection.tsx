@@ -40,7 +40,7 @@ const values = [
 
 const CommitmentSection = () => {
   const { t } = useLanguage();
-  const { fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
 
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-primary text-primary-foreground" aria-label="Our Commitment to Quality">
@@ -49,9 +49,9 @@ const CommitmentSection = () => {
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Our Promise", "وعدنا")}
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold mt-3">
+          <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold mt-3">
             {t("Our Commitment to Quality", "التزامنا بالجودة")}
-          </h2>
+          </motion.h2>
           <p className="text-primary-foreground/70 mt-4 max-w-2xl mx-auto">
             {t(
               "We believe quality Islamic education should be accessible, structured, and grounded in authentic scholarship.",

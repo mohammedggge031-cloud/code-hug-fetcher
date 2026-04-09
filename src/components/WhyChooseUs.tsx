@@ -56,7 +56,7 @@ const features = [
 
 const WhyChooseUs = () => {
   const { t } = useLanguage();
-  const { fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
 
   return (
     <section id="why-us" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="Why Choose Alhamd Academy for Online Quran Classes">
@@ -65,9 +65,9 @@ const WhyChooseUs = () => {
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Why Alhamd Academy", "لماذا أكاديمية الحمد")}
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3">
+          <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
             {t("Why Choose Us?", "لماذا تختارنا؟")}
-          </h2>
+          </motion.h2>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">

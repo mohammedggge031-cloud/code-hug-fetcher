@@ -40,7 +40,7 @@ const steps = [
 
 const HowItWorks = () => {
   const { t } = useLanguage();
-  const { fadeIn, fadeInUp } = useMobileSafeMotion();
+  const { fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
 
   return (
     <section id="how-it-works" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="How It Works - Join Alhamd Academy">
@@ -49,9 +49,9 @@ const HowItWorks = () => {
           <span className="text-sm font-semibold text-accent uppercase tracking-wider">
             {t("Simple Process", "خطوات بسيطة")}
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mt-3">
+          <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
             {t("How It Works", "كيف يعمل")}
-          </h2>
+          </motion.h2>
           <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
             {t(
               "Getting started is easy. Here's how you go from booking to progress in four simple steps.",
