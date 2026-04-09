@@ -585,7 +585,7 @@ const Navbar = () => {
         </div>
 
         {/* Menu items - scrollable */}
-        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-4 scrollbar-hide" aria-label="Mobile navigation">
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-24 scrollbar-hide" aria-label="Mobile navigation">
           <div className="space-y-0.5">
             {links.map((l) => {
               const hasDropdown = l.dropdown && l.dropdown.length > 0;

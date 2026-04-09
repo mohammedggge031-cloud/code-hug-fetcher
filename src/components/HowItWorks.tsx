@@ -50,7 +50,7 @@ const HowItWorks = () => {
             {t("Simple Process", "خطوات بسيطة")}
           </span>
           <motion.h2 {...slideInLeft(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3">
-            {t("How It Works", "كيف يعمل")}
+            {t("How It Works", "كيف تبدأ معنا")}
           </motion.h2>
           <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
             {t(

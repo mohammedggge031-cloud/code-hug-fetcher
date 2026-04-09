@@ -47,7 +47,7 @@ const AboutSection = () => {
             <p className="text-muted-foreground leading-relaxed mb-4">
               {t(
                 "Whether you're a complete beginner or looking to perfect your recitation, our experienced teachers will guide you every step of the way with patience and dedication through personalized one-on-one sessions.",
-                "سواء كنت مبتدئًا بالكامل أو تتطلع إلى إتقان تلاوتك، فإن معلمينا ذوي الخبرة سيرشدونك في كل خطوة على الطريق بصبر وتفانٍ من خلال جلسات فردية مخصصة."
+                "سواء كنت مبتدئًا تمامًا أو تسعى لإتقان تلاوتك، سيرشدك معلمونا ذوو الخبرة في كل خطوة بصبر وإخلاص من خلال جلسات فردية مخصصة."
               )}
             </p>
             <div className="flex items-center gap-3 mb-8 p-4 rounded-xl bg-accent/10 border border-accent/20">
