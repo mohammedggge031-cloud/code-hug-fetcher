@@ -1,7 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Star, MessageSquareQuote, Quote } from "lucide-react";
+import { Star, MessageSquareQuote, Quote, Play } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
@@ -66,6 +67,9 @@ const ApprovedReviewsSection = () => {
   return (
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
+        {/* Intro Video */}
+        <ApprovedIntroVideo t={t} fadeIn={fadeIn} />
+
         <motion.div
           {...fadeIn()}
           className="text-center mb-12"
