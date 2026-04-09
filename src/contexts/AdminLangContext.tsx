@@ -248,6 +248,12 @@ const translations: Record<string, Record<AdminLang, string>> = {
   "dash.videos": { ar: "الفيديوهات", en: "Videos" },
   "dash.videos.desc": { ar: "مكتبة الفيديوهات", en: "Video library" },
   "dash.guide.videos": { ar: "أضف وعدل فيديوهات المكتبة الإسلامية", en: "Add and manage Islamic video library content" },
+
+  // Translation
+  "translate.en_to_ar": { ar: "ترجم للعربية", en: "Translate to Arabic" },
+  "translate.ar_to_en": { ar: "ترجم للإنجليزية", en: "Translate to English" },
+  "translate.success": { ar: "تمت الترجمة بنجاح", en: "Translation completed" },
+  "translate.error": { ar: "فشلت الترجمة", en: "Translation failed" },
 };
 
 const AdminLangContext = createContext<AdminLangContextType | undefined>(undefined);
