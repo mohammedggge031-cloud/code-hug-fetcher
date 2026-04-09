@@ -7,29 +7,43 @@ import { useEffect, useState } from "react";
  */
 export const useMobileSafeMotion = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [isLowMotion, setIsLowMotion] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)");
-    const check = () => setIsMobile(media.matches);
+    const touchMedia = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)");
+    const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const check = () => {
+      setIsMobile(touchMedia.matches);
+      setIsLowMotion(touchMedia.matches || reducedMotionMedia.matches);
+    };
+
     check();
-    media.addEventListener("change", check);
-    return () => media.removeEventListener("change", check);
+    touchMedia.addEventListener("change", check);
+    reducedMotionMedia.addEventListener("change", check);
+
+    return () => {
+      touchMedia.removeEventListener("change", check);
+      reducedMotionMedia.removeEventListener("change", check);
+    };
   }, []);
+
+  const safeViewport = { once: true, amount: 0.18 };
 
   /** Safe whileInView entrance animation */
   const fadeIn = (delay = 0) =>
-    isMobile
+    isLowMotion
       ? {
           initial: { opacity: 0 },
           whileInView: { opacity: 1 },
-          viewport: { once: true },
-          transition: { duration: 0.4, delay },
+          viewport: safeViewport,
+          transition: { duration: 0.28, delay, ease: "easeOut" },
         }
       : {
           initial: { opacity: 0, y: 20 },
           whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true },
-          transition: { duration: 0.5, delay },
+          viewport: safeViewport,
+          transition: { duration: 0.46, delay, ease: "easeOut" },
         };
 
   /** Safe card entrance with staggered delay */
@@ -37,15 +51,15 @@ export const useMobileSafeMotion = () => {
 
   /** Slide in from left — opacity-only on touch devices */
   const slideInLeft = (delay = 0) =>
-    isMobile
-      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
-      : { initial: { opacity: 0, x: -40 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+    isLowMotion
+      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: safeViewport, transition: { duration: 0.3, delay, ease: "easeOut" } }
+      : { initial: { opacity: 0, x: -40 }, whileInView: { opacity: 1, x: 0 }, viewport: safeViewport, transition: { duration: 0.52, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
 
   /** Slide in from right — opacity-only on touch devices */
   const slideInRight = (delay = 0) =>
-    isMobile
-      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true }, transition: { duration: 0.5, delay } }
-      : { initial: { opacity: 0, x: 40 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
+    isLowMotion
+      ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: safeViewport, transition: { duration: 0.3, delay, ease: "easeOut" } }
+      : { initial: { opacity: 0, x: 40 }, whileInView: { opacity: 1, x: 0 }, viewport: safeViewport, transition: { duration: 0.52, delay, ease: [0.25, 0.46, 0.45, 0.94] } };
 
-  return { isMobile, fadeIn, fadeInUp, slideInLeft, slideInRight };
+  return { isMobile, isLowMotion, fadeIn, fadeInUp, slideInLeft, slideInRight };
 };

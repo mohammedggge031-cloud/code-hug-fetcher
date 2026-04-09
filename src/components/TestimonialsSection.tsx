@@ -163,14 +163,14 @@ const TestimonialsSection = () => {
   }, []);
 
   useEffect(() => {
-    if (isPaused || !isInView) return;
+    if (viewMode !== 'desktop' || isPaused || !isInView) return;
     intervalRef.current = setInterval(() => {
       paginate(lang === "ar" ? -1 : 1);
     }, 5000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, isInView, paginate, lang]);
+  }, [viewMode, isPaused, isInView, paginate, lang]);
 
   const currentItems = testimonials.slice(
     page * itemsPerPage,

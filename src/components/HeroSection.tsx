@@ -53,7 +53,7 @@ const HeroSection = () => {
       <div className="container relative z-10 mx-auto px-6 pb-16 pt-24 sm:px-8 md:pt-32 lg:px-16 lg:pt-32 xl:px-20">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
           <div className="text-center lg:text-start">
-            <div className="animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/25 px-5 py-2.5">
+            <div className="animate-fade-up mb-5 inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-accent/30 bg-accent/25 px-5 py-2.5 text-center lg:justify-start lg:text-start">
               <EgyptFlag className="w-5 h-3.5 shrink-0" />
               <span className="text-sm font-semibold text-accent">
                 {t(
@@ -63,10 +63,10 @@ const HeroSection = () => {
               </span>
             </div>
 
-            <h1 className="text-balance animate-fade-up motion-delay-100 mb-4 text-3xl font-bold leading-[1.22] tracking-[-0.03em] text-primary-foreground sm:text-4xl sm:leading-tight md:text-5xl lg:text-[3.35rem] xl:text-6xl">
+            <h1 className="animate-fade-up motion-delay-100 mb-4 text-[2.35rem] font-bold leading-[1.14] tracking-[-0.025em] text-primary-foreground sm:text-4xl sm:leading-tight md:text-5xl md:tracking-[-0.03em] lg:text-[3.35rem] xl:text-6xl">
               {t("One-on-One Quran & Arabic Classes", "دروس قرآن وعربية فردية")}
               <br />
-              <span className="text-gradient-gold">
+              <span className="mt-1 block text-gradient-gold">
                 {t("Not Just Classes — A Life-Changing Journey", "مش بس حصص — دا رحلة تغيير")}
               </span>
             </h1>
@@ -78,7 +78,7 @@ const HeroSection = () => {
               )}
             </p>
 
-            <p className="text-pretty animate-fade-up motion-delay-200 mx-auto mb-8 max-w-2xl text-base leading-8 text-primary-foreground/90 lg:mx-0 md:text-lg">
+            <p className="animate-fade-up motion-delay-200 mx-auto mb-8 max-w-2xl text-base leading-7 text-primary-foreground/90 sm:leading-8 lg:mx-0 md:text-lg">
               {t(
                 "Mixing up letters? Confused by Tajweed rules? Struggling to speak Arabic? At Alhamd Academy, our native Arabic Al-Azhar teachers know exactly what non-Arabic speakers face — and guide you from Noor Al-Bayan to Ijazah, helping you speak Arabic and study Islam in its original language.",
                 "بتلخبط بين الحروف؟ التجويد محيّرك؟ صعب عليك تتكلم عربي؟ في أكاديمية الحمد، معلمونا من الأزهر فاهمين بالظبط صعوبات غير الناطقين بالعربية — ويرشدونك من نور البيان للإجازة، ويساعدونك تتكلم عربي وتدرس الإسلام بلغته الأصلية."

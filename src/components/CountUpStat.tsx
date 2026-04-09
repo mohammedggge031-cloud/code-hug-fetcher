@@ -26,7 +26,7 @@ const CountUpStat = ({ num, labelEn, labelAr }: CountUpStatProps) => {
       ref={ref}
       className="text-center lg:text-start sm:border-e sm:last:border-e-0 border-primary-foreground/20 px-2"
     >
-      <div className="text-2xl font-bold text-accent md:text-3xl">
+      <div className="text-2xl font-bold tabular-nums text-accent md:text-3xl">
         {parsed ? `${animatedValue}${parsed.suffix}` : num}
       </div>
       <div className="mt-0.5 text-xs font-medium text-primary-foreground/85 sm:text-sm">

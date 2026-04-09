@@ -226,6 +226,12 @@
     .animate-fade-in {
       animation-duration: 0.35s;
     }
+
+    .blur-2xl,
+    .blur-3xl {
+      filter: none;
+      opacity: 0.35;
+    }
   }
 
   .motion-delay-100 { animation-delay: 80ms; }
