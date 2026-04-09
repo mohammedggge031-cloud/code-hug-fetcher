@@ -1,8 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Star, MessageSquareQuote, Quote, Play } from "lucide-react";
+import { Star, Quote, Play } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
@@ -20,52 +20,70 @@ interface ApprovedReview {
   created_at: string;
 }
 
-const YOUTUBE_ID = "ki2Nqq_HJ6U";
+interface PlacementVideo {
+  youtubeId: string;
+  titleEn: string;
+  titleAr: string;
+  placement?: string[];
+}
 
-const ApprovedIntroVideo = ({ t, fadeIn }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any }) => {
-  const [playing, setPlaying] = useState(false);
+const ApprovedIntroVideos = ({ t, fadeIn, videos }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any; videos: PlacementVideo[] }) => {
+  const [playingId, setPlayingId] = useState<string | null>(null);
+
+  if (videos.length === 0) return null;
 
   return (
-    <motion.div {...fadeIn()} className="max-w-3xl mx-auto mb-14">
+    <motion.div {...fadeIn()} className="max-w-4xl mx-auto mb-14">
       <div className="text-center mb-6">
         <span className="text-sm font-semibold text-accent uppercase tracking-wider">
           {t("Get to Know Us", "تعرف علينا")}
         </span>
         <h3 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
-          {t("Watch Our Story", "شاهد قصتنا")}
+          {t("Watch Some of Our Students", "شوف بعض طلابنا")}
         </h3>
       </div>
-      <div className="rounded-2xl overflow-hidden shadow-lg border border-border">
-        {playing ? (
-          <div className="aspect-video">
-            <iframe
-              src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0`}
-              title={t("About Alhamd Academy", "عن أكاديمية الحمد")}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        ) : (
-          <button
-            onClick={() => setPlaying(true)}
-            className="relative w-full aspect-video group focus:outline-none"
-            aria-label={t("Play video", "تشغيل الفيديو")}
-          >
-            <img
-              src={`https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`}
-              alt={t("About Alhamd Academy", "عن أكاديمية الحمد")}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="absolute inset-0 bg-foreground/30 group-hover:bg-foreground/40 transition-colors flex items-center justify-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <Play className="w-7 h-7 sm:w-9 sm:h-9 text-accent-foreground fill-current ms-1" />
+      <div className={`grid gap-6 ${videos.length === 1 ? "max-w-3xl mx-auto" : videos.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
+        {videos.map((video) => (
+          <div key={video.youtubeId} className="rounded-2xl overflow-hidden shadow-lg border border-border">
+            {playingId === video.youtubeId ? (
+              <div className="aspect-video">
+                <iframe
+                  src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
+                  title={t(video.titleEn, video.titleAr)}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
-            </div>
-          </button>
-        )}
+            ) : (
+              <button
+                onClick={() => setPlayingId(video.youtubeId)}
+                className="relative w-full aspect-video group focus:outline-none"
+                aria-label={t("Play video", "تشغيل الفيديو")}
+              >
+                <img
+                  src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
+                  alt={t(video.titleEn, video.titleAr)}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="absolute inset-0 bg-foreground/30 group-hover:bg-foreground/40 transition-colors flex items-center justify-center">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <Play className="w-6 h-6 sm:w-7 sm:h-7 text-accent-foreground fill-current ms-1" />
+                  </div>
+                </div>
+              </button>
+            )}
+            {videos.length > 1 && (
+              <div className="p-3 bg-muted/30">
+                <p className="text-xs text-muted-foreground font-medium text-center line-clamp-1">
+                  {t(video.titleEn, video.titleAr)}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </motion.div>
   );
@@ -74,6 +92,28 @@ const ApprovedIntroVideo = ({ t, fadeIn }: { t: (en: string, ar: string) => stri
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
   const { fadeIn, fadeInUp } = useMobileSafeMotion();
+  const [placementVideos, setPlacementVideos] = useState<PlacementVideo[]>([]);
+
+  // Load videos with "testimonials" placement
+  useEffect(() => {
+    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "About Alhamd Academy", titleAr: "عن أكاديمية الحمد", placement: ["testimonials"] }];
+    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
+      .then(({ data, error }) => {
+        if (error || !data?.script_content) {
+          setPlacementVideos(fallback);
+          return;
+        }
+        try {
+          const parsed = JSON.parse(data.script_content);
+          if (Array.isArray(parsed)) {
+            const filtered = parsed.filter((v: any) => v.placement?.includes("testimonials"));
+            setPlacementVideos(filtered.length > 0 ? filtered : fallback);
+            return;
+          }
+        } catch {}
+        setPlacementVideos(fallback);
+      });
+  }, []);
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
@@ -118,8 +158,8 @@ const ApprovedReviewsSection = () => {
   return (
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Intro Video */}
-        <ApprovedIntroVideo t={t} fadeIn={fadeIn} />
+        {/* Intro Videos */}
+        <ApprovedIntroVideos t={t} fadeIn={fadeIn} videos={placementVideos} />
 
         <motion.div
           {...fadeIn()}
@@ -151,10 +191,8 @@ const ApprovedReviewsSection = () => {
                 {...fadeInUp(idx, 0.05)}
                 className="relative bg-card rounded-2xl p-6 border border-border hover:border-accent/30 hover:shadow-lg transition-[border-color,box-shadow] duration-300 group"
               >
-                {/* Quote icon */}
                 <Quote className="absolute top-4 right-4 w-8 h-8 text-accent/10 group-hover:text-accent/20 transition-colors" />
 
-                {/* Author header with avatar + flag */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="relative flex-shrink-0">
                     <img
@@ -180,13 +218,10 @@ const ApprovedReviewsSection = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground">{review.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {review.country}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{review.country}</p>
                   </div>
                 </div>
 
-                {/* Stars */}
                 <div className="flex items-center gap-0.5 mb-3">
                   {Array.from({ length: review.rating }).map((_, i) => (
                     <Star key={i} className="w-4 h-4 text-accent fill-accent" />
@@ -196,12 +231,10 @@ const ApprovedReviewsSection = () => {
                   ))}
                 </div>
 
-                {/* Review text */}
                 <p className="text-sm text-muted-foreground leading-relaxed italic">
                   "{review.review_text}"
                 </p>
 
-                {/* Course badge */}
                 <div className="mt-4 pt-3 border-t border-border">
                   <span className="text-xs font-medium text-accent bg-accent/10 px-2.5 py-1 rounded-full">
                     {review.course}
@@ -211,7 +244,6 @@ const ApprovedReviewsSection = () => {
             );
           })}
         </div>
-
       </div>
     </section>
   );
