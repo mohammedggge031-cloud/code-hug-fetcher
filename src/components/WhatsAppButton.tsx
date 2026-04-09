@@ -1,8 +1,13 @@
+import { useFloatingActionVisibility } from "@/hooks/useFloatingActionVisibility";
+
 const WHATSAPP_NUMBER = "201271134828";
 const DEFAULT_MESSAGE = "Salam Alhamd Academy";
 
 const WhatsAppButton = () => {
+  const isVisible = useFloatingActionVisibility(380);
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
+
+  if (!isVisible) return null;
 
   return (
     <a

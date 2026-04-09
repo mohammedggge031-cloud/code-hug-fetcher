@@ -1,9 +1,13 @@
 import { GraduationCap } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollToContactForm } from "@/lib/scrollToForm";
+import { useFloatingActionVisibility } from "@/hooks/useFloatingActionVisibility";
 
 const FloatingBookingFAB = () => {
   const { t } = useLanguage();
+  const isVisible = useFloatingActionVisibility(320);
+
+  if (!isVisible) return null;
 
   return (
     <button

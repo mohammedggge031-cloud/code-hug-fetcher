@@ -545,7 +545,7 @@ const Navbar = () => {
             {/* Center: hamburger */}
             <button
               onClick={() => { cancelPendingScroll(); setMobileOpen(!mobileOpen); }}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-primary-foreground hover:bg-primary-foreground/10 transition-all duration-300"
+                className="flex h-10 w-10 items-center justify-center rounded-xl text-primary-foreground transition-colors duration-200 hover:bg-primary-foreground/10"
               aria-label="Toggle menu"
             >
               <div className="relative w-5 h-5 flex items-center justify-center">
@@ -728,7 +728,7 @@ const Navbar = () => {
           <div className="flex items-center justify-center gap-3 pt-5 mt-4 border-t border-primary-foreground/10">
             <button
               onClick={toggleLang}
-              className="h-10 px-4 rounded-full bg-accent/15 border border-accent/30 flex items-center gap-2 text-primary-foreground hover:bg-accent/25 transition-all"
+              className="flex h-10 items-center gap-2 rounded-full border border-accent/30 bg-accent/15 px-4 text-primary-foreground transition-colors duration-200 hover:bg-accent/25"
               aria-label="Toggle language"
             >
               <Globe className="w-4 h-4 text-accent" />
@@ -740,7 +740,7 @@ const Navbar = () => {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/15 transition-all"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/70 transition-colors duration-200 hover:bg-primary-foreground/15 hover:text-accent"
                 aria-label={s.label}
               >
                 {s.icon}
@@ -754,7 +754,7 @@ const Navbar = () => {
           <a
             href="#contact"
             onClick={(e) => { handleAnchorClick(e, "#contact"); }}
-            className="block w-full py-3.5 text-center text-sm font-bold uppercase tracking-wider rounded-xl bg-accent text-accent-foreground hover:brightness-110 transition-all shadow-elevated"
+            className="block w-full rounded-xl bg-accent py-3.5 text-center text-sm font-bold uppercase tracking-wider text-accent-foreground shadow-elevated transition-[filter] duration-200 hover:brightness-110"
           >
             {t("Book Your Free Trial", "احجز حصتك المجانية")}
           </a>
