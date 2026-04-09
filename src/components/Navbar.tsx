@@ -249,14 +249,17 @@ const Navbar = () => {
 
     const targetId = href.slice(1);
 
-    // If mobile menu is open, close it first then scroll
+    // If mobile menu is open, close it first then scroll after body unfixes
     if (mobileOpen) {
       setMobileOpen(false);
       if (isHomePage) {
-        // Body is position:fixed, so scroll after menu close restores body
-        requestAnimationFrame(() => {
-          scrollToSection(targetId);
-        });
+        // Wait for body position:fixed to be removed and scroll restored,
+        // then scroll to the target section
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            scrollToSection(targetId);
+          });
+        }, 80);
       } else {
         window.sessionStorage.setItem("pendingScrollTarget", targetId);
         navigate("/");
