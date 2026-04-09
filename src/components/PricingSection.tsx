@@ -134,7 +134,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         <div className={`border-t ${plan.popular ? "border-primary-foreground/10" : "border-border"}`} />
         <div className="flex justify-between items-center">
           <span className={`text-[13px] sm:text-[11px] md:text-xs font-medium ${plan.popular ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-            12 {t("months", "شهر")}
+            12 {t("months", "شهرًا")}
           </span>
           <div className="text-right">
             <span className={`text-[13px] sm:text-[11px] md:text-xs font-bold ${plan.popular ? "" : "text-foreground"}`}>
