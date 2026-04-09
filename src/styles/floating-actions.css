@@ -38,16 +38,6 @@
   position: fixed;
   inset-inline-end: 1rem;
   z-index: 60;
-  transition: opacity 0.2s ease, visibility 0.2s ease;
-}
-
-/* Hide FABs when mobile menu is open */
-body.menu-open .floating-fab-booking,
-body.menu-open .floating-fab-whatsapp,
-body.menu-open .scroll-top-fab {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
 }
 
 .floating-fab-booking {
