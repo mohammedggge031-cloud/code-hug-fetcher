@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Eye, Search, Loader2 } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
+import TranslateButton from "@/components/admin/TranslateButton";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
