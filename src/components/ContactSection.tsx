@@ -95,7 +95,7 @@ const isRateLimited = (): boolean => {
 
 const ContactSection = () => {
   const { t } = useLanguage();
-  const { fadeIn } = useMobileSafeMotion();
+  const { fadeIn, slideInLeft } = useMobileSafeMotion();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedTz, setSelectedTz] = useState("UTC+2");
