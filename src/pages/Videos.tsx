@@ -1,8 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { memo, useCallback, useMemo, useState } from "react";
-import { videos, videoCategories } from "@/data/videos";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { videos as hardcodedVideos, videoCategories } from "@/data/videos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
@@ -60,6 +61,19 @@ const Videos = () => {
   const { seo } = useSeoMetadata("/videos");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
+  const [videos, setVideos] = useState(hardcodedVideos);
+
+  useEffect(() => {
+    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
+      .then(({ data }) => {
+        if (data?.script_content) {
+          try {
+            const parsed = JSON.parse(data.script_content);
+            if (Array.isArray(parsed) && parsed.length > 0) setVideos(parsed);
+          } catch {}
+        }
+      });
+  }, []);
 
   const handleOpenVideo = useCallback((youtubeId: string) => {
     setActiveVideo(youtubeId);
