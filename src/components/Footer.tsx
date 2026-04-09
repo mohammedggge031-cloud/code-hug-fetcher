@@ -8,10 +8,10 @@ const Footer = () => {
   const { t } = useLanguage();
 
   const courseLinks = [
-    { en: "The Best Quran Course at Alhamd Academy", ar: "أفضل كورس قرآن في الحمد أكاديمي", href: "/courses/quran-course" },
-    { en: "The Best Tajweed Course at Alhamd Academy", ar: "أفضل كورس تجويد في الحمد أكاديمي", href: "/courses/tajweed-course" },
-    { en: "The Best Arabic Course at Alhamd Academy", ar: "أفضل كورس عربي في الحمد أكاديمي", href: "/courses/arabic-course" },
-    { en: "The Best Islamic Studies at Alhamd Academy", ar: "أفضل دراسات إسلامية في الحمد أكاديمي", href: "/courses/islamic-studies" },
+    { en: "The Best Quran Course at Alhamd Academy", ar: "أفضل دورة قرآن في أكاديمية الحمد", href: "/courses/quran-course" },
+    { en: "The Best Tajweed Course at Alhamd Academy", ar: "أفضل دورة تجويد في أكاديمية الحمد", href: "/courses/tajweed-course" },
+    { en: "The Best Arabic Course at Alhamd Academy", ar: "أفضل دورة عربية في أكاديمية الحمد", href: "/courses/arabic-course" },
+    { en: "The Best Islamic Studies at Alhamd Academy", ar: "أفضل دراسات إسلامية في أكاديمية الحمد", href: "/courses/islamic-studies" },
     { en: "All-in-One Course", ar: "الدورة الشاملة", href: "/courses/all-in-one-course" },
   ];
 
