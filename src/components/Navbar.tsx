@@ -62,20 +62,16 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // useLayoutEffect ensures body is unfixed BEFORE ScrollToTop's useLayoutEffect
-  // runs, preventing the "jitter" where scroll commands fire while body is still fixed
-  useLayoutEffect(() => {
-    const body = document.body;
-    const root = document.documentElement;
-    if (body.classList.contains("menu-open")) {
-      body.classList.remove("menu-open");
-      body.style.overscrollBehavior = "";
-      root.style.overscrollBehavior = "";
+  // Close menu on any route change — use useEffect (not useLayoutEffect)
+  // to avoid fighting with scroll restoration
+  useEffect(() => {
+    if (mobileOpen) {
+      setMobileOpen(false);
     }
-    setMobileOpen(false);
     setExpandedMobile(null);
     setExpandedMobileSub(null);
     setOpenDesktopDropdown(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.hash]);
 
   useEffect(() => {
@@ -92,25 +88,13 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const body = document.body;
-    const root = document.documentElement;
-
     if (mobileOpen) {
-      body.classList.add("menu-open");
-      body.style.overscrollBehavior = "none";
-      root.style.overscrollBehavior = "none";
+      document.body.classList.add("menu-open");
     } else {
-      body.classList.remove("menu-open");
-      body.style.overscrollBehavior = "";
-      root.style.overscrollBehavior = "";
+      document.body.classList.remove("menu-open");
     }
-
-    return () => {
-      body.classList.remove("menu-open");
-      body.style.overscrollBehavior = "";
-      root.style.overscrollBehavior = "";
-    };
-  }, [location.pathname, mobileOpen]);
+    return () => { document.body.classList.remove("menu-open"); };
+  }, [mobileOpen]);
 
   // Close desktop dropdown on outside click
   useEffect(() => {
@@ -549,8 +533,8 @@ const Navbar = () => {
     </header>
 
     {/* Mobile fullscreen menu - OUTSIDE header to escape stacking context */}
-    <div className={`fixed inset-x-0 bottom-0 top-16 z-[55] bg-primary overscroll-none transition-[opacity,visibility] duration-300 lg:hidden ${mobileOpen ? "visible opacity-100" : "invisible pointer-events-none opacity-0"}`}>
-      <div className={`relative flex h-full flex-col transition-transform duration-300 ${mobileOpen ? "translate-y-0" : "-translate-y-4"}`}>
+    <div className={`fixed inset-x-0 bottom-0 top-16 z-[55] bg-primary overscroll-none lg:hidden ${mobileOpen ? "visible opacity-100" : "hidden opacity-0 pointer-events-none"}`}>
+      <div className="relative flex h-full flex-col">
         {/* Top: Logo on right */}
         <div className="flex items-center justify-end px-6 pt-6 pb-4">
           <Link to="/" onClick={(e) => { e.preventDefault(); scrollToTopRoute(); }} className="flex items-center gap-2.5">
