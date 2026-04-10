@@ -533,7 +533,7 @@ const Navbar = () => {
     </header>
 
     {/* Mobile fullscreen menu - OUTSIDE header to escape stacking context */}
-    <div className={`fixed inset-x-0 bottom-0 top-16 z-[55] bg-primary overscroll-none lg:hidden ${mobileOpen ? "visible opacity-100" : "hidden opacity-0 pointer-events-none"}`}>
+    <div className={`fixed inset-x-0 bottom-0 top-16 z-[55] bg-primary overscroll-none lg:hidden transition-opacity duration-150 ${mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} style={{ visibility: mobileOpen ? "visible" : "hidden" }}>
       <div className="relative flex h-full flex-col">
         {/* Top: Logo on right */}
         <div className="flex items-center justify-end px-6 pt-6 pb-4">

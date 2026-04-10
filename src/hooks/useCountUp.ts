@@ -9,49 +9,54 @@ export function useCountUp(end: number, duration = 1800) {
   const [value, setValue] = useState(0);
   const started = useRef(false);
   const frameRef = useRef<number | null>(null);
-  const lastRenderedValueRef = useRef(-1);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || end === 0) return;
+
+    // Reset for re-renders with new end value
+    started.current = false;
+    setValue(0);
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isMobile = window.matchMedia("(max-width: 1023px), (hover: none) and (pointer: coarse)").matches;
-    const effectiveDuration = prefersReducedMotion ? 0 : isMobile ? Math.min(duration, 900) : duration;
+    const effectiveDuration = prefersReducedMotion ? 0 : isMobile ? Math.min(duration, 1200) : duration;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !started.current) {
           started.current = true;
+          observer.disconnect();
 
           if (effectiveDuration === 0) {
-            lastRenderedValueRef.current = end;
             setValue(end);
-            observer.disconnect();
             return;
           }
 
           const start = performance.now();
+          let lastSet = -1;
           const step = (now: number) => {
             const progress = Math.min((now - start) / effectiveDuration, 1);
-            const eased = 1 - Math.pow(1 - progress, 4);
+            const eased = 1 - Math.pow(1 - progress, 3);
             const nextValue = Math.round(eased * end);
 
-            if (nextValue !== lastRenderedValueRef.current) {
-              lastRenderedValueRef.current = nextValue;
+            if (nextValue !== lastSet) {
+              lastSet = nextValue;
               setValue(nextValue);
             }
 
             if (progress < 1) {
               frameRef.current = requestAnimationFrame(step);
             } else {
+              // Ensure final value is exact
+              setValue(end);
               frameRef.current = null;
             }
           };
           frameRef.current = requestAnimationFrame(step);
         }
       },
-      { threshold: 0.18 }
+      { threshold: 0.05, rootMargin: "50px 0px" }
     );
 
     observer.observe(el);
