@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight, Video } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
   const { role } = useAuth();
   const { t } = useAdminLang();
   const navigate = useNavigate();
+  const location = useLocation();
   const [stats, setStats] = useState({ seoPages: 0, scripts: 0, users: 0, posts: 0, media: 0, categories: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -61,7 +62,7 @@ const AdminDashboard = () => {
       setLoading(false);
     };
     fetchStats();
-  }, []);
+  }, [location.key]);
 
   const cards = [
     { title: t("dash.posts"), value: stats.posts, icon: FileText, desc: t("dash.posts.desc"), href: "/admin/blog", color: "text-blue-600 bg-blue-500/10" },
