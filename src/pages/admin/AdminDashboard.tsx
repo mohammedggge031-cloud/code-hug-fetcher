@@ -6,12 +6,27 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useNavigate } from "react-router-dom";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const StatCardSkeleton = () => (
+  <Card className="transition-all">
+    <CardHeader className="flex flex-row items-center justify-between pb-2">
+      <Skeleton className="h-10 w-10 rounded-xl" />
+    </CardHeader>
+    <CardContent>
+      <Skeleton className="h-8 w-16 mb-2" />
+      <Skeleton className="h-4 w-24 mb-1" />
+      <Skeleton className="h-3 w-32" />
+    </CardContent>
+  </Card>
+);
 
 const AdminDashboard = () => {
   const { role } = useAuth();
   const { t } = useAdminLang();
   const navigate = useNavigate();
   const [stats, setStats] = useState({ seoPages: 0, scripts: 0, users: 0, posts: 0, media: 0, categories: 0 });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -43,6 +58,7 @@ const AdminDashboard = () => {
         seoPages: seo.count || 0, scripts: scripts.count || 0, users: users.count || 0,
         posts: posts.count || 0, media: media.count || 0, categories: cats.count || 0,
       });
+      setLoading(false);
     };
     fetchStats();
   }, []);
@@ -67,19 +83,23 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
-        {cards.map(card => (
-          <Card key={card.href} className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5" onClick={() => navigate(card.href)}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className={`p-2.5 rounded-xl ${card.color}`}><card.icon className="h-5 w-5" /></div>
-              <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold tracking-tight tabular-nums">{card.value}</div>
-              <p className="text-sm font-medium text-foreground mt-1">{card.title}</p>
-              <p className="text-xs text-muted-foreground">{card.desc}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {loading ? (
+          Array.from({ length: role === "admin" ? 7 : 5 }).map((_, i) => <StatCardSkeleton key={i} />)
+        ) : (
+          cards.map(card => (
+            <Card key={card.href} className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5" onClick={() => navigate(card.href)}>
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <div className={`p-2.5 rounded-xl ${card.color}`}><card.icon className="h-5 w-5" /></div>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold tracking-tight tabular-nums">{card.value}</div>
+                <p className="text-sm font-medium text-foreground mt-1">{card.title}</p>
+                <p className="text-xs text-muted-foreground">{card.desc}</p>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
       <Card>
