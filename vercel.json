@@ -6,10 +6,7 @@
   "trailingSlash": false,
   "redirects": [],
   "rewrites": [
-    {
-      "source": "/((?!assets/|favicon|og-image|quran-hero|apple-touch-icon|site\\.webmanifest|robots\\.txt|sitemap|_redirects|\\.well-known/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
