@@ -78,7 +78,7 @@ const AdminDashboard = () => {
         <p className="text-muted-foreground">{t("dash.subtitle")}</p>
       </div>
 
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {loading ? (
           Array.from({ length: role === "admin" ? 7 : 5 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
