@@ -26,12 +26,15 @@ const getSupabase = () => {
   return supabasePromise;
 };
 
+const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
   const initialized = useRef(false);
+  const inactivityTimer = useRef<number | null>(null);
   const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
   const fetchRole = async (userId: string) => {
