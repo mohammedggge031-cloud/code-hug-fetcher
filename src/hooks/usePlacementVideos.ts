@@ -19,7 +19,7 @@ function fetchVideos(): Promise<PlacementVideo[]> {
   if (cached) return Promise.resolve(cached);
   if (pending) return pending;
 
-  pending = supabase
+  pending = Promise.resolve(supabase
     .from("custom_scripts")
     .select("script_content")
     .eq("name", "video_library")
