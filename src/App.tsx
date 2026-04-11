@@ -127,17 +127,20 @@ const App = () => (
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/:slug" element={<LocationPage />} />
 
-              {/* Admin routes wrapped in AuthProvider to avoid loading auth on public pages */}
-              <Route path="/admin/login" element={<AuthProvider><AdminLangProvider><AdminLogin /></AdminLangProvider></AuthProvider>} />
-              <Route path="/admin" element={<AuthProvider><AdminLangProvider><ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute></AdminLangProvider></AuthProvider>}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="blog" element={<BlogManagement />} />
-                <Route path="categories" element={<CategoriesManagement />} />
-                <Route path="media" element={<MediaLibrary />} />
-                <Route path="seo" element={<SeoManagement />} />
-                <Route path="scripts" element={<ScriptsManagement />} />
-                <Route path="videos" element={<VideoManagement />} />
-                <Route path="users" element={<UserRolesManagement />} />
+              {/* Admin routes – single AuthProvider shared across login + dashboard */}
+              <Route element={<AuthProvider><AdminLangProvider><Suspense fallback={<Loader />}><Routes><Route path="*" element={null} /></Routes></Suspense></AdminLangProvider></AuthProvider>} />
+              <Route path="/admin" element={<AuthProvider><AdminLangProvider><Suspense fallback={<Loader />}><AdminRoutes /></Suspense></AdminLangProvider></AuthProvider>}>
+                <Route path="login" element={<AdminLogin />} />
+                <Route element={<ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="blog" element={<BlogManagement />} />
+                  <Route path="categories" element={<CategoriesManagement />} />
+                  <Route path="media" element={<MediaLibrary />} />
+                  <Route path="seo" element={<SeoManagement />} />
+                  <Route path="scripts" element={<ScriptsManagement />} />
+                  <Route path="videos" element={<VideoManagement />} />
+                  <Route path="users" element={<UserRolesManagement />} />
+                </Route>
               </Route>
 
               <Route path="/404" element={<NotFound />} />
