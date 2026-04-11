@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Star, Quote, Play } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
