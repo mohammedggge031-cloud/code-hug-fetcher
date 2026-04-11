@@ -74,18 +74,28 @@ const ScrollToTop = () => {
   }, [clearPendingJobs]);
 
   useEffect(() => {
+    let rafId: number | null = null;
     const persistScroll = () => {
-      scrollPositions.set(routeKey, window.scrollY);
-      if (pathname === "/" && window.scrollY > 0) {
-        window.sessionStorage.setItem(HOMEPAGE_SCROLL_KEY, String(Math.round(window.scrollY)));
-      }
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        scrollPositions.set(routeKey, window.scrollY);
+        if (pathname === "/" && window.scrollY > 0) {
+          window.sessionStorage.setItem(HOMEPAGE_SCROLL_KEY, String(Math.round(window.scrollY)));
+        }
+      });
     };
     persistScroll();
     window.addEventListener("scroll", persistScroll, { passive: true });
-    window.addEventListener("pagehide", persistScroll);
+    window.addEventListener("pagehide", () => {
+      scrollPositions.set(routeKey, window.scrollY);
+      if (pathname === "/") {
+        window.sessionStorage.setItem(HOMEPAGE_SCROLL_KEY, String(Math.round(window.scrollY)));
+      }
+    });
     return () => {
       window.removeEventListener("scroll", persistScroll);
-      window.removeEventListener("pagehide", persistScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, [routeKey, pathname]);
 

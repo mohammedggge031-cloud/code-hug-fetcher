@@ -99,7 +99,7 @@ const AdminLogin = () => {
           variant="ghost"
           size="sm"
           onClick={toggleLang}
-          className="gap-2 text-xs text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 backdrop-blur-sm border border-white/10"
+          className="gap-2 text-xs text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/10 border border-white/10"
         >
           <Globe className="h-3.5 w-3.5" />
           {lang === "ar" ? "English" : "العربية"}
@@ -120,7 +120,7 @@ const AdminLogin = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
           {/* Card top accent */}
           <div className="h-1" style={{ background: "var(--gold-gradient)" }} />
 
