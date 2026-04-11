@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
@@ -27,6 +27,7 @@ const getSupabase = () => {
 };
 
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -35,9 +36,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [role, setRole] = useState<AppRole | null>(null);
   const initialized = useRef(false);
   const inactivityTimer = useRef<number | null>(null);
-  const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
+  const sessionRestoredRef = useRef(false);
 
-  const fetchRole = async (userId: string) => {
+  const fetchRole = useCallback(async (userId: string) => {
     const { supabase } = await getSupabase();
     const resolvedRole = await safeDataRequest<AppRole | null>({
       fallback: null,
@@ -57,7 +58,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     setRole(resolvedRole);
-  };
+    return resolvedRole;
+  }, []);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -65,6 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     let active = true;
     let subscription: { unsubscribe: () => void } | null = null;
+
     const hardStop = window.setTimeout(() => {
       if (!active) return;
       setSession(null);
@@ -73,31 +76,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }, AUTH_TIMEOUT_MS);
 
-    const applySession = async (nextSession: Session | null) => {
-      if (!active) return;
-
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-
-      if (nextSession?.user) {
-        await fetchRole(nextSession.user.id);
-      } else {
-        setRole(null);
-      }
-
-      if (active) setLoading(false);
-    };
-
     const initAuth = async () => {
       const { supabase } = await getSupabase();
 
+      // 1. Set up listener FIRST but only act on post-restore events
       const {
         data: { subscription: nextSubscription },
       } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-        void applySession(nextSession);
+        // Skip events until getSession has resolved to avoid race condition
+        if (!sessionRestoredRef.current) return;
+
+        // Fire-and-forget: do NOT await inside this callback (deadlock risk)
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (nextSession?.user) {
+          fetchRole(nextSession.user.id).then(() => {
+            if (active) setLoading(false);
+          });
+        } else {
+          setRole(null);
+          if (active) setLoading(false);
+        }
       });
       subscription = nextSubscription;
 
+      // 2. Restore session from storage
       try {
         const {
           data: { session: currentSession },
@@ -106,14 +110,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           markGlobalFallbackOnError: false,
         });
 
-        await applySession(currentSession);
+        if (!active) return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
+
+        if (currentSession?.user) {
+          await fetchRole(currentSession.user.id);
+        } else {
+          setRole(null);
+        }
       } catch {
         if (!active) return;
         setSession(null);
         setUser(null);
         setRole(null);
-        setLoading(false);
       } finally {
+        // Mark session as restored so onAuthStateChange events are processed
+        sessionRestoredRef.current = true;
+        if (active) setLoading(false);
         clearTimeout(hardStop);
       }
     };
@@ -125,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       clearTimeout(hardStop);
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [fetchRole]);
 
   // Auto-logout after 1 hour of inactivity
   useEffect(() => {

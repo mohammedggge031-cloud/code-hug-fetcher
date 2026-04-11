@@ -1,6 +1,6 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
@@ -127,17 +127,19 @@ const App = () => (
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/:slug" element={<LocationPage />} />
 
-              {/* Admin routes wrapped in AuthProvider to avoid loading auth on public pages */}
-              <Route path="/admin/login" element={<AuthProvider><AdminLangProvider><AdminLogin /></AdminLangProvider></AuthProvider>} />
-              <Route path="/admin" element={<AuthProvider><AdminLangProvider><ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute></AdminLangProvider></AuthProvider>}>
-                <Route index element={<AdminDashboard />} />
-                <Route path="blog" element={<BlogManagement />} />
-                <Route path="categories" element={<CategoriesManagement />} />
-                <Route path="media" element={<MediaLibrary />} />
-                <Route path="seo" element={<SeoManagement />} />
-                <Route path="scripts" element={<ScriptsManagement />} />
-                <Route path="videos" element={<VideoManagement />} />
-                <Route path="users" element={<UserRolesManagement />} />
+              {/* Admin routes – single shared AuthProvider for login + dashboard */}
+              <Route path="/admin" element={<AuthProvider><AdminLangProvider><Outlet /></AdminLangProvider></AuthProvider>}>
+                <Route path="login" element={<AdminLogin />} />
+                <Route element={<ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="blog" element={<BlogManagement />} />
+                  <Route path="categories" element={<CategoriesManagement />} />
+                  <Route path="media" element={<MediaLibrary />} />
+                  <Route path="seo" element={<SeoManagement />} />
+                  <Route path="scripts" element={<ScriptsManagement />} />
+                  <Route path="videos" element={<VideoManagement />} />
+                  <Route path="users" element={<UserRolesManagement />} />
+                </Route>
               </Route>
 
               <Route path="/404" element={<NotFound />} />
