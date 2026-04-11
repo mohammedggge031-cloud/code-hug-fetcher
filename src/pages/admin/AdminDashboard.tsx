@@ -5,7 +5,7 @@ import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight, Video }
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { safeDataRequest } from "@/lib/safeRuntimeData";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 const StatCardSkeleton = () => (
@@ -30,38 +30,33 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchStats = async () => {
-      const [seo, scripts, users, posts, media, cats] = await safeDataRequest({
-        fallback: [
-          { count: 0 },
-          { count: 0 },
-          { count: 0 },
-          { count: 0 },
-          { count: 0 },
-          { count: 0 },
-        ] as { count: number | null }[],
-        markGlobalFallbackOnError: false,
-        request: async (signal) => {
-          const results = await Promise.all([
-            supabase.from("seo_metadata").select("id", { count: "exact", head: true }).abortSignal(signal),
-            supabase.from("custom_scripts").select("id", { count: "exact", head: true }).abortSignal(signal),
-            supabase.from("user_roles").select("id", { count: "exact", head: true }).abortSignal(signal),
-            supabase.from("blog_posts").select("id", { count: "exact", head: true }).abortSignal(signal),
-            supabase.from("media_assets").select("id", { count: "exact", head: true }).abortSignal(signal),
-            supabase.from("blog_categories").select("id", { count: "exact", head: true }).abortSignal(signal),
-          ]);
-
-          return results.map((item) => ({ count: item.count ?? 0 }));
-        },
-      });
-
-      setStats({
-        seoPages: seo.count || 0, scripts: scripts.count || 0, users: users.count || 0,
-        posts: posts.count || 0, media: media.count || 0, categories: cats.count || 0,
-      });
-      setLoading(false);
+      try {
+        const results = await Promise.all([
+          supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
+          supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
+          supabase.from("user_roles").select("id", { count: "exact", head: true }),
+          supabase.from("blog_posts").select("id", { count: "exact", head: true }),
+          supabase.from("media_assets").select("id", { count: "exact", head: true }),
+          supabase.from("blog_categories").select("id", { count: "exact", head: true }),
+        ]);
+        if (cancelled) return;
+        setStats({
+          seoPages: results[0].count ?? 0,
+          scripts: results[1].count ?? 0,
+          users: results[2].count ?? 0,
+          posts: results[3].count ?? 0,
+          media: results[4].count ?? 0,
+          categories: results[5].count ?? 0,
+        });
+      } catch {
+        // silently use defaults
+      }
+      if (!cancelled) setLoading(false);
     };
     fetchStats();
+    return () => { cancelled = true; };
   }, [location.key]);
 
   const cards = [
