@@ -67,12 +67,12 @@ const ScriptsManagement = () => {
     }
     setIsSaving(true);
     try {
-      const payload = { ...editing, updated_by: user?.id };
+      const payload: Record<string, unknown> = { ...editing, updated_by: user?.id };
       if (isNew) {
-        const { error } = await supabase.from("custom_scripts").insert(payload as any);
+        const { error } = await supabase.from("custom_scripts").insert(payload);
         if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       } else {
-        const { error } = await supabase.from("custom_scripts").update(payload as any).eq("id", editing.id!);
+        const { error } = await supabase.from("custom_scripts").update(payload).eq("id", editing.id!);
         if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       }
       toast({ title: t("ok.done") }); setEditing(null); void fetchScripts();

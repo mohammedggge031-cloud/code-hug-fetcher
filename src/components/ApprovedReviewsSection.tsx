@@ -93,7 +93,7 @@ const ApprovedReviewsSection = () => {
     queryKey: ["approved-reviews"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("student_reviews_approved" as any)
+        .from("student_reviews_approved")
         .select("*")
         .limit(12);
 
