@@ -5,7 +5,7 @@ import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight, Video }
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useNavigate, useLocation } from "react-router-dom";
-import { safeDataRequest } from "@/lib/safeRuntimeData";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 const StatCardSkeleton = () => (
