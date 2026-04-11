@@ -70,6 +70,29 @@ const LearnQuranWithTajweed = () => {
         "جدول مرن — ادرس التجويد في وقتك المناسب 24/7",
         "حصة تجريبية مجانية لتقييم مستواك الحالي ووضع خطة دراسية",
       ]}
+      levels={[
+        { titleEn: "Beginner", titleAr: "مبتدئ", descEn: "Learn letter articulation points and basic Tajweed rules.", descAr: "تعلم مخارج الحروف وقواعد التجويد الأساسية.", topicsEn: ["Makharij al-Huruf", "Heavy & light letters", "Noon Sakinah rules"], topicsAr: ["مخارج الحروف", "التفخيم والترقيق", "أحكام النون الساكنة"] },
+        { titleEn: "Intermediate", titleAr: "متوسط", descEn: "Master Madd rules and advanced letter interactions.", descAr: "إتقان أحكام المد وتفاعلات الحروف المتقدمة.", topicsEn: ["Madd rules", "Lam Shamsiyyah/Qamariyyah", "Waqf & Ibtida"], topicsAr: ["أحكام المد", "اللام الشمسية والقمرية", "الوقف والابتداء"] },
+        { titleEn: "Advanced", titleAr: "متقدم", descEn: "Refine recitation for Ijazah preparation.", descAr: "صقل التلاوة للتحضير للإجازة.", topicsEn: ["Qalqalah perfection", "Ghunnah calibration", "Recitation speed control"], topicsAr: ["إتقان القلقلة", "ضبط الغنة", "التحكم في سرعة التلاوة"] },
+      ]}
+      outcomesEn={["Read Quran with correct Tajweed rules", "Pronounce every letter from its proper Makhraj", "Apply Noon Sakinah, Madd & Waqf rules naturally", "Prepare for Ijazah certification"]}
+      outcomesAr={["قراءة القرآن بقواعد التجويد الصحيحة", "نطق كل حرف من مخرجه الصحيح", "تطبيق أحكام النون الساكنة والمد والوقف طبيعياً", "التحضير لشهادة الإجازة"]}
+      testimonials={[
+        { name: "Ahmed R.", country: "UK", textEn: "My Tajweed improved dramatically in just 3 months. The teacher corrected mistakes I didn't know I was making.", textAr: "تحسن تجويدي بشكل كبير في 3 أشهر فقط. المعلم صحح أخطاء لم أكن أعرف أنني أرتكبها.", rating: 5 },
+        { name: "Fatima S.", country: "USA", textEn: "Finally I can recite with confidence. The practical approach makes all the difference.", textAr: "أخيراً أستطيع التلاوة بثقة. النهج العملي يصنع كل الفرق.", rating: 5 },
+      ]}
+      relatedPages={[
+        { titleEn: "Tajweed Course", titleAr: "دورة التجويد", href: "/tajweed-course" },
+        { titleEn: "Quran for Beginners", titleAr: "القرآن للمبتدئين", href: "/quran-classes-for-beginners" },
+        { titleEn: "Ijazah Program", titleAr: "برنامج الإجازة", href: "/ijazah-program" },
+      ]}
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Learn Quran with Tajweed Online",
+        "description": "Master Quran recitation with proper Tajweed rules taught by certified Al-Azhar teachers.",
+        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
+      }}
       faqs={[
         { questionEn: "How long does it take to learn Tajweed?", questionAr: "كم يستغرق تعلم التجويد؟", answerEn: "Basic Tajweed rules can be learned in 3-4 months with consistent practice. Mastering advanced rules and achieving natural, fluent application typically takes 6-12 months. Our teachers create a personalized timeline based on your starting level.", answerAr: "قواعد التجويد الأساسية يمكن تعلمها في 3-4 أشهر مع التمرين المستمر. إتقان القواعد المتقدمة وتحقيق التطبيق الطبيعي والطلاقة يستغرق عادةً 6-12 شهراً. معلمونا يضعون جدولاً زمنياً مخصصاً بناءً على مستواك الابتدائي." },
         { questionEn: "Is Tajweed mandatory for reading Quran?", questionAr: "هل التجويد واجب لقراءة القرآن؟", answerEn: "Islamic scholars agree that basic Tajweed (at least the rules that prevent changing word meanings) is obligatory. Advanced beautification rules are recommended (Mustahabb). Either way, learning Tajweed elevates your connection with the Quran immensely.", answerAr: "يتفق علماء الإسلام على أن التجويد الأساسي (على الأقل القواعد التي تمنع تغيير معاني الكلمات) واجب. قواعد التحسين المتقدمة مستحبة. في كلتا الحالتين، تعلم التجويد يرفع اتصالك بالقرآن بشكل هائل." },

@@ -70,6 +70,29 @@ const NooraniQaidaOnline = () => {
         "جدول مرن عبر جميع المناطق الزمنية (متاحون 24/7)",
         "حصة تجريبية مجانية لتجربة تعليمنا قبل الالتزام",
       ]}
+      levels={[
+        { titleEn: "Letters & Sounds", titleAr: "الحروف والأصوات", descEn: "Learn individual Arabic letters and their sounds.", descAr: "تعلم الحروف العربية المفردة وأصواتها.", topicsEn: ["28 Arabic letters", "Short vowels (Harakat)", "Letter recognition"], topicsAr: ["28 حرف عربي", "الحركات القصيرة", "تمييز الحروف"] },
+        { titleEn: "Connections & Rules", titleAr: "الوصل والقواعد", descEn: "Read connected letters with Sukoon, Shaddah & Tanween.", descAr: "قراءة الحروف المتصلة مع السكون والشدة والتنوين.", topicsEn: ["Letter connections", "Sukoon & Shaddah", "Tanween rules"], topicsAr: ["وصل الحروف", "السكون والشدة", "قواعد التنوين"] },
+        { titleEn: "Quran Reading", titleAr: "قراءة القرآن", descEn: "Read Quranic verses with basic Tajweed applied.", descAr: "قراءة آيات قرآنية مع تطبيق التجويد الأساسي.", topicsEn: ["Madd letters", "Quranic words", "Basic Tajweed"], topicsAr: ["حروف المد", "كلمات قرآنية", "تجويد أساسي"] },
+      ]}
+      outcomesEn={["Read Arabic letters and words confidently", "Apply basic Tajweed rules naturally", "Read Quranic verses independently", "Strong foundation for advanced Quran study"]}
+      outcomesAr={["قراءة الحروف والكلمات العربية بثقة", "تطبيق قواعد التجويد الأساسية طبيعياً", "قراءة آيات قرآنية باستقلالية", "أساس قوي لدراسة القرآن المتقدمة"]}
+      testimonials={[
+        { name: "Sarah M.", country: "Canada", textEn: "My 5-year-old went from zero Arabic to reading Quran in 4 months. Amazing teachers!", textAr: "طفلتي ذات الـ 5 سنوات انتقلت من صفر عربية إلى قراءة القرآن في 4 أشهر. معلمات رائعات!", rating: 5 },
+        { name: "Omar K.", country: "Australia", textEn: "As an adult beginner, I was nervous. But the teacher was so patient. Best decision I made.", textAr: "كبالغ مبتدئ، كنت متوتراً. لكن المعلم كان صبوراً جداً. أفضل قرار اتخذته.", rating: 5 },
+      ]}
+      relatedPages={[
+        { titleEn: "Quran for Beginners", titleAr: "القرآن للمبتدئين", href: "/quran-classes-for-beginners" },
+        { titleEn: "Quran for Kids", titleAr: "القرآن للأطفال", href: "/quran-classes-for-kids" },
+        { titleEn: "Learn Quran with Tajweed", titleAr: "تعلم القرآن بالتجويد", href: "/learn-quran-with-tajweed" },
+      ]}
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Learn Noorani Qaida Online",
+        "description": "Step-by-step Arabic reading course for beginners using the Noorani Qaida method with certified Al-Azhar teachers.",
+        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
+      }}
       faqs={[
         { questionEn: "How long does it take to complete Noorani Qaida?", questionAr: "كم يستغرق إكمال القاعدة النورانية؟", answerEn: "Most students complete it in 3-6 months with regular practice. Children typically learn faster, while adult beginners may take slightly longer. The key is consistency — even 30 minutes daily makes a huge difference.", answerAr: "معظم الطلاب يكملونها في 3-6 أشهر مع التمرين المنتظم. الأطفال يتعلمون أسرع عادةً، بينما البالغون المبتدئون قد يحتاجون وقتاً أطول قليلاً. المفتاح هو الاستمرارية — حتى 30 دقيقة يومياً تحدث فرقاً كبيراً." },
         { questionEn: "Is Noorani Qaida suitable for adults?", questionAr: "هل القاعدة النورانية مناسبة للبالغين؟", answerEn: "Absolutely! While it's popular for children, the Noorani Qaida method works excellently for adults. Our adult students often say they wish they'd started sooner. The method is systematic and logical, which adults appreciate.", answerAr: "بالتأكيد! بينما تحظى بشعبية للأطفال، تعمل طريقة القاعدة النورانية بشكل ممتاز للبالغين. طلابنا البالغون غالباً يقولون إنهم يتمنون لو بدأوا أبكر. الطريقة منهجية ومنطقية، وهو ما يقدره البالغون." },

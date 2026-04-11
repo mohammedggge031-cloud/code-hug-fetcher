@@ -70,6 +70,29 @@ const QuranClassesForSisters = () => {
         "تتبع تقدم يومي وخطط تعلم مخصصة",
         "حصة تجريبية مجانية مع معلمة قبل الالتزام",
       ]}
+      levels={[
+        { titleEn: "Beginner Sisters", titleAr: "أخوات مبتدئات", descEn: "Start from Noorani Qaida with a patient female teacher.", descAr: "ابدئي من القاعدة النورانية مع معلمة صبورة.", topicsEn: ["Arabic letters", "Basic reading", "Short surahs"], topicsAr: ["الحروف العربية", "القراءة الأساسية", "سور قصيرة"] },
+        { titleEn: "Intermediate", titleAr: "متوسطات", descEn: "Improve recitation with Tajweed and start memorization.", descAr: "تحسين التلاوة بالتجويد وبدء الحفظ.", topicsEn: ["Tajweed rules", "Juz Amma memorization", "Recitation practice"], topicsAr: ["قواعد التجويد", "حفظ جزء عم", "تمرين التلاوة"] },
+        { titleEn: "Advanced", titleAr: "متقدمات", descEn: "Hifz program and Ijazah preparation with female scholars.", descAr: "برنامج حفظ وتحضير إجازة مع عالمات.", topicsEn: ["Full Hifz program", "Ijazah certification", "Advanced Tajweed"], topicsAr: ["برنامج حفظ كامل", "شهادة الإجازة", "تجويد متقدم"] },
+      ]}
+      outcomesEn={["Read Quran confidently with proper Tajweed", "Memorize Quran in a private, comfortable setting", "Learn Islamic studies from female scholars", "Achieve Ijazah certification with female Mujaziaat"]}
+      outcomesAr={["قراءة القرآن بثقة وتجويد صحيح", "حفظ القرآن في بيئة خاصة ومريحة", "تعلم الدراسات الإسلامية من عالمات", "الحصول على شهادة الإجازة مع مجيزات"]}
+      testimonials={[
+        { name: "Aisha T.", country: "UK", textEn: "Having a female teacher made all the difference. I feel completely comfortable and my recitation has improved so much.", textAr: "وجود معلمة صنع كل الفرق. أشعر بالراحة التامة وتلاوتي تحسنت كثيراً.", rating: 5 },
+        { name: "Maryam H.", country: "USA", textEn: "As a revert, I was scared to start. My teacher was so kind and patient. Now I read Quran daily alhamdulillah.", textAr: "كمسلمة جديدة، كنت خائفة من البدء. معلمتي كانت لطيفة وصبورة جداً. الآن أقرأ القرآن يومياً الحمد لله.", rating: 5 },
+      ]}
+      relatedPages={[
+        { titleEn: "Female Quran Teacher", titleAr: "معلمة قرآن", href: "/female-quran-teacher" },
+        { titleEn: "Quran for Adults", titleAr: "القرآن للكبار", href: "/quran-classes-for-adults" },
+        { titleEn: "Ijazah Program", titleAr: "برنامج الإجازة", href: "/ijazah-program" },
+      ]}
+      jsonLd={{
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Online Quran Classes for Sisters",
+        "description": "Private online Quran classes for sisters with certified female Al-Azhar teachers.",
+        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
+      }}
       faqs={[
         { questionEn: "Are all teachers female?", questionAr: "هل جميع المعلمات إناث؟", answerEn: "Yes, 100%. When you request a female teacher, you are guaranteed to learn exclusively with qualified female Al-Azhar graduates. We have a dedicated team of female teachers across all programs.", answerAr: "نعم، 100%. عندما تطلبين معلمة، مضمون أنك ستتعلمين حصرياً مع خريجات أزهر مؤهلات. لدينا فريق مخصص من المعلمات عبر جميع البرامج." },
         { questionEn: "Can I learn without turning on my camera?", questionAr: "هل يمكنني التعلم بدون تشغيل الكاميرا؟", answerEn: "Absolutely. Many of our sisters prefer audio-only classes, and our teachers are fully equipped to deliver excellent instruction without video. You'll use a shared screen/whiteboard for Quran reading practice.", answerAr: "بالتأكيد. كثير من أخواتنا يفضلن دروساً صوتية فقط، ومعلماتنا مجهزات تماماً لتقديم تعليم ممتاز بدون فيديو. ستستخدمين شاشة/سبورة مشتركة لتمرين قراءة القرآن." },
