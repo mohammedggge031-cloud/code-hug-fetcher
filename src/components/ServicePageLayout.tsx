@@ -183,7 +183,7 @@ const ServicePageJsonLd = ({ jsonLd, testimonials, faqJsonLd, breadcrumbJsonLd }
   }, []);
 
   // aggregateRating removed — Google doesn't support review snippets on Course/EducationalOrganization
-  const { aggregateRating: _removed, ...cleanJsonLd } = jsonLd as any;
+  const { aggregateRating: _removed, ...cleanJsonLd } = jsonLd as Record<string, unknown>;
 
   return (
     <div ref={containerRef} style={{ display: 'none' }}>

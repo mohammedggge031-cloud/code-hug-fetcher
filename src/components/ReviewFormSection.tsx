@@ -80,8 +80,9 @@ const ReviewFormSection = () => {
 
     setSubmitting(true);
     try {
-      const { error: dbError } = await supabase
-        .from("student_reviews" as any)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: dbError } = await (supabase as any)
+        .from("student_reviews")
         .insert({
           name: result.data.name,
           country: result.data.country,
@@ -90,7 +91,7 @@ const ReviewFormSection = () => {
           rating: result.data.rating,
           review_text: result.data.review_text,
           status: "pending",
-        } as any);
+        });
 
       if (dbError) throw dbError;
 

@@ -9,6 +9,7 @@ export interface VideoItem {
   categoryAr: string;
   language: "en" | "ar";
   isOurs?: boolean;
+  placement?: string[];
 }
 
 export const videoCategories = [

@@ -167,7 +167,7 @@ const UserRolesManagement = () => {
         return;
       }
 
-      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: newRole as any });
+      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: newRole } as never);
       if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       toast({ title: `✅ ${t("ok.done")}`, description: t("ok.role_assigned") });
       setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); setShowPassword(false); void fetchRoles();
