@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Search, Code, Users, FileText, Image, FolderOpen, ArrowUpRight, Video } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import { Skeleton } from "@/components/ui/skeleton";
 
