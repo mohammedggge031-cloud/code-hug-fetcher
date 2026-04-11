@@ -92,10 +92,10 @@ const ApprovedReviewsSection = () => {
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("student_reviews_approved")
+      const { data, error } = await (supabase
+        .from("student_reviews_approved" as never)
         .select("*")
-        .limit(12);
+        .limit(12) as unknown as Promise<{ data: ApprovedReview[] | null; error: { message: string } | null }>);
 
       if (error) throw error;
       return (data || []) as unknown as ApprovedReview[];

@@ -151,12 +151,12 @@ const SeoManagement = () => {
     }
     setIsSaving(true);
     try {
-      const payload: Record<string, unknown> = { ...editing, structured_data: structuredData, updated_by: user?.id };
+      const payload = { ...editing, structured_data: structuredData, updated_by: user?.id } as Record<string, unknown>;
       if (isNew) {
-        const { error } = await supabase.from("seo_metadata").insert(payload);
+        const { error } = await supabase.from("seo_metadata").insert(payload as never);
         if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       } else {
-        const { error } = await supabase.from("seo_metadata").update(payload).eq("id", editing.id!);
+        const { error } = await supabase.from("seo_metadata").update(payload as never).eq("id", editing.id!);
         if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
       }
       toast({ title: t("ok.done") }); setEditing(null); void fetchEntries();

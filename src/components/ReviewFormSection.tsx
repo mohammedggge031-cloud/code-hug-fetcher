@@ -80,8 +80,8 @@ const ReviewFormSection = () => {
 
     setSubmitting(true);
     try {
-      const { error: dbError } = await supabase
-        .from("student_reviews")
+      const { error: dbError } = await (supabase
+        .from("student_reviews" as never)
         .insert({
           name: result.data.name,
           country: result.data.country,
@@ -90,7 +90,7 @@ const ReviewFormSection = () => {
           rating: result.data.rating,
           review_text: result.data.review_text,
           status: "pending",
-        });
+        }) as unknown as Promise<{ error: { message: string } | null }>);
 
       if (dbError) throw dbError;
 
