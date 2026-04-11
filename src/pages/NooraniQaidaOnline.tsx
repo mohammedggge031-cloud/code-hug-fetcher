@@ -77,16 +77,6 @@ const NooraniQaidaOnline = () => {
         { questionEn: "Can my child start Noorani Qaida at age 4?", questionAr: "هل يمكن لطفلي بدء القاعدة النورانية في سن 4؟", answerEn: "Yes! Age 4-5 is actually ideal for starting. At this age, children are highly receptive to new sounds and can learn Arabic phonetics naturally. Our teachers use engaging, age-appropriate methods to keep young learners excited.", answerAr: "نعم! سن 4-5 سنوات مثالي فعلاً للبدء. في هذا العمر، الأطفال يتقبلون الأصوات الجديدة بشكل كبير ويمكنهم تعلم صوتيات العربية طبيعياً. معلمونا يستخدمون أساليب جذابة ومناسبة للعمر لإبقاء المتعلمين الصغار متحمسين." },
         { questionEn: "Do I need any prior Arabic knowledge?", questionAr: "هل أحتاج أي معرفة سابقة بالعربية؟", answerEn: "No! Noorani Qaida is designed for absolute beginners with zero Arabic knowledge. You'll start from the very first letter (Alif) and build up systematically. Many of our successful students started without knowing a single Arabic letter.", answerAr: "لا! القاعدة النورانية مصممة للمبتدئين تماماً بدون أي معرفة بالعربية. ستبدأ من الحرف الأول (ألف) وتتقدم بشكل منهجي. كثير من طلابنا الناجحين بدأوا بدون معرفة حرف عربي واحد." },
       ]}
-      structuredData={{
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Noorani Qaida Online Course",
-        "description": "Learn Noorani Qaida online with certified Al-Azhar teachers. Step-by-step Arabic reading for beginners.",
-        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
-        "educationalLevel": "Beginner",
-        "isAccessibleForFree": false,
-        "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "instructor": { "@type": "Person", "name": "Alhamd Academy Teachers" } }
-      }}
     />
   );
 };

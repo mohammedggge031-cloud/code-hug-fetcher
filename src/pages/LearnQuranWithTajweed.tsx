@@ -76,16 +76,6 @@ const LearnQuranWithTajweed = () => {
         { questionEn: "Can I learn Tajweed if I'm a complete beginner?", questionAr: "هل يمكنني تعلم التجويد إذا كنت مبتدئاً تماماً؟", answerEn: "Yes! We integrate Tajweed from the very beginning of your Quran learning journey. Even if you're starting with Noorani Qaida, our teachers introduce proper letter pronunciation (Makharij) from lesson one.", answerAr: "نعم! ندمج التجويد من بداية رحلة تعلم القرآن. حتى لو كنت تبدأ بالقاعدة النورانية، معلمونا يقدمون النطق الصحيح للحروف (المخارج) من الدرس الأول." },
         { questionEn: "What's the difference between this and your Tajweed Course?", questionAr: "ما الفرق بين هذا ودورة التجويد الخاصة بكم؟", answerEn: "Our Tajweed Course page focuses on the course curriculum. This page is for students searching specifically for 'learning Quran with Tajweed' — the integrated approach where Tajweed is applied throughout Quran reading, not studied in isolation.", answerAr: "صفحة دورة التجويد تركز على منهج الدورة. هذه الصفحة للطلاب الذين يبحثون تحديداً عن 'تعلم القرآن بالتجويد' — النهج المتكامل حيث يُطبق التجويد خلال قراءة القرآن، لا يُدرس بمعزل." },
       ]}
-      structuredData={{
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Learn Quran with Tajweed Online",
-        "description": "Master Quran recitation with proper Tajweed rules. Certified Al-Azhar teachers. One-on-one live sessions.",
-        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
-        "educationalLevel": "Beginner to Advanced",
-        "isAccessibleForFree": false,
-        "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "instructor": { "@type": "Person", "name": "Alhamd Academy Teachers" } }
-      }}
     />
   );
 };

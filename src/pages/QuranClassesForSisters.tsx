@@ -76,16 +76,6 @@ const QuranClassesForSisters = () => {
         { questionEn: "What ages do you accept for girls?", questionAr: "ما الأعمار التي تقبلونها للبنات؟", answerEn: "We accept girls from age 5 and up. Our female teachers are experienced with young learners and use engaging, age-appropriate teaching methods to keep them motivated.", answerAr: "نقبل البنات من سن 5 سنوات وأكبر. معلماتنا ذوات خبرة مع المتعلمات الصغيرات ويستخدمن أساليب تعليم جذابة ومناسبة للعمر لإبقائهن متحمسات." },
         { questionEn: "Can I schedule classes during my children's school hours?", questionAr: "هل يمكنني جدولة الدروس أثناء ساعات مدرسة أطفالي؟", answerEn: "Yes! Our flexible scheduling means you can book classes at any time that works for you — early morning, during school hours, evening, or weekends. Our teachers are available 24/7 across all time zones.", answerAr: "نعم! جدولنا المرن يعني أنك تستطيعين حجز الدروس في أي وقت يناسبك — صباحاً باكراً، أثناء ساعات المدرسة، مساءً، أو في عطلة نهاية الأسبوع. معلماتنا متاحات 24/7 عبر جميع المناطق الزمنية." },
       ]}
-      structuredData={{
-        "@context": "https://schema.org",
-        "@type": "Course",
-        "name": "Online Quran Classes for Sisters & Women",
-        "description": "Private online Quran classes for sisters with certified female Al-Azhar teachers.",
-        "provider": { "@type": "Organization", "name": "Alhamd Academy", "url": "https://alhamdacademy.net" },
-        "audience": { "@type": "EducationalAudience", "educationalRole": "student", "audienceType": "Women & Sisters" },
-        "isAccessibleForFree": false,
-        "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "instructor": { "@type": "Person", "name": "Alhamd Academy Female Teachers" } }
-      }}
     />
   );
 };
