@@ -15,31 +15,32 @@ const FALLBACK: PlacementVideo[] = [
 let cached: PlacementVideo[] | null = null;
 let pending: Promise<PlacementVideo[]> | null = null;
 
-function fetchVideos(): Promise<PlacementVideo[]> {
-  if (cached) return Promise.resolve(cached);
+async function fetchVideos(): Promise<PlacementVideo[]> {
+  if (cached) return cached;
   if (pending) return pending;
 
-  pending = Promise.resolve(supabase
-    .from("custom_scripts")
-    .select("script_content")
-    .eq("name", "video_library")
-    .maybeSingle()
-    .then(({ data, error }) => {
-      if (error || !data?.script_content) {
-        cached = FALLBACK;
-        return FALLBACK;
-      }
-      try {
-        const parsed = JSON.parse(data.script_content);
-        if (Array.isArray(parsed)) {
-          const filtered = parsed.filter((v: any) => v.placement?.includes("testimonials"));
-          cached = filtered.length > 0 ? filtered : FALLBACK;
-          return cached;
-        }
-      } catch {}
+  pending = (async () => {
+    const { data, error } = await supabase
+      .from("custom_scripts")
+      .select("script_content")
+      .eq("name", "video_library")
+      .maybeSingle();
+
+    if (error || !data?.script_content) {
       cached = FALLBACK;
       return FALLBACK;
-    });
+    }
+    try {
+      const parsed = JSON.parse(data.script_content);
+      if (Array.isArray(parsed)) {
+        const filtered = parsed.filter((v: any) => v.placement?.includes("testimonials"));
+        cached = filtered.length > 0 ? filtered : FALLBACK;
+        return cached;
+      }
+    } catch {}
+    cached = FALLBACK;
+    return FALLBACK;
+  })();
 
   return pending;
 }
