@@ -127,9 +127,8 @@ const App = () => (
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/:slug" element={<LocationPage />} />
 
-              {/* Admin routes – single AuthProvider shared across login + dashboard */}
-              <Route element={<AuthProvider><AdminLangProvider><Suspense fallback={<Loader />}><Routes><Route path="*" element={null} /></Routes></Suspense></AdminLangProvider></AuthProvider>} />
-              <Route path="/admin" element={<AuthProvider><AdminLangProvider><Suspense fallback={<Loader />}><AdminRoutes /></Suspense></AdminLangProvider></AuthProvider>}>
+              {/* Admin routes – single shared AuthProvider for login + dashboard */}
+              <Route path="/admin" element={<AuthProvider><AdminLangProvider><Outlet /></AdminLangProvider></AuthProvider>}>
                 <Route path="login" element={<AdminLogin />} />
                 <Route element={<ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute>}>
                   <Route index element={<AdminDashboard />} />
