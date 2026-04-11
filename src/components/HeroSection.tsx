@@ -64,10 +64,10 @@ const HeroSection = () => {
               </span>
             </div>
 
-            <h1 className="animate-fade-up motion-delay-100 mb-4 text-[2rem] font-bold leading-[1.18] tracking-[-0.02em] text-primary-foreground sm:text-4xl sm:leading-tight md:text-5xl md:tracking-[-0.03em] lg:text-[3.35rem] xl:text-6xl">
+            <h1 className="animate-fade-up motion-delay-100 mb-4 text-[2rem] font-bold leading-[1.3] tracking-[-0.02em] text-primary-foreground sm:text-4xl sm:leading-[1.25] md:text-5xl md:leading-[1.22] md:tracking-[-0.03em] lg:text-[3.35rem] xl:text-6xl overflow-visible">
               {t("One-on-One Quran & Arabic Classes", "دروس قرآن وعربية فردية")}
               <br />
-              <span className="mt-1 block text-gradient-gold text-[1.6rem] sm:text-3xl md:text-4xl lg:text-[2.8rem] xl:text-5xl">
+              <span className="mt-2 block text-gradient-gold text-[1.6rem] leading-[1.4] sm:text-3xl sm:leading-[1.35] md:text-4xl md:leading-[1.3] lg:text-[2.8rem] xl:text-5xl overflow-visible">
                 {t("Not Just Classes — A Life-Changing Journey", "مش بس حصص — دا رحلة تغيير")}
               </span>
             </h1>
