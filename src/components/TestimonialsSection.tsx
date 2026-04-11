@@ -5,15 +5,10 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import { supabase } from "@/integrations/supabase/client";
+import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
 
-interface PlacementVideo {
-  youtubeId: string;
-  titleEn: string;
-  titleAr: string;
-  placement?: string[];
-}
 
 const testimonials = [
   {
@@ -184,28 +179,7 @@ const TestimonialsSection = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [viewMode, setViewMode] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-  const [placementVideos, setPlacementVideos] = useState<PlacementVideo[]>([]);
-
-  // Load videos with "testimonials" placement from DB
-  useEffect(() => {
-    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "Non-Arab Student Reciting Quran", titleAr: "طالب غير عربي يقرأ القرآن", placement: ["testimonials"] }];
-    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
-      .then(({ data, error }) => {
-        if (error || !data?.script_content) {
-          setPlacementVideos(fallback);
-          return;
-        }
-        try {
-          const parsed = JSON.parse(data.script_content);
-          if (Array.isArray(parsed)) {
-            const filtered = parsed.filter((v: any) => v.placement?.includes("testimonials"));
-            setPlacementVideos(filtered.length > 0 ? filtered : fallback);
-            return;
-          }
-        } catch {}
-        setPlacementVideos(fallback);
-      });
-  }, []);
+  const placementVideos = usePlacementVideos();
 
   useEffect(() => {
     const check = () => {

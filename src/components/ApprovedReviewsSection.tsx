@@ -2,9 +2,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
 import { Star, Quote, Play } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
@@ -20,12 +21,6 @@ interface ApprovedReview {
   created_at: string;
 }
 
-interface PlacementVideo {
-  youtubeId: string;
-  titleEn: string;
-  titleAr: string;
-  placement?: string[];
-}
 
 const ApprovedIntroVideos = ({ t, fadeIn, videos }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any; videos: PlacementVideo[] }) => {
   const [playingId, setPlayingId] = useState<string | null>(null);
@@ -92,28 +87,7 @@ const ApprovedIntroVideos = ({ t, fadeIn, videos }: { t: (en: string, ar: string
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
   const { fadeIn, fadeInUp } = useMobileSafeMotion();
-  const [placementVideos, setPlacementVideos] = useState<PlacementVideo[]>([]);
-
-  // Load videos with "testimonials" placement
-  useEffect(() => {
-    const fallback: PlacementVideo[] = [{ youtubeId: "ki2Nqq_HJ6U", titleEn: "Non-Arab Student Reciting Quran", titleAr: "طالب غير عربي يقرأ القرآن", placement: ["testimonials"] }];
-    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
-      .then(({ data, error }) => {
-        if (error || !data?.script_content) {
-          setPlacementVideos(fallback);
-          return;
-        }
-        try {
-          const parsed = JSON.parse(data.script_content);
-          if (Array.isArray(parsed)) {
-            const filtered = parsed.filter((v: any) => v.placement?.includes("testimonials"));
-            setPlacementVideos(filtered.length > 0 ? filtered : fallback);
-            return;
-          }
-        } catch {}
-        setPlacementVideos(fallback);
-      });
-  }, []);
+  const placementVideos = usePlacementVideos();
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
