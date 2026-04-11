@@ -4,14 +4,7 @@
   "framework": "vite",
   "cleanUrls": true,
   "trailingSlash": false,
-  "redirects": [
-    {
-      "source": "/:path(.*)",
-      "has": [{ "type": "host", "value": "www.alhamdacademy.net" }],
-      "destination": "https://alhamdacademy.net/:path",
-      "permanent": true
-    }
-  ],
+  "redirects": [],
   "rewrites": [
     {
       "source": "/((?!assets/|favicon|og-image|quran-hero|apple-touch-icon|site\\.webmanifest|robots\\.txt|sitemap|_redirects|\\.well-known/).*)",
