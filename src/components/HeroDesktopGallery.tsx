@@ -24,10 +24,10 @@ const HeroDesktopGallery = () => {
   }, []);
 
   return (
-    <div className="hidden lg:flex justify-center animate-fade-in motion-reduce:animate-none motion-delay-300">
+    <div className="hidden md:flex justify-center animate-fade-in motion-reduce:animate-none motion-delay-300">
       <div className="relative">
         <div className="absolute -inset-6 rounded-3xl bg-accent/20 blur-3xl" />
-        <div className="relative w-[380px] h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20">
+        <div className="relative w-[280px] h-[340px] md:w-[300px] md:h-[380px] lg:w-[380px] lg:h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20">
           {heroImages.map((src, idx) => (
             <img
               key={idx}
@@ -62,7 +62,7 @@ const HeroDesktopGallery = () => {
         </div>
 
         {/* Native teachers badge */}
-        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-card shadow-elevated z-20 border border-accent/20">
+        <div className="absolute top-1/2 -start-14 px-5 py-3 rounded-2xl bg-card shadow-elevated z-20 border border-accent/20 hidden lg:block">
           <div className="flex items-center gap-3">
             <EgyptFlag className="w-8 h-6 rounded-sm shadow-sm" />
             <div>

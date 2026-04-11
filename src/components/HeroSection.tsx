@@ -21,11 +21,11 @@ const stats = [
 
 const HeroSection = () => {
   const { t } = useLanguage();
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    const update = () => setIsDesktop(media.matches);
+    const media = window.matchMedia("(min-width: 768px)");
+    const update = () => setShowGallery(media.matches);
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
@@ -131,8 +131,8 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {isDesktop && (
-            <Suspense fallback={<div className="hidden h-[460px] w-[380px] lg:block" />}>
+          {showGallery && (
+            <Suspense fallback={<div className="hidden h-[340px] w-[280px] md:block lg:h-[460px] lg:w-[380px]" />}>
               <DesktopGallery />
             </Suspense>
           )}

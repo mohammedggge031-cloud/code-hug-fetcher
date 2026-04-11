@@ -7,10 +7,10 @@ import { AdminLangProvider } from "@/contexts/AdminLangContext";
 import { lazy, Suspense } from "react";
 
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 
 // Lazy load non-critical UI overlays
-const Toaster = lazy(() => import("@/components/ui/toaster").then(m => ({ default: m.Toaster })));
-const Sonner = lazy(() => import("@/components/ui/sonner").then(m => ({ default: m.Toaster })));
 const ScrollTopButton = lazy(() => import("@/components/ScrollTopButton"));
 const WhatsAppButton = lazy(() => import("@/components/WhatsAppButton"));
 const FloatingBookingFAB = lazy(() => import("@/components/FloatingBookingFAB"));
@@ -89,8 +89,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <Suspense fallback={null}><Toaster /></Suspense>
-        <Suspense fallback={null}><Sonner /></Suspense>
+        <Toaster />
+        <Sonner />
         <BrowserRouter>
           <ScrollToTop />
           <FloatingActions />
