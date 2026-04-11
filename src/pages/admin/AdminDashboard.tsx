@@ -25,6 +25,7 @@ const AdminDashboard = () => {
   const { role } = useAuth();
   const { t } = useAdminLang();
   const navigate = useNavigate();
+  const location = useLocation();
   const [stats, setStats] = useState({ seoPages: 0, scripts: 0, users: 0, posts: 0, media: 0, categories: 0 });
   const [loading, setLoading] = useState(true);
 
