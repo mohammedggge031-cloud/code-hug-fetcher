@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { getFlagUrl } from "@/data/countries";
 import { supabase } from "@/integrations/supabase/client";
+import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
 

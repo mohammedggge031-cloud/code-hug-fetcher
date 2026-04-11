@@ -5,6 +5,7 @@ import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
