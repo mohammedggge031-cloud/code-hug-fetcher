@@ -6,8 +6,9 @@ import heroStudent2 from "@/assets/hero-student2.webp";
 import heroStudent3 from "@/assets/hero-student3.webp";
 import heroStudent4 from "@/assets/hero-student4.webp";
 import heroStudent5 from "@/assets/hero-student5.webp";
+import heroStudent6 from "@/assets/hero-student6.webp";
 
-const heroImages = [heroStudent1, heroStudent2, heroStudent3, heroStudent4, heroStudent5];
+const heroImages = [heroStudent1, heroStudent2, heroStudent6, heroStudent3, heroStudent4, heroStudent5];
 import logoImg from "@/assets/logo.webp";
 const logoImage = logoImg;
 
