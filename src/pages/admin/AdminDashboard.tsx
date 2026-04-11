@@ -62,7 +62,7 @@ const AdminDashboard = () => {
       setLoading(false);
     };
     fetchStats();
-  }, []);
+  }, [location.key]);
 
   const cards = [
     { title: t("dash.posts"), value: stats.posts, icon: FileText, desc: t("dash.posts.desc"), href: "/admin/blog", color: "text-blue-600 bg-blue-500/10" },
