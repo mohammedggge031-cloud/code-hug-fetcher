@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { user, loading, role } = useAuth();
-  const [allowRender, setAllowRender] = useState(false);
 
-  useEffect(() => {
-    const timeout = window.setTimeout(() => setAllowRender(true), 3200);
-    return () => window.clearTimeout(timeout);
-  }, []);
-
-  if (loading && !allowRender) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -20,6 +13,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) return <Navigate to="/admin/login" replace />;
+
   if (!role) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -31,7 +25,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  return <>{children}</>;
+  return children ? <>{children}</> : <Outlet />;
 };
 
 export default ProtectedRoute;
