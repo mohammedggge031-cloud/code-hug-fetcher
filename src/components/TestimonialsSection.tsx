@@ -9,12 +9,6 @@ import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVid
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
 
-interface PlacementVideo {
-  youtubeId: string;
-  titleEn: string;
-  titleAr: string;
-  placement?: string[];
-}
 
 const testimonials = [
   {

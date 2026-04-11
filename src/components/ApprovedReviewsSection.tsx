@@ -21,12 +21,6 @@ interface ApprovedReview {
   created_at: string;
 }
 
-interface PlacementVideo {
-  youtubeId: string;
-  titleEn: string;
-  titleAr: string;
-  placement?: string[];
-}
 
 const ApprovedIntroVideos = ({ t, fadeIn, videos }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any; videos: PlacementVideo[] }) => {
   const [playingId, setPlayingId] = useState<string | null>(null);
