@@ -50,8 +50,6 @@ const NooraniQaidaOnline = () => {
         { icon: Clock, titleEn: "Busy Professionals", titleAr: "المهنيون المشغولون", descEn: "Flexible scheduling — learn Noorani Qaida at your own pace, even with a busy life.", descAr: "جدول مرن — تعلم القاعدة النورانية بوتيرتك الخاصة، حتى مع حياة مشغولة." },
         { icon: Award, titleEn: "Parents Learning with Kids", titleAr: "آباء يتعلمون مع أطفالهم", descEn: "Many parents join alongside their children — separate sessions, same beautiful goal.", descAr: "كثير من الآباء ينضمون مع أطفالهم — جلسات منفصلة، نفس الهدف الجميل." },
       ]}
-      featuresTitleEn="Why Learn Noorani Qaida at Alhamd Academy"
-      featuresTitleAr="لماذا تتعلم القاعدة النورانية في أكاديمية الحمد"
       featuresEn={[
         "Certified Al-Azhar teachers specialized in Noorani Qaida methodology",
         "One-on-one live sessions — not group classes or recorded videos",
@@ -72,8 +70,6 @@ const NooraniQaidaOnline = () => {
         "جدول مرن عبر جميع المناطق الزمنية (متاحون 24/7)",
         "حصة تجريبية مجانية لتجربة تعليمنا قبل الالتزام",
       ]}
-      faqsTitleEn="Common Questions About Noorani Qaida"
-      faqsTitleAr="أسئلة شائعة حول القاعدة النورانية"
       faqs={[
         { questionEn: "How long does it take to complete Noorani Qaida?", questionAr: "كم يستغرق إكمال القاعدة النورانية؟", answerEn: "Most students complete it in 3-6 months with regular practice. Children typically learn faster, while adult beginners may take slightly longer. The key is consistency — even 30 minutes daily makes a huge difference.", answerAr: "معظم الطلاب يكملونها في 3-6 أشهر مع التمرين المنتظم. الأطفال يتعلمون أسرع عادةً، بينما البالغون المبتدئون قد يحتاجون وقتاً أطول قليلاً. المفتاح هو الاستمرارية — حتى 30 دقيقة يومياً تحدث فرقاً كبيراً." },
         { questionEn: "Is Noorani Qaida suitable for adults?", questionAr: "هل القاعدة النورانية مناسبة للبالغين؟", answerEn: "Absolutely! While it's popular for children, the Noorani Qaida method works excellently for adults. Our adult students often say they wish they'd started sooner. The method is systematic and logical, which adults appreciate.", answerAr: "بالتأكيد! بينما تحظى بشعبية للأطفال، تعمل طريقة القاعدة النورانية بشكل ممتاز للبالغين. طلابنا البالغون غالباً يقولون إنهم يتمنون لو بدأوا أبكر. الطريقة منهجية ومنطقية، وهو ما يقدره البالغون." },

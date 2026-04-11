@@ -50,8 +50,6 @@ const QuranClassesForSisters = () => {
         { icon: Clock, titleEn: "Revert Sisters", titleAr: "أخوات مسلمات جديدات", descEn: "New to Islam? Our female teachers provide gentle, patient guidance from the very beginning.", descAr: "جديدة على الإسلام؟ معلماتنا يقدمن إرشاداً لطيفاً وصبوراً من البداية." },
         { icon: Award, titleEn: "Seeking Ijazah", titleAr: "الباحثات عن الإجازة", descEn: "Advanced sisters working toward Quran certification with our qualified female Mujaziaat.", descAr: "أخوات متقدمات يعملن نحو شهادة القرآن مع مجيزاتنا المؤهلات." },
       ]}
-      featuresTitleEn="What Makes Our Sisters Program Special"
-      featuresTitleAr="ما يميز برنامج الأخوات"
       featuresEn={[
         "100% female teaching staff — certified Al-Azhar graduates",
         "Private one-on-one sessions — no mixed or group classes",
@@ -72,8 +70,6 @@ const QuranClassesForSisters = () => {
         "تتبع تقدم يومي وخطط تعلم مخصصة",
         "حصة تجريبية مجانية مع معلمة قبل الالتزام",
       ]}
-      faqsTitleEn="Questions About Our Sisters Program"
-      faqsTitleAr="أسئلة حول برنامج الأخوات"
       faqs={[
         { questionEn: "Are all teachers female?", questionAr: "هل جميع المعلمات إناث؟", answerEn: "Yes, 100%. When you request a female teacher, you are guaranteed to learn exclusively with qualified female Al-Azhar graduates. We have a dedicated team of female teachers across all programs.", answerAr: "نعم، 100%. عندما تطلبين معلمة، مضمون أنك ستتعلمين حصرياً مع خريجات أزهر مؤهلات. لدينا فريق مخصص من المعلمات عبر جميع البرامج." },
         { questionEn: "Can I learn without turning on my camera?", questionAr: "هل يمكنني التعلم بدون تشغيل الكاميرا؟", answerEn: "Absolutely. Many of our sisters prefer audio-only classes, and our teachers are fully equipped to deliver excellent instruction without video. You'll use a shared screen/whiteboard for Quran reading practice.", answerAr: "بالتأكيد. كثير من أخواتنا يفضلن دروساً صوتية فقط، ومعلماتنا مجهزات تماماً لتقديم تعليم ممتاز بدون فيديو. ستستخدمين شاشة/سبورة مشتركة لتمرين قراءة القرآن." },

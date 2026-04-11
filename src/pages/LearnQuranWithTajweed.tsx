@@ -50,8 +50,6 @@ const LearnQuranWithTajweed = () => {
         { icon: Clock, titleEn: "Self-Taught Readers", titleAr: "متعلمون ذاتياً", descEn: "Learned Quran reading on your own? A teacher can identify and correct mistakes you don't even know you're making.", descAr: "تعلمت قراءة القرآن بنفسك؟ معلم يمكنه تحديد وتصحيح أخطاء لا تعرف حتى أنك ترتكبها." },
         { icon: Shield, titleEn: "Complete Beginners", titleAr: "مبتدئون تماماً", descEn: "New to Quran reading? We integrate basic Tajweed from day one so you build correct habits from the start.", descAr: "جديد على قراءة القرآن؟ ندمج التجويد الأساسي من اليوم الأول لتبني عادات صحيحة من البداية." },
       ]}
-      featuresTitleEn="Why Learn Tajweed at Alhamd Academy"
-      featuresTitleAr="لماذا تتعلم التجويد في أكاديمية الحمد"
       featuresEn={[
         "Teachers with Ijazah in Quran recitation with Sanad to Prophet Muhammad ﷺ",
         "Practical application — every rule applied immediately to Quran verses",
@@ -72,8 +70,6 @@ const LearnQuranWithTajweed = () => {
         "جدول مرن — ادرس التجويد في وقتك المناسب 24/7",
         "حصة تجريبية مجانية لتقييم مستواك الحالي ووضع خطة دراسية",
       ]}
-      faqsTitleEn="Common Questions About Tajweed"
-      faqsTitleAr="أسئلة شائعة حول التجويد"
       faqs={[
         { questionEn: "How long does it take to learn Tajweed?", questionAr: "كم يستغرق تعلم التجويد؟", answerEn: "Basic Tajweed rules can be learned in 3-4 months with consistent practice. Mastering advanced rules and achieving natural, fluent application typically takes 6-12 months. Our teachers create a personalized timeline based on your starting level.", answerAr: "قواعد التجويد الأساسية يمكن تعلمها في 3-4 أشهر مع التمرين المستمر. إتقان القواعد المتقدمة وتحقيق التطبيق الطبيعي والطلاقة يستغرق عادةً 6-12 شهراً. معلمونا يضعون جدولاً زمنياً مخصصاً بناءً على مستواك الابتدائي." },
         { questionEn: "Is Tajweed mandatory for reading Quran?", questionAr: "هل التجويد واجب لقراءة القرآن؟", answerEn: "Islamic scholars agree that basic Tajweed (at least the rules that prevent changing word meanings) is obligatory. Advanced beautification rules are recommended (Mustahabb). Either way, learning Tajweed elevates your connection with the Quran immensely.", answerAr: "يتفق علماء الإسلام على أن التجويد الأساسي (على الأقل القواعد التي تمنع تغيير معاني الكلمات) واجب. قواعد التحسين المتقدمة مستحبة. في كلتا الحالتين، تعلم التجويد يرفع اتصالك بالقرآن بشكل هائل." },
