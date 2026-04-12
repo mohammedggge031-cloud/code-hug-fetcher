@@ -7,14 +7,12 @@ const WhatsAppButton = () => {
   const isVisible = useFloatingActionVisibility(380);
   const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
 
-  if (!isVisible) return null;
-
   return (
     <a
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="floating-action-shell floating-fab-whatsapp fab-gentle-bounce whatsapp-fab flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-card md:h-14 md:w-14 md:shadow-elevated"
+      className={`floating-action-shell floating-fab-whatsapp fab-gentle-bounce whatsapp-fab flex h-12 w-12 items-center justify-center rounded-full floating-action-whatsapp shadow-card md:h-14 md:w-14 md:shadow-elevated transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       aria-label="Chat on WhatsApp"
     >
       <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
