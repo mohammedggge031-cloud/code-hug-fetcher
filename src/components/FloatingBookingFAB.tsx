@@ -7,13 +7,11 @@ const FloatingBookingFAB = () => {
   const { t } = useLanguage();
   const isVisible = useFloatingActionVisibility(320);
 
-  if (!isVisible) return null;
-
   return (
     <button
       type="button"
       onClick={() => scrollToContactForm()}
-      className="floating-action-shell floating-fab-booking fab-gentle-bounce group relative"
+      className={`floating-action-shell floating-fab-booking fab-gentle-bounce group relative transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
       aria-label={t("Book a Free Trial", "احجز حصة مجانية")}
       style={{ animationDelay: "0.25s" }}
     >
