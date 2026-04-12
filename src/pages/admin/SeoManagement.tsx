@@ -154,7 +154,7 @@ const SeoManagement = () => {
     }
     setIsSaving(true);
     try {
-      const payload = { ...editing, structured_data: structuredData, updated_by: user?.id } as Record<string, unknown>;
+      const payload = { ...editing, structured_data: structuredData, updated_by: user?.id, updated_at: new Date().toISOString() } as Record<string, unknown>;
       if (isNew) {
         const { error } = await supabase.from("seo_metadata").insert(payload as never);
         if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
