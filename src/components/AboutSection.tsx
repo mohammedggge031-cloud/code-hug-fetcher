@@ -7,35 +7,27 @@ import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 
 const AboutSection = () => {
   const { t } = useLanguage();
-  const { isMobile, fadeIn } = useMobileSafeMotion();
-
-  const slideLeft = isMobile
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } }
-    : { initial: { opacity: 0, x: -30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true } };
-
-  const slideRight = isMobile
-    ? { initial: { opacity: 0 }, whileInView: { opacity: 1 }, viewport: { once: true } }
-    : { initial: { opacity: 0, x: 30 }, whileInView: { opacity: 1, x: 0 }, viewport: { once: true } };
+  const { slideInLeft, slideInRight, fadeIn } = useMobileSafeMotion();
 
   return (
     <section id="about" className="py-16 sm:py-20 md:py-24 bg-section" aria-label="About Alhamd Academy">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
-          <motion.div {...slideLeft} className="flex justify-center">
-            <div className="relative mx-4 sm:mx-0">
-              <div className="w-56 h-56 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 rounded-3xl bg-primary/5 flex items-center justify-center border border-border shadow-card overflow-hidden">
-                <img src={logo} alt="Alhamd Academy - Professional Online Quran, Arabic and Islamic Studies Academy" width={256} height={256} className="w-32 h-32 sm:w-44 sm:h-44 md:w-52 md:h-52 lg:w-56 lg:h-56 object-contain" loading="lazy" decoding="async" />
+          <motion.div {...slideInLeft()} className="flex justify-center">
+            <div className="relative">
+              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-3xl bg-card flex items-center justify-center border border-border shadow-lg overflow-hidden">
+                <img src={logo} alt="Alhamd Academy - Professional Online Quran, Arabic and Islamic Studies Academy" width={256} height={256} className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-52 lg:h-52 object-contain" loading="lazy" decoding="async" />
               </div>
-              <div className="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 w-16 h-16 sm:w-24 sm:h-24 rounded-2xl bg-accent/20 -z-10" />
-              <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 w-10 h-10 sm:w-16 sm:h-16 rounded-xl bg-primary/10 -z-10" />
+              <div className="absolute -bottom-2.5 -right-2.5 sm:-bottom-3 sm:-right-3 w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-accent/25 -z-10" />
+              <div className="absolute -top-2.5 -left-2.5 sm:-top-3 sm:-left-3 w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-primary/15 -z-10" />
             </div>
           </motion.div>
 
-          <motion.div {...slideRight}>
+          <motion.div {...slideInRight()}>
             <span className="text-sm font-semibold text-accent uppercase tracking-wider">
               {t("About Us", "من نحن")}
             </span>
-            <motion.h2 {...slideRight} className="text-3xl md:text-5xl font-bold text-foreground mt-3 mb-6">
+            <motion.h2 {...fadeIn(0.1)} className="text-3xl md:text-5xl font-bold text-foreground mt-3 mb-6">
               {t("Alhamd Academy", "أكاديمية الحمد")}
             </motion.h2>
             <p className="text-muted-foreground leading-relaxed mb-6">
