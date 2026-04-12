@@ -54,7 +54,7 @@ const Navbar = () => {
                 onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }}
                 className="flex items-center gap-2.5 shrink-0"
               >
-                <img src={logo} alt="Alhamd Academy" width={48} height={48} loading="eager" decoding="async" className="h-12 w-12 object-cover rounded-xl shadow-soft border-2 border-accent/20" />
+                <img src={logo} alt="Alhamd Academy" width={48} height={48} loading="eager" decoding="async" className="h-12 w-12 object-contain rounded-lg" />
                 <div className="flex flex-col leading-tight">
                   <span className="text-[13px] font-heading font-extrabold text-primary-foreground uppercase tracking-wider">
                     {t("Alhamd", "الحمد")}
