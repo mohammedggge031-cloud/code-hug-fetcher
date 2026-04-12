@@ -11,7 +11,6 @@ import { Play, X, Globe, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { Button } from "@/components/ui/button";
-import { Button } from "@/components/ui/button";
 
 const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: number; onOpen: (youtubeId: string) => void }) => {
   const { t } = useLanguage();
