@@ -17,7 +17,8 @@ export const useFloatingActionVisibility = (mobileOffset = 340) => {
 
     const update = () => {
       const requiresScroll = touchMedia.matches;
-      const nextVisible = !requiresScroll || window.scrollY > mobileOffset;
+      const menuOpen = document.body.classList.contains("menu-open");
+      const nextVisible = !menuOpen && (!requiresScroll || window.scrollY > mobileOffset);
       setVisible((prev) => (prev === nextVisible ? prev : nextVisible));
     };
 

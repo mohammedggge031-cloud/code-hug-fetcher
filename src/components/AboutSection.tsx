@@ -15,8 +15,8 @@ const AboutSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
           <motion.div {...slideInLeft()} className="flex justify-center">
             <div className="relative">
-              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-3xl bg-card flex items-center justify-center overflow-hidden">
-                <img src={logo} alt="Alhamd Academy - Professional Online Quran, Arabic and Islamic Studies Academy" width={256} height={256} className="w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52 lg:w-56 lg:h-56 object-contain" loading="lazy" decoding="async" />
+              <div className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 rounded-3xl bg-card flex items-center justify-center border border-border shadow-lg overflow-hidden">
+                <img src={logo} alt="Alhamd Academy - Professional Online Quran, Arabic and Islamic Studies Academy" width={256} height={256} className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-52 lg:h-52 object-contain" loading="lazy" decoding="async" />
               </div>
 
 
