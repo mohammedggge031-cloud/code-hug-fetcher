@@ -3,7 +3,7 @@ import { ChevronDown, Globe } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 import type { NavLinkWithDropdown, SocialLink } from "./types";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-new.webp";
 
 interface MobileMenuProps {
   links: NavLinkWithDropdown[];
