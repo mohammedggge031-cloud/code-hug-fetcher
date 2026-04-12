@@ -168,6 +168,11 @@ const Videos = () => {
           </div>
         </section>
 
+        {loadingVideos ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : <>
         {/* Our Videos Section */}
         {ourVideos.length > 0 && (
           <section className="py-12 sm:py-16 bg-secondary/30">
