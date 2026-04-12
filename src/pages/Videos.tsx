@@ -67,28 +67,24 @@ const Videos = () => {
 
   useEffect(() => {
     setLoadingVideos(true);
-    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
-      .then(async ({ data }) => {
+    const loadVideos = async () => {
+      try {
+        const { data } = await supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle();
         if (data?.script_content) {
-          try {
-            const parsed = JSON.parse(data.script_content);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setVideos(parsed);
-              setLoadingVideos(false);
-              return;
-            }
-          } catch {}
+          const parsed = JSON.parse(data.script_content);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setVideos(parsed);
+            setLoadingVideos(false);
+            return;
+          }
         }
-        // Fallback to hardcoded only if DB has nothing
-        const { videos: hc } = await import("@/data/videos");
-        setVideos(hc);
-        setLoadingVideos(false);
-      })
-      .catch(async () => {
-        const { videos: hc } = await import("@/data/videos");
-        setVideos(hc);
-        setLoadingVideos(false);
-      });
+      } catch {}
+      // Fallback to hardcoded only if DB has nothing
+      const { videos: hc } = await import("@/data/videos");
+      setVideos(hc);
+      setLoadingVideos(false);
+    };
+    loadVideos();
   }, []);
 
   const handleOpenVideo = useCallback((youtubeId: string) => {
