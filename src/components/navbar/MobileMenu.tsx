@@ -39,18 +39,18 @@ const MobileMenu = ({
     >
       <div className="relative flex h-full flex-col">
         {/* Top: Logo on right */}
-        <div className="flex items-center justify-end px-6 pt-6 pb-4">
+        <div className="flex items-center justify-end px-6 pt-4 pb-2">
           <Link to="/" onClick={(e) => { e.preventDefault(); scrollToTopRoute(); }} className="flex items-center gap-2.5">
             <span className="text-xs font-heading font-bold text-primary-foreground/80 uppercase tracking-widest">
               {t("Alhamd Academy", "أكاديمية الحمد")}
             </span>
-            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft border border-accent/20" />
+            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-contain rounded-lg" />
           </Link>
         </div>
 
         {/* Menu items */}
-        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-24 scrollbar-hide touch-pan-y [-webkit-overflow-scrolling:touch]" aria-label="Mobile navigation">
-          <div className="space-y-0.5">
+        <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-20 scrollbar-hide touch-pan-y [-webkit-overflow-scrolling:touch]" aria-label="Mobile navigation">
+          <div className="space-y-0">
             {links.map((l) => {
               const hasDropdown = l.dropdown && l.dropdown.length > 0;
               const isExpanded = expandedMobile === l.en;
@@ -63,7 +63,7 @@ const MobileMenu = ({
                         <Link
                           to={l.href}
                           onClick={closeMobileMenu}
-                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-2.5 text-sm font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </Link>
@@ -71,7 +71,7 @@ const MobileMenu = ({
                         <a
                           href={l.href}
                           onClick={(e) => { handleAnchorClick(e, l.href); }}
-                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-2.5 text-sm font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </a>
@@ -101,7 +101,7 @@ const MobileMenu = ({
                     <Link
                       to={l.href}
                       onClick={closeMobileMenu}
-                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-2.5 text-sm font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </Link>
@@ -109,7 +109,7 @@ const MobileMenu = ({
                     <a
                       href={l.href}
                       onClick={(e) => { handleAnchorClick(e, l.href); }}
-                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-2.5 text-sm font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </a>
