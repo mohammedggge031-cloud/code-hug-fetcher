@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Mail, Phone, GraduationCap, BookOpen, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { FacebookIcon, InstagramIcon, WhatsAppIcon, YoutubeIcon, TikTokIcon } from "@/components/icons/SocialIcons";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-new.webp";
 
 const Footer = () => {
   const { t } = useLanguage();

@@ -9,8 +9,7 @@ import heroStudent5 from "@/assets/hero-student5.webp";
 import heroStudent6 from "@/assets/hero-student6.webp";
 
 const heroImages = [heroStudent1, heroStudent2, heroStudent6, heroStudent3, heroStudent4, heroStudent5];
-import logoImg from "@/assets/logo.webp";
-const logoImage = logoImg;
+import logoImage from "@/assets/logo-new.webp";
 
 const HeroDesktopGallery = () => {
   const { t } = useLanguage();

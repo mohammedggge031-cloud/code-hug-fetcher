@@ -6,7 +6,7 @@ import { getLinks, socials } from "./navbar/navData";
 import { useNavbarLogic } from "./navbar/useNavbarLogic";
 import DesktopNav from "./navbar/DesktopNav";
 import MobileMenu from "./navbar/MobileMenu";
-import logo from "@/assets/logo.webp";
+import logo from "@/assets/logo-new.webp";
 
 const Navbar = () => {
   const { t } = useLanguage();
