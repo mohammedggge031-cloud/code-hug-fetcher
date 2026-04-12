@@ -129,6 +129,7 @@ const BlogManagement = () => {
       status: editing.status as "draft" | "published", tags,
       read_time_en: editing.read_time_en || null, read_time_ar: editing.read_time_ar || null,
       published_at: publishedAt,
+      updated_at: new Date().toISOString(),
     };
 
     try {
