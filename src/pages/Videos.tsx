@@ -1,16 +1,15 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { videos as hardcodedVideos, videoCategories } from "@/data/videos";
+import { videoCategories, VideoItem } from "@/data/videos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
-import { Play, X, Globe, ChevronRight } from "lucide-react";
+import { Play, X, Globe, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
-import { VideoItem } from "@/data/videos";
 import { Button } from "@/components/ui/button";
 
 const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: number; onOpen: (youtubeId: string) => void }) => {
@@ -62,19 +61,30 @@ const Videos = () => {
   const { seo } = useSeoMetadata("/videos");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  const [videos, setVideos] = useState(hardcodedVideos);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
   const [showOtherVideos, setShowOtherVideos] = useState(false);
+  const [loadingVideos, setLoadingVideos] = useState(true);
 
   useEffect(() => {
-    supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
-      .then(({ data }) => {
+    setLoadingVideos(true);
+    const loadVideos = async () => {
+      try {
+        const { data } = await supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle();
         if (data?.script_content) {
-          try {
-            const parsed = JSON.parse(data.script_content);
-            if (Array.isArray(parsed) && parsed.length > 0) setVideos(parsed);
-          } catch {}
+          const parsed = JSON.parse(data.script_content);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setVideos(parsed);
+            setLoadingVideos(false);
+            return;
+          }
         }
-      });
+      } catch {}
+      // Fallback to hardcoded only if DB has nothing
+      const { videos: hc } = await import("@/data/videos");
+      setVideos(hc);
+      setLoadingVideos(false);
+    };
+    loadVideos();
   }, []);
 
   const handleOpenVideo = useCallback((youtubeId: string) => {
@@ -82,14 +92,18 @@ const Videos = () => {
   }, []);
 
   const ourVideos = useMemo(
-    () => videos.filter((v) => v.isOurs || v.category === "About Us" || v.placement?.includes("about_us") || v.placement?.includes("testimonials")),
+    () => videos.filter((v) => {
+      const p = v.placement;
+      if (p && Array.isArray(p)) return p.includes("about_us") || p.includes("testimonials");
+      return v.isOurs || v.category === "About Us";
+    }),
     [videos],
   );
 
   const otherVideos = useMemo(
     () => videos.filter((v) => {
       const p = v.placement;
-      if (p && Array.isArray(p)) return p.includes("other") && !p.includes("about_us") && !p.includes("testimonials");
+      if (p && Array.isArray(p)) return !p.includes("about_us") && !p.includes("testimonials");
       return !v.isOurs && v.category !== "About Us";
     }),
     [videos],
@@ -154,6 +168,11 @@ const Videos = () => {
           </div>
         </section>
 
+        {loadingVideos ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : <>
         {/* Our Videos Section */}
         {ourVideos.length > 0 && (
           <section className="py-12 sm:py-16 bg-secondary/30">
@@ -298,6 +317,7 @@ const Videos = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        </>}
       </main>
 
       <ExploreMoreSection />
