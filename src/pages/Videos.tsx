@@ -317,6 +317,7 @@ const Videos = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        </>}
       </main>
 
       <ExploreMoreSection />
