@@ -1,16 +1,16 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
-import { videos as hardcodedVideos, videoCategories } from "@/data/videos";
+import { videoCategories, VideoItem } from "@/data/videos";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 
 import SEOHead from "@/components/SEOHead";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
-import { Play, X, Globe, ChevronRight } from "lucide-react";
+import { Play, X, Globe, ChevronRight, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
-import { VideoItem } from "@/data/videos";
+import { Button } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 
 const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: number; onOpen: (youtubeId: string) => void }) => {
