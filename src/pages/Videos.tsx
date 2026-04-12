@@ -92,14 +92,18 @@ const Videos = () => {
   }, []);
 
   const ourVideos = useMemo(
-    () => videos.filter((v) => v.isOurs || v.category === "About Us" || v.placement?.includes("about_us") || v.placement?.includes("testimonials")),
+    () => videos.filter((v) => {
+      const p = v.placement;
+      if (p && Array.isArray(p)) return p.includes("about_us") || p.includes("testimonials");
+      return v.isOurs || v.category === "About Us";
+    }),
     [videos],
   );
 
   const otherVideos = useMemo(
     () => videos.filter((v) => {
       const p = v.placement;
-      if (p && Array.isArray(p)) return p.includes("other") && !p.includes("about_us") && !p.includes("testimonials");
+      if (p && Array.isArray(p)) return !p.includes("about_us") && !p.includes("testimonials");
       return !v.isOurs && v.category !== "About Us";
     }),
     [videos],
