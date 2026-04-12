@@ -61,18 +61,33 @@ const Videos = () => {
   const { seo } = useSeoMetadata("/videos");
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  const [videos, setVideos] = useState(hardcodedVideos);
+  const [videos, setVideos] = useState<VideoItem[]>([]);
   const [showOtherVideos, setShowOtherVideos] = useState(false);
+  const [loadingVideos, setLoadingVideos] = useState(true);
 
   useEffect(() => {
+    setLoadingVideos(true);
     supabase.from("custom_scripts").select("script_content").eq("name", "video_library").maybeSingle()
-      .then(({ data }) => {
+      .then(async ({ data }) => {
         if (data?.script_content) {
           try {
             const parsed = JSON.parse(data.script_content);
-            if (Array.isArray(parsed) && parsed.length > 0) setVideos(parsed);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setVideos(parsed);
+              setLoadingVideos(false);
+              return;
+            }
           } catch {}
         }
+        // Fallback to hardcoded only if DB has nothing
+        const { videos: hc } = await import("@/data/videos");
+        setVideos(hc);
+        setLoadingVideos(false);
+      })
+      .catch(async () => {
+        const { videos: hc } = await import("@/data/videos");
+        setVideos(hc);
+        setLoadingVideos(false);
       });
   }, []);
 
