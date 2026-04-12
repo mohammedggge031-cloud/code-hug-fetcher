@@ -9,22 +9,20 @@ import { lazy, Suspense } from "react";
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-
-// Lazy load non-critical UI overlays
-const ScrollTopButton = lazy(() => import("@/components/ScrollTopButton"));
-const WhatsAppButton = lazy(() => import("@/components/WhatsAppButton"));
-const FloatingBookingFAB = lazy(() => import("@/components/FloatingBookingFAB"));
+import ScrollTopButton from "@/components/ScrollTopButton";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import FloatingBookingFAB from "@/components/FloatingBookingFAB";
 
 const FloatingActions = () => {
   const { pathname } = useLocation();
   const isAdmin = pathname.startsWith("/admin");
   if (isAdmin) return null;
   return (
-    <Suspense fallback={null}>
+    <>
       <ScrollTopButton />
       <WhatsAppButton />
       <FloatingBookingFAB />
-    </Suspense>
+    </>
   );
 };
 
