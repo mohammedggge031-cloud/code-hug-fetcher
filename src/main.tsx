@@ -52,6 +52,6 @@ const root = createRoot(rootElement);
 
 root.render(
   <RootErrorBoundary>
-    <App key="app" />
+    <div id="app-root"><App /></div>
   </RootErrorBoundary>,
 );
