@@ -27,7 +27,7 @@ class SectionErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return this.props.fallback ?? null;
     }
-    return this.props.children;
+    return <div>{this.props.children}</div>;
   }
 }
 
