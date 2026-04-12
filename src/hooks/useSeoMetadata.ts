@@ -46,7 +46,7 @@ export const useSeoMetadata = (pagePath: string) => {
             const { supabase } = await import("@/integrations/supabase/client");
             const { data, error } = await supabase
               .from("seo_metadata")
-              .select("*")
+              .select("title,description,keywords,canonical_url,og_title,og_description,og_image,og_type,twitter_card,twitter_title,twitter_description,twitter_image,structured_data,no_index")
               .eq("page_path", pagePath)
               .abortSignal(signal)
               .maybeSingle();
