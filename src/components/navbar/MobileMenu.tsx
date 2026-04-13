@@ -129,7 +129,7 @@ const MobileMenu = ({
                                   <Link
                                     to={item.href}
                                     onClick={closeMobileMenu}
-                                    className="flex-1 flex items-center gap-2.5 px-3 py-2.5 md:py-3 text-sm md:text-base font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                    className="flex-1 flex items-center gap-2.5 px-3 py-2.5 md:py-3.5 text-sm md:text-lg font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                   >
                                     <span className="text-accent">{item.icon}</span>
                                     {t(item.labelEn, item.labelAr)}
