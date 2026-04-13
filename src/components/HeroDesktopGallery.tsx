@@ -39,8 +39,6 @@ const HeroDesktopGallery = () => {
             />
           ))}
           <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent pointer-events-none" />
-          {/* Block yellow line from bleeding into logo area */}
-          <div className="absolute -bottom-1 -start-1 w-28 h-14 bg-background z-10 rounded-tr-2xl" />
         </div>
 
         {/* Floating logo */}
