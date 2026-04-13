@@ -44,7 +44,7 @@ const MobileMenu = ({
             <span className="text-xs font-heading font-bold text-primary-foreground/80 uppercase tracking-widest">
               {t("Alhamd Academy", "أكاديمية الحمد")}
             </span>
-            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft border border-accent/20" />
+            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft" />
           </Link>
         </div>
 

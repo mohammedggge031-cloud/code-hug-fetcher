@@ -5,7 +5,7 @@ const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
 const getInitialVisibility = (mobileOffset: number) => {
   if (typeof window === "undefined") return true;
   const isTouchDevice = window.matchMedia(TOUCH_QUERY).matches;
-  return !isTouchDevice || window.scrollY > mobileOffset;
+  return !isTouchDevice || window.scrollY >= mobileOffset;
 };
 
 export const useFloatingActionVisibility = (mobileOffset = 340) => {
@@ -18,7 +18,7 @@ export const useFloatingActionVisibility = (mobileOffset = 340) => {
     const update = () => {
       const requiresScroll = touchMedia.matches;
       const menuOpen = document.body.classList.contains("menu-open");
-      const nextVisible = !menuOpen && (!requiresScroll || window.scrollY > mobileOffset);
+      const nextVisible = !menuOpen && (!requiresScroll || window.scrollY >= mobileOffset);
       setVisible((prev) => (prev === nextVisible ? prev : nextVisible));
     };
 
