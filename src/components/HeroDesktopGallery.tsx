@@ -38,17 +38,19 @@ const HeroDesktopGallery = () => {
               decoding="async"
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent pointer-events-none" />
+          {/* Block yellow line from bleeding into logo area */}
+          <div className="absolute -bottom-1 -start-1 w-28 h-14 bg-background z-10 rounded-tr-2xl" />
         </div>
 
         {/* Floating logo */}
-        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-card shadow-elevated border border-accent/20 flex items-center justify-center p-2 z-20">
+        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-white shadow-elevated border border-border flex items-center justify-center p-2 z-30 overflow-hidden isolate">
           <img
             src={logoImage}
             alt="Alhamd Academy Logo"
             width={80}
             height={80}
-            className="w-full h-full object-contain rounded-lg"
+            className="w-full h-full object-contain rounded-lg relative z-10"
             loading="lazy"
             decoding="async"
           />
