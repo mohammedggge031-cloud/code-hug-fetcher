@@ -4,6 +4,7 @@ import "./index.css";
 import "./styles/typography.css";
 import "./styles/floating-actions.css";
 import App from "./App";
+import { startImagePreload } from "./lib/imagePreload";
 
 const rootElement = document.getElementById("root");
 
@@ -55,3 +56,6 @@ root.render(
     <div id="app-root"><App /></div>
   </RootErrorBoundary>,
 );
+
+// Start background image preloading after render
+startImagePreload();
