@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 
-const TIMEOUT_MS = Math.min(SUPABASE_TIMEOUT_MS, 3000);
+const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
 interface SeoData {
   title: string | null;
@@ -20,33 +20,11 @@ interface SeoData {
   no_index: boolean | null;
 }
 
-/* ---------- in-memory cache ---------- */
-const seoCache = new Map<string, { data: SeoData; ts: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
-function getCached(path: string): SeoData | null {
-  const entry = seoCache.get(path);
-  if (!entry) return null;
-  if (Date.now() - entry.ts > CACHE_TTL) {
-    seoCache.delete(path);
-    return null;
-  }
-  return entry.data;
-}
-
 export const useSeoMetadata = (pagePath: string) => {
-  const cached = getCached(pagePath);
-  const [seo, setSeo] = useState<SeoData | null>(cached);
-  const [loading, setLoading] = useState(!cached);
+  const [seo, setSeo] = useState<SeoData | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Already have fresh cache
-    if (cached) {
-      setSeo(cached);
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
 
     if (isGlobalFallbackMode()) {
@@ -79,7 +57,6 @@ export const useSeoMetadata = (pagePath: string) => {
         });
 
         if (!cancelled && data) {
-          seoCache.set(pagePath, { data, ts: Date.now() });
           setSeo(data);
         }
       } catch {
@@ -98,7 +75,7 @@ export const useSeoMetadata = (pagePath: string) => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [pagePath, cached]);
+  }, [pagePath]);
 
   return { seo, loading };
 };
