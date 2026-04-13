@@ -26,7 +26,7 @@ const HeroDesktopGallery = () => {
     <div className="hidden md:flex justify-center animate-fade-in motion-reduce:animate-none motion-delay-300">
       <div className="relative">
         <div className="absolute -inset-6 rounded-3xl bg-accent/20 blur-3xl" />
-        <div className="relative w-[280px] h-[340px] md:w-[300px] md:h-[380px] lg:w-[380px] lg:h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20">
+        <div className="relative w-[280px] h-[340px] md:w-[300px] md:h-[380px] lg:w-[380px] lg:h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20 isolate">
           {heroImages.map((src, idx) => (
             <img
               key={idx}
@@ -38,17 +38,17 @@ const HeroDesktopGallery = () => {
               decoding="async"
             />
           ))}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent pointer-events-none" />
         </div>
 
         {/* Floating logo */}
-        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-card shadow-elevated border border-accent/20 flex items-center justify-center p-2 z-20">
+        <div className="absolute -bottom-6 -start-6 w-24 h-24 rounded-2xl bg-white shadow-elevated border border-border flex items-center justify-center p-2 z-30 overflow-hidden isolate">
           <img
             src={logoImage}
             alt="Alhamd Academy Logo"
             width={80}
             height={80}
-            className="w-full h-full object-contain rounded-lg"
+            className="w-full h-full object-contain rounded-lg relative z-10"
             loading="lazy"
             decoding="async"
           />
