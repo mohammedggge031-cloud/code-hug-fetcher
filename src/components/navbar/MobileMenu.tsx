@@ -50,7 +50,7 @@ const MobileMenu = ({
 
         {/* Menu items */}
         <nav className="flex-1 overflow-y-auto overscroll-contain px-6 pb-24 scrollbar-hide touch-pan-y [-webkit-overflow-scrolling:touch]" aria-label="Mobile navigation">
-          <div className="space-y-0.5">
+          <div className="space-y-0.5 md:space-y-1">
             {links.map((l) => {
               const hasDropdown = l.dropdown && l.dropdown.length > 0;
               const isExpanded = expandedMobile === l.en;
@@ -63,7 +63,7 @@ const MobileMenu = ({
                         <Link
                           to={l.href}
                           onClick={closeMobileMenu}
-                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </Link>
@@ -71,7 +71,7 @@ const MobileMenu = ({
                         <a
                           href={l.href}
                           onClick={(e) => { handleAnchorClick(e, l.href); }}
-                          className="flex-1 py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </a>
@@ -90,18 +90,18 @@ const MobileMenu = ({
                             }
                           }
                         }}
-                        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-primary-foreground/50 transition-colors duration-200 hover:bg-primary-foreground/5 hover:text-accent"
+                        className="inline-flex h-11 w-11 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-lg text-primary-foreground/50 transition-colors duration-200 hover:bg-primary-foreground/5 hover:text-accent"
                         aria-expanded={isExpanded}
                         aria-label={t(`Expand ${l.en}`, `افتح ${l.ar}`)}
                       >
-                        <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                        <ChevronDown className={`w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                       </button>
                     </div>
                   ) : l.isRoute ? (
                     <Link
                       to={l.href}
                       onClick={closeMobileMenu}
-                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </Link>
@@ -109,7 +109,7 @@ const MobileMenu = ({
                     <a
                       href={l.href}
                       onClick={(e) => { handleAnchorClick(e, l.href); }}
-                      className="block w-full py-3.5 text-base font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </a>
