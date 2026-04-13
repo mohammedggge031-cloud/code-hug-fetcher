@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
+import { getCached, setCache } from "@/lib/supabaseCache";
 
 const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
+const SEO_CACHE_TTL = 5 * 60 * 1000;
 
 interface SeoData {
   title: string | null;
@@ -21,10 +23,12 @@ interface SeoData {
 }
 
 export const useSeoMetadata = (pagePath: string) => {
-  const [seo, setSeo] = useState<SeoData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cached = getCached<SeoData>(`seo:${pagePath}`);
+  const [seo, setSeo] = useState<SeoData | null>(cached ?? null);
+  const [loading, setLoading] = useState(!cached);
 
   useEffect(() => {
+    if (cached) return;
     let cancelled = false;
 
     if (isGlobalFallbackMode()) {
@@ -57,10 +61,11 @@ export const useSeoMetadata = (pagePath: string) => {
         });
 
         if (!cancelled && data) {
+          setCache(`seo:${pagePath}`, data, SEO_CACHE_TTL);
           setSeo(data);
         }
       } catch {
-        // Supabase unreachable — seo stays null, page uses code defaults
+        // fallback
       } finally {
         if (!cancelled) {
           clearTimeout(timer);
@@ -75,7 +80,7 @@ export const useSeoMetadata = (pagePath: string) => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [pagePath]);
+  }, [pagePath, cached]);
 
   return { seo, loading };
 };
