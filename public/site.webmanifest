@@ -2,13 +2,16 @@
   "name": "Alhamd Academy — Online Quran, Arabic & Islamic Studies",
   "short_name": "Alhamd Academy",
   "description": "One-on-one online Quran, Arabic & Islamic studies classes with certified Al-Azhar teachers for kids and adults worldwide.",
-  "start_url": "/",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "background_color": "#0a1628",
   "theme_color": "#102840",
   "categories": ["education", "religion"],
   "lang": "en",
   "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/favicon-48.png",
@@ -37,13 +40,33 @@
   "shortcuts": [
     {
       "name": "Free Trial",
-      "url": "/free-trial",
-      "description": "Book a free Quran class"
+      "short_name": "Trial",
+      "url": "/free-trial?utm_source=pwa",
+      "description": "Book a free Quran class",
+      "icons": [{ "src": "/favicon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Courses",
+      "short_name": "Courses",
       "url": "/#courses",
-      "description": "Browse our courses"
+      "description": "Browse our courses",
+      "icons": [{ "src": "/favicon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Blog",
+      "short_name": "Blog",
+      "url": "/blog?utm_source=pwa",
+      "description": "Read our latest articles",
+      "icons": [{ "src": "/favicon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.jpg",
+      "sizes": "1200x630",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Alhamd Academy Homepage"
     }
   ]
 }
