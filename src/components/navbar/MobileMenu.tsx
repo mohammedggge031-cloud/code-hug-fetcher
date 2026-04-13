@@ -63,7 +63,7 @@ const MobileMenu = ({
                         <Link
                           to={l.href}
                           onClick={closeMobileMenu}
-                          className="flex-1 py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-3.5 md:py-5 text-base md:text-xl font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </Link>
@@ -71,7 +71,7 @@ const MobileMenu = ({
                         <a
                           href={l.href}
                           onClick={(e) => { handleAnchorClick(e, l.href); }}
-                          className="flex-1 py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                          className="flex-1 py-3.5 md:py-5 text-base md:text-xl font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                         >
                           {t(l.en, l.ar)}
                         </a>
@@ -101,7 +101,7 @@ const MobileMenu = ({
                     <Link
                       to={l.href}
                       onClick={closeMobileMenu}
-                      className="block w-full py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-3.5 md:py-5 text-base md:text-xl font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </Link>
@@ -109,7 +109,7 @@ const MobileMenu = ({
                     <a
                       href={l.href}
                       onClick={(e) => { handleAnchorClick(e, l.href); }}
-                      className="block w-full py-3.5 md:py-4 text-base md:text-lg font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
+                      className="block w-full py-3.5 md:py-5 text-base md:text-xl font-bold text-primary-foreground uppercase tracking-wider hover:text-accent transition-colors"
                     >
                       {t(l.en, l.ar)}
                     </a>
@@ -129,7 +129,7 @@ const MobileMenu = ({
                                   <Link
                                     to={item.href}
                                     onClick={closeMobileMenu}
-                                    className="flex-1 flex items-center gap-2.5 px-3 py-2.5 md:py-3 text-sm md:text-base font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
+                                    className="flex-1 flex items-center gap-2.5 px-3 py-2.5 md:py-3.5 text-sm md:text-lg font-medium text-primary-foreground/75 hover:text-accent transition-colors rounded-lg hover:bg-primary-foreground/5"
                                   >
                                     <span className="text-accent">{item.icon}</span>
                                     {t(item.labelEn, item.labelAr)}
