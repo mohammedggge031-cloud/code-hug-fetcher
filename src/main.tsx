@@ -6,6 +6,26 @@ import "./styles/floating-actions.css";
 import App from "./App";
 import { startImagePreload } from "./lib/imagePreload";
 
+// --- PWA Service Worker guard ---
+const isInIframe = (() => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+})();
+
+const isPreviewHost =
+  window.location.hostname.includes("id-preview--") ||
+  window.location.hostname.includes("lovableproject.com");
+
+if (isPreviewHost || isInIframe) {
+  navigator.serviceWorker?.getRegistrations().then((registrations) => {
+    registrations.forEach((r) => r.unregister());
+  });
+}
+// --- End PWA guard ---
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) {
