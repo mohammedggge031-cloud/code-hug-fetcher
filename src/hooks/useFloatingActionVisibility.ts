@@ -29,16 +29,12 @@ export const useFloatingActionVisibility = (mobileOffset = 340) => {
       });
     };
 
-    const classObserver = new MutationObserver(update);
-    classObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", update, { passive: true });
     touchMedia.addEventListener("change", update);
 
     return () => {
-      classObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", update);
       touchMedia.removeEventListener("change", update);
