@@ -26,7 +26,7 @@ const HeroDesktopGallery = () => {
     <div className="hidden md:flex justify-center animate-fade-in motion-reduce:animate-none motion-delay-300">
       <div className="relative">
         <div className="absolute -inset-6 rounded-3xl bg-accent/20 blur-3xl" />
-        <div className="relative w-[280px] h-[340px] md:w-[300px] md:h-[380px] lg:w-[380px] lg:h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20">
+        <div className="relative w-[280px] h-[340px] md:w-[300px] md:h-[380px] lg:w-[380px] lg:h-[460px] rounded-2xl shadow-elevated overflow-hidden border-2 border-accent/20 isolate">
           {heroImages.map((src, idx) => (
             <img
               key={idx}
