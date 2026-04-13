@@ -5,7 +5,7 @@ import { useFloatingActionVisibility } from "@/hooks/useFloatingActionVisibility
 
 const FloatingBookingFAB = () => {
   const { t } = useLanguage();
-  const isVisible = useFloatingActionVisibility(320);
+  const isVisible = useFloatingActionVisibility(0);
 
   return (
     <button

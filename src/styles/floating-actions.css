@@ -48,8 +48,6 @@
   bottom: calc(env(safe-area-inset-bottom, 0px) + 5.15rem);
 }
 
-body.menu-open .floating-fab-booking,
-body.menu-open .floating-fab-whatsapp,
 body.menu-open .scroll-top-fab {
   opacity: 0;
   visibility: hidden;
