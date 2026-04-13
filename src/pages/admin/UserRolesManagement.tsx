@@ -266,8 +266,8 @@ const UserRolesManagement = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        {/* Reset password - super admin can reset for others */}
-                        {isSuperAdmin && r.user_id !== superAdminId && (
+                        {/* Reset password - super admin can reset for all accounts */}
+                        {isSuperAdmin && (
                           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => { setResetTarget(r); setResetPassword(""); setShowResetPwd(false); }} title={t("pwd.reset_btn")}>
                             <KeyRound className="h-4 w-4" />
                           </Button>
