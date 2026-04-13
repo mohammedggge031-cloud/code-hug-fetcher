@@ -210,7 +210,7 @@ const MobileMenu = ({
           </div>
 
           {/* Language toggle + Social icons */}
-          <div className="flex items-center justify-center gap-3 pt-5 mt-4 mb-20 border-t border-primary-foreground/10">
+          <div className="flex items-center justify-center gap-3 pt-5 mt-4 mb-28 border-t border-primary-foreground/10">
             <button
               onClick={toggleLang}
               className="flex h-10 items-center gap-2 rounded-full border border-accent/30 bg-accent/15 px-4 text-primary-foreground transition-colors duration-200 hover:bg-accent/25"
