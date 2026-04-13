@@ -18,7 +18,7 @@ function parseStatNum(num: string): { value: number; suffix: string } | null {
 const CountUpStat = ({ num, labelEn, labelAr }: CountUpStatProps) => {
   const { t } = useLanguage();
   const parsed = parseStatNum(num);
-  const [ref, animatedValue] = useCountUp(parsed?.value ?? 0, 2200);
+  const [ref, animatedValue] = useCountUp(parsed?.value ?? 0, 2800);
 
   return (
     <div
