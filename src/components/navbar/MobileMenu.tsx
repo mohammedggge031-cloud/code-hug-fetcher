@@ -44,7 +44,7 @@ const MobileMenu = ({
             <span className="text-xs font-heading font-bold text-primary-foreground/80 uppercase tracking-widest">
               {t("Alhamd Academy", "أكاديمية الحمد")}
             </span>
-            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft border border-accent/20" />
+            <img src={logo} alt="Alhamd Academy" width={40} height={40} loading="lazy" decoding="async" className="h-10 w-10 object-cover rounded-xl shadow-soft" />
           </Link>
         </div>
 
@@ -210,7 +210,7 @@ const MobileMenu = ({
           </div>
 
           {/* Language toggle + Social icons */}
-          <div className="flex items-center justify-center gap-3 pt-5 mt-4 mb-20 border-t border-primary-foreground/10">
+          <div className="flex items-center justify-center gap-3 pt-5 mt-4 mb-28 border-t border-primary-foreground/10">
             <button
               onClick={toggleLang}
               className="flex h-10 items-center gap-2 rounded-full border border-accent/30 bg-accent/15 px-4 text-primary-foreground transition-colors duration-200 hover:bg-accent/25"

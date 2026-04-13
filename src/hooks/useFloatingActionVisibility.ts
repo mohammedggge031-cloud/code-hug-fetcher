@@ -5,7 +5,7 @@ const TOUCH_QUERY = "(max-width: 1023px), (hover: none) and (pointer: coarse)";
 const getInitialVisibility = (mobileOffset: number) => {
   if (typeof window === "undefined") return true;
   const isTouchDevice = window.matchMedia(TOUCH_QUERY).matches;
-  return !isTouchDevice || window.scrollY > mobileOffset;
+  return !isTouchDevice || window.scrollY >= mobileOffset;
 };
 
 export const useFloatingActionVisibility = (mobileOffset = 340) => {
@@ -17,8 +17,7 @@ export const useFloatingActionVisibility = (mobileOffset = 340) => {
 
     const update = () => {
       const requiresScroll = touchMedia.matches;
-      const menuOpen = document.body.classList.contains("menu-open");
-      const nextVisible = !menuOpen && (!requiresScroll || window.scrollY > mobileOffset);
+      const nextVisible = !requiresScroll || window.scrollY >= mobileOffset;
       setVisible((prev) => (prev === nextVisible ? prev : nextVisible));
     };
 
@@ -30,16 +29,12 @@ export const useFloatingActionVisibility = (mobileOffset = 340) => {
       });
     };
 
-    const classObserver = new MutationObserver(update);
-    classObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", update, { passive: true });
     touchMedia.addEventListener("change", update);
 
     return () => {
-      classObserver.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", update);
       touchMedia.removeEventListener("change", update);
