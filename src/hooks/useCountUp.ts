@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
  * Animates a number from 0 to `end` when the element is in view.
  * Returns [ref, displayValue].
  */
-export function useCountUp(end: number, duration = 2200) {
+export function useCountUp(end: number, duration = 2800) {
   const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(0);
   const started = useRef(false);
@@ -36,8 +36,8 @@ export function useCountUp(end: number, duration = 2200) {
           let lastSet = -1;
           const step = (now: number) => {
             const progress = Math.min((now - start) / effectiveDuration, 1);
-            // Snappy ease-out curve — fast start, gradual slowdown
-            const eased = 1 - Math.pow(1 - progress, 4);
+            // Smooth ease-out curve — visible counting with gradual slowdown
+            const eased = 1 - Math.pow(1 - progress, 2.5);
             const nextValue = Math.round(eased * end);
 
             if (nextValue !== lastSet) {
