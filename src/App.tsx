@@ -6,6 +6,23 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
 import { lazy, Suspense } from "react";
 
+/** Retry wrapper for lazy imports — handles transient chunk load failures */
+function lazyRetry<T extends { default: React.ComponentType<any> }>(
+  factory: () => Promise<T>,
+  retries = 2,
+): React.LazyExoticComponent<T["default"]> {
+  return lazy(() => {
+    const attempt = (remaining: number): Promise<T> =>
+      factory().catch((err) => {
+        if (remaining <= 0) throw err;
+        return new Promise<T>((resolve) =>
+          setTimeout(() => resolve(attempt(remaining - 1)), 1000),
+        );
+      });
+    return attempt(retries);
+  });
+}
+
 import ScrollToTop, { Loader } from "@/components/ScrollToTop";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
