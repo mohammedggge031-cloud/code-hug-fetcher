@@ -1,6 +1,8 @@
 export const SUPABASE_TIMEOUT_MS = 4000;
 
 let globalFallbackMode = false;
+let fallbackResetTimer: ReturnType<typeof setTimeout> | null = null;
+const FALLBACK_COOLDOWN_MS = 30_000; // Reset fallback mode after 30s
 
 interface TimeoutOptions {
   timeoutMs?: number;
@@ -18,6 +20,12 @@ export const isGlobalFallbackMode = () => globalFallbackMode;
 
 export const enableGlobalFallbackMode = () => {
   globalFallbackMode = true;
+  // Auto-reset after cooldown so transient network issues don't permanently block data
+  if (fallbackResetTimer) clearTimeout(fallbackResetTimer);
+  fallbackResetTimer = setTimeout(() => {
+    globalFallbackMode = false;
+    fallbackResetTimer = null;
+  }, FALLBACK_COOLDOWN_MS);
 };
 
 export async function withPromiseTimeout<T>(promise: Promise<T>, options: TimeoutOptions = {}): Promise<T> {
