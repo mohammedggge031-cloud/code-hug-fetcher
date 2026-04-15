@@ -51,7 +51,12 @@ export const useMobileSafeMotion = () => {
 
   const fadeIn = (delay = 0) =>
     isLowMotion
-      ? opacityOnly(delay, 0.26)
+      ? {
+          initial: { opacity: 0, y: 12 },
+          whileInView: { opacity: 1, y: 0 },
+          viewport: safeViewport,
+          transition: { duration: 0.5, delay, ease: "easeOut" },
+        }
       : {
           initial: { opacity: 0, y: 18 },
           whileInView: { opacity: 1, y: 0 },
@@ -63,7 +68,12 @@ export const useMobileSafeMotion = () => {
 
   const slideInLeft = (delay = 0) =>
     isLowMotion
-      ? opacityOnly(delay, 0.3)
+      ? {
+          initial: { opacity: 0, x: -18 },
+          whileInView: { opacity: 1, x: 0 },
+          viewport: safeViewport,
+          transition: { duration: 0.5, delay, ease: "easeOut" },
+        }
       : {
           initial: { opacity: 0, x: -34 },
           whileInView: { opacity: 1, x: 0 },
@@ -73,7 +83,12 @@ export const useMobileSafeMotion = () => {
 
   const slideInRight = (delay = 0) =>
     isLowMotion
-      ? opacityOnly(delay, 0.3)
+      ? {
+          initial: { opacity: 0, x: 18 },
+          whileInView: { opacity: 1, x: 0 },
+          viewport: safeViewport,
+          transition: { duration: 0.5, delay, ease: "easeOut" },
+        }
       : {
           initial: { opacity: 0, x: 34 },
           whileInView: { opacity: 1, x: 0 },
