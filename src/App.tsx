@@ -44,50 +44,50 @@ const FloatingActions = () => {
 };
 
 import Index from "./pages/Index";
-const NotFound = lazy(() => import("./pages/NotFound"));
+const NotFound = lazyRetry(() => import("./pages/NotFound"));
 
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const Videos = lazy(() => import("./pages/Videos"));
-const OnlineQuranClasses = lazy(() => import("./pages/OnlineQuranClasses"));
-const TajweedCourse = lazy(() => import("./pages/TajweedCourse"));
-const QuranMemorization = lazy(() => import("./pages/QuranMemorization"));
-const ArabicForKids = lazy(() => import("./pages/ArabicForKids"));
-const ArabicForAdults = lazy(() => import("./pages/ArabicForAdults"));
-const IslamicStudies = lazy(() => import("./pages/IslamicStudies"));
-const IjazahProgram = lazy(() => import("./pages/IjazahProgram"));
-const FemaleQuranTeacher = lazy(() => import("./pages/FemaleQuranTeacher"));
-const FreeTrial = lazy(() => import("./pages/FreeTrial"));
+const Blog = lazyRetry(() => import("./pages/Blog"));
+const BlogPost = lazyRetry(() => import("./pages/BlogPost"));
+const Videos = lazyRetry(() => import("./pages/Videos"));
+const OnlineQuranClasses = lazyRetry(() => import("./pages/OnlineQuranClasses"));
+const TajweedCourse = lazyRetry(() => import("./pages/TajweedCourse"));
+const QuranMemorization = lazyRetry(() => import("./pages/QuranMemorization"));
+const ArabicForKids = lazyRetry(() => import("./pages/ArabicForKids"));
+const ArabicForAdults = lazyRetry(() => import("./pages/ArabicForAdults"));
+const IslamicStudies = lazyRetry(() => import("./pages/IslamicStudies"));
+const IjazahProgram = lazyRetry(() => import("./pages/IjazahProgram"));
+const FemaleQuranTeacher = lazyRetry(() => import("./pages/FemaleQuranTeacher"));
+const FreeTrial = lazyRetry(() => import("./pages/FreeTrial"));
 
-const CoursePage = lazy(() => import("./pages/CoursePage"));
+const CoursePage = lazyRetry(() => import("./pages/CoursePage"));
 
 // Admin pages
-const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
-const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
-const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
-const SeoManagement = lazy(() => import("./pages/admin/SeoManagement"));
-const ScriptsManagement = lazy(() => import("./pages/admin/ScriptsManagement"));
-const UserRolesManagement = lazy(() => import("./pages/admin/UserRolesManagement"));
-const BlogManagement = lazy(() => import("./pages/admin/BlogManagement"));
-const CategoriesManagement = lazy(() => import("./pages/admin/CategoriesManagement"));
-const MediaLibrary = lazy(() => import("./pages/admin/MediaLibrary"));
-const VideoManagement = lazy(() => import("./pages/admin/VideoManagement"));
-const ProtectedRoute = lazy(() => import("./components/admin/ProtectedRoute"));
-const LocationPage = lazy(() => import("./pages/LocationPage"));
-const LearnQuranWorldwide = lazy(() => import("./pages/LearnQuranWorldwide"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const QuranClassesForKids = lazy(() => import("./pages/QuranClassesForKids"));
-const QuranClassesForAdults = lazy(() => import("./pages/QuranClassesForAdults"));
-const BestOnlineQuranClasses = lazy(() => import("./pages/BestOnlineQuranClasses"));
-const OneOnOneQuranClasses = lazy(() => import("./pages/OneOnOneQuranClasses"));
-const QuranClassesPricing = lazy(() => import("./pages/QuranClassesPricing"));
-const QuranClassesForBeginners = lazy(() => import("./pages/QuranClassesForBeginners"));
-const QuranClassesWithCertificate = lazy(() => import("./pages/QuranClassesWithCertificate"));
-const LearnQuranForReverts = lazy(() => import("./pages/LearnQuranForReverts"));
-const NooraniQaidaOnline = lazy(() => import("./pages/NooraniQaidaOnline"));
-const QuranClassesForSisters = lazy(() => import("./pages/QuranClassesForSisters"));
-const LearnQuranWithTajweed = lazy(() => import("./pages/LearnQuranWithTajweed"));
-const AdminErrorBoundary = lazy(() => import("./components/admin/AdminErrorBoundary"));
+const AdminLogin = lazyRetry(() => import("./pages/admin/AdminLogin"));
+const AdminLayout = lazyRetry(() => import("./components/admin/AdminLayout"));
+const AdminDashboard = lazyRetry(() => import("./pages/admin/AdminDashboard"));
+const SeoManagement = lazyRetry(() => import("./pages/admin/SeoManagement"));
+const ScriptsManagement = lazyRetry(() => import("./pages/admin/ScriptsManagement"));
+const UserRolesManagement = lazyRetry(() => import("./pages/admin/UserRolesManagement"));
+const BlogManagement = lazyRetry(() => import("./pages/admin/BlogManagement"));
+const CategoriesManagement = lazyRetry(() => import("./pages/admin/CategoriesManagement"));
+const MediaLibrary = lazyRetry(() => import("./pages/admin/MediaLibrary"));
+const VideoManagement = lazyRetry(() => import("./pages/admin/VideoManagement"));
+const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
+const LocationPage = lazyRetry(() => import("./pages/LocationPage"));
+const LearnQuranWorldwide = lazyRetry(() => import("./pages/LearnQuranWorldwide"));
+const PrivacyPolicy = lazyRetry(() => import("./pages/PrivacyPolicy"));
+const QuranClassesForKids = lazyRetry(() => import("./pages/QuranClassesForKids"));
+const QuranClassesForAdults = lazyRetry(() => import("./pages/QuranClassesForAdults"));
+const BestOnlineQuranClasses = lazyRetry(() => import("./pages/BestOnlineQuranClasses"));
+const OneOnOneQuranClasses = lazyRetry(() => import("./pages/OneOnOneQuranClasses"));
+const QuranClassesPricing = lazyRetry(() => import("./pages/QuranClassesPricing"));
+const QuranClassesForBeginners = lazyRetry(() => import("./pages/QuranClassesForBeginners"));
+const QuranClassesWithCertificate = lazyRetry(() => import("./pages/QuranClassesWithCertificate"));
+const LearnQuranForReverts = lazyRetry(() => import("./pages/LearnQuranForReverts"));
+const NooraniQaidaOnline = lazyRetry(() => import("./pages/NooraniQaidaOnline"));
+const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSisters"));
+const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
+const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
