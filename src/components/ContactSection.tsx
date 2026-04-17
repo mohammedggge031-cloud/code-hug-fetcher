@@ -6,6 +6,7 @@ import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
+import { captureLead } from "@/lib/leadCapture";
 import { bookingFormSchema, getFieldError } from "@/lib/formValidation";
 import { z } from "zod";
 
@@ -213,6 +214,14 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
               } catch (e) {
                 console.error("Booking sync error:", e);
               }
+
+              // Local lead-log capture (UTM-aware) for the admin dashboard
+              void captureLead({
+                name,
+                contact: phone,
+                notes: `${course}${message ? ` — ${message}` : ""}`,
+                sourceOverride: source || undefined,
+              });
 
               window.open(`https://wa.me/201271134828?text=${encodeURIComponent(text)}`, '_blank');
             }}>

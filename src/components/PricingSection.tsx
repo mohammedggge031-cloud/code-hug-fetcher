@@ -2,6 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
+import { captureLead } from "@/lib/leadCapture";
 
 type Duration = "30" | "45" | "60";
 
@@ -172,6 +173,13 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
           } catch (e) {
             console.error("Subscription sync error:", e);
           }
+
+          // Local lead-log capture for dashboard reporting
+          void captureLead({
+            name: `Pricing — ${tierNames.en[i]}`,
+            contact: "(via WhatsApp)",
+            notes: `Plan ${tierNames.en[i]} · ${duration}min · ${plan.days}d/wk · $${plan.monthly}/mo`,
+          });
         }}
         className={`w-full text-center py-3 sm:py-2.5 md:py-3 rounded-lg text-[13px] sm:text-xs md:text-sm font-semibold transition-opacity min-h-[44px] flex items-center justify-center ${
           plan.popular
