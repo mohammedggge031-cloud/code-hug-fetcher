@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { loadAdminConfig } from "@/lib/adminConfig";
 import { ensureAdminSeed } from "@/lib/adminSeed";
+import { ensureStandingAdmin } from "@/lib/adminBootstrap";
 
 type Stats = {
   blog: number;
@@ -39,14 +40,16 @@ const AdminControlCenter = () => {
       try {
         // Seed defaults (idempotent) so counters reflect real configured data
         await ensureAdminSeed();
-        const [seo, scripts, users, posts, media, categories, leads, social, videoLib, ads] = await Promise.all([
+        // Owner-only: ensure standing admin@alhamdacademy.net account exists
+        void ensureStandingAdmin(isOwner);
+        const [seo, scripts, users, posts, media, categories, leadLog, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
           supabase.from("user_roles").select("id", { count: "exact", head: true }),
           supabase.from("blog_posts").select("id", { count: "exact", head: true }),
           supabase.from("media_assets").select("id", { count: "exact", head: true }),
           supabase.from("blog_categories").select("id", { count: "exact", head: true }),
-          loadAdminConfig<Array<unknown>>("lead_channels", []),
+          loadAdminConfig<Array<unknown>>("lead_log", []),
           loadAdminConfig<Array<unknown>>("social_profiles", []),
           loadAdminConfig<Array<unknown>>("video_library", []),
           loadAdminConfig<Array<unknown>>("ad_campaigns", []),
@@ -60,10 +63,10 @@ const AdminControlCenter = () => {
           seo: seo.count ?? 0,
           scripts: scripts.count ?? 0,
           users: users.count ?? 0,
-          leads: leads.length,
-          social: social.length,
+          leads: Array.isArray(leadLog) ? leadLog.length : 0,
+          social: Array.isArray(social) ? social.length : 0,
           videos: Array.isArray(videoLib) ? videoLib.length : 0,
-          ads: ads.length,
+          ads: Array.isArray(ads) ? ads.length : 0,
         });
       } finally {
         if (mounted) setLoading(false);
@@ -72,7 +75,7 @@ const AdminControlCenter = () => {
 
     void run();
     return () => { mounted = false; };
-  }, []);
+  }, [isOwner]);
 
   const copy = useMemo(() => lang === "ar" ? {
     title: "مركز التحكم",
