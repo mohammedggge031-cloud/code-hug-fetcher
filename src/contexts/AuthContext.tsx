@@ -132,6 +132,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return resolvedRole;
   }, []);
 
+  const lastUserIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
@@ -145,16 +147,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const applySession = (nextSession: Session | null) => {
       if (!active) return;
+      const nextUserId = nextSession?.user?.id ?? null;
+      const sameUser = nextUserId !== null && nextUserId === lastUserIdRef.current;
+
       setSession(nextSession);
       setUser(nextSession?.user ?? null);
       setSessionReady(true);
 
       if (!nextSession?.user) {
+        lastUserIdRef.current = null;
         roleRequestRef.current += 1;
         resetAuthState();
         return;
       }
 
+      // Same user re-emitted (TOKEN_REFRESHED, duplicate INITIAL_SESSION etc.)
+      // Do NOT wipe role/permissions — that triggers a stuck "Loading…" because
+      // the role-fetch effect is keyed on user.id and won't re-run.
+      if (sameUser) return;
+
+      lastUserIdRef.current = nextUserId;
       setRole(null);
       setPermissions(DEFAULT_PERMS);
       setRoleLoading(true);
