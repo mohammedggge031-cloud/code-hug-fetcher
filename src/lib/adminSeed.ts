@@ -1,10 +1,11 @@
 /**
  * Auto-seed admin JSON config blobs (stored in `custom_scripts`) on first
- * dashboard load. Idempotent — only seeds when the blob is empty.
+ * authenticated dashboard load. Idempotent — only seeds when the blob is empty.
  *
- * This makes the dashboard counters reflect REAL configured data instead of
- * showing 0 just because the admin has never opened the sub-modules yet.
+ * IMPORTANT: We only run AFTER an authenticated session is available, otherwise
+ * RLS blocks the INSERT silently and we'd cache a failed promise forever.
  */
+import { supabase } from "@/integrations/supabase/client";
 import { loadAdminConfig, saveAdminConfig } from "@/lib/adminConfig";
 
 type SocialProfile = { id: string; platform: string; label: string; url: string; active: boolean };
@@ -35,12 +36,36 @@ const DEFAULT_AD_CAMPAIGNS: AdCampaign[] = [
   { id: "camp-tiktok-quran", channel: "TikTok", campaign: "Quran Reels", landingUrl: "/trial-registration", utmSource: "tiktok", utmCampaign: "quran_reels", status: "paused" },
 ];
 
-let seedPromise: Promise<void> | null = null;
+let seedPromise: Promise<boolean> | null = null;
 
-export const ensureAdminSeed = (): Promise<void> => {
+const seedOne = async <T>(name: string, value: T): Promise<boolean> => {
+  const res = await saveAdminConfig(name, value);
+  if (res?.error) {
+    console.warn(`[adminSeed] ${name} write failed:`, res.error);
+    return false;
+  }
+  console.info(`[adminSeed] ${name} seeded (${Array.isArray(value) ? value.length : "?"} items)`);
+  return true;
+};
+
+/**
+ * Ensure default admin config rows exist in `custom_scripts`.
+ * Returns true if seeding succeeded (or nothing needed seeding).
+ * On failure (e.g. RLS block before auth is ready) the cached promise is
+ * cleared so the next call retries.
+ */
+export const ensureAdminSeed = (): Promise<boolean> => {
   if (seedPromise) return seedPromise;
+
   seedPromise = (async () => {
     try {
+      // Bail out if not authenticated — RLS will reject the insert otherwise.
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData?.session) {
+        console.info("[adminSeed] no session — skipping seed");
+        return false;
+      }
+
       const [social, channels, campaigns, videos] = await Promise.all([
         loadAdminConfig<SocialProfile[]>("social_profiles", []),
         loadAdminConfig<LeadChannel[]>("lead_channels", []),
@@ -48,18 +73,17 @@ export const ensureAdminSeed = (): Promise<void> => {
         loadAdminConfig<unknown[]>("video_library", []),
       ]);
 
-      const tasks: Promise<unknown>[] = [];
+      const tasks: Promise<boolean>[] = [];
       if (!Array.isArray(social) || social.length === 0) {
-        tasks.push(saveAdminConfig("social_profiles", DEFAULT_SOCIAL));
+        tasks.push(seedOne("social_profiles", DEFAULT_SOCIAL));
       }
       if (!Array.isArray(channels) || channels.length === 0) {
-        tasks.push(saveAdminConfig("lead_channels", DEFAULT_CHANNELS));
+        tasks.push(seedOne("lead_channels", DEFAULT_CHANNELS));
       }
       if (!Array.isArray(campaigns) || campaigns.length === 0) {
-        tasks.push(saveAdminConfig("ad_campaigns", DEFAULT_AD_CAMPAIGNS));
+        tasks.push(seedOne("ad_campaigns", DEFAULT_AD_CAMPAIGNS));
       }
       if (!Array.isArray(videos) || videos.length === 0) {
-        // Lazy-import the hardcoded video catalog so we don't bloat dashboard chunk
         const { videos: hardcoded } = await import("@/data/videos");
         const mapped = hardcoded.map((v) => ({
           id: v.id,
@@ -74,15 +98,27 @@ export const ensureAdminSeed = (): Promise<void> => {
           isOurs: v.isOurs,
           placement: v.isOurs ? ["testimonials", "about_us"] : ["other"],
         }));
-        tasks.push(saveAdminConfig("video_library", mapped));
+        tasks.push(seedOne("video_library", mapped));
       }
 
-      if (tasks.length > 0) {
-        await Promise.all(tasks);
+      if (tasks.length === 0) {
+        console.info("[adminSeed] all config blobs already present");
+        return true;
       }
+
+      const results = await Promise.all(tasks);
+      const ok = results.every(Boolean);
+      if (!ok) {
+        // Don't cache a failure — let the next call retry.
+        seedPromise = null;
+      }
+      return ok;
     } catch (err) {
-      console.warn("ensureAdminSeed failed:", err);
+      console.warn("[adminSeed] failed:", err);
+      seedPromise = null;
+      return false;
     }
   })();
+
   return seedPromise;
 };

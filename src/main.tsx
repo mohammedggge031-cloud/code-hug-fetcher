@@ -4,6 +4,11 @@ import "./index.css";
 import "./styles/typography.css";
 import "./styles/floating-actions.css";
 import App from "./App";
+import { persistUtmFromUrl } from "@/lib/leadCapture";
+
+// Capture UTM parameters on first page load so they survive navigation until
+// the user submits a form (powers the dashboard Source Report).
+persistUtmFromUrl();
 
 const rootElement = document.getElementById("root");
 
