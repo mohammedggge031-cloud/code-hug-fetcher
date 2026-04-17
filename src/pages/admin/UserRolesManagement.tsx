@@ -252,6 +252,32 @@ const UserManagement = () => {
     return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> {row.role}</Badge>;
   };
 
+  const AccessModeChooser = ({ value, target }: { value: Permissions; target: "add" | "edit" }) => {
+    const active = activeModes(value);
+    return (
+      <div className="grid gap-2 sm:grid-cols-3">
+        {MODE_KEYS.map((mode) => {
+          const isOn = active.includes(mode);
+          const meta = ACCESS_MODES[mode];
+          return (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setMode(mode, !isOn, target)}
+              className={`text-start rounded-lg border p-3 transition-colors ${isOn ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}
+            >
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="font-medium text-sm">{lang === "ar" ? meta.labelAr : meta.label}</span>
+                <Checkbox checked={isOn} className="pointer-events-none" />
+              </div>
+              <p className="text-xs text-muted-foreground">{meta.description}</p>
+            </button>
+          );
+        })}
+      </div>
+    );
+  };
+
   const PermissionGrid = ({ value, onChange }: { value: Permissions; onChange: (p: Permissions) => void }) => (
     <div className="grid grid-cols-2 gap-2">
       {(Object.keys(PERM_LABELS) as PermissionKey[]).map(k => (
