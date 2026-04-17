@@ -113,6 +113,18 @@ const LeadsManagement = () => {
     none: "No data yet.",
   }, [lang]);
 
+  const sourceCounts = useMemo(() => {
+    const counts: Record<string, { total: number; converted: number; new: number }> = {};
+    for (const e of entries) {
+      const key = e.source || "unknown";
+      counts[key] = counts[key] || { total: 0, converted: 0, new: 0 };
+      counts[key].total++;
+      if (e.status === "converted") counts[key].converted++;
+      if (e.status === "new") counts[key].new++;
+    }
+    return Object.entries(counts).sort((a, b) => b[1].total - a[1].total);
+  }, [entries]);
+
   if (!(can("can_manage_leads") || isAdmin)) {
     return <div className="py-16 text-center text-muted-foreground">Access denied.</div>;
   }
@@ -132,18 +144,6 @@ const LeadsManagement = () => {
     if (error) { toast({ title: "Error", description: error.message, variant: "destructive" }); return false; }
     setEntries(next); toast({ title: copy.save }); return true;
   };
-
-  const sourceCounts = useMemo(() => {
-    const counts: Record<string, { total: number; converted: number; new: number }> = {};
-    for (const e of entries) {
-      const key = e.source || "unknown";
-      counts[key] = counts[key] || { total: 0, converted: 0, new: 0 };
-      counts[key].total++;
-      if (e.status === "converted") counts[key].converted++;
-      if (e.status === "new") counts[key].new++;
-    }
-    return Object.entries(counts).sort((a, b) => b[1].total - a[1].total);
-  }, [entries]);
 
   return (
     <div className="space-y-6">
