@@ -93,7 +93,14 @@ const isRateLimited = (): boolean => {
   return submissionTimestamps.length >= RATE_LIMIT_MAX;
 };
 
-const ContactSection = () => {
+interface ContactSectionProps {
+  /** Optional source identifier for tracking (e.g. "facebook_ads", "media_campaign"). 
+   *  When set, it is sent to the external system AND appended to the WhatsApp message. 
+   *  Default: undefined (organic — no change in behavior). */
+  source?: string;
+}
+
+const ContactSection = ({ source }: ContactSectionProps = {}) => {
   const { t } = useLanguage();
   const { fadeIn, slideInLeft } = useMobileSafeMotion();
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -183,7 +190,8 @@ const ContactSection = () => {
                 }
               }
 
-              const text = `📚 *New Booking Request - Alhamd Academy*\n\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n📖 *Course:* ${course}\n💬 *Message:* ${message}${scheduleText}`;
+              const sourceLine = source ? `\n🏷️ *Source:* ${source}` : '';
+              const text = `📚 *New Booking Request - Alhamd Academy*\n\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n📖 *Course:* ${course}\n💬 *Message:* ${message}${scheduleText}${sourceLine}`;
 
               // Send copy to admin system (non-blocking)
               try {
@@ -199,6 +207,7 @@ const ContactSection = () => {
                     preferred_time: selectedTime || null,
                     timezone: selectedTz,
                     message: message || null,
+                    ...(source ? { source } : {}),
                   }),
                 }).catch((e) => console.error("Booking sync error:", e));
               } catch (e) {
