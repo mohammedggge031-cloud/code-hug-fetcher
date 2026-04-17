@@ -8,6 +8,7 @@ import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { loadAdminConfig } from "@/lib/adminConfig";
+import { ensureAdminSeed } from "@/lib/adminSeed";
 
 type Stats = {
   blog: number;
@@ -36,6 +37,8 @@ const AdminControlCenter = () => {
 
     const run = async () => {
       try {
+        // Seed defaults (idempotent) so counters reflect real configured data
+        await ensureAdminSeed();
         const [seo, scripts, users, posts, media, categories, leads, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
