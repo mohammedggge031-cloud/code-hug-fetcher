@@ -7,6 +7,8 @@ import { useAdminLang } from "@/contexts/AdminLangContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { loadAdminConfig } from "@/lib/adminConfig";
+import { ensureAdminSeed } from "@/lib/adminSeed";
 
 const StatCardSkeleton = () => (
   <Card className="transition-all">
@@ -26,29 +28,34 @@ const AdminDashboard = () => {
   const { t } = useAdminLang();
   const navigate = useNavigate();
   const location = useLocation();
-  const [stats, setStats] = useState({ seoPages: 0, scripts: 0, users: 0, posts: 0, media: 0, categories: 0 });
+  const [stats, setStats] = useState({ seoPages: 0, scripts: 0, users: 0, posts: 0, media: 0, categories: 0, videos: 0, leads: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     const fetchStats = async () => {
       try {
-        const results = await Promise.all([
+        await ensureAdminSeed();
+        const [seo, scriptsRes, usersRes, postsRes, mediaRes, catsRes, videoLib, leadLog] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
           supabase.from("user_roles").select("id", { count: "exact", head: true }),
           supabase.from("blog_posts").select("id", { count: "exact", head: true }),
           supabase.from("media_assets").select("id", { count: "exact", head: true }),
           supabase.from("blog_categories").select("id", { count: "exact", head: true }),
+          loadAdminConfig<unknown[]>("video_library", []),
+          loadAdminConfig<unknown[]>("lead_log", []),
         ]);
         if (cancelled) return;
         setStats({
-          seoPages: results[0].count ?? 0,
-          scripts: results[1].count ?? 0,
-          users: results[2].count ?? 0,
-          posts: results[3].count ?? 0,
-          media: results[4].count ?? 0,
-          categories: results[5].count ?? 0,
+          seoPages: seo.count ?? 0,
+          scripts: scriptsRes.count ?? 0,
+          users: usersRes.count ?? 0,
+          posts: postsRes.count ?? 0,
+          media: mediaRes.count ?? 0,
+          categories: catsRes.count ?? 0,
+          videos: Array.isArray(videoLib) ? videoLib.length : 0,
+          leads: Array.isArray(leadLog) ? leadLog.length : 0,
         });
       } catch {
         // silently use defaults
@@ -74,7 +81,7 @@ const AdminDashboard = () => {
       { title: t("dash.scripts"), value: stats.scripts, icon: Code, desc: t("dash.scripts.desc"), href: "/admin/scripts", color: "text-rose-600 bg-rose-500/10" },
     ] : []),
     ...(can("can_manage_videos") || isAdmin ? [
-      { title: t("dash.videos"), value: 0, icon: Video, desc: t("dash.videos.desc"), href: "/admin/videos", color: "text-pink-600 bg-pink-500/10" },
+      { title: t("dash.videos"), value: stats.videos, icon: Video, desc: t("dash.videos.desc"), href: "/admin/videos", color: "text-pink-600 bg-pink-500/10" },
     ] : []),
     ...(isOwner ? [
       { title: t("dash.team"), value: stats.users, icon: Users, desc: t("dash.team.desc"), href: "/admin/users", color: "text-amber-600 bg-amber-500/10" },
