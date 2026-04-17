@@ -16,18 +16,38 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
 
-  const navItems = [
-    { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true, show: true },
-    { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isAdmin },
-    { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isAdmin },
-    { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isAdmin },
-    { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isAdmin },
-    { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isAdmin },
-    { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isAdmin },
-    { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isAdmin },
-    { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isAdmin },
-    { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isAdmin },
-    { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: can("can_manage_users") || isAdmin },
+  const navGroups = [
+    {
+      label: lang === "ar" ? "الرئيسية" : "Overview",
+      items: [
+        { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true, show: true },
+      ],
+    },
+    {
+      label: lang === "ar" ? "إدارة الموقع" : "Website Management",
+      items: [
+        { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isAdmin },
+        { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isAdmin },
+        { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isAdmin },
+        { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isAdmin },
+        { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isAdmin },
+        { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isAdmin },
+      ],
+    },
+    {
+      label: lang === "ar" ? "التسويق والإعلانات" : "Marketing & Ads",
+      items: [
+        { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isAdmin },
+        { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isAdmin },
+        { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isAdmin },
+      ],
+    },
+    {
+      label: lang === "ar" ? "المستخدمون والصلاحيات" : "Users & Access",
+      items: [
+        { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: can("can_manage_users") || isAdmin },
+      ],
+    },
   ];
 
   const handleSignOut = async () => {
@@ -35,7 +55,9 @@ const AdminLayout = () => {
     navigate("/admin/login");
   };
 
-  const filteredItems = navItems.filter(item => item.show);
+  const visibleGroups = navGroups
+    .map(g => ({ ...g, items: g.items.filter(i => i.show) }))
+    .filter(g => g.items.length > 0);
 
   const getInitials = (email?: string) => {
     if (!email) return "??";
@@ -78,23 +100,30 @@ const AdminLayout = () => {
           </Button>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {filteredItems.map(item => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) => cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-sidebar-foreground hover:bg-muted"
-              )}
-            >
-              <item.icon className="h-4 w-4" />
-              {item.label}
-            </NavLink>
+        <nav className="flex-1 p-3 space-y-4 overflow-y-auto">
+          {visibleGroups.map(group => (
+            <div key={group.label} className="space-y-1">
+              <p className="px-3 pt-1 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                {group.label}
+              </p>
+              {group.items.map(item => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) => cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-sidebar-foreground hover:bg-muted"
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
 
