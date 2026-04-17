@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, Search, Shield, Users, Video } from "lucide-react";
+import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, Search, Shield, Target, Users, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,9 +18,11 @@ type Stats = {
   users: number;
   leads: number;
   social: number;
+  videos: number;
+  ads: number;
 };
 
-const defaultStats: Stats = { blog: 0, categories: 0, media: 0, seo: 0, scripts: 0, users: 0, leads: 0, social: 0 };
+const defaultStats: Stats = { blog: 0, categories: 0, media: 0, seo: 0, scripts: 0, users: 0, leads: 0, social: 0, videos: 0, ads: 0 };
 
 const AdminControlCenter = () => {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const AdminControlCenter = () => {
 
     const run = async () => {
       try {
-        const [seo, scripts, users, posts, media, categories, leads, social] = await Promise.all([
+        const [seo, scripts, users, posts, media, categories, leads, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
           supabase.from("user_roles").select("id", { count: "exact", head: true }),
@@ -43,6 +45,8 @@ const AdminControlCenter = () => {
           supabase.from("blog_categories").select("id", { count: "exact", head: true }),
           loadAdminConfig<Array<unknown>>("lead_channels", []),
           loadAdminConfig<Array<unknown>>("social_profiles", []),
+          loadAdminConfig<Array<unknown>>("video_library", []),
+          loadAdminConfig<Array<unknown>>("ad_campaigns", []),
         ]);
 
         if (!mounted) return;
@@ -55,6 +59,8 @@ const AdminControlCenter = () => {
           users: users.count ?? 0,
           leads: leads.length,
           social: social.length,
+          videos: Array.isArray(videoLib) ? videoLib.length : 0,
+          ads: ads.length,
         });
       } finally {
         if (mounted) setLoading(false);
