@@ -111,7 +111,7 @@ const UserManagement = () => {
         role: r.role,
         email: emails[r.user_id],
         permissions: permMap[r.user_id] ?? DEFAULT_PERMS,
-        is_owner: (emails[r.user_id] ?? "").toLowerCase() === "info@alhamdacademy.net" || r.role === "owner",
+        is_owner: (emails[r.user_id] ?? "").toLowerCase() === "info@alhamdacademy.net" || (r.role as string) === "owner",
       }));
       setRows(merged);
     } finally { setLoading(false); }
