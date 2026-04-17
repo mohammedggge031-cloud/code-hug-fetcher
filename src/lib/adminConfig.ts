@@ -17,9 +17,12 @@ export const loadAdminConfig = async <T,>(name: string, fallback: T): Promise<T>
 };
 
 export const saveAdminConfig = async <T,>(name: string, value: T) => {
+  // NOTE: `placement` has a CHECK constraint (head|body_start|body_end).
+  // We use 'head' as a neutral parking value combined with is_active=false so
+  // these rows are never rendered as actual <script> tags on the site.
   const payload = {
     name,
-    placement: "data",
+    placement: "head",
     script_content: JSON.stringify(value),
     is_active: false,
     updated_at: new Date().toISOString(),
