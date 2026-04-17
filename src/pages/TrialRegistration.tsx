@@ -1,6 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ContactSection from "@/components/ContactSection";
+
+/**
+ * Build a dynamic source string from URL UTM parameters.
+ * Falls back to "paid_social" if no UTM params are present.
+ * Format: "{utm_source}|{utm_campaign}|{utm_medium}|{utm_content}" — only non-empty parts.
+ */
+const buildSourceFromUTM = (): string => {
+  if (typeof window === "undefined") return "paid_social";
+  const params = new URLSearchParams(window.location.search);
+  const parts: string[] = [];
+  const keys = ["utm_source", "utm_campaign", "utm_medium", "utm_content"];
+  for (const k of keys) {
+    const v = params.get(k);
+    if (v && v.trim()) parts.push(`${k.replace("utm_", "")}:${v.trim().slice(0, 50)}`);
+  }
+  return parts.length > 0 ? parts.join(" | ") : "paid_social";
+};
 import SEOHead from "@/components/SEOHead";
 import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
 
