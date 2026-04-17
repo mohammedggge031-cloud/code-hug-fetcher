@@ -1,5 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -29,6 +29,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import FloatingBookingFAB from "@/components/FloatingBookingFAB";
+import { appQueryClient } from "@/lib/queryClient";
 
 const FloatingActions = () => {
   const { pathname } = useLocation();
@@ -93,20 +94,8 @@ const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSi
 const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 10 * 60 * 1000,
-      gcTime: 15 * 60 * 1000,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      retry: 1,
-    },
-  },
-});
-
 const App = () => (
-  <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={appQueryClient}>
     <TooltipProvider>
       <LanguageProvider>
         <Toaster />
