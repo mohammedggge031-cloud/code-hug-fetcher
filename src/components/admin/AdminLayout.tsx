@@ -7,6 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
+import logoLive from "@/assets/logo-new.webp";
 
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin, isOwner, can } = useAuth();
@@ -66,7 +67,7 @@ const AdminLayout = () => {
       )}>
         <div className="p-4 border-b flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <img src="/logo-admin.webp" alt="Alhamd Academy" className="h-10 w-10 object-contain rounded-lg" loading="eager" decoding="async" />
+            <img src={logoLive} alt="Alhamd Academy" className="h-10 w-10 object-cover rounded-lg" loading="eager" decoding="async" />
             <div>
               <h1 className="font-bold text-base text-sidebar-foreground">Alhamd Academy</h1>
               <p className="text-xs text-muted-foreground">{getRoleLabel(role)}</p>
