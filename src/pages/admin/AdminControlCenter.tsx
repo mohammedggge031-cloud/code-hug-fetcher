@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, Search, Shield, Users, Video } from "lucide-react";
+import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, Search, Shield, Target, Users, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,9 +18,11 @@ type Stats = {
   users: number;
   leads: number;
   social: number;
+  videos: number;
+  ads: number;
 };
 
-const defaultStats: Stats = { blog: 0, categories: 0, media: 0, seo: 0, scripts: 0, users: 0, leads: 0, social: 0 };
+const defaultStats: Stats = { blog: 0, categories: 0, media: 0, seo: 0, scripts: 0, users: 0, leads: 0, social: 0, videos: 0, ads: 0 };
 
 const AdminControlCenter = () => {
   const navigate = useNavigate();
@@ -34,7 +36,7 @@ const AdminControlCenter = () => {
 
     const run = async () => {
       try {
-        const [seo, scripts, users, posts, media, categories, leads, social] = await Promise.all([
+        const [seo, scripts, users, posts, media, categories, leads, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
           supabase.from("user_roles").select("id", { count: "exact", head: true }),
@@ -43,6 +45,8 @@ const AdminControlCenter = () => {
           supabase.from("blog_categories").select("id", { count: "exact", head: true }),
           loadAdminConfig<Array<unknown>>("lead_channels", []),
           loadAdminConfig<Array<unknown>>("social_profiles", []),
+          loadAdminConfig<Array<unknown>>("video_library", []),
+          loadAdminConfig<Array<unknown>>("ad_campaigns", []),
         ]);
 
         if (!mounted) return;
@@ -55,6 +59,8 @@ const AdminControlCenter = () => {
           users: users.count ?? 0,
           leads: leads.length,
           social: social.length,
+          videos: Array.isArray(videoLib) ? videoLib.length : 0,
+          ads: ads.length,
         });
       } finally {
         if (mounted) setLoading(false);
@@ -105,13 +111,14 @@ const AdminControlCenter = () => {
 
   const modules = [
     { key: "leads", label: copy.leads, value: stats.leads, icon: Inbox, to: "/admin/leads", show: can("can_manage_leads") || isAdmin },
+    { key: "ads", label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", value: stats.ads, icon: Target, to: "/admin/ads", show: can("can_manage_leads") || can("can_manage_social") || isAdmin },
     { key: "social", label: copy.social, value: stats.social, icon: Megaphone, to: "/admin/social", show: can("can_manage_social") || isAdmin },
     { key: "blog", label: copy.blog, value: stats.blog, icon: FileText, to: "/admin/blog", show: can("can_manage_blog") || isAdmin },
     { key: "categories", label: copy.categories, value: stats.categories, icon: FolderOpen, to: "/admin/categories", show: can("can_manage_blog") || isAdmin },
     { key: "media", label: copy.media, value: stats.media, icon: Image, to: "/admin/media", show: can("can_manage_media") || isAdmin },
     { key: "seo", label: copy.seo, value: stats.seo, icon: Search, to: "/admin/seo", show: can("can_manage_seo") || isAdmin },
     { key: "scripts", label: copy.scripts, value: stats.scripts, icon: Code, to: "/admin/scripts", show: can("can_manage_scripts") || isAdmin },
-    { key: "videos", label: copy.videos, value: stats.scripts, icon: Video, to: "/admin/videos", show: can("can_manage_videos") || isAdmin },
+    { key: "videos", label: copy.videos, value: stats.videos, icon: Video, to: "/admin/videos", show: can("can_manage_videos") || isAdmin },
     { key: "users", label: copy.users, value: stats.users, icon: Users, to: "/admin/users", show: can("can_manage_users") || isAdmin || isOwner },
   ].filter((item) => item.show);
 

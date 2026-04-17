@@ -21,13 +21,56 @@ import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 const ASSIGNABLE_ROLES = ["admin", "editor", "seo_manager", "social_manager", "marketing_manager"] as const;
 type AssignableRole = typeof ASSIGNABLE_ROLES[number];
 
-const PRESETS: Record<string, Partial<Permissions>> = {
-  seo_only:        { can_manage_seo: true, can_manage_media: true, can_manage_scripts: true },
-  content_manager: { can_manage_blog: true, can_manage_media: true },
-  social_manager:  { can_manage_social: true, can_manage_leads: true },
-  seo_and_content: { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true },
-  full_admin:      { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true },
-  editor_basic:    { can_manage_blog: true, can_manage_media: true },
+// 3 simple access modes the owner can grant. Each maps to a real set of permissions.
+const ACCESS_MODES = {
+  content_seo: {
+    label: "Content / SEO Manager",
+    labelAr: "إدارة المحتوى والسيو",
+    description: "Blog, Categories, Media, SEO, Scripts, Videos",
+    perms: { can_manage_blog: true, can_manage_media: true, can_manage_seo: true, can_manage_scripts: true, can_manage_videos: true } as Partial<Permissions>,
+  },
+  ads_tracking: {
+    label: "Ads / Tracking Manager",
+    labelAr: "إدارة الإعلانات والتتبع",
+    description: "Leads, Social, Ads tracking & reporting",
+    perms: { can_manage_leads: true, can_manage_social: true } as Partial<Permissions>,
+  },
+  full_access: {
+    label: "Full Access Admin",
+    labelAr: "صلاحية كاملة",
+    description: "Every dashboard module (cannot delete owner)",
+    perms: { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true } as Partial<Permissions>,
+  },
+} as const;
+type AccessModeKey = keyof typeof ACCESS_MODES;
+
+const MODE_KEYS = Object.keys(ACCESS_MODES) as AccessModeKey[];
+
+// True when the permissions object includes every flag the mode requires.
+const modeMatches = (perms: Permissions, mode: AccessModeKey) => {
+  const required = ACCESS_MODES[mode].perms;
+  return Object.entries(required).every(([k, v]) => v ? !!perms[k as PermissionKey] : true);
+};
+
+const activeModes = (perms: Permissions): AccessModeKey[] =>
+  MODE_KEYS.filter((m) => modeMatches(perms, m));
+
+const toggleMode = (perms: Permissions, mode: AccessModeKey, on: boolean): Permissions => {
+  const next = { ...perms };
+  for (const [k, v] of Object.entries(ACCESS_MODES[mode].perms)) {
+    if (!v) continue;
+    if (on) (next as any)[k] = true;
+    else {
+      // Only turn off keys that aren't required by another currently-on mode.
+      const keepOn = MODE_KEYS.some((other) =>
+        other !== mode &&
+        modeMatches(perms, other) &&
+        (ACCESS_MODES[other].perms as any)[k]
+      );
+      if (!keepOn) (next as any)[k] = false;
+    }
+  }
+  return next;
 };
 
 const DEFAULT_PERMS: Permissions = {
@@ -74,7 +117,7 @@ const UserManagement = () => {
   const [addPassword, setAddPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [addRole, setAddRole] = useState<AssignableRole>("seo_manager");
-  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
   const [adding, setAdding] = useState(false);
 
   // Edit dialog
@@ -133,10 +176,9 @@ const UserManagement = () => {
     );
   }
 
-  const applyPreset = (key: string, target: "add" | "edit") => {
-    const preset = { ...DEFAULT_PERMS, ...(PRESETS[key] ?? {}) };
-    if (target === "add") setAddPerms(preset);
-    else setEditPerms(preset);
+  const setMode = (mode: AccessModeKey, on: boolean, target: "add" | "edit") => {
+    if (target === "add") setAddPerms((p) => toggleMode(p, mode, on));
+    else setEditPerms((p) => toggleMode(p, mode, on));
   };
 
   const handleCreate = async () => {
@@ -157,7 +199,7 @@ const UserManagement = () => {
       if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
       toast({ title: "✅ Account created", description: addEmail });
       setShowAdd(false); setAddEmail(""); setAddPassword(""); setAddRole("seo_manager");
-      setAddPerms({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+      setAddPerms({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
       void loadAll();
     } finally { setAdding(false); }
   };
@@ -208,6 +250,32 @@ const UserManagement = () => {
   const roleBadge = (row: UserRow) => {
     if (row.is_owner) return <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1"><Crown className="h-3 w-3" /> Owner</Badge>;
     return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> {row.role}</Badge>;
+  };
+
+  const AccessModeChooser = ({ value, target }: { value: Permissions; target: "add" | "edit" }) => {
+    const active = activeModes(value);
+    return (
+      <div className="grid gap-2 sm:grid-cols-3">
+        {MODE_KEYS.map((mode) => {
+          const isOn = active.includes(mode);
+          const meta = ACCESS_MODES[mode];
+          return (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setMode(mode, !isOn, target)}
+              className={`text-start rounded-lg border p-3 transition-colors ${isOn ? "border-primary bg-primary/5" : "border-border hover:bg-muted/40"}`}
+            >
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="font-medium text-sm">{lang === "ar" ? meta.labelAr : meta.label}</span>
+                <Checkbox checked={isOn} className="pointer-events-none" />
+              </div>
+              <p className="text-xs text-muted-foreground">{meta.description}</p>
+            </button>
+          );
+        })}
+      </div>
+    );
   };
 
   const PermissionGrid = ({ value, onChange }: { value: Permissions; onChange: (p: Permissions) => void }) => (
@@ -327,17 +395,14 @@ const UserManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quick presets</Label>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(PRESETS).map(k => (
-                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "add")}>{k.replace(/_/g, " ")}</Button>
-                ))}
-              </div>
+              <Label>Access mode</Label>
+              <p className="text-xs text-muted-foreground">Pick one or more. Toggling a mode flips the matching permissions below.</p>
+              <AccessModeChooser value={addPerms} target="add" />
             </div>
-            <div className="space-y-2">
-              <Label>Permissions</Label>
-              <PermissionGrid value={addPerms} onChange={setAddPerms} />
-            </div>
+            <details className="space-y-2 rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Advanced — granular permissions</summary>
+              <div className="pt-3"><PermissionGrid value={addPerms} onChange={setAddPerms} /></div>
+            </details>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
@@ -366,17 +431,14 @@ const UserManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quick presets</Label>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(PRESETS).map(k => (
-                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "edit")}>{k.replace(/_/g, " ")}</Button>
-                ))}
-              </div>
+              <Label>Access mode</Label>
+              <p className="text-xs text-muted-foreground">Pick one or more. Toggling a mode flips the matching permissions below.</p>
+              <AccessModeChooser value={editPerms} target="edit" />
             </div>
-            <div className="space-y-2">
-              <Label>Permissions</Label>
-              <PermissionGrid value={editPerms} onChange={setEditPerms} />
-            </div>
+            <details className="space-y-2 rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Advanced — granular permissions</summary>
+              <div className="pt-3"><PermissionGrid value={editPerms} onChange={setEditPerms} /></div>
+            </details>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>

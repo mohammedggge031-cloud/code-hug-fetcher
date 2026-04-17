@@ -75,6 +75,7 @@ const MediaLibrary = lazyRetry(() => import("./pages/admin/MediaLibrary"));
 const VideoManagement = lazyRetry(() => import("./pages/admin/VideoManagement"));
 const LeadsManagement = lazyRetry(() => import("./pages/admin/LeadsManagement"));
 const SocialManagement = lazyRetry(() => import("./pages/admin/SocialManagement"));
+const AdsTracking = lazyRetry(() => import("./pages/admin/AdsTracking"));
 const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazyRetry(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazyRetry(() => import("./pages/LearnQuranWorldwide"));
@@ -154,6 +155,7 @@ const App = () => (
                   <Route index element={<AdminControlCenter />} />
                   <Route path="leads" element={<LeadsManagement />} />
                   <Route path="social" element={<SocialManagement />} />
+                  <Route path="ads" element={<AdsTracking />} />
                   <Route path="blog" element={<BlogManagement />} />
                   <Route path="categories" element={<CategoriesManagement />} />
                   <Route path="media" element={<MediaLibrary />} />
