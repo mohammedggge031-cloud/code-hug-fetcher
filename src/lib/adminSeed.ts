@@ -41,7 +41,14 @@ let seedPromise: Promise<boolean> | null = null;
 const seedOne = async <T>(name: string, value: T): Promise<boolean> => {
   const res = await saveAdminConfig(name, value);
   if (res?.error) {
-    console.warn(`[adminSeed] ${name} write failed:`, res.error);
+    // RLS rejects until the user has owner/admin role granted in DB.
+    // This is expected on first load before the SQL fix is applied — log
+    // at info level so it doesn't pollute the console as a "warning".
+    if ((res.error as { code?: string }).code === "42501") {
+      console.info(`[adminSeed] ${name}: RLS blocked (run FIX_ADMIN_ACCESS.sql)`);
+    } else {
+      console.warn(`[adminSeed] ${name} write failed:`, res.error);
+    }
     return false;
   }
   console.info(`[adminSeed] ${name} seeded (${Array.isArray(value) ? value.length : "?"} items)`);
