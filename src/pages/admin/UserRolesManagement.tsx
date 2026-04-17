@@ -395,17 +395,14 @@ const UserManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quick presets</Label>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(PRESETS).map(k => (
-                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "add")}>{k.replace(/_/g, " ")}</Button>
-                ))}
-              </div>
+              <Label>Access mode</Label>
+              <p className="text-xs text-muted-foreground">Pick one or more. Toggling a mode flips the matching permissions below.</p>
+              <AccessModeChooser value={addPerms} target="add" />
             </div>
-            <div className="space-y-2">
-              <Label>Permissions</Label>
-              <PermissionGrid value={addPerms} onChange={setAddPerms} />
-            </div>
+            <details className="space-y-2 rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Advanced — granular permissions</summary>
+              <div className="pt-3"><PermissionGrid value={addPerms} onChange={setAddPerms} /></div>
+            </details>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
@@ -434,17 +431,14 @@ const UserManagement = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Quick presets</Label>
-              <div className="flex flex-wrap gap-2">
-                {Object.keys(PRESETS).map(k => (
-                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "edit")}>{k.replace(/_/g, " ")}</Button>
-                ))}
-              </div>
+              <Label>Access mode</Label>
+              <p className="text-xs text-muted-foreground">Pick one or more. Toggling a mode flips the matching permissions below.</p>
+              <AccessModeChooser value={editPerms} target="edit" />
             </div>
-            <div className="space-y-2">
-              <Label>Permissions</Label>
-              <PermissionGrid value={editPerms} onChange={setEditPerms} />
-            </div>
+            <details className="space-y-2 rounded-md border p-3">
+              <summary className="cursor-pointer text-sm font-medium">Advanced — granular permissions</summary>
+              <div className="pt-3"><PermissionGrid value={editPerms} onChange={setEditPerms} /></div>
+            </details>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
