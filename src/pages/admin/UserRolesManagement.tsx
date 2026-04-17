@@ -21,13 +21,56 @@ import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 const ASSIGNABLE_ROLES = ["admin", "editor", "seo_manager", "social_manager", "marketing_manager"] as const;
 type AssignableRole = typeof ASSIGNABLE_ROLES[number];
 
-const PRESETS: Record<string, Partial<Permissions>> = {
-  seo_only:        { can_manage_seo: true, can_manage_media: true, can_manage_scripts: true },
-  content_manager: { can_manage_blog: true, can_manage_media: true },
-  social_manager:  { can_manage_social: true, can_manage_leads: true },
-  seo_and_content: { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true },
-  full_admin:      { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true },
-  editor_basic:    { can_manage_blog: true, can_manage_media: true },
+// 3 simple access modes the owner can grant. Each maps to a real set of permissions.
+const ACCESS_MODES = {
+  content_seo: {
+    label: "Content / SEO Manager",
+    labelAr: "إدارة المحتوى والسيو",
+    description: "Blog, Categories, Media, SEO, Scripts, Videos",
+    perms: { can_manage_blog: true, can_manage_media: true, can_manage_seo: true, can_manage_scripts: true, can_manage_videos: true } as Partial<Permissions>,
+  },
+  ads_tracking: {
+    label: "Ads / Tracking Manager",
+    labelAr: "إدارة الإعلانات والتتبع",
+    description: "Leads, Social, Ads tracking & reporting",
+    perms: { can_manage_leads: true, can_manage_social: true } as Partial<Permissions>,
+  },
+  full_access: {
+    label: "Full Access Admin",
+    labelAr: "صلاحية كاملة",
+    description: "Every dashboard module (cannot delete owner)",
+    perms: { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true } as Partial<Permissions>,
+  },
+} as const;
+type AccessModeKey = keyof typeof ACCESS_MODES;
+
+const MODE_KEYS = Object.keys(ACCESS_MODES) as AccessModeKey[];
+
+// True when the permissions object includes every flag the mode requires.
+const modeMatches = (perms: Permissions, mode: AccessModeKey) => {
+  const required = ACCESS_MODES[mode].perms;
+  return Object.entries(required).every(([k, v]) => v ? !!perms[k as PermissionKey] : true);
+};
+
+const activeModes = (perms: Permissions): AccessModeKey[] =>
+  MODE_KEYS.filter((m) => modeMatches(perms, m));
+
+const toggleMode = (perms: Permissions, mode: AccessModeKey, on: boolean): Permissions => {
+  const next = { ...perms };
+  for (const [k, v] of Object.entries(ACCESS_MODES[mode].perms)) {
+    if (!v) continue;
+    if (on) (next as any)[k] = true;
+    else {
+      // Only turn off keys that aren't required by another currently-on mode.
+      const keepOn = MODE_KEYS.some((other) =>
+        other !== mode &&
+        modeMatches(perms, other) &&
+        (ACCESS_MODES[other].perms as any)[k]
+      );
+      if (!keepOn) (next as any)[k] = false;
+    }
+  }
+  return next;
 };
 
 const DEFAULT_PERMS: Permissions = {
