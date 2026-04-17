@@ -21,25 +21,28 @@ import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 const ASSIGNABLE_ROLES = ["admin", "editor", "seo_manager", "social_manager", "marketing_manager"] as const;
 type AssignableRole = typeof ASSIGNABLE_ROLES[number];
 
-// 3 simple access modes the owner can grant. Each maps to a real set of permissions.
+// 3 access modes the owner can grant. Each maps to a real set of permissions.
+// Website Management = content (blog/categories/media/videos/SEO/scripts).
+// Ads / Tracking     = marketing performance (leads/social/ads/analytics).
+// Both               = full content + marketing access.
 const ACCESS_MODES = {
-  content_seo: {
-    label: "Content / SEO Manager",
-    labelAr: "إدارة المحتوى والسيو",
-    description: "Blog, Categories, Media, SEO, Scripts, Videos",
+  website: {
+    label: "Website Management",
+    labelAr: "إدارة الموقع",
+    description: "Blog, Categories, Media, Videos, SEO, Scripts",
     perms: { can_manage_blog: true, can_manage_media: true, can_manage_seo: true, can_manage_scripts: true, can_manage_videos: true } as Partial<Permissions>,
   },
   ads_tracking: {
-    label: "Ads / Tracking Manager",
-    labelAr: "إدارة الإعلانات والتتبع",
-    description: "Leads, Social, Ads tracking & reporting",
+    label: "Ads / Tracking",
+    labelAr: "الإعلانات والتتبع",
+    description: "Leads, Social, Ads campaigns & analytics",
     perms: { can_manage_leads: true, can_manage_social: true } as Partial<Permissions>,
   },
-  full_access: {
-    label: "Full Access Admin",
-    labelAr: "صلاحية كاملة",
-    description: "Every dashboard module (cannot delete owner)",
-    perms: { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true } as Partial<Permissions>,
+  both: {
+    label: "Both (Website + Ads/Tracking)",
+    labelAr: "كل شيء (الموقع + الإعلانات)",
+    description: "Full content + marketing access (cannot manage users)",
+    perms: { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true } as Partial<Permissions>,
   },
 } as const;
 type AccessModeKey = keyof typeof ACCESS_MODES;
