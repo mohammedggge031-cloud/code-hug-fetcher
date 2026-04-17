@@ -199,7 +199,7 @@ const UserManagement = () => {
       if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
       toast({ title: "✅ Account created", description: addEmail });
       setShowAdd(false); setAddEmail(""); setAddPassword(""); setAddRole("seo_manager");
-      setAddPerms({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+      setAddPerms({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
       void loadAll();
     } finally { setAdding(false); }
   };
