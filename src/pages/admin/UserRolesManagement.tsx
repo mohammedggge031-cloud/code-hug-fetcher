@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth, type Permissions, type PermissionKey } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,234 +8,227 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { Trash2, Shield, Crown, UserPlus, Mail, KeyRound, Loader2, Eye, EyeOff } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useToast } from "@/hooks/use-toast";
+import { Crown, Shield, UserPlus, Trash2, Settings2, Loader2, Eye, EyeOff, Lock } from "lucide-react";
 import { fetchSupabaseFunction } from "@/lib/supabaseFunctions";
-import { safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
+import { withPromiseTimeout } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
 
-interface UserRole {
-  id: string;
+const ASSIGNABLE_ROLES = ["admin", "editor", "seo_manager", "social_manager", "marketing_manager"] as const;
+type AssignableRole = typeof ASSIGNABLE_ROLES[number];
+
+const PRESETS: Record<string, Partial<Permissions>> = {
+  seo_only:        { can_manage_seo: true, can_manage_media: true, can_manage_scripts: true },
+  social_only:     { can_manage_social: true, can_manage_leads: true },
+  leads_only:      { can_manage_leads: true },
+  seo_and_social:  { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_media: true },
+  full_admin:      { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_view_audit_log: true },
+  editor_basic:    { can_manage_blog: true, can_manage_media: true },
+};
+
+const DEFAULT_PERMS: Permissions = {
+  can_manage_seo: false, can_manage_social: false, can_manage_leads: false,
+  can_manage_blog: false, can_manage_media: false, can_manage_scripts: false,
+  can_manage_videos: false, can_manage_users: false, can_view_audit_log: false,
+  is_disabled: false,
+};
+
+interface UserRow {
   user_id: string;
   role: string;
-  created_at: string;
+  email?: string;
+  permissions: Permissions;
+  is_owner: boolean;
 }
 
-const UserRolesManagement = () => {
-  const [roles, setRoles] = useState<UserRole[]>([]);
-  const [emailMap, setEmailMap] = useState<Record<string, string>>({});
-  const [showAdd, setShowAdd] = useState(false);
-  const [newEmail, setNewEmail] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [createNew, setCreateNew] = useState(false);
-  const [newRole, setNewRole] = useState<string>("editor");
-  const { isAdmin, user } = useAuth();
-  const { t, lang } = useAdminLang();
+const PERM_LABELS: Record<PermissionKey, string> = {
+  can_manage_seo: "SEO",
+  can_manage_social: "Social Media",
+  can_manage_leads: "Leads",
+  can_manage_blog: "Blog",
+  can_manage_media: "Media",
+  can_manage_scripts: "Scripts",
+  can_manage_videos: "Videos",
+  can_manage_users: "Users (advanced)",
+  can_view_audit_log: "Audit log",
+};
+
+const UserManagement = () => {
+  const { isOwner } = useAuth();
+  const { lang } = useAdminLang();
   const { toast } = useToast();
-  const [addLoading, setAddLoading] = useState(false);
-  const [loadingEmails, setLoadingEmails] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<UserRole | null>(null);
+  const [rows, setRows] = useState<UserRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Reset password dialog state
-  const [resetTarget, setResetTarget] = useState<UserRole | null>(null);
-  const [resetPassword, setResetPassword] = useState("");
-  const [showResetPwd, setShowResetPwd] = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
+  // Add dialog
+  const [showAdd, setShowAdd] = useState(false);
+  const [addEmail, setAddEmail] = useState("");
+  const [addPassword, setAddPassword] = useState("");
+  const [showPwd, setShowPwd] = useState(false);
+  const [addRole, setAddRole] = useState<AssignableRole>("seo_manager");
+  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+  const [adding, setAdding] = useState(false);
 
-  // Check super admin from database: first admin role by created_at
-  const [superAdminId, setSuperAdminId] = useState<string | null>(null);
-  useEffect(() => {
-    if (roles.length > 0) {
-      const firstAdmin = roles
-        .filter(r => r.role === "admin")
-        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())[0];
-      setSuperAdminId(firstAdmin?.user_id ?? null);
-    }
-  }, [roles]);
+  // Edit dialog
+  const [editTarget, setEditTarget] = useState<UserRow | null>(null);
+  const [editRole, setEditRole] = useState<AssignableRole>("editor");
+  const [editPerms, setEditPerms] = useState<Permissions>(DEFAULT_PERMS);
+  const [savingEdit, setSavingEdit] = useState(false);
 
-  const isSuperAdmin = !!superAdminId && user?.id === superAdminId;
+  const [deleteTarget, setDeleteTarget] = useState<UserRow | null>(null);
 
-  const fetchEmails = async (userIds: string[]) => {
-    if (userIds.length === 0) return;
-    setLoadingEmails(true);
+  const loadAll = async () => {
+    setLoading(true);
     try {
-      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
-      const token = sessionData?.session?.access_token;
-      const res = await fetchSupabaseFunction("list-user-emails", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ user_ids: userIds }),
-      });
-      const result = await res.json();
-      if (res.ok && result.users) setEmailMap(result.users);
-    } catch {} finally { setLoadingEmails(false); }
+      const { data: roleData } = await supabase.from("user_roles").select("user_id, role").order("created_at");
+      const { data: permData } = await (supabase as any).from("user_permissions").select("*");
+      const userIds = (roleData ?? []).map(r => r.user_id);
+
+      let emails: Record<string, string> = {};
+      if (userIds.length) {
+        try {
+          const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
+          const token = sessionData?.session?.access_token;
+          const res = await fetchSupabaseFunction("list-user-emails", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ user_ids: userIds }),
+          });
+          const json = await res.json();
+          if (res.ok && json.users) emails = json.users;
+        } catch { /* ignore */ }
+      }
+
+      const permMap: Record<string, Permissions> = {};
+      (permData ?? []).forEach((p: any) => { permMap[p.user_id] = { ...DEFAULT_PERMS, ...p }; });
+
+      const merged: UserRow[] = (roleData ?? []).map(r => ({
+        user_id: r.user_id,
+        role: r.role,
+        email: emails[r.user_id],
+        permissions: permMap[r.user_id] ?? DEFAULT_PERMS,
+        is_owner: (emails[r.user_id] ?? "").toLowerCase() === "info@alhamdacademy.net" || r.role === "owner",
+      }));
+      setRows(merged);
+    } finally { setLoading(false); }
   };
 
-  const fetchRoles = async () => {
-    const data = await safeDataRequest<UserRole[]>({
-      fallback: [],
-      markGlobalFallbackOnError: false,
-      request: async (signal) => {
-        const { data, error } = await supabase.from("user_roles").select("*").order("created_at").abortSignal(signal);
-        if (error) throw error;
-        return data ?? [];
-      },
-    });
+  useEffect(() => { void loadAll(); }, []);
 
-    setRoles(data);
-    void fetchEmails(data.map(r => r.user_id));
-  };
-
-  useEffect(() => { fetchRoles(); }, []);
-
-  if (!isAdmin) {
+  if (!isOwner) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <Shield className="h-12 w-12 text-muted-foreground mb-4" />
-        <h2 className="text-xl font-semibold">{t("team.admin_only")}</h2>
-        <p className="text-muted-foreground mt-1">{t("team.admin_only_desc")}</p>
+        <Lock className="h-12 w-12 text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold">Owner only</h2>
+        <p className="text-muted-foreground mt-1">Only the Owner account can manage users and permissions.</p>
       </div>
     );
   }
 
-  const handleAdd = async () => {
-    if (!newEmail) { toast({ title: t("err.error"), description: t("err.email_required"), variant: "destructive" }); return; }
-    if (createNew && !newPassword) { toast({ title: t("err.error"), description: t("err.password_required"), variant: "destructive" }); return; }
-    if (createNew && newPassword.length < 6) { toast({ title: t("err.error"), description: t("err.password_short"), variant: "destructive" }); return; }
-    if (newRole === "admin" && !isSuperAdmin) {
-      toast({ title: t("err.not_allowed"), description: t("err.only_super_add"), variant: "destructive" }); return;
-    }
-
-    setAddLoading(true);
-    try {
-      let userId: string | null = null;
-      let wasCreated = false;
-
-      if (createNew) {
-        const { data: currentSessionData } = await withPromiseTimeout(
-          supabase.auth.getSession(),
-          { markGlobalFallbackOnError: false }
-        );
-        const adminRefreshToken = currentSessionData?.session?.refresh_token;
-
-        const { data: signUpData, error: signUpError } = await withPromiseTimeout(
-          supabase.auth.signUp({
-            email: newEmail,
-            password: newPassword,
-            options: { emailRedirectTo: window.location.origin },
-          }),
-          { markGlobalFallbackOnError: false }
-        );
-
-        if (adminRefreshToken) {
-          await supabase.auth.refreshSession({ refresh_token: adminRefreshToken }).catch(() => {});
-        }
-
-        if (signUpError) {
-          toast({ title: t("err.error"), description: signUpError.message, variant: "destructive" });
-          return;
-        }
-
-        if (signUpData.user && signUpData.user.identities && signUpData.user.identities.length === 0) {
-          userId = signUpData.user.id;
-        } else if (signUpData.user) {
-          userId = signUpData.user.id;
-          wasCreated = true;
-        }
-      } else {
-        toast({ title: t("err.error"), description: t("err.enable_create_new"), variant: "destructive" });
-        return;
-      }
-
-      if (!userId) {
-        toast({ title: t("err.error"), description: t("err.user_not_found"), variant: "destructive" });
-        return;
-      }
-
-      if (wasCreated) {
-        toast({ title: `✅ ${t("ok.account_created")}`, description: `${t("ok.account_created_for")} ${newEmail}` });
-      }
-
-      const { data: existingRole } = await supabase.from("user_roles").select("id").eq("user_id", userId).maybeSingle();
-      if (existingRole) {
-        toast({ title: t("err.error"), description: t("err.role_exists"), variant: "destructive" });
-        return;
-      }
-
-      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role: newRole } as never);
-      if (error) { toast({ title: t("err.error"), description: error.message, variant: "destructive" }); return; }
-      toast({ title: `✅ ${t("ok.done")}`, description: t("ok.role_assigned") });
-      setShowAdd(false); setNewEmail(""); setNewPassword(""); setCreateNew(false); setShowPassword(false); void fetchRoles();
-    } catch {
-      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
-    } finally { setAddLoading(false); }
+  const applyPreset = (key: string, target: "add" | "edit") => {
+    const preset = { ...DEFAULT_PERMS, ...(PRESETS[key] ?? {}) };
+    if (target === "add") setAddPerms(preset);
+    else setEditPerms(preset);
   };
 
-  const handleDelete = async (r: UserRole) => {
-    if (r.user_id === superAdminId) { toast({ title: t("err.not_allowed"), description: t("err.cant_del_super"), variant: "destructive" }); return; }
-    if (!isSuperAdmin) { toast({ title: t("err.not_allowed"), description: t("err.only_super_del"), variant: "destructive" }); return; }
-    try {
-      const { error } = await supabase.from("user_roles").delete().eq("id", r.id);
-      if (error) {
-        toast({ title: t("err.error"), description: error.message, variant: "destructive" });
-        return;
-      }
-      toast({ title: t("ok.deleted") });
-      void fetchRoles();
-    } catch {
-      toast({ title: t("err.error"), description: "Request timed out. Please try again.", variant: "destructive" });
-    }
-  };
-
-  const handleResetPassword = async () => {
-    if (!resetTarget) return;
-    if (resetPassword.length < 6) {
-      toast({ title: t("err.error"), description: t("pwd.min_length"), variant: "destructive" });
+  const handleCreate = async () => {
+    if (!addEmail || addPassword.length < 8) {
+      toast({ title: "Error", description: "Email and a password (≥8 chars) are required.", variant: "destructive" });
       return;
     }
-    setResetLoading(true);
+    setAdding(true);
     try {
       const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
       const token = sessionData?.session?.access_token;
-      const res = await fetchSupabaseFunction("admin-reset-password", {
+      const res = await fetchSupabaseFunction("admin-create-user", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ user_id: resetTarget.user_id, new_password: resetPassword }),
+        body: JSON.stringify({ email: addEmail, password: addPassword, role: addRole, permissions: addPerms }),
       });
-      const result = await res.json();
-      if (!res.ok) {
-        toast({ title: t("err.error"), description: result.error || "Failed", variant: "destructive" });
-        return;
-      }
-      toast({ title: `✅ ${t("ok.done")}`, description: t("pwd.reset_success") });
-      setResetTarget(null);
-      setResetPassword("");
-    } catch {
-      toast({ title: t("err.error"), description: "Request timed out.", variant: "destructive" });
-    } finally { setResetLoading(false); }
+      const json = await res.json();
+      if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
+      toast({ title: "✅ Account created", description: addEmail });
+      setShowAdd(false); setAddEmail(""); setAddPassword(""); setAddRole("seo_manager");
+      setAddPerms({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+      void loadAll();
+    } finally { setAdding(false); }
   };
 
-  const getInitials = (email: string) => email.split("@")[0].slice(0, 2).toUpperCase();
-
-  const getRoleBadge = (role: string, userId: string) => {
-    if (userId === superAdminId) return <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1"><Crown className="h-3 w-3" /> {t("team.badge.super")}</Badge>;
-    if (role === "admin") return <Badge className="bg-primary/10 text-primary border-primary/20 gap-1"><Shield className="h-3 w-3" /> {t("team.badge.admin")}</Badge>;
-    return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> {t("team.badge.editor")}</Badge>;
+  const openEdit = (row: UserRow) => {
+    setEditTarget(row);
+    setEditRole((ASSIGNABLE_ROLES.includes(row.role as AssignableRole) ? row.role : "editor") as AssignableRole);
+    setEditPerms(row.permissions);
   };
+
+  const handleSaveEdit = async () => {
+    if (!editTarget) return;
+    setSavingEdit(true);
+    try {
+      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
+      const token = sessionData?.session?.access_token;
+      const res = await fetchSupabaseFunction("admin-update-permissions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ user_id: editTarget.user_id, role: editRole, permissions: editPerms }),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
+      toast({ title: "✅ Saved" });
+      setEditTarget(null);
+      void loadAll();
+    } finally { setSavingEdit(false); }
+  };
+
+  const handleDelete = async (row: UserRow) => {
+    try {
+      const { data: sessionData } = await withPromiseTimeout(supabase.auth.getSession(), { markGlobalFallbackOnError: false });
+      const token = sessionData?.session?.access_token;
+      const res = await fetchSupabaseFunction("admin-delete-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ user_id: row.user_id }),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
+      toast({ title: "Deleted" });
+      void loadAll();
+    } finally { setDeleteTarget(null); }
+  };
+
+  const initials = (e?: string) => (e ? e.split("@")[0].slice(0, 2).toUpperCase() : "??");
+
+  const roleBadge = (row: UserRow) => {
+    if (row.is_owner) return <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1"><Crown className="h-3 w-3" /> Owner</Badge>;
+    return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> {row.role}</Badge>;
+  };
+
+  const PermissionGrid = ({ value, onChange }: { value: Permissions; onChange: (p: Permissions) => void }) => (
+    <div className="grid grid-cols-2 gap-2">
+      {(Object.keys(PERM_LABELS) as PermissionKey[]).map(k => (
+        <label key={k} className="flex items-center gap-2 text-sm rounded-md border p-2 cursor-pointer hover:bg-muted/50">
+          <Checkbox checked={!!value[k]} onCheckedChange={(v) => onChange({ ...value, [k]: !!v })} />
+          <span>{PERM_LABELS[k]}</span>
+        </label>
+      ))}
+      <label className="col-span-2 flex items-center gap-2 text-sm rounded-md border border-destructive/30 p-2 cursor-pointer hover:bg-destructive/5">
+        <Checkbox checked={value.is_disabled} onCheckedChange={(v) => onChange({ ...value, is_disabled: !!v })} />
+        <span className="text-destructive">Disable account (revokes all access)</span>
+      </label>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t("team.title")}</h1>
-          <p className="text-muted-foreground">{t("team.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-foreground">User Management</h1>
+          <p className="text-muted-foreground">Owner-only: create accounts and assign granular permissions.</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="gap-2"><UserPlus className="h-4 w-4" /> {t("team.add")}</Button>
+        <Button onClick={() => setShowAdd(true)} className="gap-2"><UserPlus className="h-4 w-4" /> Add user</Button>
       </div>
 
       <Card>
@@ -243,152 +236,164 @@ const UserRolesManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t("team.member")}</TableHead>
-                <TableHead>{t("team.role")}</TableHead>
-                <TableHead>{t("team.date")}</TableHead>
-                <TableHead className="w-24"></TableHead>
+                <TableHead>Member</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Permissions</TableHead>
+                <TableHead className="w-32">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {roles.map(r => {
-                const email = emailMap[r.user_id] || "";
+              {loading && (
+                <TableRow><TableCell colSpan={4} className="text-center py-12"><Loader2 className="h-5 w-5 animate-spin mx-auto" /></TableCell></TableRow>
+              )}
+              {!loading && rows.map(r => {
+                const activePerms = (Object.keys(PERM_LABELS) as PermissionKey[]).filter(k => r.is_owner || r.permissions[k]);
                 return (
-                  <TableRow key={r.id}>
+                  <TableRow key={r.user_id} className={r.permissions.is_disabled ? "opacity-50" : ""}>
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9"><AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{email ? getInitials(email) : "??"}</AvatarFallback></Avatar>
-                        <p className="font-medium text-sm">{loadingEmails ? <span className="text-muted-foreground">{t("team.loading")}</span> : (email || t("team.unknown"))}</p>
+                        <Avatar className="h-9 w-9"><AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{initials(r.email)}</AvatarFallback></Avatar>
+                        <div>
+                          <p className="font-medium text-sm">{r.email ?? r.user_id.slice(0, 8)}</p>
+                          {r.permissions.is_disabled && <p className="text-xs text-destructive">Disabled</p>}
+                        </div>
                       </div>
                     </TableCell>
-                    <TableCell>{getRoleBadge(r.role, r.user_id)}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {new Date(r.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", { year: "numeric", month: "short", day: "numeric" })}
+                    <TableCell>{roleBadge(r)}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1 max-w-md">
+                        {r.is_owner && <Badge variant="outline" className="text-xs">All</Badge>}
+                        {!r.is_owner && activePerms.length === 0 && <span className="text-xs text-muted-foreground">None</span>}
+                        {!r.is_owner && activePerms.slice(0, 5).map(k => (
+                          <Badge key={k} variant="outline" className="text-xs">{PERM_LABELS[k]}</Badge>
+                        ))}
+                        {!r.is_owner && activePerms.length > 5 && <Badge variant="outline" className="text-xs">+{activePerms.length - 5}</Badge>}
+                      </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        {/* Reset password - super admin can reset for all accounts */}
-                        {isSuperAdmin && (
-                          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary" onClick={() => { setResetTarget(r); setResetPassword(""); setShowResetPwd(false); }} title={t("pwd.reset_btn")}>
-                            <KeyRound className="h-4 w-4" />
-                          </Button>
+                        {!r.is_owner && (
+                          <>
+                            <Button variant="ghost" size="icon" onClick={() => openEdit(r)} title="Edit"><Settings2 className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(r)} title="Delete"><Trash2 className="h-4 w-4" /></Button>
+                          </>
                         )}
-                        {r.user_id !== superAdminId && isSuperAdmin && (
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => setDeleteTarget(r)}>
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
+                        {r.is_owner && <Lock className="h-4 w-4 text-muted-foreground" aria-label="Owner is protected" />}
                       </div>
                     </TableCell>
                   </TableRow>
                 );
               })}
-              {roles.length === 0 && (
-                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-12"><UserPlus className="h-8 w-8 mx-auto mb-2 opacity-40" />{t("team.empty")}</TableCell></TableRow>
+              {!loading && rows.length === 0 && (
+                <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground py-12">No users yet</TableCell></TableRow>
               )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
 
-      {/* Delete Confirmation */}
-      <DeleteConfirmDialog
-        open={!!deleteTarget}
-        onOpenChange={(open) => !open && setDeleteTarget(null)}
-        onConfirm={async () => { if (deleteTarget) { const target = deleteTarget; setDeleteTarget(null); await handleDelete(target); } }}
-        title={t("team.confirm_delete_title")}
-        description={t("team.confirm_delete_desc")}
-        confirmLabel={t("ok.deleted")}
-        cancelLabel={t("blog.cancel")}
-      />
-
-      {/* Reset Password Dialog */}
-      <Dialog open={!!resetTarget} onOpenChange={(v) => { if (!v) { setResetTarget(null); setResetPassword(""); } }}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><KeyRound className="h-5 w-5" /> {t("pwd.reset_title")}</DialogTitle>
-            <DialogDescription>{t("pwd.reset_desc")} {emailMap[resetTarget?.user_id || ""] || ""}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label>{t("pwd.new")}</Label>
-              <div className="relative">
-                <Input
-                  type={showResetPwd ? "text" : "password"}
-                  value={resetPassword}
-                  onChange={(e) => setResetPassword(e.target.value)}
-                  placeholder="••••••••"
-                  dir="ltr"
-                />
-                <Button type="button" variant="ghost" size="icon" className="absolute end-1 top-1/2 -translate-y-1/2 h-7 w-7" onClick={() => setShowResetPwd(!showResetPwd)}>
-                  {showResetPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">{t("pwd.hint")}</p>
-            </div>
-            <Button onClick={handleResetPassword} className="w-full" disabled={resetLoading}>
-              {resetLoading ? <><Loader2 className="h-4 w-4 animate-spin me-1" />{t("login.loading")}</> : t("pwd.reset_save")}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Dialog */}
+      {/* Add user dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5" /> {t("team.dialog.title")}</DialogTitle>
-            <DialogDescription>{t("team.dialog.desc")}</DialogDescription>
+            <DialogTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5" /> Add user</DialogTitle>
+            <DialogDescription>Create a new dashboard account with role + permissions.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-5 pt-2">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="flex items-center gap-2"><Mail className="h-4 w-4 text-muted-foreground" /> {t("team.email")}</Label>
-              <Input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} dir="ltr" />
+              <Label>Email</Label>
+              <Input type="email" value={addEmail} onChange={e => setAddEmail(e.target.value)} dir="ltr" />
             </div>
-            <div className="flex items-center space-x-3 rtl:space-x-reverse rounded-lg border p-3 bg-muted/30">
-              <Checkbox id="create-new" checked={createNew} onCheckedChange={(v) => setCreateNew(!!v)} />
-              <Label htmlFor="create-new" className="cursor-pointer text-sm leading-relaxed">{t("team.create_new")}</Label>
-            </div>
-            {createNew && (
-              <div className="space-y-2 animate-in slide-in-from-top-2">
-                <Label className="flex items-center gap-2"><KeyRound className="h-4 w-4 text-muted-foreground" /> {t("team.password")}</Label>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    value={newPassword}
-                    onChange={e => setNewPassword(e.target.value)}
-                    dir="ltr"
-                    className="pe-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute end-3 top-1/2 -translate-y-1/2 p-0.5 text-muted-foreground hover:text-foreground transition-colors"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <p className="text-xs text-muted-foreground">{t("team.password_hint")}</p>
+            <div className="space-y-2">
+              <Label>Password (min 8)</Label>
+              <div className="relative">
+                <Input type={showPwd ? "text" : "password"} value={addPassword} onChange={e => setAddPassword(e.target.value)} dir="ltr" className="pe-10" />
+                <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute end-3 top-1/2 -translate-y-1/2 text-muted-foreground" tabIndex={-1}>
+                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
-            )}
+            </div>
             <div className="space-y-2">
-              <Label>{t("team.role_label")}</Label>
-              <Select value={newRole} onValueChange={setNewRole}>
+              <Label>Role</Label>
+              <Select value={addRole} onValueChange={(v) => setAddRole(v as AssignableRole)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {isSuperAdmin && <SelectItem value="admin">{t("team.role.admin")}</SelectItem>}
-                  <SelectItem value="editor">{t("team.role.editor")}</SelectItem>
+                  {ASSIGNABLE_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
-            <Button onClick={handleAdd} className="w-full gap-2" disabled={addLoading}>
-              {addLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> {t("team.submitting")}</> : <><UserPlus className="h-4 w-4" /> {t("team.submit")}</>}
-            </Button>
+            <div className="space-y-2">
+              <Label>Quick presets</Label>
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(PRESETS).map(k => (
+                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "add")}>{k.replace(/_/g, " ")}</Button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Permissions</Label>
+              <PermissionGrid value={addPerms} onChange={setAddPerms} />
+            </div>
           </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAdd(false)}>Cancel</Button>
+            <Button onClick={handleCreate} disabled={adding}>
+              {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit user dialog */}
+      <Dialog open={!!editTarget} onOpenChange={(v) => !v && setEditTarget(null)}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Settings2 className="h-5 w-5" /> Edit user</DialogTitle>
+            <DialogDescription>{editTarget?.email}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Role</Label>
+              <Select value={editRole} onValueChange={(v) => setEditRole(v as AssignableRole)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {ASSIGNABLE_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Quick presets</Label>
+              <div className="flex flex-wrap gap-2">
+                {Object.keys(PRESETS).map(k => (
+                  <Button key={k} type="button" variant="outline" size="sm" onClick={() => applyPreset(k, "edit")}>{k.replace(/_/g, " ")}</Button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Permissions</Label>
+              <PermissionGrid value={editPerms} onChange={setEditPerms} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
+            <Button onClick={handleSaveEdit} disabled={savingEdit}>
+              {savingEdit ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <DeleteConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => !open && setDeleteTarget(null)}
+        onConfirm={async () => { if (deleteTarget) await handleDelete(deleteTarget); }}
+        title="Delete user"
+        description={`Permanently delete ${deleteTarget?.email}? This cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+      />
     </div>
   );
 };
 
-export default UserRolesManagement;
+export default UserManagement;
