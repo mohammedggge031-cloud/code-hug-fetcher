@@ -98,8 +98,8 @@ const TrialRegistration = () => {
         </div>
       </header>
 
-      {/* Same form, same flow — passes source for tracking */}
-      <ContactSection source="facebook_ads" />
+      {/* Same form, same flow — passes generic source for all paid social campaigns */}
+      <ContactSection source="paid_social" />
 
       <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
         © {new Date().getFullYear()} Alhamd Academy ·{" "}
