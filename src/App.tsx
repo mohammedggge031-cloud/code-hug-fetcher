@@ -58,6 +58,7 @@ const IslamicStudies = lazyRetry(() => import("./pages/IslamicStudies"));
 const IjazahProgram = lazyRetry(() => import("./pages/IjazahProgram"));
 const FemaleQuranTeacher = lazyRetry(() => import("./pages/FemaleQuranTeacher"));
 const FreeTrial = lazyRetry(() => import("./pages/FreeTrial"));
+const TrialRegistration = lazyRetry(() => import("./pages/TrialRegistration"));
 
 const CoursePage = lazyRetry(() => import("./pages/CoursePage"));
 
@@ -126,6 +127,7 @@ const App = () => (
               <Route path="/ijazah-program" element={<IjazahProgram />} />
               <Route path="/female-quran-teacher" element={<FemaleQuranTeacher />} />
               <Route path="/free-trial" element={<FreeTrial />} />
+              <Route path="/trial-registration" element={<TrialRegistration />} />
               
               <Route path="/courses/:slug" element={<CoursePage />} />
               <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
