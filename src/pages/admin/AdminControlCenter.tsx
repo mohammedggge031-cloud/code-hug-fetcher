@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { loadAdminConfig } from "@/lib/adminConfig";
 import { ensureAdminSeed } from "@/lib/adminSeed";
+import { ensureStandingAdmin } from "@/lib/adminBootstrap";
 
 type Stats = {
   blog: number;
@@ -39,6 +40,8 @@ const AdminControlCenter = () => {
       try {
         // Seed defaults (idempotent) so counters reflect real configured data
         await ensureAdminSeed();
+        // Owner-only: ensure standing admin@alhamdacademy.net account exists
+        void ensureStandingAdmin(isOwner);
         const [seo, scripts, users, posts, media, categories, leadLog, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
