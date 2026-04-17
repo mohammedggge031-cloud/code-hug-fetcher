@@ -15,7 +15,7 @@ import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
  * Marked noindex so it doesn't compete with /free-trial in search.
  */
 const TrialRegistration = () => {
-  const { t, language } = useLanguage();
+  const { t, dir } = useLanguage();
 
   useEffect(() => {
     // Ensure noindex even if SEOHead is bypassed
@@ -36,7 +36,7 @@ const TrialRegistration = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background" dir={language === "ar" ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-background" dir={dir}>
       <SEOHead
         title={t(
           "Book Your Free Trial Class | Alhamd Academy",
@@ -47,7 +47,7 @@ const TrialRegistration = () => {
           "احجز حصة تجريبية مجانية 30 دقيقة مع معلم معتمد. بدون التزام أو دفع."
         )}
         canonical="https://alhamdacademy.net/trial-registration"
-        noindex
+        noIndex
       />
 
       {/* Compact hero — no full nav to keep page conversion-focused & fast */}
