@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, useCallback, ReactNode } from "react";
 import type { User, Session } from "@supabase/supabase-js";
 import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
+import { appQueryClient } from "@/lib/queryClient";
 
 type AppRole = "owner" | "admin" | "editor" | "seo_manager" | "social_manager" | "marketing_manager";
 
@@ -66,15 +67,26 @@ const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [roleLoading, setRoleLoading] = useState(false);
   const [role, setRole] = useState<AppRole | null>(null);
   const [permissions, setPermissions] = useState<Permissions>(DEFAULT_PERMS);
   const initialized = useRef(false);
   const inactivityTimer = useRef<number | null>(null);
-  const sessionRestoredRef = useRef(false);
+  const roleRequestRef = useRef(0);
+
+  const resetAuthState = useCallback(() => {
+    setSession(null);
+    setUser(null);
+    setRole(null);
+    setPermissions(DEFAULT_PERMS);
+    setRoleLoading(false);
+  }, []);
 
   const fetchRoleAndPerms = useCallback(async (userId: string) => {
+    const requestId = ++roleRequestRef.current;
     const { supabase } = await getSupabase();
+    setRoleLoading(true);
 
     const resolvedRole = await safeDataRequest<AppRole | null>({
       fallback: null,
@@ -102,22 +114,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { ...DEFAULT_PERMS, ...(data ?? {}) } as Permissions;
       },
     });
+    if (roleRequestRef.current !== requestId) return null;
     // Owner always has all perms regardless of row
-    if (resolvedRole === "owner") {
-      setPermissions({
-        can_manage_seo: true,
-        can_manage_social: true,
-        can_manage_leads: true,
-        can_manage_blog: true,
-        can_manage_media: true,
-        can_manage_scripts: true,
-        can_manage_videos: true,
-        can_manage_users: true,
-        is_disabled: false,
-      });
-    } else {
-      setPermissions(resolvedPerms);
-    }
+    setRole(resolvedRole);
+    setPermissions(resolvedRole === "owner" ? {
+      can_manage_seo: true,
+      can_manage_social: true,
+      can_manage_leads: true,
+      can_manage_blog: true,
+      can_manage_media: true,
+      can_manage_scripts: true,
+      can_manage_videos: true,
+      can_manage_users: true,
+      is_disabled: false,
+    } : resolvedPerms);
+    setRoleLoading(false);
     return resolvedRole;
   }, []);
 
@@ -129,22 +140,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const hardStop = window.setTimeout(() => {
       if (!active) return;
-      setSession(null); setUser(null); setRole(null); setPermissions(DEFAULT_PERMS);
-      setLoading(false);
+      setSessionReady(true);
     }, AUTH_TIMEOUT_MS);
+
+    const applySession = (nextSession: Session | null) => {
+      if (!active) return;
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      setSessionReady(true);
+
+      if (!nextSession?.user) {
+        roleRequestRef.current += 1;
+        resetAuthState();
+        return;
+      }
+
+      setRole(null);
+      setPermissions(DEFAULT_PERMS);
+      setRoleLoading(true);
+    };
 
     const initAuth = async () => {
       const { supabase } = await getSupabase();
       const { data: { subscription: nextSubscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-        if (!sessionRestoredRef.current) return;
-        setSession(nextSession);
-        setUser(nextSession?.user ?? null);
-        if (nextSession?.user) {
-          fetchRoleAndPerms(nextSession.user.id).then(() => { if (active) setLoading(false); });
-        } else {
-          setRole(null); setPermissions(DEFAULT_PERMS);
-          if (active) setLoading(false);
-        }
+        applySession(nextSession);
       });
       subscription = nextSubscription;
 
@@ -153,24 +172,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           supabase.auth.getSession(),
           { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false },
         );
-        if (!active) return;
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        if (currentSession?.user) await fetchRoleAndPerms(currentSession.user.id);
-        else { setRole(null); setPermissions(DEFAULT_PERMS); }
+        applySession(currentSession);
       } catch {
-        if (!active) return;
-        setSession(null); setUser(null); setRole(null); setPermissions(DEFAULT_PERMS);
+        applySession(null);
       } finally {
-        sessionRestoredRef.current = true;
-        if (active) setLoading(false);
         clearTimeout(hardStop);
       }
     };
 
     void initAuth();
     return () => { active = false; clearTimeout(hardStop); subscription?.unsubscribe(); };
-  }, [fetchRoleAndPerms]);
+  }, [fetchRoleAndPerms, resetAuthState]);
+
+  useEffect(() => {
+    if (!sessionReady) return;
+    if (!user?.id) return;
+    void fetchRoleAndPerms(user.id);
+  }, [fetchRoleAndPerms, sessionReady, user?.id]);
 
   useEffect(() => {
     if (!user) return;
@@ -200,11 +218,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     const { supabase } = await getSupabase();
+    roleRequestRef.current += 1;
+    resetAuthState();
+    setSessionReady(true);
+    appQueryClient.clear();
     await withPromiseTimeout(supabase.auth.signOut(), { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false }).catch(() => undefined);
-    setRole(null); setPermissions(DEFAULT_PERMS);
   };
 
   const isOwner = role === "owner";
+  const loading = !sessionReady || (!!user && roleLoading);
   const can = (perm: PermissionKey) => {
     if (isOwner) return true;
     if (permissions.is_disabled) return false;
