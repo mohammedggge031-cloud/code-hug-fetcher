@@ -120,7 +120,7 @@ const UserManagement = () => {
   const [addPassword, setAddPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [addRole, setAddRole] = useState<AssignableRole>("seo_manager");
-  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
+  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...ACCESS_MODES.website.perms });
   const [adding, setAdding] = useState(false);
 
   // Edit dialog
@@ -202,7 +202,7 @@ const UserManagement = () => {
       if (!res.ok) { toast({ title: "Error", description: json.error || "Failed", variant: "destructive" }); return; }
       toast({ title: "✅ Account created", description: addEmail });
       setShowAdd(false); setAddEmail(""); setAddPassword(""); setAddRole("seo_manager");
-      setAddPerms({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
+      setAddPerms({ ...DEFAULT_PERMS, ...ACCESS_MODES.website.perms });
       void loadAll();
     } finally { setAdding(false); }
   };
