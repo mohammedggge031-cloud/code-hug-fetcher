@@ -8,8 +8,8 @@ const corsHeaders = {
 };
 
 const PERM_KEYS = [
-  "can_manage_seo", "can_manage_blog", "can_manage_media",
-  "can_manage_scripts", "can_manage_videos", "can_manage_users", "is_disabled",
+  "can_manage_seo", "can_manage_social", "can_manage_leads", "can_manage_blog",
+  "can_manage_media", "can_manage_scripts", "can_manage_videos", "can_manage_users", "is_disabled",
 ] as const;
 
 Deno.serve(async (req) => {

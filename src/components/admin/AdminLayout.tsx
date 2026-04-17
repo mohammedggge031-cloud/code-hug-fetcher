@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video } from "lucide-react";
+import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video, Megaphone, Inbox } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -17,13 +17,15 @@ const AdminLayout = () => {
 
   const navItems = [
     { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true, show: true },
+    { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isAdmin },
+    { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isAdmin },
     { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isAdmin },
     { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isAdmin },
     { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isAdmin },
     { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isAdmin },
     { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isAdmin },
     { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isAdmin },
-    { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: isOwner },
+    { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: can("can_manage_users") || isAdmin },
   ];
 
   const handleSignOut = async () => {

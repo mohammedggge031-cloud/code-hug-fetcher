@@ -6,6 +6,8 @@ type AppRole = "owner" | "admin" | "editor" | "seo_manager" | "social_manager" |
 
 export type PermissionKey =
   | "can_manage_seo"
+  | "can_manage_social"
+  | "can_manage_leads"
   | "can_manage_blog"
   | "can_manage_media"
   | "can_manage_scripts"
@@ -14,6 +16,8 @@ export type PermissionKey =
 
 export interface Permissions {
   can_manage_seo: boolean;
+  can_manage_social: boolean;
+  can_manage_leads: boolean;
   can_manage_blog: boolean;
   can_manage_media: boolean;
   can_manage_scripts: boolean;
@@ -24,6 +28,8 @@ export interface Permissions {
 
 const DEFAULT_PERMS: Permissions = {
   can_manage_seo: false,
+  can_manage_social: false,
+  can_manage_leads: false,
   can_manage_blog: false,
   can_manage_media: false,
   can_manage_scripts: false,
@@ -100,6 +106,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (resolvedRole === "owner") {
       setPermissions({
         can_manage_seo: true,
+        can_manage_social: true,
+        can_manage_leads: true,
         can_manage_blog: true,
         can_manage_media: true,
         can_manage_scripts: true,
