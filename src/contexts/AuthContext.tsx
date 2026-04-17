@@ -5,27 +5,30 @@ import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/
 type AppRole = "owner" | "admin" | "editor" | "seo_manager" | "social_manager" | "marketing_manager";
 
 export type PermissionKey =
-  | "can_manage_seo" | "can_manage_social" | "can_manage_leads"
-  | "can_manage_blog" | "can_manage_media" | "can_manage_scripts"
-  | "can_manage_videos" | "can_manage_users" | "can_view_audit_log";
+  | "can_manage_seo"
+  | "can_manage_blog"
+  | "can_manage_media"
+  | "can_manage_scripts"
+  | "can_manage_videos"
+  | "can_manage_users";
 
 export interface Permissions {
   can_manage_seo: boolean;
-  can_manage_social: boolean;
-  can_manage_leads: boolean;
   can_manage_blog: boolean;
   can_manage_media: boolean;
   can_manage_scripts: boolean;
   can_manage_videos: boolean;
   can_manage_users: boolean;
-  can_view_audit_log: boolean;
   is_disabled: boolean;
 }
 
 const DEFAULT_PERMS: Permissions = {
-  can_manage_seo: false, can_manage_social: false, can_manage_leads: false,
-  can_manage_blog: false, can_manage_media: false, can_manage_scripts: false,
-  can_manage_videos: false, can_manage_users: false, can_view_audit_log: false,
+  can_manage_seo: false,
+  can_manage_blog: false,
+  can_manage_media: false,
+  can_manage_scripts: false,
+  can_manage_videos: false,
+  can_manage_users: false,
   is_disabled: false,
 };
 
@@ -96,9 +99,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Owner always has all perms regardless of row
     if (resolvedRole === "owner") {
       setPermissions({
-        can_manage_seo: true, can_manage_social: true, can_manage_leads: true,
-        can_manage_blog: true, can_manage_media: true, can_manage_scripts: true,
-        can_manage_videos: true, can_manage_users: true, can_view_audit_log: true,
+        can_manage_seo: true,
+        can_manage_blog: true,
+        can_manage_media: true,
+        can_manage_scripts: true,
+        can_manage_videos: true,
+        can_manage_users: true,
         is_disabled: false,
       });
     } else {
