@@ -1,11 +1,12 @@
 import { useEffect, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ContactSection from "@/components/ContactSection";
+import SEOHead from "@/components/SEOHead";
+import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
 
 /**
  * Build a dynamic source string from URL UTM parameters.
  * Falls back to "paid_social" if no UTM params are present.
- * Format: "{utm_source}|{utm_campaign}|{utm_medium}|{utm_content}" — only non-empty parts.
  */
 const buildSourceFromUTM = (): string => {
   if (typeof window === "undefined") return "paid_social";
@@ -18,8 +19,6 @@ const buildSourceFromUTM = (): string => {
   }
   return parts.length > 0 ? parts.join(" | ") : "paid_social";
 };
-import SEOHead from "@/components/SEOHead";
-import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
 
 /**
  * Standalone landing page for media/ads team only.
