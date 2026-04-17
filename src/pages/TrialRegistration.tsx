@@ -33,7 +33,7 @@ import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
  */
 const TrialRegistration = () => {
   const { t, dir } = useLanguage();
-
+  const dynamicSource = useMemo(() => buildSourceFromUTM(), []);
   useEffect(() => {
     // Ensure noindex even if SEOHead is bypassed
     const meta = document.createElement("meta");
