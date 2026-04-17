@@ -65,7 +65,7 @@ const CoursePage = lazyRetry(() => import("./pages/CoursePage"));
 // Admin pages
 const AdminLogin = lazyRetry(() => import("./pages/admin/AdminLogin"));
 const AdminLayout = lazyRetry(() => import("./components/admin/AdminLayout"));
-const AdminDashboard = lazyRetry(() => import("./pages/admin/AdminDashboard"));
+const AdminControlCenter = lazyRetry(() => import("./pages/admin/AdminControlCenter"));
 const SeoManagement = lazyRetry(() => import("./pages/admin/SeoManagement"));
 const ScriptsManagement = lazyRetry(() => import("./pages/admin/ScriptsManagement"));
 const UserRolesManagement = lazyRetry(() => import("./pages/admin/UserRolesManagement"));
@@ -73,6 +73,8 @@ const BlogManagement = lazyRetry(() => import("./pages/admin/BlogManagement"));
 const CategoriesManagement = lazyRetry(() => import("./pages/admin/CategoriesManagement"));
 const MediaLibrary = lazyRetry(() => import("./pages/admin/MediaLibrary"));
 const VideoManagement = lazyRetry(() => import("./pages/admin/VideoManagement"));
+const LeadsManagement = lazyRetry(() => import("./pages/admin/LeadsManagement"));
+const SocialManagement = lazyRetry(() => import("./pages/admin/SocialManagement"));
 const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazyRetry(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazyRetry(() => import("./pages/LearnQuranWorldwide"));
@@ -149,7 +151,9 @@ const App = () => (
               <Route path="/admin" element={<AuthProvider><AdminLangProvider><Outlet /></AdminLangProvider></AuthProvider>}>
                 <Route path="login" element={<AdminLogin />} />
                 <Route element={<ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute>}>
-                  <Route index element={<AdminDashboard />} />
+                  <Route index element={<AdminControlCenter />} />
+                  <Route path="leads" element={<LeadsManagement />} />
+                  <Route path="social" element={<SocialManagement />} />
                   <Route path="blog" element={<BlogManagement />} />
                   <Route path="categories" element={<CategoriesManagement />} />
                   <Route path="media" element={<MediaLibrary />} />

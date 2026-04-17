@@ -24,13 +24,16 @@ type AssignableRole = typeof ASSIGNABLE_ROLES[number];
 const PRESETS: Record<string, Partial<Permissions>> = {
   seo_only:        { can_manage_seo: true, can_manage_media: true, can_manage_scripts: true },
   content_manager: { can_manage_blog: true, can_manage_media: true },
+  social_manager:  { can_manage_social: true, can_manage_leads: true },
   seo_and_content: { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true },
-  full_admin:      { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true },
+  full_admin:      { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true },
   editor_basic:    { can_manage_blog: true, can_manage_media: true },
 };
 
 const DEFAULT_PERMS: Permissions = {
   can_manage_seo: false,
+  can_manage_social: false,
+  can_manage_leads: false,
   can_manage_blog: false,
   can_manage_media: false,
   can_manage_scripts: false,
@@ -49,6 +52,8 @@ interface UserRow {
 
 const PERM_LABELS: Record<PermissionKey, string> = {
   can_manage_seo: "SEO",
+  can_manage_social: "Social",
+  can_manage_leads: "Leads",
   can_manage_blog: "Blog",
   can_manage_media: "Media",
   can_manage_scripts: "Scripts",
@@ -57,7 +62,7 @@ const PERM_LABELS: Record<PermissionKey, string> = {
 };
 
 const UserManagement = () => {
-  const { isOwner } = useAuth();
+  const { isOwner, isAdmin } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
   const [rows, setRows] = useState<UserRow[]>([]);
@@ -118,7 +123,7 @@ const UserManagement = () => {
 
   useEffect(() => { void loadAll(); }, []);
 
-  if (!isOwner) {
+  if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Lock className="h-12 w-12 text-muted-foreground mb-4" />
@@ -227,7 +232,7 @@ const UserManagement = () => {
           <h1 className="text-2xl font-bold text-foreground">User Management</h1>
           <p className="text-muted-foreground">Owner-only: create accounts and assign granular permissions.</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} className="gap-2"><UserPlus className="h-4 w-4" /> Add user</Button>
+        {isOwner && <Button onClick={() => setShowAdd(true)} className="gap-2"><UserPlus className="h-4 w-4" /> Add user</Button>}
       </div>
 
       <Card>
@@ -271,7 +276,7 @@ const UserManagement = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        {!r.is_owner && (
+                         {isOwner && !r.is_owner && (
                           <>
                             <Button variant="ghost" size="icon" onClick={() => openEdit(r)} title="Edit"><Settings2 className="h-4 w-4" /></Button>
                             <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(r)} title="Delete"><Trash2 className="h-4 w-4" /></Button>

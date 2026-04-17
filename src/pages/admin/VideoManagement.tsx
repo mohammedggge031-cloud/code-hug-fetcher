@@ -46,7 +46,7 @@ const PLACEMENTS = [
 const STORAGE_KEY = "video_library";
 
 const VideoManagement = () => {
-  const { isAdmin } = useAuth();
+  const { isAdmin, can } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
   const [videos, setVideos] = useState<VideoEntry[]>([]);
@@ -133,7 +133,7 @@ const VideoManagement = () => {
 
   useEffect(() => { loadVideos(); }, []);
 
-  if (!isAdmin) {
+  if (!(can("can_manage_videos") || isAdmin)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Shield className="h-12 w-12 text-muted-foreground mb-4" />
