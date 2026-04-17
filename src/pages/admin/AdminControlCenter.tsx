@@ -39,14 +39,14 @@ const AdminControlCenter = () => {
       try {
         // Seed defaults (idempotent) so counters reflect real configured data
         await ensureAdminSeed();
-        const [seo, scripts, users, posts, media, categories, leads, social, videoLib, ads] = await Promise.all([
+        const [seo, scripts, users, posts, media, categories, leadLog, social, videoLib, ads] = await Promise.all([
           supabase.from("seo_metadata").select("id", { count: "exact", head: true }),
           supabase.from("custom_scripts").select("id", { count: "exact", head: true }),
           supabase.from("user_roles").select("id", { count: "exact", head: true }),
           supabase.from("blog_posts").select("id", { count: "exact", head: true }),
           supabase.from("media_assets").select("id", { count: "exact", head: true }),
           supabase.from("blog_categories").select("id", { count: "exact", head: true }),
-          loadAdminConfig<Array<unknown>>("lead_channels", []),
+          loadAdminConfig<Array<unknown>>("lead_log", []),
           loadAdminConfig<Array<unknown>>("social_profiles", []),
           loadAdminConfig<Array<unknown>>("video_library", []),
           loadAdminConfig<Array<unknown>>("ad_campaigns", []),
@@ -60,10 +60,10 @@ const AdminControlCenter = () => {
           seo: seo.count ?? 0,
           scripts: scripts.count ?? 0,
           users: users.count ?? 0,
-          leads: leads.length,
-          social: social.length,
+          leads: Array.isArray(leadLog) ? leadLog.length : 0,
+          social: Array.isArray(social) ? social.length : 0,
           videos: Array.isArray(videoLib) ? videoLib.length : 0,
-          ads: ads.length,
+          ads: Array.isArray(ads) ? ads.length : 0,
         });
       } finally {
         if (mounted) setLoading(false);
