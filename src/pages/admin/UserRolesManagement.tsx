@@ -117,7 +117,7 @@ const UserManagement = () => {
   const [addPassword, setAddPassword] = useState("");
   const [showPwd, setShowPwd] = useState(false);
   const [addRole, setAddRole] = useState<AssignableRole>("seo_manager");
-  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...PRESETS.seo_only });
+  const [addPerms, setAddPerms] = useState<Permissions>({ ...DEFAULT_PERMS, ...ACCESS_MODES.content_seo.perms });
   const [adding, setAdding] = useState(false);
 
   // Edit dialog
@@ -176,10 +176,9 @@ const UserManagement = () => {
     );
   }
 
-  const applyPreset = (key: string, target: "add" | "edit") => {
-    const preset = { ...DEFAULT_PERMS, ...(PRESETS[key] ?? {}) };
-    if (target === "add") setAddPerms(preset);
-    else setEditPerms(preset);
+  const setMode = (mode: AccessModeKey, on: boolean, target: "add" | "edit") => {
+    if (target === "add") setAddPerms((p) => toggleMode(p, mode, on));
+    else setEditPerms((p) => toggleMode(p, mode, on));
   };
 
   const handleCreate = async () => {
