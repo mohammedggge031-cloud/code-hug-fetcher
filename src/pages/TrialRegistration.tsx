@@ -116,7 +116,8 @@ const TrialRegistration = () => {
       </header>
 
       {/* Same form, same flow — passes generic source for all paid social campaigns */}
-      <ContactSection source="paid_social" />
+      {/* Same form, same flow — passes dynamic UTM source (fallback: paid_social) */}
+      <ContactSection source={dynamicSource} />
 
       <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
         © {new Date().getFullYear()} Alhamd Academy ·{" "}
