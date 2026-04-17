@@ -1,8 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import ContactSection from "@/components/ContactSection";
 import SEOHead from "@/components/SEOHead";
 import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
+
+/**
+ * Build a dynamic source string from URL UTM parameters.
+ * Falls back to "paid_social" if no UTM params are present.
+ */
+const buildSourceFromUTM = (): string => {
+  if (typeof window === "undefined") return "paid_social";
+  const params = new URLSearchParams(window.location.search);
+  const parts: string[] = [];
+  const keys = ["utm_source", "utm_campaign", "utm_medium", "utm_content"];
+  for (const k of keys) {
+    const v = params.get(k);
+    if (v && v.trim()) parts.push(`${k.replace("utm_", "")}:${v.trim().slice(0, 50)}`);
+  }
+  return parts.length > 0 ? parts.join(" | ") : "paid_social";
+};
 
 /**
  * Standalone landing page for media/ads team only.
@@ -16,7 +32,7 @@ import { CheckCircle2, Star, ShieldCheck, Clock } from "lucide-react";
  */
 const TrialRegistration = () => {
   const { t, dir } = useLanguage();
-
+  const dynamicSource = useMemo(() => buildSourceFromUTM(), []);
   useEffect(() => {
     // Ensure noindex even if SEOHead is bypassed
     const meta = document.createElement("meta");
@@ -99,7 +115,8 @@ const TrialRegistration = () => {
       </header>
 
       {/* Same form, same flow — passes generic source for all paid social campaigns */}
-      <ContactSection source="paid_social" />
+      {/* Same form, same flow — passes dynamic UTM source (fallback: paid_social) */}
+      <ContactSection source={dynamicSource} />
 
       <footer className="py-6 text-center text-xs text-muted-foreground border-t border-border">
         © {new Date().getFullYear()} Alhamd Academy ·{" "}
