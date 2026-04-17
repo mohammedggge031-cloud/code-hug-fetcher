@@ -75,7 +75,7 @@ const AdminControlCenter = () => {
 
     void run();
     return () => { mounted = false; };
-  }, []);
+  }, [isOwner]);
 
   const copy = useMemo(() => lang === "ar" ? {
     title: "مركز التحكم",
