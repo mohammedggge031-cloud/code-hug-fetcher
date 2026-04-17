@@ -22,7 +22,7 @@ const StatCardSkeleton = () => (
 );
 
 const AdminDashboard = () => {
-  const { role } = useAuth();
+  const { isAdmin, isOwner, can } = useAuth();
   const { t } = useAdminLang();
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,13 +60,23 @@ const AdminDashboard = () => {
   }, [location.key]);
 
   const cards = [
-    { title: t("dash.posts"), value: stats.posts, icon: FileText, desc: t("dash.posts.desc"), href: "/admin/blog", color: "text-blue-600 bg-blue-500/10" },
-    { title: t("dash.seo"), value: stats.seoPages, icon: Search, desc: t("dash.seo.desc"), href: "/admin/seo", color: "text-emerald-600 bg-emerald-500/10" },
-    { title: t("dash.media"), value: stats.media, icon: Image, desc: t("dash.media.desc"), href: "/admin/media", color: "text-violet-600 bg-violet-500/10" },
-    { title: t("dash.categories"), value: stats.categories, icon: FolderOpen, desc: t("dash.categories.desc"), href: "/admin/categories", color: "text-orange-600 bg-orange-500/10" },
-    { title: t("dash.scripts"), value: stats.scripts, icon: Code, desc: t("dash.scripts.desc"), href: "/admin/scripts", color: "text-rose-600 bg-rose-500/10" },
-    ...(role === "admin" ? [
+    ...(can("can_manage_blog") || isAdmin ? [
+      { title: t("dash.posts"), value: stats.posts, icon: FileText, desc: t("dash.posts.desc"), href: "/admin/blog", color: "text-blue-600 bg-blue-500/10" },
+      { title: t("dash.categories"), value: stats.categories, icon: FolderOpen, desc: t("dash.categories.desc"), href: "/admin/categories", color: "text-orange-600 bg-orange-500/10" },
+    ] : []),
+    ...(can("can_manage_seo") || isAdmin ? [
+      { title: t("dash.seo"), value: stats.seoPages, icon: Search, desc: t("dash.seo.desc"), href: "/admin/seo", color: "text-emerald-600 bg-emerald-500/10" },
+    ] : []),
+    ...(can("can_manage_media") || isAdmin ? [
+      { title: t("dash.media"), value: stats.media, icon: Image, desc: t("dash.media.desc"), href: "/admin/media", color: "text-violet-600 bg-violet-500/10" },
+    ] : []),
+    ...(can("can_manage_scripts") || isAdmin ? [
+      { title: t("dash.scripts"), value: stats.scripts, icon: Code, desc: t("dash.scripts.desc"), href: "/admin/scripts", color: "text-rose-600 bg-rose-500/10" },
+    ] : []),
+    ...(can("can_manage_videos") || isAdmin ? [
       { title: t("dash.videos"), value: 0, icon: Video, desc: t("dash.videos.desc"), href: "/admin/videos", color: "text-pink-600 bg-pink-500/10" },
+    ] : []),
+    ...(isOwner ? [
       { title: t("dash.team"), value: stats.users, icon: Users, desc: t("dash.team.desc"), href: "/admin/users", color: "text-amber-600 bg-amber-500/10" },
     ] : []),
   ];
@@ -80,7 +90,7 @@ const AdminDashboard = () => {
 
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {loading ? (
-          Array.from({ length: role === "admin" ? 7 : 5 }).map((_, i) => <StatCardSkeleton key={i} />)
+          Array.from({ length: cards.length || 1 }).map((_, i) => <StatCardSkeleton key={i} />)
         ) : (
           cards.map(card => (
             <Card key={card.href} className="group cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5" onClick={() => navigate(card.href)}>
@@ -101,12 +111,12 @@ const AdminDashboard = () => {
       <Card>
         <CardHeader><CardTitle className="text-lg">{t("dash.guide")}</CardTitle></CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <p>📝 <strong className="text-foreground">{t("dash.posts")}</strong> — {t("dash.guide.posts")}</p>
-          <p>🔍 <strong className="text-foreground">{t("dash.seo")}</strong> — {t("dash.guide.seo")}</p>
-          <p>🖼️ <strong className="text-foreground">{t("dash.media")}</strong> — {t("dash.guide.media")}</p>
-          <p>📊 <strong className="text-foreground">{t("dash.scripts")}</strong> — {t("dash.guide.scripts")}</p>
-          {role === "admin" && <p>👥 <strong className="text-foreground">{t("dash.team")}</strong> — {t("dash.guide.team")}</p>}
-          {role === "admin" && <p>🎬 <strong className="text-foreground">{t("dash.videos")}</strong> — {t("dash.guide.videos")}</p>}
+          {(can("can_manage_blog") || isAdmin) && <p>📝 <strong className="text-foreground">{t("dash.posts")}</strong> — {t("dash.guide.posts")}</p>}
+          {(can("can_manage_seo") || isAdmin) && <p>🔍 <strong className="text-foreground">{t("dash.seo")}</strong> — {t("dash.guide.seo")}</p>}
+          {(can("can_manage_media") || isAdmin) && <p>🖼️ <strong className="text-foreground">{t("dash.media")}</strong> — {t("dash.guide.media")}</p>}
+          {(can("can_manage_scripts") || isAdmin) && <p>📊 <strong className="text-foreground">{t("dash.scripts")}</strong> — {t("dash.guide.scripts")}</p>}
+          {isOwner && <p>👥 <strong className="text-foreground">{t("dash.team")}</strong> — {t("dash.guide.team")}</p>}
+          {(can("can_manage_videos") || isAdmin) && <p>🎬 <strong className="text-foreground">{t("dash.videos")}</strong> — {t("dash.guide.videos")}</p>}
         </CardContent>
       </Card>
     </div>

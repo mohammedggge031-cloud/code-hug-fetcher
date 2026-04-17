@@ -8,9 +8,8 @@ const corsHeaders = {
 };
 
 const PERM_KEYS = [
-  "can_manage_seo", "can_manage_social", "can_manage_leads", "can_manage_blog",
-  "can_manage_media", "can_manage_scripts", "can_manage_videos",
-  "can_manage_users", "can_view_audit_log",
+  "can_manage_seo", "can_manage_blog", "can_manage_media",
+  "can_manage_scripts", "can_manage_videos", "can_manage_users",
 ] as const;
 
 type PermKey = typeof PERM_KEYS[number];

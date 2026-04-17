@@ -23,17 +23,19 @@ type AssignableRole = typeof ASSIGNABLE_ROLES[number];
 
 const PRESETS: Record<string, Partial<Permissions>> = {
   seo_only:        { can_manage_seo: true, can_manage_media: true, can_manage_scripts: true },
-  social_only:     { can_manage_social: true, can_manage_leads: true },
-  leads_only:      { can_manage_leads: true },
-  seo_and_social:  { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_media: true },
-  full_admin:      { can_manage_seo: true, can_manage_social: true, can_manage_leads: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_view_audit_log: true },
+  content_manager: { can_manage_blog: true, can_manage_media: true },
+  seo_and_content: { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true },
+  full_admin:      { can_manage_seo: true, can_manage_blog: true, can_manage_media: true, can_manage_scripts: true, can_manage_videos: true, can_manage_users: true },
   editor_basic:    { can_manage_blog: true, can_manage_media: true },
 };
 
 const DEFAULT_PERMS: Permissions = {
-  can_manage_seo: false, can_manage_social: false, can_manage_leads: false,
-  can_manage_blog: false, can_manage_media: false, can_manage_scripts: false,
-  can_manage_videos: false, can_manage_users: false, can_view_audit_log: false,
+  can_manage_seo: false,
+  can_manage_blog: false,
+  can_manage_media: false,
+  can_manage_scripts: false,
+  can_manage_videos: false,
+  can_manage_users: false,
   is_disabled: false,
 };
 
@@ -47,14 +49,11 @@ interface UserRow {
 
 const PERM_LABELS: Record<PermissionKey, string> = {
   can_manage_seo: "SEO",
-  can_manage_social: "Social Media",
-  can_manage_leads: "Leads",
   can_manage_blog: "Blog",
   can_manage_media: "Media",
   can_manage_scripts: "Scripts",
   can_manage_videos: "Videos",
   can_manage_users: "Users (advanced)",
-  can_view_audit_log: "Audit log",
 };
 
 const UserManagement = () => {
