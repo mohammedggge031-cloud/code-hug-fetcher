@@ -2,31 +2,56 @@ import { createContext, useContext, useEffect, useState, useRef, useCallback, Re
 import type { User, Session } from "@supabase/supabase-js";
 import { SUPABASE_TIMEOUT_MS, safeDataRequest, withPromiseTimeout } from "@/lib/safeRuntimeData";
 
-type AppRole = "admin" | "editor";
+type AppRole = "owner" | "admin" | "editor" | "seo_manager" | "social_manager" | "marketing_manager";
+
+export type PermissionKey =
+  | "can_manage_seo" | "can_manage_social" | "can_manage_leads"
+  | "can_manage_blog" | "can_manage_media" | "can_manage_scripts"
+  | "can_manage_videos" | "can_manage_users" | "can_view_audit_log";
+
+export interface Permissions {
+  can_manage_seo: boolean;
+  can_manage_social: boolean;
+  can_manage_leads: boolean;
+  can_manage_blog: boolean;
+  can_manage_media: boolean;
+  can_manage_scripts: boolean;
+  can_manage_videos: boolean;
+  can_manage_users: boolean;
+  can_view_audit_log: boolean;
+  is_disabled: boolean;
+}
+
+const DEFAULT_PERMS: Permissions = {
+  can_manage_seo: false, can_manage_social: false, can_manage_leads: false,
+  can_manage_blog: false, can_manage_media: false, can_manage_scripts: false,
+  can_manage_videos: false, can_manage_users: false, can_view_audit_log: false,
+  is_disabled: false,
+};
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
   role: AppRole | null;
+  isOwner: boolean;
   isAdmin: boolean;
   isEditor: boolean;
+  permissions: Permissions;
+  can: (perm: PermissionKey) => boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Lazy singleton – supabase client is only imported when auth is actually needed
 let supabasePromise: Promise<typeof import("@/integrations/supabase/client")> | null = null;
 const getSupabase = () => {
-  if (!supabasePromise) {
-    supabasePromise = import("@/integrations/supabase/client");
-  }
+  if (!supabasePromise) supabasePromise = import("@/integrations/supabase/client");
   return supabasePromise;
 };
 
-const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1 hour
+const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000;
 const AUTH_TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -34,99 +59,95 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [permissions, setPermissions] = useState<Permissions>(DEFAULT_PERMS);
   const initialized = useRef(false);
   const inactivityTimer = useRef<number | null>(null);
   const sessionRestoredRef = useRef(false);
 
-  const fetchRole = useCallback(async (userId: string) => {
+  const fetchRoleAndPerms = useCallback(async (userId: string) => {
     const { supabase } = await getSupabase();
+
     const resolvedRole = await safeDataRequest<AppRole | null>({
       fallback: null,
       timeoutMs: AUTH_TIMEOUT_MS,
       markGlobalFallbackOnError: false,
       request: async (signal) => {
         const { data, error } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .abortSignal(signal)
-          .maybeSingle();
-
+          .from("user_roles").select("role").eq("user_id", userId)
+          .abortSignal(signal).maybeSingle();
         if (error) throw error;
         return (data?.role as AppRole) || null;
       },
     });
-
     setRole(resolvedRole);
+
+    const resolvedPerms = await safeDataRequest<Permissions>({
+      fallback: DEFAULT_PERMS,
+      timeoutMs: AUTH_TIMEOUT_MS,
+      markGlobalFallbackOnError: false,
+      request: async (signal) => {
+        const { data, error } = await (supabase as any)
+          .from("user_permissions").select("*").eq("user_id", userId)
+          .abortSignal(signal).maybeSingle();
+        if (error) throw error;
+        return { ...DEFAULT_PERMS, ...(data ?? {}) } as Permissions;
+      },
+    });
+    // Owner always has all perms regardless of row
+    if (resolvedRole === "owner") {
+      setPermissions({
+        can_manage_seo: true, can_manage_social: true, can_manage_leads: true,
+        can_manage_blog: true, can_manage_media: true, can_manage_scripts: true,
+        can_manage_videos: true, can_manage_users: true, can_view_audit_log: true,
+        is_disabled: false,
+      });
+    } else {
+      setPermissions(resolvedPerms);
+    }
     return resolvedRole;
   }, []);
 
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-
     let active = true;
     let subscription: { unsubscribe: () => void } | null = null;
 
     const hardStop = window.setTimeout(() => {
       if (!active) return;
-      setSession(null);
-      setUser(null);
-      setRole(null);
+      setSession(null); setUser(null); setRole(null); setPermissions(DEFAULT_PERMS);
       setLoading(false);
     }, AUTH_TIMEOUT_MS);
 
     const initAuth = async () => {
       const { supabase } = await getSupabase();
-
-      // 1. Set up listener FIRST but only act on post-restore events
-      const {
-        data: { subscription: nextSubscription },
-      } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-        // Skip events until getSession has resolved to avoid race condition
+      const { data: { subscription: nextSubscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
         if (!sessionRestoredRef.current) return;
-
-        // Fire-and-forget: do NOT await inside this callback (deadlock risk)
         setSession(nextSession);
         setUser(nextSession?.user ?? null);
-
         if (nextSession?.user) {
-          fetchRole(nextSession.user.id).then(() => {
-            if (active) setLoading(false);
-          });
+          fetchRoleAndPerms(nextSession.user.id).then(() => { if (active) setLoading(false); });
         } else {
-          setRole(null);
+          setRole(null); setPermissions(DEFAULT_PERMS);
           if (active) setLoading(false);
         }
       });
       subscription = nextSubscription;
 
-      // 2. Restore session from storage
       try {
-        const {
-          data: { session: currentSession },
-        } = await withPromiseTimeout(supabase.auth.getSession(), {
-          timeoutMs: AUTH_TIMEOUT_MS,
-          markGlobalFallbackOnError: false,
-        });
-
+        const { data: { session: currentSession } } = await withPromiseTimeout(
+          supabase.auth.getSession(),
+          { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false },
+        );
         if (!active) return;
-
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
-
-        if (currentSession?.user) {
-          await fetchRole(currentSession.user.id);
-        } else {
-          setRole(null);
-        }
+        if (currentSession?.user) await fetchRoleAndPerms(currentSession.user.id);
+        else { setRole(null); setPermissions(DEFAULT_PERMS); }
       } catch {
         if (!active) return;
-        setSession(null);
-        setUser(null);
-        setRole(null);
+        setSession(null); setUser(null); setRole(null); setPermissions(DEFAULT_PERMS);
       } finally {
-        // Mark session as restored so onAuthStateChange events are processed
         sessionRestoredRef.current = true;
         if (active) setLoading(false);
         clearTimeout(hardStop);
@@ -134,29 +155,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     void initAuth();
+    return () => { active = false; clearTimeout(hardStop); subscription?.unsubscribe(); };
+  }, [fetchRoleAndPerms]);
 
-    return () => {
-      active = false;
-      clearTimeout(hardStop);
-      subscription?.unsubscribe();
-    };
-  }, [fetchRole]);
-
-  // Auto-logout after 1 hour of inactivity
   useEffect(() => {
     if (!user) return;
-
     const resetTimer = () => {
       if (inactivityTimer.current) window.clearTimeout(inactivityTimer.current);
-      inactivityTimer.current = window.setTimeout(() => {
-        void signOut();
-      }, INACTIVITY_TIMEOUT_MS);
+      inactivityTimer.current = window.setTimeout(() => { void signOut(); }, INACTIVITY_TIMEOUT_MS);
     };
-
     const events: (keyof WindowEventMap)[] = ["mousedown", "keydown", "touchstart", "scroll"];
     events.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
     resetTimer();
-
     return () => {
       if (inactivityTimer.current) window.clearTimeout(inactivityTimer.current);
       events.forEach((e) => window.removeEventListener(e, resetTimer));
@@ -171,25 +181,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false },
       );
       return { error: error as Error | null };
-    } catch {
-      return { error: new Error("Request timed out. Please try again.") };
-    }
+    } catch { return { error: new Error("Request timed out. Please try again.") }; }
   };
 
   const signOut = async () => {
     const { supabase } = await getSupabase();
-    await withPromiseTimeout(supabase.auth.signOut(), {
-      timeoutMs: AUTH_TIMEOUT_MS,
-      markGlobalFallbackOnError: false,
-    }).catch(() => undefined);
-    setRole(null);
+    await withPromiseTimeout(supabase.auth.signOut(), { timeoutMs: AUTH_TIMEOUT_MS, markGlobalFallbackOnError: false }).catch(() => undefined);
+    setRole(null); setPermissions(DEFAULT_PERMS);
+  };
+
+  const isOwner = role === "owner";
+  const can = (perm: PermissionKey) => {
+    if (isOwner) return true;
+    if (permissions.is_disabled) return false;
+    return !!permissions[perm];
   };
 
   return (
     <AuthContext.Provider value={{
       user, session, loading, role,
-      isAdmin: role === "admin",
+      isOwner,
+      isAdmin: role === "admin" || isOwner,
       isEditor: role === "editor",
+      permissions, can,
       signIn, signOut,
     }}>
       {children}

@@ -9,21 +9,21 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 
 const AdminLayout = () => {
-  const { user, role, signOut, isAdmin } = useAuth();
+  const { user, role, signOut, isAdmin, isOwner, can } = useAuth();
   const { t, lang, toggleLang, dir } = useAdminLang();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
 
   const navItems = [
-    { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true },
-    { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false },
-    { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false },
-    { to: "/admin/media", icon: Image, label: t("nav.media"), end: false },
-    { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false },
-    { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false },
-    { to: "/admin/videos", icon: Video, label: t("nav.videos"), adminOnly: true, end: false },
-    { to: "/admin/users", icon: Users, label: t("nav.team"), adminOnly: true, end: false },
+    { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true, show: true },
+    { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isAdmin },
+    { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isAdmin },
+    { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isAdmin },
+    { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isAdmin },
+    { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isAdmin },
+    { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isAdmin },
+    { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: isOwner },
   ];
 
   const handleSignOut = async () => {
@@ -31,7 +31,7 @@ const AdminLayout = () => {
     navigate("/admin/login");
   };
 
-  const filteredItems = navItems.filter(item => !item.adminOnly || isAdmin);
+  const filteredItems = navItems.filter(item => item.show);
 
   const getInitials = (email?: string) => {
     if (!email) return "??";
@@ -39,8 +39,12 @@ const AdminLayout = () => {
   };
 
   const getRoleLabel = (r: string | null) => {
+    if (r === "owner") return "Owner";
     if (r === "admin") return t("nav.role.admin");
     if (r === "editor") return t("nav.role.editor");
+    if (r === "seo_manager") return "SEO Manager";
+    if (r === "social_manager") return "Social Manager";
+    if (r === "marketing_manager") return "Marketing Manager";
     return "";
   };
 
