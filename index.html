@@ -45,8 +45,8 @@
 
     <!-- Fonts: critical (above-the-fold) — Playfair + DM Sans -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <!-- Amiri (Quran section) — load on idle, not blocking LCP -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" media="print" onload="requestAnimationFrame(()=>{this.media='all'})" />
+    <!-- Amiri (Quran section) — load on idle with display=optional, never blocks LCP nor causes layout shift -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=optional" media="print" onload="if(window.requestIdleCallback){requestIdleCallback(()=>{this.media='all'},{timeout:3000})}else{setTimeout(()=>{this.media='all'},1500)}" />
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" />
     </noscript>
@@ -93,14 +93,26 @@
           f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','GTM-WSTSTPM9');
         }
-        // Defer until first user interaction OR a longer idle window — keeps mobile LCP/TBT clean.
+        // Defer GTM until after page load + idle, OR first meaningful interaction.
+        // mousemove removed (fires too eagerly on desktop); keydown delayed via interaction list.
         var fired=false;
         function trigger(){if(fired)return;fired=true;loadAnalytics();}
-        if('requestIdleCallback' in window){requestIdleCallback(trigger,{timeout:8000})}
-        else{window.addEventListener('load',function(){setTimeout(trigger,6000)})}
-        ['scroll','click','touchstart','keydown','mousemove'].forEach(function(e){
-          window.addEventListener(e,trigger,{once:true,passive:true})
-        });
+        function armInteractionTriggers(){
+          ['scroll','click','touchstart','keydown'].forEach(function(e){
+            window.addEventListener(e,trigger,{once:true,passive:true})
+          });
+        }
+        if(document.readyState==='complete'){
+          if('requestIdleCallback' in window){requestIdleCallback(trigger,{timeout:10000})}
+          else{setTimeout(trigger,5000)}
+          armInteractionTriggers();
+        }else{
+          window.addEventListener('load',function(){
+            if('requestIdleCallback' in window){requestIdleCallback(trigger,{timeout:10000})}
+            else{setTimeout(trigger,5000)}
+            armInteractionTriggers();
+          },{once:true});
+        }
       })();
     </script>
 

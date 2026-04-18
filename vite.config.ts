@@ -22,20 +22,19 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': [
-            'react',
-            'react-dom',
-            'react/jsx-runtime',
-            'react/jsx-dev-runtime',
-            'scheduler',
-          ],
-          'vendor-router': ['react-router-dom', 'react-router'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-utils': ['date-fns', 'zod', 'dompurify'],
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'vendor-react';
+          if (/[\\/](react-router|react-router-dom|@remix-run[\\/]router)[\\/]/.test(id)) return 'vendor-router';
+          if (id.includes('@tanstack/react-query')) return 'vendor-query';
+          if (id.includes('framer-motion')) return 'vendor-motion';
+          if (id.includes('@supabase/')) return 'vendor-supabase';
+          if (id.includes('lucide-react')) return 'vendor-icons';
+          if (id.includes('dompurify')) return 'vendor-dompurify';
+          if (id.includes('date-fns')) return 'vendor-datefns';
+          if (id.includes('zod')) return 'vendor-zod';
+          if (id.includes('@radix-ui')) return 'vendor-radix';
+          return 'vendor';
         },
       },
     },
