@@ -6,21 +6,7 @@ const corsHeaders = {
   "Content-Type": "application/json",
 };
 
-type TeacherRow = {
-  id: string;
-  name_en: string;
-  name_ar: string;
-  title_en: string;
-  title_ar: string;
-  bio_en: string;
-  bio_ar: string;
-  photo_url: string | null;
-  specializations: string[] | null;
-  rating: number | null;
-  experience_years: number | null;
-  education_en: string | null;
-  education_ar: string | null;
-};
+type TeacherRow = Record<string, unknown> & { id: string };
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -46,11 +32,11 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
+    // Select * so any new admin-controlled field (qualification, academic_degree,
+    // ijazat, gender, subjects, etc.) is forwarded to the website automatically.
     const { data, error } = await supabase
       .from("teachers")
-      .select(
-        "id,name_en,name_ar,title_en,title_ar,bio_en,bio_ar,photo_url,specializations,rating,experience_years,education_en,education_ar"
-      )
+      .select("*")
       .eq("is_active", true)
       .order("display_order", { ascending: true })
       .order("created_at", { ascending: false });
@@ -69,26 +55,19 @@ Deno.serve(async (req) => {
       });
     }
 
-    const teachers = (data as TeacherRow[] | null)?.map((teacher) => ({
-      id: teacher.id,
-      name_en: teacher.name_en,
-      name_ar: teacher.name_ar,
-      title_en: teacher.title_en,
-      title_ar: teacher.title_ar,
-      bio_en: teacher.bio_en,
-      bio_ar: teacher.bio_ar,
-      photo_url: teacher.photo_url ?? "",
-      specializations: Array.isArray(teacher.specializations) ? teacher.specializations : [],
-      rating: typeof teacher.rating === "number" ? teacher.rating : 0,
-      experience_years: teacher.experience_years ?? undefined,
-      education_en: teacher.education_en ?? undefined,
-      education_ar: teacher.education_ar ?? undefined,
-    })) ?? [];
+    const teachers = (data as TeacherRow[] | null) ?? [];
 
     return new Response(JSON.stringify({ teachers }), {
       status: 200,
       headers: corsHeaders,
     });
+  } catch {
+    return new Response(JSON.stringify({ teachers: [] }), {
+      status: 200,
+      headers: corsHeaders,
+    });
+  }
+});
   } catch {
     return new Response(JSON.stringify({ teachers: [] }), {
       status: 200,

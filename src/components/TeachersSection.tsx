@@ -327,10 +327,10 @@ const TeachersSection = () => {
                   </div>
                 </div>
 
-                {/* Specializations */}
+                {/* Subjects */}
                 {selectedTeacher.specializations && selectedTeacher.specializations.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-foreground mb-2">{t("Specializations", "التخصصات")}</h4>
+                    <h4 className="text-sm font-bold text-foreground mb-2">{t("Subjects", "المواد")}</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedTeacher.specializations.map((spec, j) => (
                         <span
