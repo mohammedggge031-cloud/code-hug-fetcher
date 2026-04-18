@@ -66,5 +66,7 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 600,
     modulePreload: { polyfill: false },
     sourcemap: false,
+    // Inline small assets (≤4KB) as base64 to reduce mobile request count and TTFB on first paint.
+    assetsInlineLimit: 4096,
   },
 }));
