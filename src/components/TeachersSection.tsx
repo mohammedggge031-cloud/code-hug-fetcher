@@ -327,6 +327,21 @@ const TeachersSection = () => {
                   </div>
                 </div>
 
+                {/* About Teacher (extra notes) */}
+                {(selectedTeacher.about_en || selectedTeacher.about_ar) && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <BookOpen className="w-4 h-4 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground mb-1">{t("About Teacher", "عن المعلم")}</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                        {t(selectedTeacher.about_en || "", selectedTeacher.about_ar || "")}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Subjects */}
                 {selectedTeacher.specializations && selectedTeacher.specializations.length > 0 && (
                   <div>
