@@ -153,26 +153,24 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => {
-          try {
-            fetchExternalFunction("receive-booking", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                full_name: "Subscription Request",
-                phone: "",
-                email: "",
-                course_interest: `${tierNames.en[i]} Plan`,
-                preferred_date: "",
-                preferred_time: "",
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                message: `📋 Plan: ${tierNames.en[i]} | ⏱ Session: ${duration} min | 📅 Days/week: ${plan.days} | 🕐 Hours/month: ${plan.hoursPerMonth} | 💰 Price: $${plan.monthly}/month`,
-              })
-            }).catch((e) => {
-              console.error("Subscription sync error:", e);
-            });
-          } catch (e) {
-            console.error("Subscription sync error:", e);
-          }
+          void retryWithBackoff(
+            () =>
+              fetchExternalFunction("receive-booking", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  full_name: "Subscription Request",
+                  phone: "",
+                  email: "",
+                  course_interest: `${tierNames.en[i]} Plan`,
+                  preferred_date: "",
+                  preferred_time: "",
+                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                  message: `📋 Plan: ${tierNames.en[i]} | ⏱ Session: ${duration} min | 📅 Days/week: ${plan.days} | 🕐 Hours/month: ${plan.hoursPerMonth} | 💰 Price: $${plan.monthly}/month`,
+                }),
+              }),
+            { label: "subscription-sync" },
+          ).catch(() => { /* logged in retryWithBackoff */ });
 
           // Local lead-log capture for dashboard reporting
           void captureLead({
