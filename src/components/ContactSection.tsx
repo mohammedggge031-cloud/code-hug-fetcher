@@ -7,6 +7,7 @@ import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
+import { retryWithBackoff } from "@/lib/logger";
 import { bookingFormSchema, getFieldError } from "@/lib/formValidation";
 import { z } from "zod";
 

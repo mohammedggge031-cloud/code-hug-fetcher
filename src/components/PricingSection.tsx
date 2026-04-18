@@ -3,6 +3,7 @@ import { memo, useState, useCallback } from "react";
 import { Check, Star } from "lucide-react";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
+import { retryWithBackoff } from "@/lib/logger";
 
 type Duration = "30" | "45" | "60";
 
