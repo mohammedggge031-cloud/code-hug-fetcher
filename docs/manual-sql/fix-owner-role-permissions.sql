@@ -1,19 +1,25 @@
 -- ============================================================
--- 🚨 CRITICAL FIX — RUN ONCE in Supabase SQL Editor
+-- 🚨 CRITICAL FIX — Safe to run multiple times (idempotent)
 -- Project: rihxkjhgipmqqihuljah
 -- 
--- BUG DISCOVERED (Production Audit, 2026-04-18):
--- The 'owner' role exists in user_roles but the helper functions
--- `is_admin_or_editor()` and `is_admin()` only check for 'admin'
--- and 'editor'. Result: owners (the highest role) cannot see
--- pending/hidden reviews in the dashboard, cannot update or delete
--- them, and effectively have LESS access than editors.
+-- Bug: 'owner' role users cannot manage reviews because
+-- is_admin() and is_admin_or_editor() only check 'admin'/'editor'.
 --
--- FIX: Treat 'owner' as having the same privileges as 'admin' in
--- both helpers (owner ⊇ admin ⊇ editor for access checks).
+-- Fix: Add 'owner' to both helpers. Owners get full access.
+--
+-- HOW TO RUN:
+-- 1. Open: https://supabase.com/dashboard/project/rihxkjhgipmqqihuljah/sql/new
+-- 2. Paste this entire file
+-- 3. Click "Run"
+-- 4. You should see: "Success. No rows returned" + verification results
 -- ============================================================
 
-CREATE OR REPLACE FUNCTION public.is_admin(_user_id uuid)
+BEGIN;
+
+-- Drop and recreate is_admin (CREATE OR REPLACE may fail if signature differs)
+DROP FUNCTION IF EXISTS public.is_admin(uuid) CASCADE;
+
+CREATE FUNCTION public.is_admin(_user_id uuid)
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -24,11 +30,14 @@ AS $$
     SELECT 1
     FROM public.user_roles
     WHERE user_id = _user_id
-      AND role IN ('owner', 'admin')
+      AND role::text IN ('owner', 'admin')
   );
 $$;
 
-CREATE OR REPLACE FUNCTION public.is_admin_or_editor(_user_id uuid)
+-- Drop and recreate is_admin_or_editor
+DROP FUNCTION IF EXISTS public.is_admin_or_editor(uuid) CASCADE;
+
+CREATE FUNCTION public.is_admin_or_editor(_user_id uuid)
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -39,11 +48,54 @@ AS $$
     SELECT 1
     FROM public.user_roles
     WHERE user_id = _user_id
-      AND role IN ('owner', 'admin', 'editor')
+      AND role::text IN ('owner', 'admin', 'editor')
   );
 $$;
 
--- Verify after running:
--- SELECT public.is_admin('c792e8df-1447-4432-9897-49477582fbb4');           -- expect: true
--- SELECT public.is_admin_or_editor('c792e8df-1447-4432-9897-49477582fbb4'); -- expect: true
--- SELECT id, name, status FROM public.student_reviews ORDER BY created_at DESC LIMIT 5;
+-- Re-grant execute (CASCADE may have dropped grants)
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.is_admin_or_editor(uuid) TO anon, authenticated;
+
+-- ============================================================
+-- Re-create RLS policies that depend on the helpers (CASCADE drops them)
+-- Safe: drops if exists, then creates fresh.
+-- ============================================================
+
+-- student_reviews policies
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='student_reviews') THEN
+    DROP POLICY IF EXISTS "Admins can read all reviews" ON public.student_reviews;
+    DROP POLICY IF EXISTS "Admins can update reviews"  ON public.student_reviews;
+    DROP POLICY IF EXISTS "Admins can delete reviews"  ON public.student_reviews;
+
+    CREATE POLICY "Admins can read all reviews"
+      ON public.student_reviews FOR SELECT TO authenticated
+      USING (public.is_admin_or_editor(auth.uid()));
+
+    CREATE POLICY "Admins can update reviews"
+      ON public.student_reviews FOR UPDATE TO authenticated
+      USING (public.is_admin_or_editor(auth.uid()))
+      WITH CHECK (public.is_admin_or_editor(auth.uid()));
+
+    CREATE POLICY "Admins can delete reviews"
+      ON public.student_reviews FOR DELETE TO authenticated
+      USING (public.is_admin(auth.uid()));
+  END IF;
+END $$;
+
+COMMIT;
+
+-- ============================================================
+-- VERIFICATION (run separately or scroll to see results)
+-- ============================================================
+SELECT 'is_admin (owner)' AS check_name,
+       public.is_admin('c792e8df-1447-4432-9897-49477582fbb4') AS result;
+
+SELECT 'is_admin_or_editor (owner)' AS check_name,
+       public.is_admin_or_editor('c792e8df-1447-4432-9897-49477582fbb4') AS result;
+
+SELECT id, name, status, created_at
+FROM public.student_reviews
+ORDER BY created_at DESC
+LIMIT 5;
