@@ -77,12 +77,36 @@ const mapTeacher = (teacher: TeacherRow): Teacher => {
   };
 };
 
-/** Shared singleton cache — ensures only ONE network request across all consumers. */
+/**
+ * Shared cache with 60s TTL — balances performance (no duplicate requests on a page)
+ * with freshness (admin changes appear within 1 minute, no Hard Refresh needed).
+ * Also auto-revalidates when the tab regains focus.
+ */
+const CACHE_TTL_MS = 60 * 1000;
 let cachedTeachers: Teacher[] | null = null;
+let cachedAt = 0;
 let fetchPromise: Promise<Teacher[]> | null = null;
 
+export function invalidateTeachersCache() {
+  cachedTeachers = null;
+  cachedAt = 0;
+  fetchPromise = null;
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("focus", () => {
+    if (Date.now() - cachedAt > CACHE_TTL_MS) invalidateTeachersCache();
+  });
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && Date.now() - cachedAt > CACHE_TTL_MS) {
+      invalidateTeachersCache();
+    }
+  });
+}
+
 export async function loadTeachers(): Promise<Teacher[]> {
-  if (cachedTeachers !== null) return cachedTeachers;
+  const fresh = cachedTeachers !== null && Date.now() - cachedAt < CACHE_TTL_MS;
+  if (fresh) return cachedTeachers!;
   if (fetchPromise) return fetchPromise;
   if (isGlobalFallbackMode()) return [];
 
@@ -94,6 +118,7 @@ export async function loadTeachers(): Promise<Teacher[]> {
 
       if (!response.ok) {
         cachedTeachers = [];
+        cachedAt = Date.now();
         return [];
       }
 
@@ -101,14 +126,19 @@ export async function loadTeachers(): Promise<Teacher[]> {
       const data = (json?.teachers ?? json) as TeacherRow[];
       if (!Array.isArray(data) || data.length === 0) {
         cachedTeachers = [];
+        cachedAt = Date.now();
         return [];
       }
 
       cachedTeachers = data.map(mapTeacher);
+      cachedAt = Date.now();
       return cachedTeachers;
     } catch {
       cachedTeachers = [];
+      cachedAt = Date.now();
       return [];
+    } finally {
+      fetchPromise = null;
     }
   })();
 
