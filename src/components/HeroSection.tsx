@@ -131,11 +131,14 @@ const HeroSection = () => {
             </div>
           </div>
 
-          {showGallery && (
-            <Suspense fallback={<div className="hidden h-[340px] w-[280px] md:block lg:h-[460px] lg:w-[380px]" />}>
-              <DesktopGallery />
-            </Suspense>
-          )}
+          {/* Reserve space on desktop to prevent CLS when gallery hydrates */}
+          <div className="hidden md:block md:min-h-[340px] lg:min-h-[460px]" aria-hidden={!showGallery}>
+            {showGallery && (
+              <Suspense fallback={<div className="h-[340px] w-[280px] lg:h-[460px] lg:w-[380px]" />}>
+                <DesktopGallery />
+              </Suspense>
+            )}
+          </div>
         </div>
       </div>
 
