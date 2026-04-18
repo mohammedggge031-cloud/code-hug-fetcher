@@ -75,6 +75,7 @@ const CategoriesManagement = lazyRetry(() => import("./pages/admin/CategoriesMan
 const MediaLibrary = lazyRetry(() => import("./pages/admin/MediaLibrary"));
 const VideoManagement = lazyRetry(() => import("./pages/admin/VideoManagement"));
 const LeadsManagement = lazyRetry(() => import("./pages/admin/LeadsManagement"));
+const ReviewsManagement = lazyRetry(() => import("./pages/admin/ReviewsManagement"));
 const SocialManagement = lazyRetry(() => import("./pages/admin/SocialManagement"));
 const AdsTracking = lazyRetry(() => import("./pages/admin/AdsTracking"));
 const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
@@ -143,6 +144,7 @@ const App = () => (
                 <Route element={<ProtectedRoute><AdminErrorBoundary><AdminLayout /></AdminErrorBoundary></ProtectedRoute>}>
                   <Route index element={<AdminControlCenter />} />
                   <Route path="leads" element={<LeadsManagement />} />
+                  <Route path="reviews" element={<ReviewsManagement />} />
                   <Route path="social" element={<SocialManagement />} />
                   <Route path="ads" element={<AdsTracking />} />
                   <Route path="blog" element={<BlogManagement />} />

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, Search, Shield, Target, Users, Video } from "lucide-react";
+import { BarChart3, Code, FileText, FolderOpen, Image, Inbox, Megaphone, MessageSquare, Search, Shield, Target, Users, Video } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -125,6 +125,7 @@ const AdminControlCenter = () => {
     { key: "seo", label: copy.seo, value: stats.seo, icon: Search, to: "/admin/seo", show: can("can_manage_seo") || isOwner },
     { key: "scripts", label: copy.scripts, value: stats.scripts, icon: Code, to: "/admin/scripts", show: can("can_manage_scripts") || isOwner },
     { key: "videos", label: copy.videos, value: stats.videos, icon: Video, to: "/admin/videos", show: can("can_manage_videos") || isOwner },
+    { key: "reviews", label: lang === "ar" ? "آراء الطلاب" : "Reviews", value: 0, icon: MessageSquare, to: "/admin/reviews", show: can("can_manage_blog") || isOwner },
     { key: "users", label: copy.users, value: stats.users, icon: Users, to: "/admin/users", show: can("can_manage_users") || isOwner },
   ].filter((item) => item.show);
 
