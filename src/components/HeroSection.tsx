@@ -7,7 +7,6 @@ import { scrollToContactForm } from "@/lib/scrollToForm";
 import { getSafeScrollBehavior } from "@/lib/scrollBehavior";
 
 const HERO_SRCSET = "/quran-hero-640.webp 640w, /quran-hero-1024.webp 1024w, /quran-hero.webp 1920w";
-const HERO_IMAGE_JPG = "/quran-hero.jpg";
 
 const DesktopGallery = lazy(() => import("@/components/HeroDesktopGallery"));
 
