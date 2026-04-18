@@ -34,7 +34,11 @@ export default defineConfig(({ mode }) => ({
           if (id.includes('date-fns')) return 'vendor-datefns';
           if (id.includes('zod')) return 'vendor-zod';
           if (id.includes('@radix-ui')) return 'vendor-radix';
-          return 'vendor';
+          if (id.includes('@tiptap') || id.includes('prosemirror')) return 'vendor-editor';
+          if (id.includes('embla-carousel')) return 'vendor-carousel';
+          if (id.includes('recharts') || id.includes('d3-')) return 'vendor-charts';
+          // Default: let Rollup auto-split per route via dynamic imports
+          return undefined;
         },
       },
     },
