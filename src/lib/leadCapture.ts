@@ -4,8 +4,11 @@
  *
  * This is ADDITIVE — it never blocks the existing `receive-booking` external
  * flow. It just gives the admin dashboard real data to show.
+ *
+ * NOTE: `adminConfig` (which pulls in @supabase/supabase-js, ~190 KB) is
+ * imported DYNAMICALLY inside captureLead() so home/landing pages never pay
+ * the Supabase JS cost during initial load. Critical for mobile LCP.
  */
-import { loadAdminConfig, saveAdminConfig } from "@/lib/adminConfig";
 
 export type CapturedLead = {
   id: string;
@@ -85,6 +88,7 @@ export const captureLead = async (
       created_at: new Date().toISOString(),
     };
 
+    const { loadAdminConfig, saveAdminConfig } = await import("@/lib/adminConfig");
     const existing = await loadAdminConfig<CapturedLead[]>("lead_log", []);
     const next = Array.isArray(existing) ? [entry, ...existing].slice(0, 1000) : [entry];
     await saveAdminConfig("lead_log", next);
