@@ -7,6 +7,7 @@ import { useState, useRef } from "react";
 import { format } from "date-fns";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
+import { retryWithBackoff } from "@/lib/logger";
 import { bookingFormSchema, getFieldError } from "@/lib/formValidation";
 import { z } from "zod";
 
@@ -194,26 +195,26 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
               const sourceLine = source ? `\n🏷️ *Source:* ${source}` : '';
               const text = `📚 *New Booking Request - Alhamd Academy*\n\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n📖 *Course:* ${course}\n💬 *Message:* ${message}${scheduleText}${sourceLine}`;
 
-              // Send copy to admin system (non-blocking)
-              try {
-                fetchExternalFunction("receive-booking", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    full_name: name,
-                    phone,
-                    email: null,
-                    course_interest: course,
-                    preferred_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
-                    preferred_time: selectedTime || null,
-                    timezone: selectedTz,
-                    message: message || null,
-                    ...(source ? { source } : {}),
+              // Send copy to admin system (non-blocking, retry 3x with backoff)
+              void retryWithBackoff(
+                () =>
+                  fetchExternalFunction("receive-booking", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      full_name: name,
+                      phone,
+                      email: null,
+                      course_interest: course,
+                      preferred_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
+                      preferred_time: selectedTime || null,
+                      timezone: selectedTz,
+                      message: message || null,
+                      ...(source ? { source } : {}),
+                    }),
                   }),
-                }).catch((e) => console.error("Booking sync error:", e));
-              } catch (e) {
-                console.error("Booking sync error:", e);
-              }
+                { label: "booking-sync" },
+              ).catch(() => { /* logged in retryWithBackoff */ });
 
               // Local lead-log capture (UTM-aware) for the admin dashboard
               void captureLead({

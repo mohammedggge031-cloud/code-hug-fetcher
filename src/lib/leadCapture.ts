@@ -94,6 +94,7 @@ export const captureLead = async (
     await saveAdminConfig("lead_log", next);
   } catch (err) {
     // Never break the submission flow on capture errors
-    console.warn("captureLead failed:", err);
+    const { logger } = await import("@/lib/logger");
+    logger.warn("captureLead failed:", err);
   }
 };
