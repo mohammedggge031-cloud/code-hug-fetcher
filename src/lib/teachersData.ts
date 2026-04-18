@@ -118,6 +118,7 @@ export async function loadTeachers(): Promise<Teacher[]> {
 
       if (!response.ok) {
         cachedTeachers = [];
+        cachedAt = Date.now();
         return [];
       }
 
@@ -125,14 +126,19 @@ export async function loadTeachers(): Promise<Teacher[]> {
       const data = (json?.teachers ?? json) as TeacherRow[];
       if (!Array.isArray(data) || data.length === 0) {
         cachedTeachers = [];
+        cachedAt = Date.now();
         return [];
       }
 
       cachedTeachers = data.map(mapTeacher);
+      cachedAt = Date.now();
       return cachedTeachers;
     } catch {
       cachedTeachers = [];
+      cachedAt = Date.now();
       return [];
+    } finally {
+      fetchPromise = null;
     }
   })();
 
