@@ -24,15 +24,21 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return undefined;
-          if (/[\\/](react|react-dom|scheduler)[\\/]/.test(id)) return 'vendor-react';
-          if (/[\\/](react-router|react-router-dom|@remix-run[\\/]router)[\\/]/.test(id)) return 'vendor-router';
+          // Group ALL react-related modules (incl. jsx-runtime, scheduler) in ONE chunk
+          // to avoid runtime errors from split React internals (white-screen on prod).
+          if (
+            /[\\/]node_modules[\\/](react|react-dom|scheduler|use-sync-external-store)[\\/]/.test(id) ||
+            id.includes('react/jsx-runtime') ||
+            id.includes('react/jsx-dev-runtime')
+          ) return 'vendor-react';
+          if (/[\\/]node_modules[\\/](react-router|react-router-dom|@remix-run[\\/]router)[\\/]/.test(id)) return 'vendor-router';
           if (id.includes('@tanstack/react-query')) return 'vendor-query';
           if (id.includes('framer-motion')) return 'vendor-motion';
           if (id.includes('@supabase/')) return 'vendor-supabase';
           if (id.includes('lucide-react')) return 'vendor-icons';
           if (id.includes('dompurify')) return 'vendor-dompurify';
           if (id.includes('date-fns')) return 'vendor-datefns';
-          if (id.includes('zod')) return 'vendor-zod';
+          if (id.includes('/zod/')) return 'vendor-zod';
           if (id.includes('@radix-ui')) return 'vendor-radix';
           if (id.includes('@tiptap') || id.includes('prosemirror')) return 'vendor-editor';
           if (id.includes('embla-carousel')) return 'vendor-carousel';
@@ -50,13 +56,10 @@ export default defineConfig(({ mode }) => ({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        passes: 3,
+        passes: 2,
         pure_getters: true,
-        unsafe_comps: true,
-        toplevel: true,
-        ecma: 2020,
       },
-      mangle: { toplevel: true },
+      mangle: true,
       format: { comments: false },
     },
     reportCompressedSize: false,
