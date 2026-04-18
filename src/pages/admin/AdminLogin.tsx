@@ -135,8 +135,8 @@ const AdminLogin = () => {
 
       <div className="relative z-10 w-full max-w-[420px] mx-4">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 shadow-xl bg-white/95 p-3 overflow-hidden">
-            <img src="/logo-admin.webp" alt="Alhamd Academy" className="max-h-full max-w-full object-contain" />
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl mb-5 shadow-xl bg-white overflow-hidden">
+            <img src="/logo-admin.webp" alt="Alhamd Academy" className="w-full h-full object-cover scale-110" />
           </div>
           <h1 className="text-2xl font-bold text-primary-foreground tracking-tight">
             Alhamd Academy
