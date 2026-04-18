@@ -54,7 +54,7 @@ const STATUS_VARIANT: Record<LeadEntry["status"], "default" | "secondary" | "out
 };
 
 const LeadsManagement = () => {
-  const { isAdmin, can } = useAuth();
+  const { isOwner, can } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
 

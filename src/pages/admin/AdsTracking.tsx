@@ -48,7 +48,7 @@ const EXTERNAL_DASHBOARDS: { label: string; url: string }[] = [
 const defaultCampaigns: Campaign[] = [];
 
 const AdsTracking = () => {
-  const { isAdmin, can } = useAuth();
+  const { isOwner, can } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
 

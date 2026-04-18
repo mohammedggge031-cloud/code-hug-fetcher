@@ -30,7 +30,7 @@ const defaultProfiles: SocialProfile[] = [
 ];
 
 const SocialManagement = () => {
-  const { isAdmin, can } = useAuth();
+  const { isOwner, can } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
   const [profiles, setProfiles] = useState<SocialProfile[]>([]);

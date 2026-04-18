@@ -28,7 +28,7 @@ const ScriptsManagement = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Script | null>(null);
-  const { user, isAdmin, can } = useAuth();
+  const { user, isOwner, can } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
 

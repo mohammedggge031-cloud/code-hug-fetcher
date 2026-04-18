@@ -46,7 +46,7 @@ const PLACEMENTS = [
 const STORAGE_KEY = "video_library";
 
 const VideoManagement = () => {
-  const { isAdmin, can } = useAuth();
+  const { isOwner, can } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
   const [videos, setVideos] = useState<VideoEntry[]>([]);
