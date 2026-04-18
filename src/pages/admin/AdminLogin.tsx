@@ -9,11 +9,21 @@ import { useToast } from "@/hooks/use-toast";
 import { Lock, Mail, Loader2, Globe, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+const preloadAdminShell = async () => {
+  await Promise.all([
+    import("@/components/admin/ProtectedRoute"),
+    import("@/components/admin/AdminLayout"),
+    import("@/components/admin/AdminErrorBoundary"),
+    import("@/pages/admin/AdminControlCenter"),
+  ]);
+};
+
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [resetLoading, setResetLoading] = useState(false);
   const [allowRender, setAllowRender] = useState(false);
   const { signIn, user, role, loading } = useAuth();
@@ -27,12 +37,16 @@ const AdminLogin = () => {
   }, []);
 
   useEffect(() => {
+    void preloadAdminShell().catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
     if (!loading && user && role) {
       navigate("/admin", { replace: true });
     }
   }, [loading, user, role, navigate]);
 
-  if (loading && !allowRender) {
+  if ((loading || redirecting) && !allowRender) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
@@ -45,12 +59,19 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setRedirecting(false);
+
+    const preloadPromise = preloadAdminShell().catch(() => undefined);
     const { error } = await signIn(email, password);
+
     if (error) {
       toast({ title: t("login.failed"), description: t("login.failed_desc"), variant: "destructive" });
+      setRedirecting(false);
     } else {
-      navigate("/admin");
+      setRedirecting(true);
+      await preloadPromise;
     }
+
     setSubmitting(false);
   };
 
@@ -81,19 +102,15 @@ const AdminLogin = () => {
       className="min-h-screen flex items-center justify-center relative overflow-hidden"
       dir={lang === "ar" ? "rtl" : "ltr"}
     >
-      {/* Background with gradient */}
       <div className="absolute inset-0" style={{ background: "var(--hero-gradient)" }} />
 
-      {/* Decorative pattern overlay */}
       <div className="absolute inset-0 opacity-[0.04]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
       }} />
 
-      {/* Decorative gold accent circles */}
       <div className="absolute -top-32 -end-32 w-96 h-96 rounded-full opacity-10" style={{ background: "var(--gold-gradient)" }} />
       <div className="absolute -bottom-24 -start-24 w-72 h-72 rounded-full opacity-[0.07]" style={{ background: "var(--gold-gradient)" }} />
 
-      {/* Language toggle */}
       <div className="absolute top-5 end-5 z-10">
         <Button
           variant="ghost"
@@ -106,9 +123,7 @@ const AdminLogin = () => {
         </Button>
       </div>
 
-      {/* Login Card */}
       <div className="relative z-10 w-full max-w-[420px] mx-4">
-        {/* Brand header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5 shadow-xl bg-white/95 p-2">
             <img src="/logo-admin.webp" alt="Alhamd Academy" className="h-14 w-14 object-contain" />
@@ -119,9 +134,7 @@ const AdminLogin = () => {
           <p className="text-sm text-primary-foreground/50 mt-1.5">{t("login.panel")}</p>
         </div>
 
-        {/* Card */}
         <div className="bg-card rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
-          {/* Card top accent */}
           <div className="h-1" style={{ background: "var(--gold-gradient)" }} />
 
           <div className="p-8">
@@ -131,7 +144,6 @@ const AdminLogin = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-foreground">
                   {t("login.email")}
@@ -151,7 +163,6 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              {/* Password */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password" className="text-sm font-medium text-foreground">
@@ -160,7 +171,7 @@ const AdminLogin = () => {
                   <button
                     type="button"
                     onClick={handleForgotPassword}
-                    disabled={resetLoading}
+                    disabled={resetLoading || submitting || redirecting}
                     className="text-xs text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
                   >
                     {resetLoading ? <Loader2 className="h-3 w-3 animate-spin inline" /> : t("login.forgot")}
@@ -190,13 +201,12 @@ const AdminLogin = () => {
                 </div>
               </div>
 
-              {/* Submit */}
               <Button
                 type="submit"
                 className="w-full h-11 gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition-all"
-                disabled={submitting}
+                disabled={submitting || redirecting}
               >
-                {submitting ? (
+                {submitting || redirecting ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     {t("login.loading")}
@@ -209,7 +219,6 @@ const AdminLogin = () => {
           </div>
         </div>
 
-        {/* Footer */}
         <p className="text-xs text-center text-primary-foreground/30 mt-6">
           © {new Date().getFullYear()} Alhamd Academy — All rights reserved
         </p>
