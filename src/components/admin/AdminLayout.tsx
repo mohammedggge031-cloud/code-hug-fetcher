@@ -89,7 +89,9 @@ const AdminLayout = () => {
       )}>
         <div className="p-4 border-b flex items-center gap-3 justify-between">
           <div className="flex items-center gap-3">
-            <img src={logoLive} alt="Alhamd Academy" className="h-10 w-10 object-cover rounded-lg" loading="eager" decoding="async" />
+            <div className="h-10 w-10 rounded-lg bg-white border border-sidebar-border flex items-center justify-center overflow-hidden shrink-0">
+              <img src={logoLive} alt="Alhamd Academy" className="max-h-8 max-w-8 object-contain" loading="eager" decoding="async" />
+            </div>
             <div>
               <h1 className="font-bold text-base text-sidebar-foreground">Alhamd Academy</h1>
               <p className="text-xs text-muted-foreground">{getRoleLabel(role)}</p>
