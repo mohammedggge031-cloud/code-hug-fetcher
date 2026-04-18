@@ -72,7 +72,7 @@ const HowItWorks = () => {
                 <div className="hidden lg:block absolute top-16 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-accent/30 to-accent/10" />
               )}
 
-              <div className="w-28 h-28 mx-auto rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-center mb-5 group-hover:scale-105 group-hover:shadow-lg transition-[transform,box-shadow] duration-300 overflow-hidden">
+              <div className="w-28 h-28 mx-auto rounded-2xl bg-accent/5 border border-accent/10 flex items-center justify-center mb-5 group-hover:scale-105 group-hover:shadow-lg transition-[transform,box-shadow] duration-300 overflow-hidden [contain:layout_paint]">
                 <img
                   src={step.image}
                   alt={step.titleEn}

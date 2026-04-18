@@ -67,7 +67,7 @@ const CommitmentSection = () => {
               {...fadeInUp(i, 0.1)}
               className="group flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl bg-primary-foreground/5 border border-primary-foreground/10 hover:bg-primary-foreground/10 hover:-translate-y-1 transition-[background-color,border-color,transform] duration-300"
             >
-              <div className="w-28 h-28 mb-6 rounded-full bg-accent/10 border-2 border-accent/20 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/40 transition-[transform,box-shadow,border-color] duration-300">
+              <div className="w-28 h-28 mb-6 rounded-full bg-accent/10 border-2 border-accent/20 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/40 transition-[transform,box-shadow,border-color] duration-300 [contain:layout_paint]">
                 <img
                   src={v.image}
                   alt={v.titleEn}
