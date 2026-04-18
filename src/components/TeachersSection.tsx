@@ -2,7 +2,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { GraduationCap, Star, X, BookOpen, Award } from "lucide-react";
+import { GraduationCap, Star, X, BookOpen, Award, ScrollText, User } from "lucide-react";
 import EgyptFlag from "@/components/EgyptFlag";
 import { scrollToContactForm } from "@/lib/scrollToForm";
 import type { Teacher } from "@/data/fallbackContent";
@@ -232,16 +232,49 @@ const TeachersSection = () => {
 
               {/* Details */}
               <div className="px-6 pb-6 space-y-5">
-                {/* Education */}
-                {(selectedTeacher.education_en || selectedTeacher.education_ar) && (
+                {/* Qualification */}
+                {(selectedTeacher.qualification_en || selectedTeacher.qualification_ar || selectedTeacher.education_en || selectedTeacher.education_ar) && (
                   <div className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
                       <GraduationCap className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <h4 className="text-sm font-bold text-foreground mb-1">{t("Education", "التعليم")}</h4>
+                      <h4 className="text-sm font-bold text-foreground mb-1">{t("Qualification", "المؤهل")}</h4>
                       <p className="text-sm text-muted-foreground">
-                        {t(selectedTeacher.education_en || "", selectedTeacher.education_ar || "")}
+                        {t(
+                          selectedTeacher.qualification_en || selectedTeacher.education_en || "",
+                          selectedTeacher.qualification_ar || selectedTeacher.education_ar || ""
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Academic Degree */}
+                {(selectedTeacher.academic_degree_en || selectedTeacher.academic_degree_ar) && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <Award className="w-4 h-4 text-accent" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground mb-1">{t("Academic Degree", "الدرجة العلمية")}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {t(selectedTeacher.academic_degree_en || "", selectedTeacher.academic_degree_ar || "")}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Ijazat */}
+                {(selectedTeacher.ijazat_en || selectedTeacher.ijazat_ar) && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <ScrollText className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground mb-1">{t("Ijazat", "الإجازات")}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {t(selectedTeacher.ijazat_en || "", selectedTeacher.ijazat_ar || "")}
                       </p>
                     </div>
                   </div>
@@ -262,6 +295,25 @@ const TeachersSection = () => {
                   </div>
                 )}
 
+                {/* Gender */}
+                {selectedTeacher.gender && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                      <User className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-foreground mb-1">{t("Gender", "النوع")}</h4>
+                      <p className="text-sm text-muted-foreground capitalize">
+                        {selectedTeacher.gender === "male"
+                          ? t("Male", "ذكر")
+                          : selectedTeacher.gender === "female"
+                          ? t("Female", "أنثى")
+                          : selectedTeacher.gender}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Bio */}
                 <div className="flex items-start gap-3">
                   <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
@@ -275,10 +327,10 @@ const TeachersSection = () => {
                   </div>
                 </div>
 
-                {/* Specializations */}
+                {/* Subjects */}
                 {selectedTeacher.specializations && selectedTeacher.specializations.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-foreground mb-2">{t("Specializations", "التخصصات")}</h4>
+                    <h4 className="text-sm font-bold text-foreground mb-2">{t("Subjects", "المواد")}</h4>
                     <div className="flex flex-wrap gap-2">
                       {selectedTeacher.specializations.map((spec, j) => (
                         <span
