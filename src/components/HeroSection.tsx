@@ -36,7 +36,7 @@ const HeroSection = () => {
       <div className="absolute inset-0" aria-hidden="true">
         <img
           srcSet={HERO_SRCSET}
-          src={HERO_IMAGE_JPG}
+          src="/quran-hero-640.webp"
           alt="Open Quran with Arabic calligraphy - Alhamd Academy online Quran classes"
           width={1920}
           height={1080}
@@ -44,7 +44,7 @@ const HeroSection = () => {
           loading="eager"
           fetchPriority="high"
           decoding="async"
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1920px"
           data-hero-bg=""
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/85 to-primary/60" />
