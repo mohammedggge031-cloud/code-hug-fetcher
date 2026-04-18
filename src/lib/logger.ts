@@ -9,8 +9,25 @@
  */
 
 const isDev = import.meta.env.DEV;
+const isProd = import.meta.env.PROD;
 
 type LogArgs = Parameters<typeof console.log>;
+
+// Forward production errors to Sentry. Lazy-imported so dev bundles stay lean.
+const reportToSentry = (args: LogArgs) => {
+  if (!isProd) return;
+  import("@sentry/react").then((Sentry) => {
+    const first = args[0];
+    if (first instanceof Error) {
+      Sentry.captureException(first, { extra: { args: args.slice(1) } });
+    } else {
+      Sentry.captureMessage(
+        typeof first === "string" ? first : JSON.stringify(first),
+        { level: "error", extra: { args: args.slice(1) } },
+      );
+    }
+  }).catch(() => { /* never block UI */ });
+};
 
 export const logger = {
   log: (...args: LogArgs) => {
@@ -21,6 +38,7 @@ export const logger = {
   },
   error: (...args: LogArgs) => {
     if (isDev) console.error(...args);
+    reportToSentry(args);
   },
   info: (...args: LogArgs) => {
     if (isDev) console.info(...args);
