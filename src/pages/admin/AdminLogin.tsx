@@ -33,7 +33,17 @@ const AdminLogin = () => {
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setAllowRender(true), 3200);
-    return () => window.clearTimeout(timeout);
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow, noarchive";
+    document.head.appendChild(meta);
+    const prevTitle = document.title;
+    document.title = "Admin";
+    return () => {
+      window.clearTimeout(timeout);
+      meta.remove();
+      document.title = prevTitle;
+    };
   }, []);
 
   useEffect(() => {
