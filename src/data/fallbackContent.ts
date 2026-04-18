@@ -34,4 +34,13 @@ export interface Teacher {
   experience_years?: number;
   education_en?: string;
   education_ar?: string;
+  /** External admin fields (controlled via Website Visibility toggle) */
+  qualification_en?: string;
+  qualification_ar?: string;
+  academic_degree_en?: string;
+  academic_degree_ar?: string;
+  ijazat_en?: string;
+  ijazat_ar?: string;
+  subjects?: string[];
+  gender?: "male" | "female" | string;
 }
