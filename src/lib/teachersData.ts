@@ -30,6 +30,9 @@ interface TeacherRow {
   ijazat_ar?: string | null;
   ijazat?: string | null;
   gender?: string | null;
+  about_en?: string | null;
+  about_ar?: string | null;
+  about?: string | null;
 }
 
 const pick = <T,>(...vals: (T | null | undefined)[]): T | undefined => {
