@@ -48,7 +48,7 @@ const EXTERNAL_DASHBOARDS: { label: string; url: string }[] = [
 const defaultCampaigns: Campaign[] = [];
 
 const AdsTracking = () => {
-  const { isAdmin, can } = useAuth();
+  const { isOwner, can } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
 
@@ -110,7 +110,7 @@ const AdsTracking = () => {
     return map;
   }, [leads]);
 
-  if (!(can("can_manage_leads") || can("can_manage_social") || isAdmin)) {
+  if (!(can("can_manage_leads") || can("can_manage_social") || isOwner)) {
     return <div className="py-16 text-center text-muted-foreground">Access denied.</div>;
   }
 

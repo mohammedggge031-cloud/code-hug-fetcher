@@ -67,32 +67,32 @@ const AdminDashboard = () => {
   }, [location.key]);
 
   const websiteCards = [
-    ...(can("can_manage_blog") || isAdmin ? [
+    ...(can("can_manage_blog") || isOwner ? [
       { title: t("dash.posts"), value: stats.posts, icon: FileText, desc: t("dash.posts.desc"), href: "/admin/blog", color: "text-blue-600 bg-blue-500/10" },
       { title: t("dash.categories"), value: stats.categories, icon: FolderOpen, desc: t("dash.categories.desc"), href: "/admin/categories", color: "text-orange-600 bg-orange-500/10" },
     ] : []),
-    ...(can("can_manage_media") || isAdmin ? [
+    ...(can("can_manage_media") || isOwner ? [
       { title: t("dash.media"), value: stats.media, icon: Image, desc: t("dash.media.desc"), href: "/admin/media", color: "text-violet-600 bg-violet-500/10" },
     ] : []),
-    ...(can("can_manage_videos") || isAdmin ? [
+    ...(can("can_manage_videos") || isOwner ? [
       { title: t("dash.videos"), value: stats.videos, icon: Video, desc: t("dash.videos.desc"), href: "/admin/videos", color: "text-pink-600 bg-pink-500/10" },
     ] : []),
-    ...(can("can_manage_seo") || isAdmin ? [
+    ...(can("can_manage_seo") || isOwner ? [
       { title: t("dash.seo"), value: stats.seoPages, icon: Search, desc: t("dash.seo.desc"), href: "/admin/seo", color: "text-emerald-600 bg-emerald-500/10" },
     ] : []),
-    ...(can("can_manage_scripts") || isAdmin ? [
+    ...(can("can_manage_scripts") || isOwner ? [
       { title: t("dash.scripts"), value: stats.scripts, icon: Code, desc: t("dash.scripts.desc"), href: "/admin/scripts", color: "text-rose-600 bg-rose-500/10" },
     ] : []),
   ];
 
   const marketingCards = [
-    ...(can("can_manage_leads") || isAdmin ? [
+    ...(can("can_manage_leads") || isOwner ? [
       { title: "Leads", value: stats.leads, icon: FileText, desc: "Captured form submissions", href: "/admin/leads", color: "text-cyan-600 bg-cyan-500/10" },
     ] : []),
-    ...(can("can_manage_social") || isAdmin ? [
+    ...(can("can_manage_social") || isOwner ? [
       { title: "Social", value: 0, icon: FileText, desc: "Social tracking & reports", href: "/admin/social", color: "text-fuchsia-600 bg-fuchsia-500/10" },
     ] : []),
-    ...(can("can_manage_leads") || can("can_manage_social") || isAdmin ? [
+    ...(can("can_manage_leads") || can("can_manage_social") || isOwner ? [
       { title: "Ads Tracking", value: 0, icon: FileText, desc: "UTM & campaign sources", href: "/admin/ads", color: "text-amber-600 bg-amber-500/10" },
     ] : []),
   ];
@@ -151,11 +151,11 @@ const AdminDashboard = () => {
       <Card>
         <CardHeader><CardTitle className="text-lg">{t("dash.guide")}</CardTitle></CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
-          {(can("can_manage_blog") || isAdmin) && <p>📝 <strong className="text-foreground">{t("dash.posts")}</strong> — {t("dash.guide.posts")}</p>}
-          {(can("can_manage_seo") || isAdmin) && <p>🔍 <strong className="text-foreground">{t("dash.seo")}</strong> — {t("dash.guide.seo")}</p>}
-          {(can("can_manage_media") || isAdmin) && <p>🖼️ <strong className="text-foreground">{t("dash.media")}</strong> — {t("dash.guide.media")}</p>}
-          {(can("can_manage_scripts") || isAdmin) && <p>📊 <strong className="text-foreground">{t("dash.scripts")}</strong> — {t("dash.guide.scripts")}</p>}
-          {(can("can_manage_videos") || isAdmin) && <p>🎬 <strong className="text-foreground">{t("dash.videos")}</strong> — {t("dash.guide.videos")}</p>}
+          {(can("can_manage_blog") || isOwner) && <p>📝 <strong className="text-foreground">{t("dash.posts")}</strong> — {t("dash.guide.posts")}</p>}
+          {(can("can_manage_seo") || isOwner) && <p>🔍 <strong className="text-foreground">{t("dash.seo")}</strong> — {t("dash.guide.seo")}</p>}
+          {(can("can_manage_media") || isOwner) && <p>🖼️ <strong className="text-foreground">{t("dash.media")}</strong> — {t("dash.guide.media")}</p>}
+          {(can("can_manage_scripts") || isOwner) && <p>📊 <strong className="text-foreground">{t("dash.scripts")}</strong> — {t("dash.guide.scripts")}</p>}
+          {(can("can_manage_videos") || isOwner) && <p>🎬 <strong className="text-foreground">{t("dash.videos")}</strong> — {t("dash.guide.videos")}</p>}
           {isOwner && <p>👥 <strong className="text-foreground">{t("dash.team")}</strong> — {t("dash.guide.team")}</p>}
         </CardContent>
       </Card>

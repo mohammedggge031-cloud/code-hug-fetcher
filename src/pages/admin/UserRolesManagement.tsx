@@ -108,7 +108,7 @@ const PERM_LABELS: Record<PermissionKey, string> = {
 };
 
 const UserManagement = () => {
-  const { isOwner, isAdmin } = useAuth();
+  const { isOwner } = useAuth();
   const { lang } = useAdminLang();
   const { toast } = useToast();
   const [rows, setRows] = useState<UserRow[]>([]);
@@ -169,7 +169,7 @@ const UserManagement = () => {
 
   useEffect(() => { void loadAll(); }, []);
 
-  if (!isAdmin) {
+  if (!isOwner) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Lock className="h-12 w-12 text-muted-foreground mb-4" />

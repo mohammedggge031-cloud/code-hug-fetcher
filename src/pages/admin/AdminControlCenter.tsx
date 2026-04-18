@@ -116,16 +116,16 @@ const AdminControlCenter = () => {
   }, [lang]);
 
   const modules = [
-    { key: "leads", label: copy.leads, value: stats.leads, icon: Inbox, to: "/admin/leads", show: can("can_manage_leads") || isAdmin },
-    { key: "ads", label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", value: stats.ads, icon: Target, to: "/admin/ads", show: can("can_manage_leads") || can("can_manage_social") || isAdmin },
-    { key: "social", label: copy.social, value: stats.social, icon: Megaphone, to: "/admin/social", show: can("can_manage_social") || isAdmin },
-    { key: "blog", label: copy.blog, value: stats.blog, icon: FileText, to: "/admin/blog", show: can("can_manage_blog") || isAdmin },
-    { key: "categories", label: copy.categories, value: stats.categories, icon: FolderOpen, to: "/admin/categories", show: can("can_manage_blog") || isAdmin },
-    { key: "media", label: copy.media, value: stats.media, icon: Image, to: "/admin/media", show: can("can_manage_media") || isAdmin },
-    { key: "seo", label: copy.seo, value: stats.seo, icon: Search, to: "/admin/seo", show: can("can_manage_seo") || isAdmin },
-    { key: "scripts", label: copy.scripts, value: stats.scripts, icon: Code, to: "/admin/scripts", show: can("can_manage_scripts") || isAdmin },
-    { key: "videos", label: copy.videos, value: stats.videos, icon: Video, to: "/admin/videos", show: can("can_manage_videos") || isAdmin },
-    { key: "users", label: copy.users, value: stats.users, icon: Users, to: "/admin/users", show: can("can_manage_users") || isAdmin || isOwner },
+    { key: "leads", label: copy.leads, value: stats.leads, icon: Inbox, to: "/admin/leads", show: can("can_manage_leads") || isOwner },
+    { key: "ads", label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", value: stats.ads, icon: Target, to: "/admin/ads", show: can("can_manage_leads") || can("can_manage_social") || isOwner },
+    { key: "social", label: copy.social, value: stats.social, icon: Megaphone, to: "/admin/social", show: can("can_manage_social") || isOwner },
+    { key: "blog", label: copy.blog, value: stats.blog, icon: FileText, to: "/admin/blog", show: can("can_manage_blog") || isOwner },
+    { key: "categories", label: copy.categories, value: stats.categories, icon: FolderOpen, to: "/admin/categories", show: can("can_manage_blog") || isOwner },
+    { key: "media", label: copy.media, value: stats.media, icon: Image, to: "/admin/media", show: can("can_manage_media") || isOwner },
+    { key: "seo", label: copy.seo, value: stats.seo, icon: Search, to: "/admin/seo", show: can("can_manage_seo") || isOwner },
+    { key: "scripts", label: copy.scripts, value: stats.scripts, icon: Code, to: "/admin/scripts", show: can("can_manage_scripts") || isOwner },
+    { key: "videos", label: copy.videos, value: stats.videos, icon: Video, to: "/admin/videos", show: can("can_manage_videos") || isOwner },
+    { key: "users", label: copy.users, value: stats.users, icon: Users, to: "/admin/users", show: can("can_manage_users") || isOwner },
   ].filter((item) => item.show);
 
   return (

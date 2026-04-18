@@ -26,26 +26,26 @@ const AdminLayout = () => {
     {
       label: lang === "ar" ? "إدارة الموقع" : "Website Management",
       items: [
-        { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isAdmin },
-        { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isAdmin },
-        { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isAdmin },
-        { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isAdmin },
-        { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isAdmin },
-        { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isAdmin },
+        { to: "/admin/blog", icon: FileText, label: t("nav.posts"), end: false, show: can("can_manage_blog") || isOwner },
+        { to: "/admin/categories", icon: FolderOpen, label: t("nav.categories"), end: false, show: can("can_manage_blog") || isOwner },
+        { to: "/admin/media", icon: Image, label: t("nav.media"), end: false, show: can("can_manage_media") || isOwner },
+        { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isOwner },
+        { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isOwner },
+        { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isOwner },
       ],
     },
     {
       label: lang === "ar" ? "التسويق والإعلانات" : "Marketing & Ads",
       items: [
-        { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isAdmin },
-        { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isAdmin },
-        { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isAdmin },
+        { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isOwner },
+        { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isOwner },
+        { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isOwner },
       ],
     },
     {
       label: lang === "ar" ? "المستخدمون والصلاحيات" : "Users & Access",
       items: [
-        { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: can("can_manage_users") || isAdmin },
+        { to: "/admin/users", icon: Users, label: t("nav.team"), end: false, show: can("can_manage_users") || isOwner },
       ],
     },
   ];
