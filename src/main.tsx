@@ -1,10 +1,23 @@
 import { createRoot } from "react-dom/client";
 import { Component, ErrorInfo, ReactNode } from "react";
+import * as Sentry from "@sentry/react";
 import "./index.css";
 import "./styles/typography.css";
 import "./styles/floating-actions.css";
 import App from "./App";
 import { persistUtmFromUrl } from "@/lib/leadCapture";
+
+// Initialize Sentry only in production to avoid noise during development.
+if (import.meta.env.PROD) {
+  Sentry.init({
+    dsn: "https://3b18255ba38288a66354d56fc3792a77@o4511242959650816.ingest.de.sentry.io/4511242967056464",
+    sendDefaultPii: true,
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 1.0,
+    environment: "production",
+  });
+}
 
 // Capture UTM parameters on first page load so they survive navigation until
 // the user submits a form (powers the dashboard Source Report).
@@ -28,6 +41,9 @@ class RootErrorBoundary extends Component<{ children: ReactNode }, { hasError: b
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("Root render error:", error, errorInfo);
+    if (import.meta.env.PROD) {
+      Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
+    }
   }
 
   render() {
