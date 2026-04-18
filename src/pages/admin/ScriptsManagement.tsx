@@ -52,7 +52,7 @@ const ScriptsManagement = () => {
 
   useEffect(() => { fetchScripts(); }, []);
 
-  if (!(can("can_manage_scripts") || isAdmin)) {
+  if (!(can("can_manage_scripts") || isOwner)) {
     return (
       <div className="text-center py-12">
         <h2 className="text-xl font-semibold">{t("scripts.admin_only")}</h2>

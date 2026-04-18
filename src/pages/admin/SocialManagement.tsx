@@ -55,7 +55,7 @@ const SocialManagement = () => {
     active: "Active",
   }, [lang]);
 
-  if (!(can("can_manage_social") || isAdmin)) {
+  if (!(can("can_manage_social") || isOwner)) {
     return <div className="py-16 text-center text-muted-foreground">Access denied.</div>;
   }
 

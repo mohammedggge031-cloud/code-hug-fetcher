@@ -125,7 +125,7 @@ const LeadsManagement = () => {
     return Object.entries(counts).sort((a, b) => b[1].total - a[1].total);
   }, [entries]);
 
-  if (!(can("can_manage_leads") || isAdmin)) {
+  if (!(can("can_manage_leads") || isOwner)) {
     return <div className="py-16 text-center text-muted-foreground">Access denied.</div>;
   }
 

@@ -133,7 +133,7 @@ const VideoManagement = () => {
 
   useEffect(() => { loadVideos(); }, []);
 
-  if (!(can("can_manage_videos") || isAdmin)) {
+  if (!(can("can_manage_videos") || isOwner)) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Shield className="h-12 w-12 text-muted-foreground mb-4" />
