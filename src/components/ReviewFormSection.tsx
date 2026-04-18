@@ -81,17 +81,24 @@ const ReviewFormSection = () => {
     setSubmitting(true);
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // CRITICAL: use returning:"minimal" so PostgREST does NOT try to
+      // SELECT the new row back. Anonymous SELECT policy only exposes
+      // approved rows, so returning the pending row would trigger a
+      // false RLS violation (42501) even though the INSERT succeeded.
       const { error: dbError } = await (supabase as any)
         .from("student_reviews")
-        .insert({
-          name: result.data.name,
-          country: result.data.country,
-          course: result.data.course,
-          gender: result.data.gender,
-          rating: result.data.rating,
-          review_text: result.data.review_text,
-          status: "pending",
-        });
+        .insert(
+          {
+            name: result.data.name,
+            country: result.data.country,
+            course: result.data.course,
+            gender: result.data.gender,
+            rating: result.data.rating,
+            review_text: result.data.review_text,
+            status: "pending",
+          },
+          { returning: "minimal" },
+        );
 
       if (dbError) throw dbError;
 
