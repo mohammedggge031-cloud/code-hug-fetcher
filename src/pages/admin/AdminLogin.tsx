@@ -32,7 +32,7 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => setAllowRender(true), 3200);
+    setAllowRender(true);
     const meta = document.createElement("meta");
     meta.name = "robots";
     meta.content = "noindex, nofollow, noarchive";
@@ -40,7 +40,6 @@ const AdminLogin = () => {
     const prevTitle = document.title;
     document.title = "Admin";
     return () => {
-      window.clearTimeout(timeout);
       meta.remove();
       document.title = prevTitle;
     };
