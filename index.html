@@ -43,8 +43,10 @@
     <link rel="preload" as="image" href="/quran-hero-1024.webp" type="image/webp" media="(min-width: 769px) and (max-width: 1280px)" fetchpriority="high" />
     <link rel="preload" as="image" href="/quran-hero.webp" type="image/webp" media="(min-width: 1281px)" fetchpriority="high" />
 
-    <!-- Fonts: minimal weights, deferred -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" media="print" onload="this.media='all'" />
+    <!-- Fonts: critical (above-the-fold) — Playfair + DM Sans -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <!-- Amiri (Quran section) — load on idle, not blocking LCP -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" media="print" onload="requestAnimationFrame(()=>{this.media='all'})" />
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" />
     </noscript>
@@ -76,28 +78,28 @@
     <meta name="geo.region" content="EG" />
     <meta name="geo.placename" content="Egypt" />
 
-    <!-- Google Tag Manager - deferred -->
+    <!-- Google Tag Manager - deferred. GTM container handles GA4 itself; no duplicate gtag injection. -->
     <script>
       (function(){
         var loaded=false;
+        // Pre-init dataLayer so any early gtag/dataLayer pushes from React code are queued.
+        window.dataLayer=window.dataLayer||[];
+        window.gtag=window.gtag||function(){window.dataLayer.push(arguments);};
         function loadAnalytics(){
           if(loaded)return;loaded=true;
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          (function(w,d,s,l,i){w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+          var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+          j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+          f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','GTM-WSTSTPM9');
-          var ga=document.createElement('script');ga.async=true;
-          ga.src='https://www.googletagmanager.com/gtag/js?id=G-41M40TDYJG';
-          document.head.appendChild(ga);
-          window.dataLayer=window.dataLayer||[];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag=gtag;gtag('js',new Date());gtag('config','G-41M40TDYJG');
         }
-        if('requestIdleCallback' in window){requestIdleCallback(loadAnalytics,{timeout:5000})}
-        else{window.addEventListener('load',function(){setTimeout(loadAnalytics,4000)})}
-        ['scroll','click','touchstart'].forEach(function(e){
-          document.addEventListener(e,loadAnalytics,{once:true,passive:true})
+        // Defer until first user interaction OR a longer idle window — keeps mobile LCP/TBT clean.
+        var fired=false;
+        function trigger(){if(fired)return;fired=true;loadAnalytics();}
+        if('requestIdleCallback' in window){requestIdleCallback(trigger,{timeout:8000})}
+        else{window.addEventListener('load',function(){setTimeout(trigger,6000)})}
+        ['scroll','click','touchstart','keydown','mousemove'].forEach(function(e){
+          window.addEventListener(e,trigger,{once:true,passive:true})
         });
       })();
     </script>
