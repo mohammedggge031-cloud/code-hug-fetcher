@@ -30,6 +30,9 @@ interface TeacherRow {
   ijazat_ar?: string | null;
   ijazat?: string | null;
   gender?: string | null;
+  about_en?: string | null;
+  about_ar?: string | null;
+  about?: string | null;
 }
 
 const pick = <T,>(...vals: (T | null | undefined)[]): T | undefined => {
@@ -69,6 +72,8 @@ const mapTeacher = (teacher: TeacherRow): Teacher => {
     ijazat_en: pick(teacher.ijazat_en, teacher.ijazat),
     ijazat_ar: pick(teacher.ijazat_ar, teacher.ijazat),
     gender: teacher.gender ?? undefined,
+    about_en: pick(teacher.about_en, teacher.about),
+    about_ar: pick(teacher.about_ar, teacher.about),
   };
 };
 

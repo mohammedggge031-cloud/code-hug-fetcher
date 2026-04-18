@@ -43,4 +43,6 @@ export interface Teacher {
   ijazat_ar?: string;
   subjects?: string[];
   gender?: "male" | "female" | string;
+  about_en?: string;
+  about_ar?: string;
 }
