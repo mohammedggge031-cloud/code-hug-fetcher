@@ -77,7 +77,7 @@ const WhyChooseUs = () => {
               {...fadeInUp(i)}
               className="group flex flex-col items-center text-center p-6 sm:p-8 rounded-2xl border border-border bg-card hover:shadow-xl hover:border-accent/30 hover:-translate-y-1 transition-[box-shadow,border-color,transform] duration-300"
             >
-              <div className="w-28 h-28 mb-6 rounded-full bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/15 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/30 transition-[transform,box-shadow,border-color] duration-300">
+              <div className="w-28 h-28 mb-6 rounded-full bg-gradient-to-br from-accent/10 to-accent/5 border-2 border-accent/15 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:border-accent/30 transition-[transform,box-shadow,border-color] duration-300 [contain:layout_paint]">
                 <img
                   src={f.image}
                   alt={f.titleEn}

@@ -95,11 +95,16 @@ body.menu-open .scroll-top-fab {
   animation-play-state: running !important;
 }
 
-/* Badge breathing animation */
+/* Badge breathing animation — promoted to its own compositor layer
+   to prevent transform from triggering layout-shift detection */
 .badge-breathe {
   animation: badge-breathe 2s ease-in-out infinite !important;
   animation-play-state: running !important;
   transform-origin: center;
+  will-change: transform;
+  contain: layout paint;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .floating-free-badge {
