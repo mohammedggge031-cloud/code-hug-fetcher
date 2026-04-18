@@ -4,13 +4,13 @@ Disallow: /admin/
 Disallow: /admin
 Disallow: /trial-registration
 
-# Sitemaps (Index format for faster crawling)
+# Sitemaps
 Sitemap: https://alhamdacademy.net/sitemap.xml
 Sitemap: https://alhamdacademy.net/sitemap-main.xml
 Sitemap: https://alhamdacademy.net/sitemap-blog.xml
 Sitemap: https://alhamdacademy.net/sitemap-locations.xml
 
-# Crawl-delay for polite crawling
+# Crawl-delay for aggressive SEO crawlers
 User-agent: AhrefsBot
 Crawl-delay: 10
 
@@ -19,6 +19,3 @@ Crawl-delay: 10
 
 User-agent: MJ12bot
 Crawl-delay: 10
-
-# Host directive
-Host: https://alhamdacademy.net
