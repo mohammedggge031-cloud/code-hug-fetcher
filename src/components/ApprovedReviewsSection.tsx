@@ -1,11 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Star, Quote, Play } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
