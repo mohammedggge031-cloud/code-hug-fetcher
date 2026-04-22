@@ -1,11 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
-import { Star, Quote, Play } from "lucide-react";
+import { Star, Quote } from "lucide-react";
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { usePlacementVideos, type PlacementVideo } from "@/hooks/usePlacementVideos";
 import { getCountryCode, getFlagUrl } from "@/data/countries";
 import avatarMale from "@/assets/avatar-male.webp";
 import avatarFemale from "@/assets/avatar-female.webp";
@@ -22,72 +20,11 @@ interface ApprovedReview {
 }
 
 
-const ApprovedIntroVideos = ({ t, fadeIn, videos }: { t: (en: string, ar: string) => string; fadeIn: (delay?: number) => any; videos: PlacementVideo[] }) => {
-  const [playingId, setPlayingId] = useState<string | null>(null);
-
-  if (videos.length === 0) return null;
-
-  return (
-    <motion.div {...fadeIn()} className="max-w-4xl mx-auto mb-14">
-      <div className="text-center mb-6">
-        <span className="text-sm font-semibold text-accent uppercase tracking-wider">
-          {t("Get to Know Us", "تعرف علينا")}
-        </span>
-        <h3 className="text-2xl md:text-3xl font-bold text-foreground mt-2">
-          {t("Watch Some of Our Students", "شوف بعض طلابنا")}
-        </h3>
-      </div>
-      <div className={`grid gap-6 ${videos.length === 1 ? "max-w-3xl mx-auto" : videos.length === 2 ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
-        {videos.map((video) => (
-          <div key={video.youtubeId} className="rounded-2xl overflow-hidden shadow-lg border border-border">
-            {playingId === video.youtubeId ? (
-              <div className="aspect-video">
-                <iframe
-                  src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&rel=0`}
-                  title={t(video.titleEn, video.titleAr)}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <button
-                onClick={() => setPlayingId(video.youtubeId)}
-                className="relative w-full aspect-video group focus:outline-none"
-                aria-label={t("Play video", "تشغيل الفيديو")}
-              >
-                <img
-                  src={`https://img.youtube.com/vi/${video.youtubeId}/maxresdefault.jpg`}
-                  alt={t(video.titleEn, video.titleAr)}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute inset-0 bg-foreground/30 group-hover:bg-foreground/40 transition-colors flex items-center justify-center">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-accent flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <Play className="w-6 h-6 sm:w-7 sm:h-7 text-accent-foreground fill-current ms-1" />
-                  </div>
-                </div>
-              </button>
-            )}
-            {videos.length > 1 && (
-              <div className="p-3 bg-muted/30">
-                <p className="text-xs text-muted-foreground font-medium text-center line-clamp-1">
-                  {t(video.titleEn, video.titleAr)}
-                </p>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-};
 
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
   const { fadeIn, fadeInUp } = useMobileSafeMotion();
-  const placementVideos = usePlacementVideos();
+  
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
@@ -132,8 +69,6 @@ const ApprovedReviewsSection = () => {
   return (
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Intro Videos */}
-        <ApprovedIntroVideos t={t} fadeIn={fadeIn} videos={placementVideos} />
 
         <motion.div
           {...fadeIn()}

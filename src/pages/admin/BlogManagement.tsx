@@ -57,6 +57,7 @@ const BlogManagement = () => {
       const result = await safeDataRequest<{ posts: BlogPost[]; cats: Category[]; errorMessage: string | null }>({
         fallback: { posts: [], cats: [], errorMessage: null },
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const [{ data: postsData, error: postsError }, { data: catsData, error: catsError }] = await Promise.all([
             supabase.from("blog_posts").select("*").order("created_at", { ascending: false }).abortSignal(signal),

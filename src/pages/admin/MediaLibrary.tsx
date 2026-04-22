@@ -32,6 +32,7 @@ const MediaLibrary = () => {
       const data = await safeDataRequest<MediaAsset[]>({
         fallback: [],
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const { data, error } = await supabase.from("media_assets").select("*").order("created_at", { ascending: false }).abortSignal(signal);
           if (error) throw error;

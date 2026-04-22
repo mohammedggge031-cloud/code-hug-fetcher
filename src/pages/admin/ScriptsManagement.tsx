@@ -38,6 +38,7 @@ const ScriptsManagement = () => {
       const data = await safeDataRequest<Script[]>({
         fallback: [],
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const { data, error } = await supabase.from("custom_scripts").select("*").order("created_at", { ascending: false }).abortSignal(signal);
           if (error) throw error;

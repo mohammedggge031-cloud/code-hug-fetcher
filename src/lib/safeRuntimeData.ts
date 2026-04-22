@@ -73,10 +73,15 @@ export async function safeDataRequest<T>(options: SafeDataRequestOptions<T>): Pr
     fallback,
     request,
     isEmpty,
-    skipWhenGlobalFallback = true,
     timeoutMs = SUPABASE_TIMEOUT_MS,
     markGlobalFallbackOnError = true,
   } = options;
+
+  // If the caller opts out of marking global fallback (e.g. admin pages that must
+  // always hit the live DB), default to NOT skipping when global fallback is active.
+  // This prevents an unrelated public-page timeout from silently disabling admin
+  // queries for the cooldown window (which manifested as "sorting hangs until refresh").
+  const skipWhenGlobalFallback = options.skipWhenGlobalFallback ?? markGlobalFallbackOnError;
 
   if (skipWhenGlobalFallback && isGlobalFallbackMode()) {
     return fallback;
