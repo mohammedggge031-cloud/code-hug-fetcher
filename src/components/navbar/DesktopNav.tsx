@@ -141,7 +141,7 @@ const DesktopNav = ({
         onClick={(e) => { if (isCourseDetailPage) handleHomeLogoClick(e); else { e.preventDefault(); scrollToTopRoute(); } }}
         className="hidden lg:flex flex-col items-center gap-0.5 shrink-0 overflow-hidden"
       >
-        <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" {...({ fetchpriority: "high" } as any)} decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
+        <img src={logo} alt="Alhamd Academy" width={56} height={56} loading="eager" decoding="async" className="h-14 w-14 object-cover rounded-xl shadow-soft border border-primary-foreground/10" />
         <span className="text-[11px] font-heading font-bold text-primary-foreground uppercase tracking-widest">
           {t("Alhamd Academy", "أكاديمية الحمد")}
         </span>
