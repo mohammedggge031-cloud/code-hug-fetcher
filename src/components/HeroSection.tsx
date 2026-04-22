@@ -41,7 +41,7 @@ const HeroSection = () => {
           height={1080}
           className="h-full w-full object-cover"
           loading="eager"
-          fetchPriority="high"
+          {...({ fetchpriority: "high" } as any)}
           decoding="async"
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 100vw, 1920px"
           data-hero-bg=""

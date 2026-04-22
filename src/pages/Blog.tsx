@@ -210,7 +210,7 @@ const Blog = () => {
                     className="group rounded-xl border border-border bg-card overflow-hidden shadow-soft hover:shadow-card transition-all duration-300 hover:-translate-y-1"
                   >
                     <div className="aspect-[16/10] overflow-hidden">
-                      <img src={post.image} alt={t(post.title_en, post.title_ar)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" fetchPriority="low" />
+                      <img src={post.image} alt={t(post.title_en, post.title_ar)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" {...({ fetchpriority: "low" } as any)} />
                     </div>
                     <div className="p-5">
                       <span className="inline-block px-3 py-1 rounded-full bg-accent/15 text-accent text-xs font-semibold mb-3">

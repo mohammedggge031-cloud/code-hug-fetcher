@@ -34,7 +34,7 @@ const HeroDesktopGallery = () => {
               alt={`Student learning Quran online with Alhamd Academy - ${idx + 1}`}
               className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 motion-reduce:transition-none ${idx === currentImage ? "opacity-100" : "opacity-0"}`}
               loading={idx === 0 ? "eager" : "lazy"}
-              fetchPriority={idx === 0 ? "high" : "low"}
+              {...({ fetchpriority: idx === 0 ? "high" : "low" } as any)}
               decoding="async"
             />
           ))}

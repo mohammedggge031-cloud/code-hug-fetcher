@@ -184,7 +184,7 @@ const BlogPost = () => {
         {post.featured_image && (
           <div className="container mx-auto px-4 max-w-4xl -mt-6">
             <div className="rounded-xl overflow-hidden shadow-elevated">
-              <img src={post.featured_image} alt={t(titleEn, titleAr)} className="w-full h-64 md:h-96 object-cover" decoding="async" fetchPriority="high" />
+              <img src={post.featured_image} alt={t(titleEn, titleAr)} className="w-full h-64 md:h-96 object-cover" decoding="async" {...({ fetchpriority: "high" } as any)} />
             </div>
           </div>
         )}
@@ -229,7 +229,7 @@ const BlogPost = () => {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         loading="lazy"
                         decoding="async"
-                        fetchPriority="low"
+                        {...({ fetchpriority: "low" } as any)}
                       />
                     </div>
                     <div className="p-4">
