@@ -69,6 +69,7 @@ const VideoManagement = () => {
       const stored = await safeDataRequest<string | null>({
         fallback: null,
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const { data, error } = await supabase
             .from("custom_scripts")

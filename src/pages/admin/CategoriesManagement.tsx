@@ -35,6 +35,7 @@ const CategoriesManagement = () => {
       const result = await safeDataRequest<{ data: Category[]; errorMessage: string | null }>({
         fallback: { data: [], errorMessage: null },
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const { data, error } = await supabase.from("blog_categories").select("*").order("name_en").abortSignal(signal);
           return { data: data ?? [], errorMessage: error?.message || null };

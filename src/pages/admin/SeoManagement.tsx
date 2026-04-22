@@ -132,6 +132,7 @@ const SeoManagement = () => {
       const data = await safeDataRequest<SeoEntry[]>({
         fallback: [],
         markGlobalFallbackOnError: false,
+        timeoutMs: 12000,
         request: async (signal) => {
           const { data, error } = await supabase.from("seo_metadata").select("*").order("page_path").abortSignal(signal);
           if (error) throw error;
