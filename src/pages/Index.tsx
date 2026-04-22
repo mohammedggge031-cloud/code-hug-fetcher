@@ -23,7 +23,6 @@ const ContactSection = lazy(() => import("@/components/ContactSection"));
 const Footer = lazy(() => import("@/components/Footer"));
 const TeachersSection = lazy(() => import("@/components/TeachersSection"));
 const RecentArticlesSection = lazy(() => import("@/components/RecentArticlesSection"));
-const ApprovedReviewsSection = lazy(() => import("@/components/ApprovedReviewsSection"));
 const ReviewFormSection = lazy(() => import("@/components/ReviewFormSection"));
 
 const DeferredSection = ({ children, minHeight = 260, forceRender = false, delayMs = 0 }: { children: ReactNode; minHeight?: number; forceRender?: boolean; delayMs?: number }) => {
@@ -154,8 +153,7 @@ const Index = () => {
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={400}><CommitmentSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={440} forceRender={forceEager} delayMs={500}><WhyChooseUs /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={600}><TestimonialsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={320} forceRender={forceEager} delayMs={700}><ApprovedReviewsSection /></DeferredSection></SectionErrorBoundary>
-        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={800}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
+        <SectionErrorBoundary><DeferredSection minHeight={380} forceRender={forceEager} delayMs={700}><ReviewFormSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={460} forceRender={forceEager} delayMs={900}><PricingSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={360} forceRender={forceEager} delayMs={1000}><AboutSection /></DeferredSection></SectionErrorBoundary>
         <SectionErrorBoundary><DeferredSection minHeight={420} forceRender={forceEager} delayMs={1100}><TeachersSection /></DeferredSection></SectionErrorBoundary>
