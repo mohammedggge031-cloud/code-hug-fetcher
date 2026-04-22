@@ -174,7 +174,7 @@ const CoursePage = () => {
                     width={112}
                     height={112}
                     decoding="async"
-                    fetchPriority="high"
+                    {...({ fetchpriority: "high" } as any)}
                   />
                 </div>
               )}
@@ -502,7 +502,7 @@ const CoursePage = () => {
                       className="w-12 h-12 mx-auto rounded-full object-cover border-2 border-accent/20 mb-2 group-hover:border-accent/50 transition-colors"
                       loading="lazy"
                       decoding="async"
-                      fetchPriority="low"
+                      {...({ fetchpriority: "low" } as any)}
                       width="48"
                       height="48"
                     />

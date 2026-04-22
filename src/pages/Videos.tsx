@@ -31,7 +31,7 @@ const VideoCard = memo(({ video, index, onOpen }: { video: VideoItem; index: num
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           decoding="async"
-          fetchPriority="low"
+          {...({ fetchpriority: "low" } as any)}
         />
         <div className="absolute inset-0 bg-foreground/30 flex items-center justify-center group-hover:bg-foreground/40 transition-colors">
           <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center shadow-elevated group-hover:scale-110 transition-transform">
