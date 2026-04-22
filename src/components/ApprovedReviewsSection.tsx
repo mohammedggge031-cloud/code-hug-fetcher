@@ -24,7 +24,7 @@ interface ApprovedReview {
 const ApprovedReviewsSection = () => {
   const { t } = useLanguage();
   const { fadeIn, fadeInUp } = useMobileSafeMotion();
-  const placementVideos = usePlacementVideos();
+  
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["approved-reviews"],
@@ -69,8 +69,6 @@ const ApprovedReviewsSection = () => {
   return (
     <section id="student-reviews" className="py-16 sm:py-20 bg-secondary/30" aria-label="Student Reviews">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Intro Videos */}
-        <ApprovedIntroVideos t={t} fadeIn={fadeIn} videos={placementVideos} />
 
         <motion.div
           {...fadeIn()}
