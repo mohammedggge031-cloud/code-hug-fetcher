@@ -1,21 +1,23 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
-Disallow: /admin
-Disallow: /trial-registration
 
-# Sitemaps
+# صفحات المستخدم
+Disallow: /login
+Disallow: /register
+Disallow: /dashboard
+Disallow: /profile
+
+# البحث الداخلي
+Disallow: /search
+Disallow: /?s=
+
+# الباراميترز 
+Disallow: /*?s=
+
+# صفحات غير مفيدة
+Disallow: /cart
+Disallow: /checkout
+Disallow: /thank-you
+
+# Sitemap
 Sitemap: https://alhamdacademy.net/sitemap.xml
-Sitemap: https://alhamdacademy.net/sitemap-main.xml
-Sitemap: https://alhamdacademy.net/sitemap-blog.xml
-Sitemap: https://alhamdacademy.net/sitemap-locations.xml
-
-# Crawl-delay for aggressive SEO crawlers
-User-agent: AhrefsBot
-Crawl-delay: 10
-
-User-agent: SemrushBot
-Crawl-delay: 10
-
-User-agent: MJ12bot
-Crawl-delay: 10

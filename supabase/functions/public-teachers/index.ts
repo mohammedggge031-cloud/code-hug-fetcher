@@ -68,10 +68,3 @@ Deno.serve(async (req) => {
     });
   }
 });
-  } catch {
-    return new Response(JSON.stringify({ teachers: [] }), {
-      status: 200,
-      headers: corsHeaders,
-    });
-  }
-});
