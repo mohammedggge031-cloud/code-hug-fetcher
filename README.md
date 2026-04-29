@@ -61,7 +61,7 @@ npm run dev
 ```bash
 npm run build
 ```
-Output goes to `dist/`. Deploy to any static host (Vercel, Netlify, Cloudflare Pages, etc.).
+Output goes to `dist/`. Deploy to any static host (Vercel, Netlify, Cloudflare Pages, etc.)..
 
 ---
 
