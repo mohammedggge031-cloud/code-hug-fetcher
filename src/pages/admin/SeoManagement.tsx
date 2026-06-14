@@ -15,6 +15,7 @@ import { Pencil, Plus, Trash2, Search } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import VerificationMetaCard from "@/components/admin/VerificationMetaCard";
 
 interface SeoEntry {
   id: string; page_path: string; page_name: string;
