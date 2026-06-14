@@ -101,9 +101,29 @@ const SEOHead = ({
       if (article.section) setMeta("article:section", article.section, "property");
     }
 
-    // Always set canonical — use provided or derive from current path
-    const effectiveCanonical = canonical || `https://alhamdacademy.net${window.location.pathname.replace(/\/$/, '') || '/'}`;
+    // Always set canonical — derive from current route and normalize to the canonical
+    // host (https://www.alhamdacademy.net). If a canonical is provided (static prop or
+    // DB-driven), keep its path but force the canonical host so legacy non-www or bare
+    // values cannot leak into the rendered tag.
+    const CANONICAL_ORIGIN = "https://www.alhamdacademy.net";
+    const normalizeCanonical = (value: string): string => {
+      try {
+        const url = new URL(value, CANONICAL_ORIGIN);
+        const path = url.pathname === "/" ? "/" : url.pathname.replace(/\/$/, "");
+        return `${CANONICAL_ORIGIN}${path}${url.search}`;
+      } catch {
+        const path = window.location.pathname;
+        const safe = path === "/" ? "/" : path.replace(/\/$/, "");
+        return `${CANONICAL_ORIGIN}${safe}`;
+      }
+    };
+    const routePath = window.location.pathname === "/" ? "/" : window.location.pathname.replace(/\/$/, "");
+    const effectiveCanonical = normalizeCanonical(canonical || `${CANONICAL_ORIGIN}${routePath}`);
     setMeta("og:url", effectiveCanonical, "property");
+    // Guarantee exactly one <link rel="canonical"> per page by clearing duplicates
+    // (including the static one shipped in index.html) before writing the active one.
+    const existingCanonicals = document.querySelectorAll('link[rel="canonical"]');
+    existingCanonicals.forEach((node, idx) => { if (idx > 0) node.remove(); });
     let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
     if (!link) {
       link = document.createElement("link");
