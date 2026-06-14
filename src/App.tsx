@@ -104,6 +104,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <SiteVerificationMeta />
           <FloatingActions />
 
           <Suspense fallback={<Loader />}>
