@@ -29,6 +29,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import FloatingBookingFAB from "@/components/FloatingBookingFAB";
+import SiteVerificationMeta from "@/components/SiteVerificationMeta";
 import { appQueryClient } from "@/lib/queryClient";
 
 const FloatingActions = () => {
@@ -103,6 +104,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <SiteVerificationMeta />
           <FloatingActions />
 
           <Suspense fallback={<Loader />}>

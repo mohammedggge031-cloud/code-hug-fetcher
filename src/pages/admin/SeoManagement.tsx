@@ -15,6 +15,7 @@ import { Pencil, Plus, Trash2, Search } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
 import DeleteConfirmDialog from "@/components/admin/DeleteConfirmDialog";
+import VerificationMetaCard from "@/components/admin/VerificationMetaCard";
 
 interface SeoEntry {
   id: string; page_path: string; page_name: string;
@@ -244,6 +245,8 @@ const SeoManagement = () => {
           <Button onClick={() => { setEditing({ ...defaultEntry }); setIsNew(true); }}><Plus className="h-4 w-4 me-1" /> {t("seo.add")}</Button>
         </div>
       </div>
+
+      <VerificationMetaCard />
 
       <div className="relative max-w-sm">
         <Search className="absolute start-3 top-3 h-4 w-4 text-muted-foreground" />
