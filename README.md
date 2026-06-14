@@ -1,4 +1,4 @@
-# Alhamd Academy — Online Quran, Arabic & Islamic Studies
+.# Alhamd Academy — Online Quran, Arabic & Islamic Studies
 
 A production-grade, fully independent web application built with **React + Vite + TypeScript + Tailwind CSS**, backed by **Supabase** for database, auth, and edge functions.
 
