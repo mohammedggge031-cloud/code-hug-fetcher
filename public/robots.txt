@@ -20,4 +20,4 @@ Disallow: /checkout
 Disallow: /thank-you
 
 # Sitemap
-Sitemap: https://alhamdacademy.net/sitemap.xml
+Sitemap: https://www.alhamdacademy.net/sitemap.xml
