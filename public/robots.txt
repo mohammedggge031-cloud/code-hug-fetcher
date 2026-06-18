@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 
+# Admin
+Disallow: /admin/
+Disallow: /admin/*
+
 # صفحات المستخدم
 Disallow: /login
 Disallow: /register
