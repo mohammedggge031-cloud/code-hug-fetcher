@@ -4,10 +4,24 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "alhamdacademy.net" }],
+      "destination": "https://www.alhamdacademy.net/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
