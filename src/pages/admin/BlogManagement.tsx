@@ -143,6 +143,13 @@ const BlogManagement = () => {
         return;
       }
 
+      // Ping IndexNow when a post is published so search engines pick it up immediately
+      if (editing.status === "published") {
+        void supabase.functions.invoke("indexnow-ping", {
+          body: { urls: [`https://www.alhamdacademy.net/blog/${slug}`] },
+        }).catch(() => { /* non-blocking */ });
+      }
+
       toast({ title: t("blog.saved"), description: `"${editing.title_en}"` });
       setShowEditor(false);
       void fetchData();

@@ -13,6 +13,10 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/sitemap-blog.xml",
+      "destination": "https://rihxkjhgipmqqihuljah.supabase.co/functions/v1/generate-blog-sitemap"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
