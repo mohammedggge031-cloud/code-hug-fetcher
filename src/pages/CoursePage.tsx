@@ -127,13 +127,24 @@ const CoursePage = () => {
   const courseImage = courseImages[course.slug];
   const otherCourses = courses.filter((c) => c.slug !== course.slug);
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.alhamdacademy.net/" },
+      { "@type": "ListItem", position: 2, name: "Courses", item: "https://www.alhamdacademy.net/courses" },
+      { "@type": "ListItem", position: 3, name: course.titleEn, item: `https://www.alhamdacademy.net/courses/${course.slug}` },
+    ],
+  };
+
   return (
     <>
       <SEOHead
         title={`${t(course.titleEn, course.titleAr)} | Alhamd Academy`}
         description={courseSeoDescriptions[course.slug] || t(course.descEn, course.descAr)}
-        canonical={`https://alhamdacademy.net/courses/${course.slug}`}
+        canonical={`https://www.alhamdacademy.net/courses/${course.slug}`}
         keywords={courseSeoKeywords[course.slug] || `${course.titleEn.toLowerCase()}, online ${course.titleEn.toLowerCase()}`}
+        structuredData={breadcrumbSchema}
         dynamicSeo={seo}
       />
       <Navbar />

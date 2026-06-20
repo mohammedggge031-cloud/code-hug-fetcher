@@ -115,28 +115,28 @@ const BlogPost = () => {
 
   const articleSchema = {
     "@context": "https://schema.org",
-    "@type": "BlogPosting",
+    "@type": "Article",
     headline: t(titleEn, titleAr),
     description: t(excerptEn, excerptAr),
-    image: post.featured_image,
-    datePublished: postDate,
-    dateModified: postDate,
-    author: { "@type": "Organization", name: "Alhamd Academy", url: "https://alhamdacademy.net/" },
+    image: post.featured_image || "https://www.alhamdacademy.net/og-image.jpg",
+    datePublished: post.created_at || postDate,
+    dateModified: post.updated_at || post.created_at || postDate,
+    author: { "@type": "Organization", name: "Alhamd Academy", url: "https://www.alhamdacademy.net" },
     publisher: {
       "@type": "Organization",
       name: "Alhamd Academy",
-      logo: { "@type": "ImageObject", url: "https://alhamdacademy.net/favicon-512.png", width: 512, height: 512 },
+      logo: { "@type": "ImageObject", url: "https://www.alhamdacademy.net/favicon-512.png" },
     },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `https://alhamdacademy.net/blog/${post.slug}` },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.alhamdacademy.net/blog/${post.slug}` },
   };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://alhamdacademy.net/" },
-      { "@type": "ListItem", position: 2, name: "Blog", item: "https://alhamdacademy.net/blog" },
-      { "@type": "ListItem", position: 3, name: t(titleEn, titleAr), item: `https://alhamdacademy.net/blog/${post.slug}` },
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.alhamdacademy.net/" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.alhamdacademy.net/blog" },
+      { "@type": "ListItem", position: 3, name: t(titleEn, titleAr), item: `https://www.alhamdacademy.net/blog/${post.slug}` },
     ],
   };
 
@@ -145,14 +145,13 @@ const BlogPost = () => {
       <SEOHead
         title={`${t(titleEn, titleAr)} | Alhamd Academy Blog`}
         description={t(excerptEn, excerptAr)}
-        canonical={`https://alhamdacademy.net/blog/${post.slug}`}
+        canonical={`https://www.alhamdacademy.net/blog/${post.slug}`}
         ogType="article"
         ogImage={post.featured_image}
         keywords={`${catName}, quran, alhamd academy`}
         article={{ publishedTime: postDate, modifiedTime: postDate, author: "Alhamd Academy", section: catName }}
+        structuredData={[articleSchema, breadcrumbSchema]}
       />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
 
       <main>
