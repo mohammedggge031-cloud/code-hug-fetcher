@@ -143,8 +143,11 @@ const BlogManagement = () => {
         return;
       }
 
-      // Ping IndexNow when a post is published so search engines pick it up immediately
-      if (editing.status === "published") {
+      // Ping IndexNow on publish OR unpublish so search engines re-crawl immediately
+      const prevStatus = editing.id ? posts.find(p => p.id === editing.id)?.status : undefined;
+      const becamePublished = editing.status === "published";
+      const becameUnpublished = prevStatus === "published" && editing.status === "draft";
+      if (becamePublished || becameUnpublished) {
         void supabase.functions.invoke("indexnow-ping", {
           body: { urls: [`https://www.alhamdacademy.net/blog/${slug}`] },
         }).catch(() => { /* non-blocking */ });
