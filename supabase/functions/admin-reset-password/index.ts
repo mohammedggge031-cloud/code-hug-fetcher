@@ -1,3 +1,4 @@
+// Owner-only: reset another user's password.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -7,58 +8,60 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const json = (body: unknown, status = 200) =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Verify caller is admin
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
-    );
-    const { data: { user: caller } } = await supabaseClient.auth.getUser();
-    if (!caller) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const token = authHeader.replace("Bearer ", "");
+    if (!token) return json({ error: "missing token" }, 401);
 
-    // Check caller is super admin (first admin by created_at)
-    const { data: allAdmins } = await supabaseClient
+    // Identify caller
+    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData, error: userErr } = await userClient.auth.getUser(token);
+    if (userErr || !userData?.user) return json({ error: "invalid session" }, 401);
+    const callerId = userData.user.id;
+
+    const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+
+    // Consistent owner-role check (matches admin-create-user, admin-delete-user,
+    // admin-update-permissions). Fixes fragile "first admin by created_at" model.
+    const { data: ownerRow } = await admin
       .from("user_roles")
-      .select("user_id, created_at")
-      .eq("role", "admin")
-      .order("created_at", { ascending: true });
-
-    const superAdminId = allAdmins?.[0]?.user_id;
-    if (caller.id !== superAdminId) {
-      return new Response(JSON.stringify({ error: "Only Super Admin can reset passwords" }), { status: 403, headers: corsHeaders });
-    }
+      .select("role")
+      .eq("user_id", callerId)
+      .eq("role", "owner")
+      .maybeSingle();
+    if (!ownerRow) return json({ error: "owner only" }, 403);
 
     const { user_id, new_password } = await req.json();
     if (!user_id || typeof user_id !== "string") {
-      return new Response(JSON.stringify({ error: "user_id required" }), { status: 400, headers: corsHeaders });
+      return json({ error: "user_id required" }, 400);
     }
     if (!new_password || typeof new_password !== "string" || new_password.length < 6) {
-      return new Response(JSON.stringify({ error: "Password must be at least 6 characters" }), { status: 400, headers: corsHeaders });
+      return json({ error: "Password must be at least 6 characters" }, 400);
     }
 
-    // Use service role to update user password
-    const adminClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
-    const { error } = await adminClient.auth.admin.updateUserById(user_id, {
+    const { error } = await admin.auth.admin.updateUserById(user_id, {
       password: new_password,
     });
 
-    if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders });
+    if (error) return json({ error: error.message }, 500);
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return json({ success: true });
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), { status: 500, headers: corsHeaders });
+    return json({ error: (e as Error).message }, 500);
   }
 });

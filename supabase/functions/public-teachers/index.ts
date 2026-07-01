@@ -32,11 +32,30 @@ Deno.serve(async (req) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    // Select * so any new admin-controlled field (qualification, academic_degree,
-    // ijazat, gender, subjects, etc.) is forwarded to the website automatically.
+    // Explicit allowlist of public-safe columns. Prevents accidental exposure of
+    // any future internal columns (contact info, admin notes, salary, etc.) that
+    // may be added to the teachers table. Any new public-facing field must be
+    // added here intentionally.
+    const PUBLIC_COLUMNS = [
+      "id",
+      "name_en", "name_ar", "name",
+      "title_en", "title_ar",
+      "bio_en", "bio_ar", "bio",
+      "photo_url", "photo",
+      "specializations", "subjects",
+      "rating", "experience_years",
+      "education_en", "education_ar",
+      "qualification_en", "qualification_ar", "qualification",
+      "academic_degree_en", "academic_degree_ar", "academic_degree",
+      "ijazat_en", "ijazat_ar", "ijazat",
+      "gender",
+      "about_en", "about_ar", "about",
+      "is_active", "display_order", "created_at",
+    ].join(", ");
+
     const { data, error } = await supabase
       .from("teachers")
-      .select("*")
+      .select(PUBLIC_COLUMNS)
       .eq("is_active", true)
       .order("display_order", { ascending: true })
       .order("created_at", { ascending: false });
