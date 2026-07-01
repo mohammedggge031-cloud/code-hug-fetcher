@@ -1,7 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const INDEXNOW_KEY = "e7dc8d90badf93778b26df853c852411";
 const HOST = "alhamdacademy.net";
+const ALLOWED_HOSTS = new Set([HOST, `www.${HOST}`]);
 
 const ALL_URLS = [
   // Homepage
@@ -49,21 +51,55 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  try {
-    const { urls } = await req.json().catch(() => ({ urls: null }));
-    
-    // Use provided URLs or default to all URLs
-    const urlList = (urls && Array.isArray(urls) && urls.length > 0) 
-      ? urls 
-      : ALL_URLS.map(path => `https://${HOST}${path}`);
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status,
+    });
 
-    // Ensure full URLs
-    const fullUrls = urlList.map((u: string) => 
-      u.startsWith("http") ? u : `https://${HOST}${u}`
-    );
+  try {
+    // --- AUTHENTICATION: reject anonymous callers so the site's IndexNow key
+    // and submission quota cannot be abused by arbitrary internet users. ---
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const token = authHeader.replace("Bearer ", "").trim();
+    if (!token) return json({ error: "Unauthorized" }, 401);
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
+    if (!SUPABASE_URL || !ANON_KEY) return json({ error: "Server misconfigured" }, 500);
+
+    const userClient = createClient(SUPABASE_URL, ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData, error: userErr } = await userClient.auth.getUser(token);
+    if (userErr || !userData?.user) return json({ error: "Unauthorized" }, 401);
+
+    // --- INPUT VALIDATION: only allow URLs on our own hostname. ---
+    const { urls } = await req.json().catch(() => ({ urls: null }));
+
+    const rawList: string[] = (urls && Array.isArray(urls) && urls.length > 0)
+      ? urls
+      : ALL_URLS.map((path) => `https://${HOST}${path}`);
+
+    const fullUrls: string[] = [];
+    for (const raw of rawList) {
+      if (typeof raw !== "string" || !raw) continue;
+      const candidate = raw.startsWith("http") ? raw : `https://${HOST}${raw}`;
+      try {
+        const parsed = new URL(candidate);
+        if (parsed.protocol !== "https:") continue;
+        if (!ALLOWED_HOSTS.has(parsed.hostname)) continue;
+        fullUrls.push(parsed.toString());
+      } catch {
+        // skip malformed URLs
+      }
+    }
+
+    if (fullUrls.length === 0) {
+      return json({ error: "No valid URLs on allowed host" }, 400);
+    }
 
     // IndexNow supports batch submission (max 10,000 URLs)
-    // Submit to Bing/Yandex IndexNow endpoint
     const indexNowPayload = {
       host: HOST,
       key: INDEXNOW_KEY,
@@ -73,7 +109,6 @@ serve(async (req) => {
 
     const results: Record<string, string> = {};
 
-    // Submit to IndexNow (Bing + Yandex + others)
     const indexNowEndpoints = [
       "https://api.indexnow.org/indexnow",
       "https://www.bing.com/indexnow",
@@ -89,7 +124,7 @@ serve(async (req) => {
         });
         results[endpoint] = `${resp.status} ${resp.statusText}`;
       } catch (e) {
-        results[endpoint] = `Error: ${e.message}`;
+        results[endpoint] = `Error: ${(e as Error).message}`;
       }
     }
 
@@ -106,23 +141,17 @@ serve(async (req) => {
         const resp = await fetch(`https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`);
         results[`google-ping:${sitemapUrl.split('/').pop()}`] = `${resp.status}`;
       } catch (e) {
-        results[`google-ping:${sitemapUrl.split('/').pop()}`] = `Error: ${e.message}`;
+        results[`google-ping:${sitemapUrl.split('/').pop()}`] = `Error: ${(e as Error).message}`;
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        success: true,
-        urlsSubmitted: fullUrls.length,
-        results,
-        message: `Submitted ${fullUrls.length} URLs to IndexNow + pinged Google sitemaps`,
-      }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-    );
+    return json({
+      success: true,
+      urlsSubmitted: fullUrls.length,
+      results,
+      message: `Submitted ${fullUrls.length} URLs to IndexNow + pinged Google sitemaps`,
+    });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
-    );
+    return json({ error: (error as Error).message }, 500);
   }
 });
