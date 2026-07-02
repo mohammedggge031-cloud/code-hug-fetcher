@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 
 const DIST = 'dist';
-const DOMAIN = 'https://alhamdacademy.net';
+const DOMAIN = 'https://www.alhamdacademy.net';
 
 // Read the built index.html as template
 const template = readFileSync(join(DIST, 'index.html'), 'utf-8');
