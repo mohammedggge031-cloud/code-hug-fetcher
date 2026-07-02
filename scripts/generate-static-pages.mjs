@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { dirname, join } from 'path';
 
 const DIST = 'dist';
-const DOMAIN = 'https://alhamdacademy.net';
+const DOMAIN = 'https://www.alhamdacademy.net';
 
 // Read the built index.html as template
 const template = readFileSync(join(DIST, 'index.html'), 'utf-8');
@@ -131,6 +131,86 @@ const pages = [
     title: 'Learn Quran Online Worldwide | Alhamd Academy',
     description: 'Learn Quran online from anywhere in the world with certified Al-Azhar teachers. Serving students in USA, UK, Canada, Australia & Europe.',
     content: `<article><h1>Learn Quran Online Worldwide</h1><p>Alhamd Academy connects students worldwide with certified Al-Azhar teachers from Egypt. One-on-one online Quran, Arabic, and Islamic studies classes for all ages and levels.</p><h2>Countries We Serve</h2><ul><li><a href="${DOMAIN}/learn-quran-online-usa">United States</a></li><li><a href="${DOMAIN}/learn-quran-online-canada">Canada</a></li><li><a href="${DOMAIN}/learn-quran-online-uk">United Kingdom</a></li><li><a href="${DOMAIN}/learn-quran-online-australia">Australia</a></li><li><a href="${DOMAIN}/learn-quran-online-germany">Germany</a></li><li><a href="${DOMAIN}/learn-quran-online-france">France</a></li><li><a href="${DOMAIN}/learn-quran-online-netherlands">Netherlands</a></li><li><a href="${DOMAIN}/learn-quran-online-sweden">Sweden</a></li><li><a href="${DOMAIN}/learn-quran-online-norway">Norway</a></li><li><a href="${DOMAIN}/learn-quran-online-denmark">Denmark</a></li><li><a href="${DOMAIN}/learn-quran-online-belgium">Belgium</a></li><li><a href="${DOMAIN}/learn-quran-online-switzerland">Switzerland</a></li><li><a href="${DOMAIN}/learn-quran-online-ireland">Ireland</a></li></ul><h2>Why Alhamd Academy?</h2><ul><li>Certified Al-Azhar University teachers</li><li>One-on-one personalized sessions</li><li>Flexible scheduling across all time zones</li><li>Starting from $57/month</li><li>Free trial class available</li></ul><p><a href="${DOMAIN}/free-trial">Book Your Free Trial</a> | <a href="https://wa.me/201271134828">WhatsApp +201271134828</a></p></article>`,
+  },
+  // ── Additional SEO Landing Pages (must mirror routes in src/App.tsx) ──
+  {
+    path: '/quran-classes-for-kids',
+    title: 'Quran Classes for Kids Online | Certified Teachers - Alhamd Academy',
+    description: 'Online Quran classes for kids aged 4+ with certified Al-Azhar teachers. Fun, interactive, one-on-one sessions. Noor Al-Bayan method. Free trial.',
+    content: `<article><h1>Online Quran Classes for Kids</h1><p>Engaging, age-appropriate online Quran classes for children aged 4+ with certified Al-Azhar teachers. Kids learn Arabic letters, Quran reading, memorization and Tajweed through interactive, patient one-on-one sessions.</p><h2>Why Parents Choose Us</h2><ul><li>Certified female and male Al-Azhar teachers experienced with children</li><li>Short 30-minute sessions tuned for kids' attention spans</li><li>Noor Al-Bayan method — proven for beginners</li><li>Parent-monitored Zoom sessions in a safe environment</li><li>Free trial with no obligation</li></ul><p><a href="${DOMAIN}/free-trial">Book Your Child's Free Trial</a> | <a href="https://wa.me/201271134828">WhatsApp +201271134828</a></p></article>`,
+  },
+  {
+    path: '/quran-classes-for-adults',
+    title: 'Quran Classes for Adults Online | Beginner to Ijazah - Alhamd Academy',
+    description: 'Online Quran classes for adults of all levels. From complete beginners to Ijazah candidates. Certified Al-Azhar teachers. Flexible schedule. Free trial.',
+    content: `<article><h1>Online Quran Classes for Adults</h1><p>Structured, judgement-free online Quran classes for adult learners — from complete beginners who cannot yet read Arabic letters, to advanced students preparing for Ijazah. Certified Al-Azhar teachers guide you at your own pace.</p><h2>Programs for Adults</h2><ul><li>Noor Al-Bayan — read Arabic from zero</li><li>Quran reading and Tajweed</li><li>Hifz (memorization) with structured revision</li><li>Ijazah in Hafs an Asim</li></ul><p><a href="${DOMAIN}/free-trial">Book Your Free Trial</a> | <a href="https://wa.me/201271134828">WhatsApp +201271134828</a></p></article>`,
+  },
+  {
+    path: '/best-online-quran-classes',
+    title: 'Best Online Quran Classes | Certified Al-Azhar Teachers - Alhamd Academy',
+    description: 'Ranked among the best online Quran classes. Certified Al-Azhar teachers, one-on-one sessions, transparent pricing, and 200+ happy families worldwide.',
+    content: `<article><h1>Best Online Quran Classes</h1><p>Alhamd Academy delivers what makes an online Quran class truly the best: certified Al-Azhar teachers, one-on-one attention, transparent pricing, flexible scheduling, and a proven curriculum trusted by 200+ families across 8+ countries.</p><h2>What Sets Us Apart</h2><ul><li>Every teacher holds Ijazah and an Al-Azhar University qualification</li><li>Private one-on-one sessions — never group classes</li><li>Free trial before you commit</li><li>Plans starting at $57/month</li></ul><p><a href="${DOMAIN}/free-trial">Start Free Trial</a> | <a href="https://wa.me/201271134828">WhatsApp +201271134828</a></p></article>`,
+  },
+  {
+    path: '/one-on-one-quran-classes',
+    title: 'One-on-One Quran Classes Online | Private Tutor - Alhamd Academy',
+    description: 'Private one-on-one online Quran classes with certified Al-Azhar teachers. Personalized curriculum, undivided attention. Free trial available.',
+    content: `<article><h1>One-on-One Online Quran Classes</h1><p>Every class at Alhamd Academy is strictly one-on-one. Your teacher plans each session around your level, pace and goals — the fastest way to progress in Quran reading, Tajweed or memorization.</p><h2>Benefits of Private Classes</h2><ul><li>100% teacher attention on your recitation and mistakes</li><li>Curriculum adjusted every session to your progress</li><li>Flexible scheduling and rescheduling</li><li>Comfortable environment for shy learners and sisters</li></ul><p><a href="${DOMAIN}/free-trial">Book Free Trial</a></p></article>`,
+  },
+  {
+    path: '/quran-classes-pricing',
+    title: 'Online Quran Classes Pricing | Plans from $57/mo - Alhamd Academy',
+    description: 'Transparent pricing for online Quran classes. Plans from $57/month for 3 sessions/week. 30/45/60-min options. Semi-annual & annual discounts.',
+    content: `<article><h1>Online Quran Classes Pricing</h1><p>Simple, transparent pricing. Every plan is one-on-one with a certified Al-Azhar teacher.</p><h2>Monthly Plans (30-min sessions)</h2><ul><li>Basic — $57/mo · 3 days/week</li><li>Standard — $74/mo · 4 days/week</li><li>Premium — $91/mo · 5 days/week</li></ul><p>45-min and 60-min packages available. Save 6% semi-annual, 14% annual.</p><p><a href="${DOMAIN}/free-trial">Try Before You Pay — Free Trial</a></p></article>`,
+  },
+  {
+    path: '/quran-classes-for-beginners',
+    title: 'Quran Classes for Beginners Online | Start from Zero - Alhamd Academy',
+    description: 'Online Quran classes designed for absolute beginners. Learn Arabic letters and Quran reading from zero with certified teachers. Free trial.',
+    content: `<article><h1>Online Quran Classes for Beginners</h1><p>Never read Arabic before? No problem. Our beginner track uses the Noor Al-Bayan method to take you from recognising individual letters to reading full Quranic ayaat — step by step, with patient certified teachers.</p><p><a href="${DOMAIN}/free-trial">Start Your Beginner Free Trial</a></p></article>`,
+  },
+  {
+    path: '/online-quran-classes-with-certificate',
+    title: 'Online Quran Classes with Certificate | Ijazah & Completion - Alhamd Academy',
+    description: 'Online Quran classes with recognised certification. Completion certificates for courses and Ijazah in Hafs an Asim with authenticated Sanad.',
+    content: `<article><h1>Online Quran Classes with Certificate</h1><p>Every completed program at Alhamd Academy is documented. Students earn a course completion certificate; advanced students pursuing Quran mastery receive Ijazah in Hafs an Asim with an unbroken Sanad back to the Prophet ﷺ.</p><p><a href="${DOMAIN}/free-trial">Book Free Trial</a></p></article>`,
+  },
+  {
+    path: '/learn-quran-for-reverts',
+    title: 'Learn Quran for Reverts (New Muslims) Online - Alhamd Academy',
+    description: 'Online Quran and Islam classes designed for reverts (new Muslims). Judgement-free, step-by-step lessons in Quran reading, Salah and basic Islam.',
+    content: `<article><h1>Learn Quran for Reverts (New Muslims)</h1><p>Welcome to Islam. Alhamd Academy offers structured, judgement-free programs for reverts — starting from the shahada, Salah, and Arabic letters, all the way to fluent Quran recitation.</p><p><a href="${DOMAIN}/free-trial">Book Your Free Trial</a> | <a href="https://wa.me/201271134828">WhatsApp +201271134828</a></p></article>`,
+  },
+  {
+    path: '/noorani-qaida-online',
+    title: 'Noorani Qaida Online | Learn Quran Reading from Zero - Alhamd Academy',
+    description: 'Online Noorani Qaida (Noor Al-Bayan) classes for kids and adults. Master Arabic letters and Quran reading step by step with certified teachers.',
+    content: `<article><h1>Noorani Qaida Online (Noor Al-Bayan)</h1><p>The Noorani Qaida is the classical stepping stone to reading the Quran. Our online course uses the Noor Al-Bayan method with certified teachers to guide beginners through Arabic letters, vowel marks, connections and full-word reading — for kids and adults alike.</p><p><a href="${DOMAIN}/free-trial">Book Your Free Trial</a></p></article>`,
+  },
+  {
+    path: '/quran-classes-for-sisters',
+    title: 'Quran Classes for Sisters Online | Female Teachers - Alhamd Academy',
+    description: 'Online Quran classes for sisters with qualified female Al-Azhar teachers. Private, comfortable, one-on-one sessions. Free trial available.',
+    content: `<article><h1>Online Quran Classes for Sisters</h1><p>Alhamd Academy provides sisters with qualified female teachers who hold Ijazah certification and Al-Azhar degrees. Private one-on-one sessions in a comfortable environment covering Quran reading, Tajweed, Hifz, Arabic and Islamic studies.</p><p><a href="${DOMAIN}/free-trial">Book Your Free Trial</a></p></article>`,
+  },
+  {
+    path: '/learn-quran-with-tajweed',
+    title: 'Learn Quran with Tajweed Online | Certified Teachers - Alhamd Academy',
+    description: 'Learn Quran with proper Tajweed online. Certified Al-Azhar teachers guide you through Makharij, Sifaat, Noon/Meem, Madd and more. Free trial.',
+    content: `<article><h1>Learn Quran with Tajweed Online</h1><p>Read the Quran the way it was revealed. Our Tajweed-integrated Quran course teaches Makharij Al-Huruf, Sifaat, Noon and Meem rules, and Madd, applied directly to your daily recitation with certified Al-Azhar teachers.</p><p><a href="${DOMAIN}/free-trial">Start Your Free Trial</a></p></article>`,
+  },
+  {
+    path: '/privacy-policy',
+    title: 'Privacy Policy | Alhamd Academy',
+    description: 'How Alhamd Academy collects, uses and protects your personal information across our website, booking flow and online classes.',
+    content: `<article><h1>Privacy Policy</h1><p>Alhamd Academy respects your privacy. This page explains what information we collect when you use the website or book a free trial, how we use it, and the choices you have. For questions, contact <a href="mailto:info@alhamdacademy.net">info@alhamdacademy.net</a>.</p></article>`,
+  },
+  {
+    path: '/trial-registration',
+    title: 'Free Trial Registration | Alhamd Academy',
+    description: 'Register for your free trial Quran class with Alhamd Academy.',
+    noindex: true,
+    content: `<article><h1>Free Trial Registration</h1><p>Complete the form to book your free trial class. A certified teacher will contact you within 24 hours.</p></article>`,
   },
 ];
 
@@ -514,6 +594,13 @@ function generatePage(page) {
   // Inject schema scripts into head
   if (schemaScripts) {
     html = html.replace('</head>', `${schemaScripts}\n</head>`);
+  }
+
+  // Honor per-page noindex flag
+  if (page.noindex) {
+    // Remove any existing robots meta then inject noindex
+    html = html.replace(/<meta\s+name="robots"[^>]*>/gi, '');
+    html = html.replace('</head>', `<meta name="robots" content="noindex,nofollow" />\n</head>`);
   }
 
   return html;
