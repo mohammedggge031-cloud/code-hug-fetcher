@@ -596,6 +596,13 @@ function generatePage(page) {
     html = html.replace('</head>', `${schemaScripts}\n</head>`);
   }
 
+  // Honor per-page noindex flag
+  if (page.noindex) {
+    // Remove any existing robots meta then inject noindex
+    html = html.replace(/<meta\s+name="robots"[^>]*>/gi, '');
+    html = html.replace('</head>', `<meta name="robots" content="noindex,nofollow" />\n</head>`);
+  }
+
   return html;
 }
 
