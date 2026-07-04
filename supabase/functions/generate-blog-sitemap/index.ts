@@ -54,7 +54,7 @@ ${urlEntries}
       headers: {
         ...corsHeaders,
         "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "public, max-age=3600, must-revalidate",
+        "Cache-Control": "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400",
       },
     });
   } catch (err) {

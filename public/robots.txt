@@ -23,5 +23,11 @@ Disallow: /cart
 Disallow: /checkout
 Disallow: /thank-you
 
-# Sitemap
+# Sitemaps
 Sitemap: https://www.alhamdacademy.net/sitemap.xml
+Sitemap: https://www.alhamdacademy.net/sitemap-main.xml
+Sitemap: https://www.alhamdacademy.net/sitemap-locations.xml
+Sitemap: https://www.alhamdacademy.net/sitemap-blog.xml
+
+# RSS feed
+# Feed: https://www.alhamdacademy.net/rss.xml

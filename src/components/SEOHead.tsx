@@ -132,14 +132,29 @@ const SEOHead = ({
     }
     link.setAttribute("href", effectiveCanonical);
 
-    // hreflang alternates — site serves both en/ar at the same URL (client-side lang toggle),
-    // so point every alternate at the canonical URL and add x-default.
+    // hreflang alternates — the site is bilingual with an in-URL `?lang=`
+    // toggle, so emit distinct URLs per language plus an x-default that
+    // points at the bare canonical (Google will pick the visitor's locale).
     document.querySelectorAll('link[rel="alternate"][data-seo-hreflang]').forEach((n) => n.remove());
-    (["en", "ar", "x-default"] as const).forEach((code) => {
+    const langUrl = (code: "en" | "ar"): string => {
+      try {
+        const u = new URL(effectiveCanonical);
+        u.searchParams.set("lang", code);
+        return u.toString();
+      } catch {
+        return effectiveCanonical;
+      }
+    };
+    const alternates: Array<{ code: string; href: string }> = [
+      { code: "en", href: langUrl("en") },
+      { code: "ar", href: langUrl("ar") },
+      { code: "x-default", href: effectiveCanonical },
+    ];
+    alternates.forEach(({ code, href }) => {
       const alt = document.createElement("link");
       alt.setAttribute("rel", "alternate");
       alt.setAttribute("hreflang", code);
-      alt.setAttribute("href", effectiveCanonical);
+      alt.setAttribute("href", href);
       alt.setAttribute("data-seo-hreflang", "true");
       document.head.appendChild(alt);
     });
