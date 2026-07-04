@@ -163,6 +163,7 @@ const SEOHead = ({
       // Remove canonical so next page sets its own (prevents stale canonicals)
       const canonicalLink = document.querySelector('link[rel="canonical"]');
       if (canonicalLink) canonicalLink.remove();
+      document.querySelectorAll('link[rel="alternate"][data-seo-hreflang]').forEach((n) => n.remove());
     };
   }, [title, description, canonical, ogType, ogImage, ogTitle, ogDesc, keywords, noIndex, article, twitterCard, twitterTitle, twitterDesc, twitterImage, structuredData]);
 
