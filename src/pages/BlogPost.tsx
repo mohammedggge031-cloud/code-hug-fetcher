@@ -153,6 +153,7 @@ const BlogPost = () => {
         keywords={`${catName}, quran, alhamd academy`}
         article={{ publishedTime: postDate, modifiedTime: postDate, author: "Alhamd Academy", section: catName }}
         structuredData={[articleSchema, breadcrumbSchema]}
+        dynamicSeo={dynamicSeo}
       />
       <Navbar />
 
