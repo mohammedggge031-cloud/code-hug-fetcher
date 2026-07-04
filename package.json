@@ -6,12 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/generate-static-pages.mjs",
+    "build:vite": "vite build",
     "prerender": "node scripts/generate-static-pages.mjs",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:sitemap": "node scripts/sitemap-smoke-test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
