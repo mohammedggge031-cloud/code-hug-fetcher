@@ -10,11 +10,13 @@ import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const BackArrow = lang === "ar" ? ArrowRight : ArrowLeft;
+  const { seo: dynamicSeo } = useSeoMetadata(`/blog/${id ?? ""}`);
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -151,6 +153,7 @@ const BlogPost = () => {
         keywords={`${catName}, quran, alhamd academy`}
         article={{ publishedTime: postDate, modifiedTime: postDate, author: "Alhamd Academy", section: catName }}
         structuredData={[articleSchema, breadcrumbSchema]}
+        dynamicSeo={dynamicSeo}
       />
       <Navbar />
 
