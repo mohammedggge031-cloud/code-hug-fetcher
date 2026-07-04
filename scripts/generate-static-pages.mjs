@@ -164,6 +164,24 @@ async function main() {
     written++;
   }
 
+  const courseSlugs = await extractCourseSlugs();
+  for (const slug of courseSlugs) {
+    const routePath = `/courses/${slug}`;
+    const db = seoMap.get(routePath);
+    const canonical = `${SITE_ORIGIN}${routePath}`;
+    await writeRoute(template, routePath, {
+      title: db?.title || DEFAULT_TITLE,
+      description: db?.description || DEFAULT_DESCRIPTION,
+      canonical,
+      ogTitle: db?.og_title || db?.title || DEFAULT_TITLE,
+      ogDescription: db?.og_description || db?.description || DEFAULT_DESCRIPTION,
+      ogImage: db?.og_image || DEFAULT_OG_IMAGE,
+      noIndex: db?.no_index ?? false,
+    });
+    written++;
+  }
+  console.log(`[prerender] Prerendered ${courseSlugs.length} course pages`);
+
   console.log(`[prerender] ✅ Generated ${written} HTML files in dist/`);
 }
 
