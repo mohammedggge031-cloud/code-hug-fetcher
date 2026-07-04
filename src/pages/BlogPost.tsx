@@ -16,6 +16,7 @@ const BlogPost = () => {
   const { t, lang } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const BackArrow = lang === "ar" ? ArrowRight : ArrowLeft;
+  const { seo: dynamicSeo } = useSeoMetadata(`/blog/${id ?? ""}`);
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
