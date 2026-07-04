@@ -10,6 +10,7 @@ import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
