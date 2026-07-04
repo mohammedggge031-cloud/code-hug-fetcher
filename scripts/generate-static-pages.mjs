@@ -16,7 +16,19 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 const APP_TSX = path.join(ROOT, "src", "App.tsx");
+const COURSES_TS = path.join(ROOT, "src", "data", "courses.ts");
 const TEMPLATE_PATH = path.join(DIST, "index.html");
+
+async function extractCourseSlugs() {
+  try {
+    const src = await fs.readFile(COURSES_TS, "utf8");
+    const slugs = [];
+    const re = /slug:\s*["'`]([a-z0-9-]+)["'`]/gi;
+    let m;
+    while ((m = re.exec(src)) !== null) slugs.push(m[1]);
+    return [...new Set(slugs)];
+  } catch { return []; }
+}
 
 loadEnv({ path: path.join(ROOT, ".env") });
 
@@ -151,6 +163,24 @@ async function main() {
     });
     written++;
   }
+
+  const courseSlugs = await extractCourseSlugs();
+  for (const slug of courseSlugs) {
+    const routePath = `/courses/${slug}`;
+    const db = seoMap.get(routePath);
+    const canonical = `${SITE_ORIGIN}${routePath}`;
+    await writeRoute(template, routePath, {
+      title: db?.title || DEFAULT_TITLE,
+      description: db?.description || DEFAULT_DESCRIPTION,
+      canonical,
+      ogTitle: db?.og_title || db?.title || DEFAULT_TITLE,
+      ogDescription: db?.og_description || db?.description || DEFAULT_DESCRIPTION,
+      ogImage: db?.og_image || DEFAULT_OG_IMAGE,
+      noIndex: db?.no_index ?? false,
+    });
+    written++;
+  }
+  console.log(`[prerender] Prerendered ${courseSlugs.length} course pages`);
 
   console.log(`[prerender] ✅ Generated ${written} HTML files in dist/`);
 }
