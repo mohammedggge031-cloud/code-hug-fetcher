@@ -132,6 +132,18 @@ const SEOHead = ({
     }
     link.setAttribute("href", effectiveCanonical);
 
+    // hreflang alternates — site serves both en/ar at the same URL (client-side lang toggle),
+    // so point every alternate at the canonical URL and add x-default.
+    document.querySelectorAll('link[rel="alternate"][data-seo-hreflang]').forEach((n) => n.remove());
+    (["en", "ar", "x-default"] as const).forEach((code) => {
+      const alt = document.createElement("link");
+      alt.setAttribute("rel", "alternate");
+      alt.setAttribute("hreflang", code);
+      alt.setAttribute("href", effectiveCanonical);
+      alt.setAttribute("data-seo-hreflang", "true");
+      document.head.appendChild(alt);
+    });
+
     // Structured data
     if (structuredData) {
       let script = document.querySelector('script[data-seo-jsonld]') as HTMLScriptElement | null;
