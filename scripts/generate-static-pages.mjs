@@ -16,7 +16,19 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
 const APP_TSX = path.join(ROOT, "src", "App.tsx");
+const COURSES_TS = path.join(ROOT, "src", "data", "courses.ts");
 const TEMPLATE_PATH = path.join(DIST, "index.html");
+
+async function extractCourseSlugs() {
+  try {
+    const src = await fs.readFile(COURSES_TS, "utf8");
+    const slugs = [];
+    const re = /slug:\s*["'`]([a-z0-9-]+)["'`]/gi;
+    let m;
+    while ((m = re.exec(src)) !== null) slugs.push(m[1]);
+    return [...new Set(slugs)];
+  } catch { return []; }
+}
 
 loadEnv({ path: path.join(ROOT, ".env") });
 
