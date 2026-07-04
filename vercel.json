@@ -17,6 +17,21 @@
       "source": "/sitemap-blog.xml",
       "destination": "https://rihxkjhgipmqqihuljah.supabase.co/functions/v1/generate-blog-sitemap"
     },
+    {
+      "source": "/rss.xml",
+      "destination": "https://rihxkjhgipmqqihuljah.supabase.co/functions/v1/generate-blog-rss"
+    },
+    {
+      "source": "/blog/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterest|redditbot|Applebot|Embedly|SkypeUriPreview|vkShare|W3C_Validator|Iframely).*"
+        }
+      ],
+      "destination": "/api/prerender?slug=:slug"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
