@@ -47,6 +47,8 @@ const BlogManagement = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
+  const [reindexingId, setReindexingId] = useState<string | null>(null);
+  const [reindexingAll, setReindexingAll] = useState(false);
   const { isAdmin } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
