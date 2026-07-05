@@ -1,16 +1,12 @@
 /**
- * Prerender for /blog/:slug — serves indexable/social HTML to bots.
+ * Runtime prerender for /blog/:slug — serves the real SPA template
+ * with per-article <title>, description, canonical, og:*, twitter:*,
+ * and JSON-LD injected into <head>.
  *
- * vercel.json rewrites /blog/:slug → /api/prerender?slug=:slug for known
- * social AND search-engine user agents. Human users still receive the SPA.
- *
- * Two modes distinguished by UA:
- *  - searchBot (Googlebot, Bingbot, GPTBot, PerplexityBot, ClaudeBot, …):
- *      full <article> body with EN + AR content, both <h1>s, JSON-LD.
- *      NO meta refresh (would be treated as soft redirect).
- *  - socialBot (Facebook, LinkedIn, WhatsApp, Twitter, Slack, …):
- *      small HTML with OG/Twitter tags + meta refresh so any human who
- *      lands here (unlikely) still ends up on the SPA.
+ * Runs for ALL requests (human, bot, view-source), not just crawlers.
+ * The response still contains the built <script> tag from index.html,
+ * so React mounts normally in the browser. Newly published articles
+ * are picked up automatically — no rebuild required.
  */
 
 const SUPABASE_URL = "https://rihxkjhgipmqqihuljah.supabase.co";
@@ -18,27 +14,11 @@ const SUPABASE_ANON_KEY = "sb_publishable_u5wVaa0Vc3O66Gnqyzc9Dg_-hdHmNZ8";
 const SITE_URL = "https://www.alhamdacademy.net";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
-const SEARCH_BOT_RE =
-  /(Googlebot|Google-InspectionTool|Google-Extended|Storebot-Google|AdsBot-Google|Mediapartners-Google|bingbot|BingPreview|DuckDuckBot|YandexBot|Baiduspider|Applebot|GPTBot|OAI-SearchBot|ChatGPT-User|PerplexityBot|ClaudeBot|Claude-Web|anthropic-ai|CCBot|Amazonbot|Bytespider|MojeekBot)/i;
+const escapeHtml = (v: string): string =>
+  v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 
-const escapeHtml = (value: string): string =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-// Very light HTML sanitiser for content body: strip <script>, event
-// handlers, inline JS URLs. We already trust admin-authored content, but
-// belt-and-suspenders for what's served to Google.
-const sanitiseBodyHtml = (html: string): string =>
-  html
-    .replace(/<script[\s\S]*?<\/script>/gi, "")
-    .replace(/<style[\s\S]*?<\/style>/gi, "")
-    .replace(/ on[a-z]+="[^"]*"/gi, "")
-    .replace(/ on[a-z]+='[^']*'/gi, "")
-    .replace(/javascript:/gi, "");
+const escapeAttr = escapeHtml;
 
 interface BlogPost {
   slug: string;
@@ -52,7 +32,6 @@ interface BlogPost {
   published_at: string | null;
   updated_at: string | null;
   created_at: string | null;
-  author?: string | null;
 }
 
 interface SeoOverride {
@@ -67,14 +46,9 @@ interface SeoOverride {
 }
 
 async function fetchPost(slug: string): Promise<BlogPost | null> {
-  // NOTE: `author` column does not exist on blog_posts (only author_id UUID).
-  // Selecting it would return a PostgREST 400 → 404 for every crawler request.
   const url = `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title_en,title_ar,excerpt_en,excerpt_ar,content_en,content_ar,featured_image,published_at,updated_at,created_at&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`;
   const res = await fetch(url, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    },
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
   });
   if (!res.ok) return null;
   const rows = (await res.json()) as BlogPost[];
@@ -84,70 +58,36 @@ async function fetchPost(slug: string): Promise<BlogPost | null> {
 async function fetchSeoOverride(pagePath: string): Promise<SeoOverride | null> {
   const url = `${SUPABASE_URL}/rest/v1/seo_metadata?select=title,description,og_title,og_description,og_image,twitter_title,twitter_description,twitter_image&page_path=eq.${encodeURIComponent(pagePath)}&limit=1`;
   const res = await fetch(url, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-    },
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
   });
   if (!res.ok) return null;
   const rows = (await res.json()) as SeoOverride[];
   return rows?.[0] ?? null;
 }
 
-function buildCommonHead(opts: {
-  title: string;
-  description: string;
-  canonical: string;
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: string;
-  twitterTitle: string;
-  twitterDescription: string;
-  twitterImage: string;
-  publishedTime: string;
-  modifiedTime: string;
-  author: string | null;
-  jsonLd: string;
-}): string {
-  const {
-    title, description, canonical, ogTitle, ogDescription, ogImage,
-    twitterTitle, twitterDescription, twitterImage, publishedTime,
-    modifiedTime, author, jsonLd,
-  } = opts;
-  return `<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${escapeHtml(title)}</title>
-<meta name="description" content="${escapeHtml(description)}" />
-<link rel="canonical" href="${canonical}" />
-<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-${author ? `<meta name="author" content="${escapeHtml(author)}" />` : `<meta name="author" content="Alhamd Academy" />`}
+// Cache the built SPA template in-memory per warm instance so we don't
+// re-fetch it on every request. Falls back gracefully if fetch fails.
+let cachedTemplate: string | null = null;
+let cachedTemplateAt = 0;
+const TEMPLATE_TTL_MS = 5 * 60_000;
 
-<meta property="og:type" content="article" />
-<meta property="og:url" content="${canonical}" />
-<meta property="og:title" content="${escapeHtml(ogTitle)}" />
-<meta property="og:description" content="${escapeHtml(ogDescription)}" />
-<meta property="og:image" content="${escapeHtml(ogImage)}" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="${escapeHtml(ogTitle)}" />
-<meta property="og:site_name" content="Alhamd Academy" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:locale:alternate" content="ar_AR" />
-${publishedTime ? `<meta property="article:published_time" content="${escapeHtml(publishedTime)}" />` : ""}
-${modifiedTime ? `<meta property="article:modified_time" content="${escapeHtml(modifiedTime)}" />` : ""}
-${author ? `<meta property="article:author" content="${escapeHtml(author)}" />` : ""}
-
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="${escapeHtml(twitterTitle)}" />
-<meta name="twitter:description" content="${escapeHtml(twitterDescription)}" />
-<meta name="twitter:image" content="${escapeHtml(twitterImage)}" />
-<meta name="twitter:image:alt" content="${escapeHtml(twitterTitle)}" />
-
-<link rel="alternate" hreflang="en" href="${canonical}?lang=en" />
-<link rel="alternate" hreflang="ar" href="${canonical}?lang=ar" />
-<link rel="alternate" hreflang="x-default" href="${canonical}" />
-
-<script type="application/ld+json">${jsonLd}</script>`;
+async function getTemplate(host: string): Promise<string | null> {
+  const now = Date.now();
+  if (cachedTemplate && now - cachedTemplateAt < TEMPLATE_TTL_MS) return cachedTemplate;
+  try {
+    const res = await fetch(`https://${host}/index.html`, {
+      headers: { "user-agent": "AlhamdPrerender/1.0" },
+    });
+    if (!res.ok) return cachedTemplate;
+    const html = await res.text();
+    // Sanity check: must contain #root
+    if (!html.includes('id="root"')) return cachedTemplate;
+    cachedTemplate = html;
+    cachedTemplateAt = now;
+    return cachedTemplate;
+  } catch {
+    return cachedTemplate;
+  }
 }
 
 function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string {
@@ -161,7 +101,7 @@ function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string
     headline: titleEn,
     description: excerptEn,
     image: ogImage,
-    author: { "@type": "Person", name: post.author || "Alhamd Academy" },
+    author: { "@type": "Organization", name: "Alhamd Academy" },
     publisher: {
       "@type": "Organization",
       name: "Alhamd Academy",
@@ -184,52 +124,29 @@ function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string
   return JSON.stringify([article, breadcrumb]);
 }
 
-function buildSocialHtml(post: BlogPost, seo: SeoOverride | null): string {
-  const canonical = `${SITE_URL}/blog/${post.slug}`;
-  const titleEn = post.title_en || post.title_ar || "Alhamd Academy Blog";
-  const excerptEn = post.excerpt_en || post.excerpt_ar || "Read the latest article from Alhamd Academy.";
-  const title = seo?.title || seo?.og_title || `${titleEn} | Alhamd Academy`;
-  const description = seo?.description || seo?.og_description || excerptEn;
-  const ogTitle = seo?.og_title || title;
-  const ogDescription = seo?.og_description || description;
-  const ogImage = seo?.og_image || post.featured_image || DEFAULT_OG_IMAGE;
-  const twitterTitle = seo?.twitter_title || ogTitle;
-  const twitterDescription = seo?.twitter_description || ogDescription;
-  const twitterImage = seo?.twitter_image || ogImage;
-  const publishedTime = post.published_at || post.created_at || "";
-  const modifiedTime = post.updated_at || publishedTime;
-  const jsonLd = buildJsonLd(post, canonical, ogImage);
-  const head = buildCommonHead({
-    title, description, canonical, ogTitle, ogDescription, ogImage,
-    twitterTitle, twitterDescription, twitterImage, publishedTime,
-    modifiedTime, author: post.author, jsonLd,
-  });
-  return `<!doctype html>
-<html lang="en">
-<head>
-${head}
-<meta http-equiv="refresh" content="0; url=${canonical}" />
-</head>
-<body>
-<h1>${escapeHtml(titleEn)}</h1>
-<p>${escapeHtml(excerptEn)}</p>
-<p><a href="${canonical}">Read on Alhamd Academy</a></p>
-<script>window.location.replace(${JSON.stringify(canonical)});</script>
-</body>
-</html>`;
+interface MetaBundle {
+  title: string;
+  description: string;
+  canonical: string;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  twitterTitle: string;
+  twitterDescription: string;
+  twitterImage: string;
+  publishedTime: string;
+  modifiedTime: string;
+  jsonLd: string;
+  noscriptBody: string;
 }
 
-function buildSearchBotHtml(post: BlogPost, seo: SeoOverride | null): string {
+function buildMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
   const canonical = `${SITE_URL}/blog/${post.slug}`;
   const titleEn = post.title_en || post.title_ar || "Alhamd Academy Blog";
-  const titleAr = post.title_ar || post.title_en || "";
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
-  const excerptAr = post.excerpt_ar || post.excerpt_en || "";
-  const contentEn = sanitiseBodyHtml(post.content_en || post.content_ar || "");
-  const contentAr = sanitiseBodyHtml(post.content_ar || post.content_en || "");
-
   const title = seo?.title || seo?.og_title || `${titleEn} | Alhamd Academy`;
-  const description = seo?.description || seo?.og_description || excerptEn;
+  const description = seo?.description || seo?.og_description || excerptEn ||
+    "Read the latest article from Alhamd Academy.";
   const ogTitle = seo?.og_title || title;
   const ogDescription = seo?.og_description || description;
   const ogImage = seo?.og_image || post.featured_image || DEFAULT_OG_IMAGE;
@@ -239,69 +156,119 @@ function buildSearchBotHtml(post: BlogPost, seo: SeoOverride | null): string {
   const publishedTime = post.published_at || post.created_at || "";
   const modifiedTime = post.updated_at || publishedTime;
   const jsonLd = buildJsonLd(post, canonical, ogImage);
-  const head = buildCommonHead({
+  const noscriptBody = `<h1>${escapeHtml(titleEn)}</h1>${
+    excerptEn ? `<p>${escapeHtml(excerptEn)}</p>` : ""
+  }<p><a href="${canonical}">Read on Alhamd Academy</a></p>`;
+  return {
     title, description, canonical, ogTitle, ogDescription, ogImage,
     twitterTitle, twitterDescription, twitterImage, publishedTime,
-    modifiedTime, author: post.author, jsonLd,
-  });
+    modifiedTime, jsonLd, noscriptBody,
+  };
+}
 
-  const featured = post.featured_image
-    ? `<img src="${escapeHtml(post.featured_image)}" alt="${escapeHtml(titleEn)}" width="1200" height="630" />`
-    : "";
+/**
+ * Rewrite the <head> of the built SPA template with per-article meta.
+ * Uses targeted regex replacements — never rebuilds the doc — so the
+ * preload hints, GTM script, favicons, fonts and mounted <script> tag
+ * are preserved verbatim.
+ */
+function injectMeta(template: string, m: MetaBundle): string {
+  let html = template;
 
-  // Note: no meta refresh, no auto redirect — search bots must render the
-  // full article. A <noscript> link and a client-side hydration hint let
-  // human users (rare on this path) still reach the SPA.
-  return `<!doctype html>
-<html lang="en">
-<head>
-${head}
-</head>
-<body>
-<nav aria-label="Breadcrumb">
-  <a href="${SITE_URL}/">Home</a> &rsaquo;
-  <a href="${SITE_URL}/blog">Blog</a> &rsaquo;
-  <span>${escapeHtml(titleEn)}</span>
-</nav>
+  // <title>
+  html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(m.title)}</title>`);
 
-<article lang="en">
-  <header>
-    <h1>${escapeHtml(titleEn)}</h1>
-    ${publishedTime ? `<time datetime="${escapeHtml(publishedTime)}">${escapeHtml(publishedTime.split("T")[0])}</time>` : ""}
-    ${post.author ? `<address>by <span>${escapeHtml(post.author)}</span></address>` : ""}
-  </header>
-  ${featured}
-  ${excerptEn ? `<p><strong>${escapeHtml(excerptEn)}</strong></p>` : ""}
-  <div>${contentEn}</div>
-</article>
+  // meta name="description"
+  html = html.replace(
+    /<meta\s+name=["']description["'][^>]*>/i,
+    `<meta name="description" content="${escapeAttr(m.description)}" />`,
+  );
 
-${titleAr || contentAr ? `<article lang="ar" dir="rtl">
-  <header>
-    <h1>${escapeHtml(titleAr)}</h1>
-  </header>
-  ${excerptAr ? `<p><strong>${escapeHtml(excerptAr)}</strong></p>` : ""}
-  <div>${contentAr}</div>
-</article>` : ""}
+  // canonical
+  html = html.replace(
+    /<link\s+rel=["']canonical["'][^>]*>/i,
+    `<link rel="canonical" href="${m.canonical}" />`,
+  );
 
-<footer>
-  <p><a href="${canonical}">Read the interactive version on Alhamd Academy</a></p>
-</footer>
-<noscript><meta http-equiv="refresh" content="0; url=${canonical}" /></noscript>
-</body>
-</html>`;
+  // og:type website -> article
+  html = html.replace(
+    /<meta\s+property=["']og:type["'][^>]*>/i,
+    `<meta property="og:type" content="article" />`,
+  );
+
+  // og:url
+  html = html.replace(
+    /<meta\s+property=["']og:url["'][^>]*>/i,
+    `<meta property="og:url" content="${m.canonical}" />`,
+  );
+
+  // og:title / og:description / og:image / og:image:alt
+  html = html.replace(
+    /<meta\s+property=["']og:title["'][^>]*>/i,
+    `<meta property="og:title" content="${escapeAttr(m.ogTitle)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+property=["']og:description["'][^>]*>/i,
+    `<meta property="og:description" content="${escapeAttr(m.ogDescription)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+property=["']og:image["'](?!:)[^>]*>/i,
+    `<meta property="og:image" content="${escapeAttr(m.ogImage)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+property=["']og:image:alt["'][^>]*>/i,
+    `<meta property="og:image:alt" content="${escapeAttr(m.ogTitle)}" />`,
+  );
+
+  // twitter:title / description / image
+  html = html.replace(
+    /<meta\s+name=["']twitter:title["'][^>]*>/i,
+    `<meta name="twitter:title" content="${escapeAttr(m.twitterTitle)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+name=["']twitter:description["'][^>]*>/i,
+    `<meta name="twitter:description" content="${escapeAttr(m.twitterDescription)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+name=["']twitter:image["'](?!:)[^>]*>/i,
+    `<meta name="twitter:image" content="${escapeAttr(m.twitterImage)}" />`,
+  );
+  html = html.replace(
+    /<meta\s+name=["']twitter:image:alt["'][^>]*>/i,
+    `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
+  );
+
+  // Article timestamps + JSON-LD injected right before </head>
+  const extra = [
+    m.publishedTime
+      ? `<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`
+      : "",
+    m.modifiedTime
+      ? `<meta property="article:modified_time" content="${escapeAttr(m.modifiedTime)}" />`
+      : "",
+    `<script type="application/ld+json">${m.jsonLd}</script>`,
+  ].filter(Boolean).join("\n");
+  html = html.replace(/<\/head>/i, `${extra}\n</head>`);
+
+  // Inject a <noscript> summary right after <body> so JS-less crawlers
+  // see the article title/excerpt too.
+  html = html.replace(
+    /<body([^>]*)>/i,
+    `<body$1>\n<noscript>${m.noscriptBody}</noscript>`,
+  );
+
+  return html;
 }
 
 function buildFallbackHtml(slug: string): string {
   const canonical = `${SITE_URL}/blog/${slug}`;
-  return `<!doctype html>
-<html lang="en"><head>
+  return `<!doctype html><html lang="en"><head>
 <meta charset="UTF-8" />
-<title>Alhamd Academy Blog</title>
-<meta name="description" content="Read the latest articles from Alhamd Academy — online Quran, Arabic and Islamic studies." />
+<title>Article not found | Alhamd Academy</title>
+<meta name="description" content="This article is unavailable." />
 <link rel="canonical" href="${canonical}" />
 <meta name="robots" content="noindex, follow" />
-<meta http-equiv="refresh" content="0; url=${canonical}" />
-</head><body><script>window.location.replace(${JSON.stringify(canonical)});</script></body></html>`;
+</head><body><p>Article not found. <a href="${SITE_URL}/blog">Back to blog</a>.</p></body></html>`;
 }
 
 export default async function handler(req: any, res: any) {
@@ -314,12 +281,12 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    const ua = (req.headers?.["user-agent"] ?? "").toString();
-    const isSearchBot = SEARCH_BOT_RE.test(ua);
+    const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
-    const [post, seo] = await Promise.all([
+    const [post, seo, template] = await Promise.all([
       fetchPost(slug),
       fetchSeoOverride(`/blog/${slug}`),
+      getTemplate(host),
     ]);
 
     if (!post) {
@@ -329,13 +296,26 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    const html = isSearchBot ? buildSearchBotHtml(post, seo) : buildSocialHtml(post, seo);
+    if (!template) {
+      // Template fetch failed — degrade to a minimal but correct meta doc.
+      const canonical = `${SITE_URL}/blog/${post.slug}`;
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.status(200).send(
+        `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
+          escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
+        }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
+      );
+      return;
+    }
+
+    const meta = buildMeta(post, seo);
+    const html = injectMeta(template, meta);
+
     res.setHeader("Content-Type", "text/html; charset=utf-8");
-    // Vary on UA so the CDN doesn't hand a searchBot page to a socialBot or vice versa.
-    res.setHeader("Vary", "User-Agent");
+    res.setHeader("Vary", "Accept-Encoding");
     res.setHeader(
       "Cache-Control",
-      "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+      "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
     );
     res.status(200).send(html);
   } catch (err) {
