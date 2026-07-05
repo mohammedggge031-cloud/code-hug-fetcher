@@ -16,12 +16,6 @@
       "has": [{ "type": "query", "key": "lang", "value": "ar" }],
       "destination": "/ar/:path*",
       "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [{ "type": "query", "key": "lang", "value": "en" }],
-      "destination": "/:path*",
-      "permanent": true
     }
   ],
   "rewrites": [
