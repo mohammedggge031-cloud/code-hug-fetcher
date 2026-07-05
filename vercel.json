@@ -27,7 +27,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": ".*(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterest|redditbot|Applebot|Embedly|SkypeUriPreview|vkShare|W3C_Validator|Iframely).*"
+          "value": ".*(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Slackbot|Discordbot|Pinterest|redditbot|Applebot|Embedly|SkypeUriPreview|vkShare|W3C_Validator|Iframely|Googlebot|Google-InspectionTool|Google-Extended|Storebot-Google|AdsBot-Google|Mediapartners-Google|bingbot|BingPreview|DuckDuckBot|YandexBot|Baiduspider|GPTBot|OAI-SearchBot|ChatGPT-User|PerplexityBot|ClaudeBot|Claude-Web|anthropic-ai|CCBot|Amazonbot|Bytespider|MojeekBot).*"
         }
       ],
       "destination": "/api/prerender?slug=:slug"
