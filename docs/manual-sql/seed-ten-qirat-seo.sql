@@ -25,6 +25,7 @@ insert into public.seo_metadata (
   no_index
 ) values (
   '/courses/ten-qirat-online',
+  'Ten Qira''at Online Course',
   'Online Ten Qira''at Course with Ijazah | Al-Qira''at Al-''Ashr | Alhamd Academy',
   'Study the ten authentic Qira''at of the Quran online with certified Al-Azhar Sanad-holders. One-on-one Talaqqi in the Shatibiyyah and Durrah routes with a full written Ijazah. Free trial class.',
   'online qirat course, ten qirat online, qira''at al ashr online, learn qiraat online, ten qiraat course, al qiraat al ashr, shatibiyyah online, durrah online, ijazah in qiraat, sanad in qiraat, qirat teacher online, qirat classes online, qirat course with ijazah, learn the ten qiraat',
