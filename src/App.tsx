@@ -103,6 +103,7 @@ const NooraniQaidaOnline = lazyRetry(() => import("./pages/NooraniQaidaOnline"))
 const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSisters"));
 const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
 const TenQiratOnline = lazyRetry(() => import("./pages/TenQiratOnline"));
+const IjazahProgramCourse = lazyRetry(() => import("./pages/IjazahProgramCourse"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const App = () => (
