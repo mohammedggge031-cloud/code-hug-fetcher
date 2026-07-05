@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
 const today = new Date().toISOString().split("T")[0];
-const files = ["public/sitemap-main.xml", "public/sitemap-locations.xml"];
+const files = ["public/sitemap.xml", "public/sitemap-main.xml", "public/sitemap-locations.xml"];
 
 let touched = 0;
 for (const rel of files) {

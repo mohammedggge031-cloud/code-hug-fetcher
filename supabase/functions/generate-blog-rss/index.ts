@@ -28,7 +28,7 @@ Deno.serve(async (req) => {
 
     const { data: posts, error } = await supabase
       .from("blog_posts")
-      .select("slug, title_en, title_ar, excerpt_en, excerpt_ar, featured_image, published_at, updated_at, created_at, author")
+      .select("slug, title_en, title_ar, excerpt_en, excerpt_ar, featured_image, published_at, updated_at, created_at")
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(50);

@@ -52,7 +52,7 @@ interface BlogPost {
   published_at: string | null;
   updated_at: string | null;
   created_at: string | null;
-  author: string | null;
+  author?: string | null;
 }
 
 interface SeoOverride {
@@ -67,7 +67,9 @@ interface SeoOverride {
 }
 
 async function fetchPost(slug: string): Promise<BlogPost | null> {
-  const url = `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title_en,title_ar,excerpt_en,excerpt_ar,content_en,content_ar,featured_image,published_at,updated_at,created_at,author&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`;
+  // NOTE: `author` column does not exist on blog_posts (only author_id UUID).
+  // Selecting it would return a PostgREST 400 → 404 for every crawler request.
+  const url = `${SUPABASE_URL}/rest/v1/blog_posts?select=slug,title_en,title_ar,excerpt_en,excerpt_ar,content_en,content_ar,featured_image,published_at,updated_at,created_at&slug=eq.${encodeURIComponent(slug)}&status=eq.published&limit=1`;
   const res = await fetch(url, {
     headers: {
       apikey: SUPABASE_ANON_KEY,
