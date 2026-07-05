@@ -68,7 +68,7 @@ const CoursesSection = () => {
           </motion.div>
 
           {/* Swipe hint for mobile */}
-          <div className="flex items-center justify-center gap-2 mb-3 sm:hidden text-muted-foreground/60 text-xs animate-pulse">
+          <div className="flex items-center justify-center gap-2 mb-3 sm:hidden text-muted-foreground text-xs animate-pulse">
             <span>←</span>
             <span>{t("Swipe to explore courses", "اسحب لاستكشاف الدورات")}</span>
             <span>→</span>
