@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, Search, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Search, Loader2, RefreshCw, Zap } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
 import TranslateButton from "@/components/admin/TranslateButton";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,6 +47,8 @@ const BlogManagement = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
+  const [reindexingId, setReindexingId] = useState<string | null>(null);
+  const [reindexingAll, setReindexingAll] = useState(false);
   const { isAdmin } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
@@ -177,6 +179,46 @@ const BlogManagement = () => {
     }
   };
 
+  const pingIndexNow = async (urls: string[] | undefined, label: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("indexnow-ping", {
+        body: urls && urls.length > 0 ? { urls } : {},
+      });
+      if (error) throw error;
+      const count = (data as { urlsSubmitted?: number } | null)?.urlsSubmitted ?? urls?.length ?? 0;
+      toast({
+        title: lang === "ar" ? "تم إرسال طلب الفهرسة" : "Re-index submitted",
+        description: lang === "ar"
+          ? `${label} — ${count} رابط أُرسل إلى Bing / Yandex / IndexNow.`
+          : `${label} — ${count} URL(s) sent to Bing / Yandex / IndexNow.`,
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      toast({ title: t("err.error"), description: msg, variant: "destructive" });
+    }
+  };
+
+  const handleReindexPost = async (post: BlogPost) => {
+    setReindexingId(post.id);
+    try {
+      await pingIndexNow(
+        [`https://www.alhamdacademy.net/blog/${post.slug}`],
+        lang === "ar" ? post.title_ar || post.title_en : post.title_en,
+      );
+    } finally {
+      setReindexingId(null);
+    }
+  };
+
+  const handleReindexAll = async () => {
+    setReindexingAll(true);
+    try {
+      await pingIndexNow(undefined, lang === "ar" ? "كل صفحات الموقع" : "All site pages");
+    } finally {
+      setReindexingAll(false);
+    }
+  };
+
   const filtered = posts.filter(p => p.title_en.toLowerCase().includes(search.toLowerCase()) || p.title_ar.includes(search));
   const getCategoryName = (catId: string | null) => {
     if (!catId) return "—";
@@ -191,7 +233,18 @@ const BlogManagement = () => {
           <h1 className="text-2xl font-bold text-foreground">{t("blog.title")}</h1>
           <p className="text-muted-foreground">{posts.length} {t("blog.total")}</p>
         </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={handleReindexAll}
+            disabled={reindexingAll}
+            title={lang === "ar" ? "إرسال كل صفحات الموقع إلى محركات البحث عبر IndexNow" : "Submit all site pages to search engines via IndexNow"}
+          >
+            {reindexingAll ? <Loader2 className="h-4 w-4 me-1 animate-spin" /> : <Zap className="h-4 w-4 me-1" />}
+            {lang === "ar" ? "أعِد فهرسة كل الصفحات" : "Re-index all pages"}
+          </Button>
+          <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
+        </div>
       </div>
 
       <div className="relative w-full sm:w-80">
@@ -208,7 +261,7 @@ const BlogManagement = () => {
                 <TableHead>{t("blog.col.category")}</TableHead>
                 <TableHead>{t("blog.col.status")}</TableHead>
                 <TableHead>{t("blog.col.date")}</TableHead>
-                <TableHead className="w-28">{t("blog.col.actions")}</TableHead>
+                <TableHead className="w-40">{t("blog.col.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -246,9 +299,22 @@ const BlogManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(post)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")}><Eye className="h-4 w-4" /></Button>
-                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(post)}><Trash2 className="h-4 w-4" /></Button>}
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(post)} title={t("blog.edit")}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")} title={lang === "ar" ? "معاينة" : "Preview"}><Eye className="h-4 w-4" /></Button>
+                      {post.status === "published" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleReindexPost(post)}
+                          disabled={reindexingId === post.id}
+                          title={lang === "ar" ? "أعِد فهرسة هذا المقال الآن" : "Re-index this post now"}
+                        >
+                          {reindexingId === post.id
+                            ? <Loader2 className="h-4 w-4 animate-spin" />
+                            : <RefreshCw className="h-4 w-4" />}
+                        </Button>
+                      )}
+                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(post)} title={t("blog.confirm_delete")}><Trash2 className="h-4 w-4" /></Button>}
                     </div>
                   </TableCell>
                 </TableRow>
