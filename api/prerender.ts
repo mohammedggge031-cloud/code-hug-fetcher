@@ -383,6 +383,21 @@ export default async function handler(req: any, res: any) {
   try {
     const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
+    // `path` wins over `slug`. Vercel forwards named source params
+    // (e.g. `/courses/:slug`) into the destination query string, which
+    // would otherwise hijack these requests into the blog-post branch.
+    const pathRaw = (req.query?.path ?? "").toString();
+    if (pathRaw) {
+      const path = normalisePath(pathRaw);
+      if (!path) {
+        res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.send("Missing or invalid path");
+        return;
+      }
+      await handlePage(req, res, path, host);
+      return;
+    }
+
     const slugRaw = (req.query?.slug ?? "").toString();
     if (slugRaw) {
       const slug = slugRaw.trim().replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 200);
@@ -395,14 +410,8 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    const pathRaw = (req.query?.path ?? "").toString();
-    const path = normalisePath(pathRaw);
-    if (!path) {
-      res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.send("Missing or invalid path");
-      return;
-    }
-    await handlePage(req, res, path, host);
+    res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.send("Missing path or slug");
   } catch (err) {
     res.status(500).setHeader("Content-Type", "text/plain; charset=utf-8");
     res.send(`Prerender error: ${String(err)}`);
