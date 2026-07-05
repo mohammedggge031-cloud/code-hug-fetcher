@@ -3,7 +3,7 @@
  * Sitemap smoke test.
  *
  * Verifies that the live sitemap index and all referenced child sitemaps
- * (including the dynamic blog sitemap served by the Supabase edge function)
+ * (including the blog sitemap)
  * respond with valid XML and at least one <url> or <sitemap> entry.
  *
  * Usage:
@@ -13,7 +13,7 @@
  * Exit code 0 = all good, 1 = failure (suitable for CI / post-deploy hooks).
  */
 
-const BASE = (process.env.SITEMAP_BASE_URL || "https://www.alhamdacademy.net").replace(/\/$/, "");
+const BASE = (process.env.SITEMAP_BASE_URL || "https://code-hug-fetcher.lovable.app").replace(/\/$/, "");
 const INDEX_URL = `${BASE}/sitemap.xml`;
 const TIMEOUT_MS = 15_000;
 

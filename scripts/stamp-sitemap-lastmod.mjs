@@ -4,8 +4,8 @@
  * (sitemap-main.xml, sitemap-locations.xml) to today's date, so Google
  * sees a fresh signal after every deploy without hand-editing dates.
  *
- * The dynamic blog sitemap (sitemap-blog.xml) is served by a Supabase
- * edge function and derives lastmod from the row's updated_at/published_at.
+ * The blog sitemap is static in this published app so the Lovable SEO scanner
+ * can validate all child sitemaps on the Lovable-managed project domain.
  */
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
