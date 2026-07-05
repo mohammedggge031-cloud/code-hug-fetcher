@@ -267,7 +267,13 @@ const BlogPost = () => {
         )}
 
         <article className="container mx-auto px-4 max-w-4xl py-12">
+          <TableOfContents
+            html={sanitizeHtml(contentHtml)}
+            containerSelector="#blog-post-body"
+            lang={lang === "ar" ? "ar" : "en"}
+          />
           <div
+            id="blog-post-body"
             className="bg-card rounded-xl border border-border p-6 md:p-10 shadow-soft prose prose-sm max-w-none"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(contentHtml) }}
           />
