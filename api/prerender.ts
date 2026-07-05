@@ -196,9 +196,26 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
  * Uses targeted regex replacements — never rebuilds the doc — so the
  * preload hints, GTM script, favicons, fonts and mounted <script> tag
  * are preserved verbatim.
+ *
+ * `lang` controls `<html lang="...">` and `<html dir="...">`. It's
+ * purely additive — any HTML that already has the right attrs still
+ * ends up correct.
  */
-function injectMeta(template: string, m: MetaBundle): string {
+function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): string {
   let html = template;
+  const dir = lang === "ar" ? "rtl" : "ltr";
+
+  // <html lang / dir> — replace existing attrs when present, otherwise inject.
+  if (/<html\b[^>]*\blang=/i.test(html)) {
+    html = html.replace(/(<html\b[^>]*\b)lang="[^"]*"/i, `$1lang="${lang}"`);
+  } else {
+    html = html.replace(/<html\b/i, `<html lang="${lang}"`);
+  }
+  if (/<html\b[^>]*\bdir=/i.test(html)) {
+    html = html.replace(/(<html\b[^>]*\b)dir="[^"]*"/i, `$1dir="${dir}"`);
+  } else {
+    html = html.replace(/<html\b/i, `<html dir="${dir}"`);
+  }
 
   // <title>
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(m.title)}</title>`);
@@ -245,6 +262,15 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta property="og:image:alt" content="${escapeAttr(m.ogTitle)}" />`,
   );
 
+  // og:locale — helps social crawlers pick the right language.
+  const ogLocale = lang === "ar" ? "ar_AR" : "en_US";
+  const ogLocaleAlt = lang === "ar" ? "en_US" : "ar_AR";
+  const localeTags =
+    `<meta property="og:locale" content="${ogLocale}" />` +
+    `<meta property="og:locale:alternate" content="${ogLocaleAlt}" />`;
+  html = html.replace(/<meta\s+property=["']og:locale["'][^>]*>\s*/gi, "");
+  html = html.replace(/<meta\s+property=["']og:locale:alternate["'][^>]*>\s*/gi, "");
+
   // twitter:title / description / image
   html = html.replace(
     /<meta\s+name=["']twitter:title["'][^>]*>/i,
@@ -263,8 +289,31 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
+  // hreflang alternates. Emit distinct URLs per language on the same
+  // canonical (query-param toggle) plus x-default → bare canonical.
+  let hreflangUrl: (code: "en" | "ar") => string;
+  try {
+    hreflangUrl = (code) => {
+      const u = new URL(m.canonical);
+      u.searchParams.set("lang", code);
+      return u.toString();
+    };
+  } catch {
+    hreflangUrl = () => m.canonical;
+  }
+  const hreflangTags = [
+    `<link rel="alternate" hreflang="en" href="${escapeAttr(hreflangUrl("en"))}" />`,
+    `<link rel="alternate" hreflang="ar" href="${escapeAttr(hreflangUrl("ar"))}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(m.canonical)}" />`,
+  ].join("");
+  // Strip any hreflang alternates already present so we don't ship duplicates.
+  html = html.replace(
+    /<link\s+rel=["']alternate["'][^>]*hreflang=["'][^"']*["'][^>]*>\s*/gi,
+    "",
+  );
+
   // Article extras — only for blog posts.
-  const extras: string[] = [];
+  const extras: string[] = [localeTags, hreflangTags];
   if (m.publishedTime) {
     extras.push(`<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`);
   }
@@ -274,9 +323,7 @@ function injectMeta(template: string, m: MetaBundle): string {
   if (m.jsonLd) {
     extras.push(`<script type="application/ld+json">${m.jsonLd}</script>`);
   }
-  if (extras.length) {
-    html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
-  }
+  html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
 
   // Optional <noscript> body summary (blog posts only).
   if (m.noscriptBody) {
@@ -313,7 +360,7 @@ function normalisePath(raw: string): string | null {
   return trimmed.replace(/\/+$/, "");
 }
 
-async function handleBlogPost(req: any, res: any, slug: string, host: string) {
+async function handleBlogPost(req: any, res: any, slug: string, host: string, lang: "en" | "ar" = "en") {
   const [post, seo, template] = await Promise.all([
     fetchPost(slug),
     fetchSeoOverride(`/blog/${slug}`),
@@ -331,7 +378,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
     const canonical = `${SITE_URL}/blog/${post.slug}`;
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.status(200).send(
-      `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
+      `<!doctype html><html lang="${lang}"><head><meta charset="UTF-8" /><title>${
         escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
       }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
     );
@@ -339,7 +386,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
   }
 
   const meta = buildPostMeta(post, seo);
-  const html = injectMeta(template, meta);
+  const html = injectMeta(template, meta, lang);
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
   res.setHeader(
@@ -349,7 +396,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
   res.status(200).send(html);
 }
 
-async function handlePage(req: any, res: any, path: string, host: string) {
+async function handlePage(req: any, res: any, path: string, host: string, lang: "en" | "ar" = "en") {
   const [seo, template] = await Promise.all([
     fetchSeoOverride(path),
     getTemplate(host),
@@ -360,15 +407,28 @@ async function handlePage(req: any, res: any, path: string, host: string) {
   if (!template) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.status(200).send(
-      `<!doctype html><html><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
+      `<!doctype html><html lang="${lang}"><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
     );
     return;
   }
 
-  const meta = buildPageMeta(path, seo);
-  // No override → serve the untouched template. That still gives the
-  // homepage's defaults, which is exactly what index.html would ship.
-  const html = meta ? injectMeta(template, meta) : template;
+  // Build a minimal MetaBundle for pages without a seo_metadata override
+  // so lang/dir + hreflang still get applied to the static template.
+  const meta =
+    buildPageMeta(path, seo) ??
+    ({
+      title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
+      description: "",
+      canonical: `${SITE_URL}${path === "/" ? "/" : path}`,
+      ogType: "website" as const,
+      ogTitle: "Alhamd Academy",
+      ogDescription: "",
+      ogImage: DEFAULT_OG_IMAGE,
+      twitterTitle: "Alhamd Academy",
+      twitterDescription: "",
+      twitterImage: DEFAULT_OG_IMAGE,
+    } as MetaBundle);
+  const html = injectMeta(template, meta, lang);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
@@ -383,6 +443,10 @@ export default async function handler(req: any, res: any) {
   try {
     const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
+    // Language detection: `?lang=ar` toggles Arabic. Default English.
+    const langRaw = (req.query?.lang ?? "").toString().toLowerCase();
+    const lang: "en" | "ar" = langRaw === "ar" ? "ar" : "en";
+
     // `path` wins over `slug`. Vercel forwards named source params
     // (e.g. `/courses/:slug`) into the destination query string, which
     // would otherwise hijack these requests into the blog-post branch.
@@ -394,7 +458,7 @@ export default async function handler(req: any, res: any) {
         res.send("Missing or invalid path");
         return;
       }
-      await handlePage(req, res, path, host);
+      await handlePage(req, res, path, host, lang);
       return;
     }
 
@@ -406,7 +470,7 @@ export default async function handler(req: any, res: any) {
         res.send("Missing slug");
         return;
       }
-      await handleBlogPost(req, res, slug, host);
+      await handleBlogPost(req, res, slug, host, lang);
       return;
     }
 

@@ -176,7 +176,7 @@ describe("api/prerender routing", () => {
     expect(res.body).toContain("Article not found");
   });
 
-  it("serves the untouched template when a page path has no seo_metadata row", async () => {
+  it("applies lang/hreflang defaults when a page path has no seo_metadata row", async () => {
     installFetchMock({ seoByPath: {} });
 
     const req = makeReq({ path: "/videos" });
@@ -184,11 +184,50 @@ describe("api/prerender routing", () => {
     await handler(req, res);
 
     expect(res.statusCode).toBe(200);
-    // Untouched defaults from the template
-    expect(res.body).toContain("<title>Alhamd Academy</title>");
-    expect(res.body).toContain('<div id="root">');
     // SPA bundle survives the rewrite
+    expect(res.body).toContain('<div id="root">');
     expect(res.body).toContain('src="/assets/index.js"');
+    // Fallback still sets html lang + hreflang alternates on the response
+    expect(res.body).toMatch(/<html[^>]*lang="en"/);
+    expect(res.body).toContain('hreflang="ar"');
+    expect(res.body).toContain('hreflang="x-default"');
+    expect(res.body).toContain('href="https://www.alhamdacademy.net/videos"');
+  });
+
+  it("switches <html lang> and dir to Arabic when ?lang=ar is present", async () => {
+    installFetchMock({
+      seoByPath: {
+        "/free-trial": { title: "Free Trial", description: "Book a class." },
+      },
+    });
+
+    const req = makeReq({ path: "/free-trial", lang: "ar" });
+    const res = makeRes();
+    await handler(req, res);
+
+    expect(res.body).toMatch(/<html[^>]*lang="ar"/);
+    expect(res.body).toMatch(/<html[^>]*dir="rtl"/);
+    expect(res.body).toContain('content="ar_AR"');
+  });
+
+  it("emits exactly one hreflang link per language + x-default", async () => {
+    installFetchMock({
+      posts: { p: { slug: "p", title_en: "P", published_at: "2026-05-01T00:00:00Z" } },
+    });
+
+    const req = makeReq({ slug: "p" });
+    const res = makeRes();
+    await handler(req, res);
+
+    const en = (res.body.match(/hreflang="en"/g) || []).length;
+    const ar = (res.body.match(/hreflang="ar"/g) || []).length;
+    const xd = (res.body.match(/hreflang="x-default"/g) || []).length;
+    expect(en).toBe(1);
+    expect(ar).toBe(1);
+    expect(xd).toBe(1);
+    // hreflang URLs carry the ?lang= toggle
+    expect(res.body).toContain("?lang=en");
+    expect(res.body).toContain("?lang=ar");
   });
 
   it("injects per-page title/canonical/og for landing pages", async () => {
