@@ -4,7 +4,14 @@ import { BrowserRouter, Routes, Route, Outlet, useLocation } from "react-router-
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AdminLangProvider } from "@/contexts/AdminLangContext";
+import { detectBasename } from "@/lib/localizedRouting";
 import { lazy, Suspense } from "react";
+
+// Computed once at module load. Language switches trigger a full page reload
+// (see LanguageContext.toggleLang), so a static basename is correct here and
+// makes every <Link to="/x"> / navigate("/x") resolve to /ar/x automatically
+// while the user is browsing the Arabic subfolder.
+const ROUTER_BASENAME = detectBasename();
 
 /** Retry wrapper for lazy imports — handles transient chunk load failures */
 function lazyRetry<T extends { default: React.ComponentType<any> }>(
@@ -102,7 +109,7 @@ const App = () => (
       <LanguageProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename={ROUTER_BASENAME || undefined}>
           <ScrollToTop />
           <SiteVerificationMeta />
           <FloatingActions />
