@@ -92,7 +92,7 @@ function installFetchMock(opts: {
       return new Response(JSON.stringify(row ? [row] : []), { status: 200 });
     }
 
-    if (url.endsWith("/index.html")) {
+    if (url.endsWith("/app.html") || url.endsWith("/index.html")) {
       return new Response(templateStatus === 200 ? TEMPLATE : "", { status: templateStatus });
     }
 
