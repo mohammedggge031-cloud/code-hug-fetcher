@@ -196,9 +196,26 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
  * Uses targeted regex replacements — never rebuilds the doc — so the
  * preload hints, GTM script, favicons, fonts and mounted <script> tag
  * are preserved verbatim.
+ *
+ * `lang` controls `<html lang="...">` and `<html dir="...">`. It's
+ * purely additive — any HTML that already has the right attrs still
+ * ends up correct.
  */
-function injectMeta(template: string, m: MetaBundle): string {
+function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): string {
   let html = template;
+  const dir = lang === "ar" ? "rtl" : "ltr";
+
+  // <html lang / dir> — replace existing attrs when present, otherwise inject.
+  if (/<html\b[^>]*\blang=/i.test(html)) {
+    html = html.replace(/(<html\b[^>]*\b)lang="[^"]*"/i, `$1lang="${lang}"`);
+  } else {
+    html = html.replace(/<html\b/i, `<html lang="${lang}"`);
+  }
+  if (/<html\b[^>]*\bdir=/i.test(html)) {
+    html = html.replace(/(<html\b[^>]*\b)dir="[^"]*"/i, `$1dir="${dir}"`);
+  } else {
+    html = html.replace(/<html\b/i, `<html dir="${dir}"`);
+  }
 
   // <title>
   html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${escapeHtml(m.title)}</title>`);
@@ -245,6 +262,15 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta property="og:image:alt" content="${escapeAttr(m.ogTitle)}" />`,
   );
 
+  // og:locale — helps social crawlers pick the right language.
+  const ogLocale = lang === "ar" ? "ar_AR" : "en_US";
+  const ogLocaleAlt = lang === "ar" ? "en_US" : "ar_AR";
+  const localeTags =
+    `<meta property="og:locale" content="${ogLocale}" />` +
+    `<meta property="og:locale:alternate" content="${ogLocaleAlt}" />`;
+  html = html.replace(/<meta\s+property=["']og:locale["'][^>]*>\s*/gi, "");
+  html = html.replace(/<meta\s+property=["']og:locale:alternate["'][^>]*>\s*/gi, "");
+
   // twitter:title / description / image
   html = html.replace(
     /<meta\s+name=["']twitter:title["'][^>]*>/i,
@@ -263,8 +289,31 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
+  // hreflang alternates. Emit distinct URLs per language on the same
+  // canonical (query-param toggle) plus x-default → bare canonical.
+  let hreflangUrl: (code: "en" | "ar") => string;
+  try {
+    hreflangUrl = (code) => {
+      const u = new URL(m.canonical);
+      u.searchParams.set("lang", code);
+      return u.toString();
+    };
+  } catch {
+    hreflangUrl = () => m.canonical;
+  }
+  const hreflangTags = [
+    `<link rel="alternate" hreflang="en" href="${escapeAttr(hreflangUrl("en"))}" />`,
+    `<link rel="alternate" hreflang="ar" href="${escapeAttr(hreflangUrl("ar"))}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(m.canonical)}" />`,
+  ].join("");
+  // Strip any hreflang alternates already present so we don't ship duplicates.
+  html = html.replace(
+    /<link\s+rel=["']alternate["'][^>]*hreflang=["'][^"']*["'][^>]*>\s*/gi,
+    "",
+  );
+
   // Article extras — only for blog posts.
-  const extras: string[] = [];
+  const extras: string[] = [localeTags, hreflangTags];
   if (m.publishedTime) {
     extras.push(`<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`);
   }
@@ -274,9 +323,7 @@ function injectMeta(template: string, m: MetaBundle): string {
   if (m.jsonLd) {
     extras.push(`<script type="application/ld+json">${m.jsonLd}</script>`);
   }
-  if (extras.length) {
-    html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
-  }
+  html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
 
   // Optional <noscript> body summary (blog posts only).
   if (m.noscriptBody) {
