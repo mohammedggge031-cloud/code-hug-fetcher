@@ -141,7 +141,13 @@ async function getTemplate(host: string): Promise<string | null> {
 interface MetaBundle {
   title: string;
   description: string;
-  canonical: string;
+  /**
+   * Logical (language-agnostic) path such as "/", "/blog/foo",
+   * "/free-trial". `injectMeta` derives the English canonical
+   * (`SITE_URL + logicalPath`) and the Arabic canonical
+   * (`SITE_URL + "/ar" + logicalPath`) from it.
+   */
+  logicalPath: string;
   ogType: "article" | "website";
   ogTitle: string;
   ogDescription: string;
@@ -155,42 +161,31 @@ interface MetaBundle {
   noscriptBody?: string;
 }
 
+/** English canonical for a logical path. Root stays "/". */
+function englishUrlFor(logicalPath: string): string {
+  return `${SITE_URL}${logicalPath === "/" ? "/" : logicalPath}`;
+}
+
+/** Arabic canonical for a logical path — `/ar` for root, `/ar/foo` otherwise. */
+function arabicUrlFor(logicalPath: string): string {
+  return `${SITE_URL}/ar${logicalPath === "/" ? "" : logicalPath}`;
+}
+
+/** Current canonical URL given the active language. */
+function canonicalFor(logicalPath: string, lang: "en" | "ar"): string {
+  return lang === "ar" ? arabicUrlFor(logicalPath) : englishUrlFor(logicalPath);
+}
+
 function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string {
-  const titleEn = post.title_en || post.title_ar || "";
-  const excerptEn = post.excerpt_en || post.excerpt_ar || "";
-  const publishedTime = post.published_at || post.created_at || "";
-  const modifiedTime = post.updated_at || publishedTime;
-  const article = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: titleEn,
-    description: excerptEn,
-    image: ogImage,
-    author: { "@type": "Organization", name: "Alhamd Academy" },
-    publisher: {
-      "@type": "Organization",
-      name: "Alhamd Academy",
-      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon-512.png` },
-    },
-    datePublished: publishedTime,
-    dateModified: modifiedTime,
-    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
-    inLanguage: ["en", "ar"],
-  };
-  const breadcrumb = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
-      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
-      { "@type": "ListItem", position: 3, name: titleEn, item: canonical },
+...
     ],
   };
   return JSON.stringify([article, breadcrumb]);
 }
 
 function buildPostMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
-  const canonical = `${SITE_URL}/blog/${post.slug}`;
+  const logicalPath = `/blog/${post.slug}`;
+  const canonical = englishUrlFor(logicalPath);
   const titleEn = post.title_en || post.title_ar || "Alhamd Academy Blog";
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
   const title = seo?.title || seo?.og_title || `${titleEn} | Alhamd Academy`;
@@ -209,7 +204,7 @@ function buildPostMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
     excerptEn ? `<p>${escapeHtml(excerptEn)}</p>` : ""
   }<p><a href="${canonical}">Read on Alhamd Academy</a></p>`;
   return {
-    title, description, canonical, ogType: "article",
+    title, description, logicalPath, ogType: "article",
     ogTitle, ogDescription, ogImage,
     twitterTitle, twitterDescription, twitterImage,
     publishedTime, modifiedTime, jsonLd, noscriptBody,
@@ -220,7 +215,6 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
   // Page-mode only injects when we have a seo_metadata row — otherwise
   // the static index.html defaults are already correct for /.
   if (!seo || (!seo.title && !seo.description && !seo.og_title)) return null;
-  const canonical = `${SITE_URL}${path === "/" ? "/" : path}`;
   const title = seo.title || seo.og_title || "Alhamd Academy";
   const description = seo.description || seo.og_description || "";
   const ogTitle = seo.og_title || title;
@@ -230,7 +224,7 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
   const twitterDescription = seo.twitter_description || ogDescription;
   const twitterImage = seo.twitter_image || ogImage;
   return {
-    title, description, canonical, ogType: "website",
+    title, description, logicalPath: path, ogType: "website",
     ogTitle, ogDescription, ogImage,
     twitterTitle, twitterDescription, twitterImage,
   };
