@@ -65,6 +65,50 @@ async function fetchSeoOverride(pagePath: string): Promise<SeoOverride | null> {
   return rows?.[0] ?? null;
 }
 
+/**
+ * Full seo_metadata row used by the client `useSeoMetadata` hook.
+ * Inlined into the HTML shell so the browser doesn't re-fetch on hydration.
+ */
+async function fetchFullSeo(pagePath: string): Promise<Record<string, unknown> | null> {
+  const cols =
+    "title,description,keywords,canonical_url,og_title,og_description,og_image,og_type,twitter_card,twitter_title,twitter_description,twitter_image,structured_data,no_index";
+  const url = `${SUPABASE_URL}/rest/v1/seo_metadata?select=${cols}&page_path=eq.${encodeURIComponent(pagePath)}&limit=1`;
+  try {
+    const res = await fetch(url, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) return null;
+    const rows = (await res.json()) as Record<string, unknown>[];
+    return rows?.[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Recent published blog posts — inlined for the homepage so the
+ * `RecentArticlesSection` component skips its client-side fetch.
+ */
+async function fetchRecentPosts(): Promise<unknown[]> {
+  const cols =
+    "slug,title_en,title_ar,excerpt_en,excerpt_ar,featured_image,read_time_en,read_time_ar,blog_categories(name_en,name_ar)";
+  const url = `${SUPABASE_URL}/rest/v1/blog_posts?select=${cols}&status=eq.published&order=published_at.desc&limit=4`;
+  try {
+    const res = await fetch(url, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
+    });
+    if (!res.ok) return [];
+    return ((await res.json()) as unknown[]) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/** JSON-safe embed for <script type="application/json"> — escapes `</` only. */
+function jsonEmbed(v: unknown): string {
+  return JSON.stringify(v).replace(/</g, "\\u003c");
+}
+
 // Cache the built SPA template in-memory per warm instance so we don't
 // re-fetch it on every request. Falls back gracefully if fetch fails.
 let cachedTemplate: string | null = null;
@@ -388,7 +432,14 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string, la
   }
 
   const meta = buildPostMeta(post, seo);
-  const html = injectMeta(template, meta, lang);
+  let html = injectMeta(template, meta, lang);
+  // Inline full seo row so client `useSeoMetadata` skips its fetch.
+  const fullSeo = await fetchFullSeo(`/blog/${post.slug}`);
+  const dataBlob = { seo: { [`/blog/${post.slug}`]: fullSeo }, recentPosts: null };
+  html = html.replace(
+    /<\/head>/i,
+    `<script id="__ALHAMD_DATA__" type="application/json">${jsonEmbed(dataBlob)}</script>\n</head>`,
+  );
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
   res.setHeader(
@@ -399,9 +450,12 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string, la
 }
 
 async function handlePage(req: any, res: any, path: string, host: string, lang: "en" | "ar" = "en") {
-  const [seo, template] = await Promise.all([
+  const isHome = path === "/";
+  const [seo, template, fullSeo, recentPosts] = await Promise.all([
     fetchSeoOverride(path),
     getTemplate(host),
+    fetchFullSeo(path),
+    isHome ? fetchRecentPosts() : Promise.resolve(null),
   ]);
 
   // Without a template we can't do anything useful — fall through to
@@ -430,7 +484,17 @@ async function handlePage(req: any, res: any, path: string, host: string, lang: 
       twitterDescription: "",
       twitterImage: DEFAULT_OG_IMAGE,
     } as MetaBundle);
-  const html = injectMeta(template, meta, lang);
+  let html = injectMeta(template, meta, lang);
+
+  // Inline data so the client SPA can hydrate without extra Supabase round-trips.
+  const dataBlob = {
+    seo: { [path]: fullSeo },
+    recentPosts: recentPosts ?? null,
+  };
+  html = html.replace(
+    /<\/head>/i,
+    `<script id="__ALHAMD_DATA__" type="application/json">${jsonEmbed(dataBlob)}</script>\n</head>`,
+  );
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
