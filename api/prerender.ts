@@ -432,7 +432,14 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string, la
   }
 
   const meta = buildPostMeta(post, seo);
-  const html = injectMeta(template, meta, lang);
+  let html = injectMeta(template, meta, lang);
+  // Inline full seo row so client `useSeoMetadata` skips its fetch.
+  const fullSeo = await fetchFullSeo(`/blog/${post.slug}`);
+  const dataBlob = { seo: { [`/blog/${post.slug}`]: fullSeo }, recentPosts: null };
+  html = html.replace(
+    /<\/head>/i,
+    `<script id="__ALHAMD_DATA__" type="application/json">${jsonEmbed(dataBlob)}</script>\n</head>`,
+  );
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
   res.setHeader(
