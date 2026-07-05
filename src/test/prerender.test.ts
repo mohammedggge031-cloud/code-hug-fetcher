@@ -192,15 +192,19 @@ describe("api/prerender routing", () => {
     expect(res.body).toContain('hreflang="ar"');
     expect(res.body).toContain('hreflang="x-default"');
     expect(res.body).toContain('href="https://www.alhamdacademy.net/videos"');
+    expect(res.body).toContain('href="https://www.alhamdacademy.net/ar/videos"');
+    expect(res.body).not.toContain("?lang=");
   });
 
-  it("switches <html lang> and dir to Arabic when ?lang=ar is present", async () => {
+  it("switches <html lang>, dir, canonical, and og:url to Arabic when lang=ar (from /ar/* rewrite)", async () => {
     installFetchMock({
       seoByPath: {
         "/free-trial": { title: "Free Trial", description: "Book a class." },
       },
     });
 
+    // The `/ar/free-trial` Vercel rewrite passes `path=/free-trial&lang=ar`
+    // through to the handler.
     const req = makeReq({ path: "/free-trial", lang: "ar" });
     const res = makeRes();
     await handler(req, res);
@@ -208,9 +212,18 @@ describe("api/prerender routing", () => {
     expect(res.body).toMatch(/<html[^>]*lang="ar"/);
     expect(res.body).toMatch(/<html[^>]*dir="rtl"/);
     expect(res.body).toContain('content="ar_AR"');
+    // Canonical + og:url self-reference the Arabic subfolder URL.
+    expect(res.body).toContain(
+      '<link rel="canonical" href="https://www.alhamdacademy.net/ar/free-trial" />',
+    );
+    expect(res.body).toContain(
+      '<meta property="og:url" content="https://www.alhamdacademy.net/ar/free-trial" />',
+    );
+    // No query parameters leak into any URL.
+    expect(res.body).not.toContain("?lang=");
   });
 
-  it("emits exactly one hreflang link per language + x-default (en is bare canonical, ar carries ?lang=ar)", async () => {
+  it("emits exactly one hreflang link per language + x-default using clean /ar directory URLs (no ?lang=)", async () => {
     installFetchMock({
       posts: { p: { slug: "p", title_en: "P", published_at: "2026-05-01T00:00:00Z" } },
     });
@@ -225,17 +238,18 @@ describe("api/prerender routing", () => {
     expect(en).toBe(1);
     expect(ar).toBe(1);
     expect(xd).toBe(1);
-    // English default: bare canonical, no ?lang= parameter
-    expect(res.body).not.toContain("?lang=en");
+    // Absolutely no query-parameter language markers anywhere.
+    expect(res.body).not.toContain("?lang=");
+    // English default + x-default → bare canonical.
     expect(res.body).toContain(
       '<link rel="alternate" hreflang="en" href="https://www.alhamdacademy.net/blog/p" />',
     );
     expect(res.body).toContain(
       '<link rel="alternate" hreflang="x-default" href="https://www.alhamdacademy.net/blog/p" />',
     );
-    // Arabic override: canonical + ?lang=ar
+    // Arabic → /ar directory prefix.
     expect(res.body).toContain(
-      '<link rel="alternate" hreflang="ar" href="https://www.alhamdacademy.net/blog/p?lang=ar" />',
+      '<link rel="alternate" hreflang="ar" href="https://www.alhamdacademy.net/ar/blog/p" />',
     );
   });
 

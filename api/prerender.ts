@@ -141,7 +141,13 @@ async function getTemplate(host: string): Promise<string | null> {
 interface MetaBundle {
   title: string;
   description: string;
-  canonical: string;
+  /**
+   * Logical (language-agnostic) path such as "/", "/blog/foo",
+   * "/free-trial". `injectMeta` derives the English canonical
+   * (`SITE_URL + logicalPath`) and the Arabic canonical
+   * (`SITE_URL + "/ar" + logicalPath`) from it.
+   */
+  logicalPath: string;
   ogType: "article" | "website";
   ogTitle: string;
   ogDescription: string;
@@ -153,6 +159,21 @@ interface MetaBundle {
   modifiedTime?: string;
   jsonLd?: string;
   noscriptBody?: string;
+}
+
+/** English canonical for a logical path. Root stays "/". */
+function englishUrlFor(logicalPath: string): string {
+  return `${SITE_URL}${logicalPath === "/" ? "/" : logicalPath}`;
+}
+
+/** Arabic canonical for a logical path — `/ar` for root, `/ar/foo` otherwise. */
+function arabicUrlFor(logicalPath: string): string {
+  return `${SITE_URL}/ar${logicalPath === "/" ? "" : logicalPath}`;
+}
+
+/** Current canonical URL given the active language. */
+function canonicalFor(logicalPath: string, lang: "en" | "ar"): string {
+  return lang === "ar" ? arabicUrlFor(logicalPath) : englishUrlFor(logicalPath);
 }
 
 function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string {
@@ -190,7 +211,8 @@ function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string
 }
 
 function buildPostMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
-  const canonical = `${SITE_URL}/blog/${post.slug}`;
+  const logicalPath = `/blog/${post.slug}`;
+  const canonical = englishUrlFor(logicalPath);
   const titleEn = post.title_en || post.title_ar || "Alhamd Academy Blog";
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
   const title = seo?.title || seo?.og_title || `${titleEn} | Alhamd Academy`;
@@ -209,7 +231,7 @@ function buildPostMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
     excerptEn ? `<p>${escapeHtml(excerptEn)}</p>` : ""
   }<p><a href="${canonical}">Read on Alhamd Academy</a></p>`;
   return {
-    title, description, canonical, ogType: "article",
+    title, description, logicalPath, ogType: "article",
     ogTitle, ogDescription, ogImage,
     twitterTitle, twitterDescription, twitterImage,
     publishedTime, modifiedTime, jsonLd, noscriptBody,
@@ -220,7 +242,6 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
   // Page-mode only injects when we have a seo_metadata row — otherwise
   // the static index.html defaults are already correct for /.
   if (!seo || (!seo.title && !seo.description && !seo.og_title)) return null;
-  const canonical = `${SITE_URL}${path === "/" ? "/" : path}`;
   const title = seo.title || seo.og_title || "Alhamd Academy";
   const description = seo.description || seo.og_description || "";
   const ogTitle = seo.og_title || title;
@@ -230,7 +251,7 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
   const twitterDescription = seo.twitter_description || ogDescription;
   const twitterImage = seo.twitter_image || ogImage;
   return {
-    title, description, canonical, ogType: "website",
+    title, description, logicalPath: path, ogType: "website",
     ogTitle, ogDescription, ogImage,
     twitterTitle, twitterDescription, twitterImage,
   };
@@ -251,6 +272,7 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
 function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): string {
   let html = template;
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const currentCanonical = canonicalFor(m.logicalPath, lang);
 
   // <html lang / dir> — replace existing attrs when present, otherwise inject.
   if (/<html\b[^>]*\blang=/i.test(html)) {
@@ -273,10 +295,10 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta name="description" content="${escapeAttr(m.description)}" />`,
   );
 
-  // canonical
+  // canonical (self-referencing per-language URL)
   html = html.replace(
     /<link\s+rel=["']canonical["'][^>]*>/i,
-    `<link rel="canonical" href="${m.canonical}" />`,
+    `<link rel="canonical" href="${currentCanonical}" />`,
   );
 
   // og:type (article for blog posts, website for landing pages)
@@ -285,10 +307,10 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta property="og:type" content="${m.ogType}" />`,
   );
 
-  // og:url
+  // og:url (self-referencing per-language URL)
   html = html.replace(
     /<meta\s+property=["']og:url["'][^>]*>/i,
-    `<meta property="og:url" content="${m.canonical}" />`,
+    `<meta property="og:url" content="${currentCanonical}" />`,
   );
 
   // og:title / og:description / og:image / og:image:alt
@@ -336,21 +358,15 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
-  // hreflang alternates. English is the default baseline: `en` and
-  // `x-default` both point at the bare canonical (no query string).
-  // Arabic gets `?lang=ar` appended.
-  let arabicUrl = m.canonical;
-  try {
-    const u = new URL(m.canonical);
-    u.searchParams.set("lang", "ar");
-    arabicUrl = u.toString();
-  } catch {
-    arabicUrl = m.canonical;
-  }
+  // hreflang alternates — clean directory-based URLs (no query params).
+  // English is the default baseline at the bare path; Arabic lives under
+  // the `/ar` subfolder; `x-default` mirrors English.
+  const englishUrl = englishUrlFor(m.logicalPath);
+  const arabicUrl = arabicUrlFor(m.logicalPath);
   const hreflangTags = [
-    `<link rel="alternate" hreflang="en" href="${escapeAttr(m.canonical)}" />`,
+    `<link rel="alternate" hreflang="en" href="${escapeAttr(englishUrl)}" />`,
     `<link rel="alternate" hreflang="ar" href="${escapeAttr(arabicUrl)}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(m.canonical)}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(englishUrl)}" />`,
   ].join("");
   // Strip any hreflang alternates already present so we don't ship duplicates.
   html = html.replace(
@@ -475,7 +491,7 @@ async function handlePage(req: any, res: any, path: string, host: string, lang: 
     ({
       title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
       description: "",
-      canonical: `${SITE_URL}${path === "/" ? "/" : path}`,
+      logicalPath: path,
       ogType: "website" as const,
       ogTitle: "Alhamd Academy",
       ogDescription: "",

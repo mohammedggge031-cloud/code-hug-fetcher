@@ -10,6 +10,12 @@
       "has": [{ "type": "host", "value": "alhamdacademy.net" }],
       "destination": "https://www.alhamdacademy.net/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "query", "key": "lang", "value": "ar" }],
+      "destination": "/ar/:path*",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -21,6 +27,10 @@
       "source": "/rss.xml",
       "destination": "https://rihxkjhgipmqqihuljah.supabase.co/functions/v1/generate-blog-rss"
     },
+    { "source": "/ar/blog/:slug", "destination": "/api/prerender?slug=:slug&lang=ar" },
+    { "source": "/ar/blog", "destination": "/api/prerender?path=/blog&lang=ar" },
+    { "source": "/ar", "destination": "/api/prerender?path=/&lang=ar" },
+    { "source": "/ar/:path*", "destination": "/api/prerender?path=/:path*&lang=ar" },
     {
       "source": "/blog/:slug",
       "destination": "/api/prerender?slug=:slug"
