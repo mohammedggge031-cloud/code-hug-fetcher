@@ -245,6 +245,7 @@ function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null
 function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): string {
   let html = template;
   const dir = lang === "ar" ? "rtl" : "ltr";
+  const currentCanonical = canonicalFor(m.logicalPath, lang);
 
   // <html lang / dir> — replace existing attrs when present, otherwise inject.
   if (/<html\b[^>]*\blang=/i.test(html)) {
@@ -267,10 +268,10 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta name="description" content="${escapeAttr(m.description)}" />`,
   );
 
-  // canonical
+  // canonical (self-referencing per-language URL)
   html = html.replace(
     /<link\s+rel=["']canonical["'][^>]*>/i,
-    `<link rel="canonical" href="${m.canonical}" />`,
+    `<link rel="canonical" href="${currentCanonical}" />`,
   );
 
   // og:type (article for blog posts, website for landing pages)
@@ -279,10 +280,10 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta property="og:type" content="${m.ogType}" />`,
   );
 
-  // og:url
+  // og:url (self-referencing per-language URL)
   html = html.replace(
     /<meta\s+property=["']og:url["'][^>]*>/i,
-    `<meta property="og:url" content="${m.canonical}" />`,
+    `<meta property="og:url" content="${currentCanonical}" />`,
   );
 
   // og:title / og:description / og:image / og:image:alt
