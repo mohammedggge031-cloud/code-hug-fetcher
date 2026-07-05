@@ -75,7 +75,10 @@ async function getTemplate(host: string): Promise<string | null> {
   const now = Date.now();
   if (cachedTemplate && now - cachedTemplateAt < TEMPLATE_TTL_MS) return cachedTemplate;
   try {
-    const res = await fetch(`https://${host}/index.html`, {
+    // dist/index.html is renamed to dist/app.html by the postbuild step
+    // so that Vercel's `/` rewrite always hits this prerender function
+    // instead of being short-circuited by the filesystem.
+    const res = await fetch(`https://${host}/app.html`, {
       headers: { "user-agent": "AlhamdPrerender/1.0" },
     });
     if (!res.ok) return cachedTemplate;
