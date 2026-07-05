@@ -24,11 +24,11 @@ Disallow: /checkout
 Disallow: /thank-you
 
 # Sitemaps
-Sitemap: https://www.alhamdacademy.net/sitemap.xml
-Sitemap: https://www.alhamdacademy.net/sitemap-main.xml
-Sitemap: https://www.alhamdacademy.net/sitemap-locations.xml
-Sitemap: https://www.alhamdacademy.net/sitemap-blog.xml
+Sitemap: https://code-hug-fetcher.lovable.app/sitemap.xml
+Sitemap: https://code-hug-fetcher.lovable.app/sitemap-main.xml
+Sitemap: https://code-hug-fetcher.lovable.app/sitemap-locations.xml
+Sitemap: https://code-hug-fetcher.lovable.app/sitemap-blog.xml
 
 # RSS feed (discoverable in HTML via <link rel="alternate" type="application/rss+xml">)
-# https://www.alhamdacademy.net/rss.xml
+# https://code-hug-fetcher.lovable.app/rss.xml
 
