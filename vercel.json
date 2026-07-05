@@ -29,6 +29,7 @@
     },
     { "source": "/ar/blog/:slug", "destination": "/api/prerender?slug=:slug&lang=ar" },
     { "source": "/ar/blog", "destination": "/api/prerender?path=/blog&lang=ar" },
+    { "source": "/ar/courses/ten-qirat-online", "destination": "/api/prerender?path=/courses/ten-qirat-online&lang=ar" },
     { "source": "/ar", "destination": "/api/prerender?path=/&lang=ar" },
     { "source": "/ar/:path*", "destination": "/api/prerender?path=/:path*&lang=ar" },
     {
