@@ -450,9 +450,12 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string, la
 }
 
 async function handlePage(req: any, res: any, path: string, host: string, lang: "en" | "ar" = "en") {
-  const [seo, template] = await Promise.all([
+  const isHome = path === "/";
+  const [seo, template, fullSeo, recentPosts] = await Promise.all([
     fetchSeoOverride(path),
     getTemplate(host),
+    fetchFullSeo(path),
+    isHome ? fetchRecentPosts() : Promise.resolve(null),
   ]);
 
   // Without a template we can't do anything useful — fall through to
@@ -481,7 +484,17 @@ async function handlePage(req: any, res: any, path: string, host: string, lang: 
       twitterDescription: "",
       twitterImage: DEFAULT_OG_IMAGE,
     } as MetaBundle);
-  const html = injectMeta(template, meta, lang);
+  let html = injectMeta(template, meta, lang);
+
+  // Inline data so the client SPA can hydrate without extra Supabase round-trips.
+  const dataBlob = {
+    seo: { [path]: fullSeo },
+    recentPosts: recentPosts ?? null,
+  };
+  html = html.replace(
+    /<\/head>/i,
+    `<script id="__ALHAMD_DATA__" type="application/json">${jsonEmbed(dataBlob)}</script>\n</head>`,
+  );
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
