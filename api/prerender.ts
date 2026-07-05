@@ -301,55 +301,111 @@ function buildFallbackHtml(slug: string): string {
 </head><body><p>Article not found. <a href="${SITE_URL}/blog">Back to blog</a>.</p></body></html>`;
 }
 
+// Normalise a path from the ?path=... query param: keep leading slash,
+// strip trailing slash (except root), reject anything non-URL-safe.
+function normalisePath(raw: string): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("/")) return null;
+  if (!/^[/A-Za-z0-9\-_./]+$/.test(trimmed)) return null;
+  if (trimmed.length > 300) return null;
+  if (trimmed === "/") return "/";
+  return trimmed.replace(/\/+$/, "");
+}
+
+async function handleBlogPost(req: any, res: any, slug: string, host: string) {
+  const [post, seo, template] = await Promise.all([
+    fetchPost(slug),
+    fetchSeoOverride(`/blog/${slug}`),
+    getTemplate(host),
+  ]);
+
+  if (!post) {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
+    res.status(404).send(buildFallbackHtml(slug));
+    return;
+  }
+
+  if (!template) {
+    const canonical = `${SITE_URL}/blog/${post.slug}`;
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(
+      `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
+        escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
+      }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
+    );
+    return;
+  }
+
+  const meta = buildPostMeta(post, seo);
+  const html = injectMeta(template, meta);
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Vary", "Accept-Encoding");
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+  );
+  res.status(200).send(html);
+}
+
+async function handlePage(req: any, res: any, path: string, host: string) {
+  const [seo, template] = await Promise.all([
+    fetchSeoOverride(path),
+    getTemplate(host),
+  ]);
+
+  // Without a template we can't do anything useful — fall through to
+  // the static index.html by letting Vercel serve /index.html normally.
+  if (!template) {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(
+      `<!doctype html><html><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
+    );
+    return;
+  }
+
+  const meta = buildPageMeta(path, seo);
+  // No override → serve the untouched template. That still gives the
+  // homepage's defaults, which is exactly what index.html would ship.
+  const html = meta ? injectMeta(template, meta) : template;
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Vary", "Accept-Encoding");
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=600, stale-while-revalidate=86400",
+  );
+  res.status(200).send(html);
+}
+
 export default async function handler(req: any, res: any) {
   try {
-    const slugRaw = (req.query?.slug ?? "").toString();
-    const slug = slugRaw.trim().replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 200);
-    if (!slug) {
-      res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.send("Missing slug");
-      return;
-    }
-
     const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
-    const [post, seo, template] = await Promise.all([
-      fetchPost(slug),
-      fetchSeoOverride(`/blog/${slug}`),
-      getTemplate(host),
-    ]);
-
-    if (!post) {
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
-      res.status(404).send(buildFallbackHtml(slug));
+    const slugRaw = (req.query?.slug ?? "").toString();
+    if (slugRaw) {
+      const slug = slugRaw.trim().replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 200);
+      if (!slug) {
+        res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.send("Missing slug");
+        return;
+      }
+      await handleBlogPost(req, res, slug, host);
       return;
     }
 
-    if (!template) {
-      // Template fetch failed — degrade to a minimal but correct meta doc.
-      const canonical = `${SITE_URL}/blog/${post.slug}`;
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.status(200).send(
-        `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
-          escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
-        }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
-      );
+    const pathRaw = (req.query?.path ?? "").toString();
+    const path = normalisePath(pathRaw);
+    if (!path) {
+      res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send("Missing or invalid path");
       return;
     }
-
-    const meta = buildMeta(post, seo);
-    const html = injectMeta(template, meta);
-
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Vary", "Accept-Encoding");
-    res.setHeader(
-      "Cache-Control",
-      "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
-    );
-    res.status(200).send(html);
+    await handlePage(req, res, path, host);
   } catch (err) {
     res.status(500).setHeader("Content-Type", "text/plain; charset=utf-8");
     res.send(`Prerender error: ${String(err)}`);
   }
 }
+
