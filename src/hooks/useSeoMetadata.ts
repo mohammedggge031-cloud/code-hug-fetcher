@@ -24,12 +24,18 @@ interface SeoData {
 }
 
 export const useSeoMetadata = (pagePath: string) => {
-  const cached = getCached<SeoData>(`seo:${pagePath}`);
+  // Prefer server-inlined data from prerender to skip the client fetch entirely.
+  const inline = getInlineSeo<SeoData>(pagePath);
+  const cached = inline ?? getCached<SeoData>(`seo:${pagePath}`);
   const [seo, setSeo] = useState<SeoData | null>(cached ?? null);
   const [loading, setLoading] = useState(!cached);
 
   useEffect(() => {
-    if (cached) return;
+    if (cached) {
+      // Warm the client cache so subsequent SPA navigations don't refetch.
+      if (inline) setCache(`seo:${pagePath}`, inline, SEO_CACHE_TTL);
+      return;
+    }
     let cancelled = false;
 
     if (isGlobalFallbackMode()) {
