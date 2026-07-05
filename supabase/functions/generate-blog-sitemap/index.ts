@@ -32,6 +32,7 @@ Deno.serve(async (req) => {
     }
 
     const urlEntries = (posts || [])
+      .filter((post: { slug: string }) => typeof post.slug === "string" && /^[a-zA-Z0-9._~-]+$/.test(post.slug))
       .map((post: { slug: string; updated_at: string | null; published_at: string | null; created_at: string }) => {
         const lastmod = new Date(post.updated_at || post.published_at || post.created_at)
           .toISOString()
