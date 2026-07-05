@@ -464,7 +464,7 @@ async function handlePage(req: any, res: any, path: string, host: string, lang: 
     ({
       title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
       description: "",
-      canonical: `${SITE_URL}${path === "/" ? "/" : path}`,
+      logicalPath: path,
       ogType: "website" as const,
       ogTitle: "Alhamd Academy",
       ogDescription: "",
