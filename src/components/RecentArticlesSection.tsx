@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { safeDataRequest } from "@/lib/safeRuntimeData";
+import { getInlineRecentPosts } from "@/lib/inlineData";
 
 interface RecentPost {
   slug: string;
