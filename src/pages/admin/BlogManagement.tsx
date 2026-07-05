@@ -261,7 +261,7 @@ const BlogManagement = () => {
                 <TableHead>{t("blog.col.category")}</TableHead>
                 <TableHead>{t("blog.col.status")}</TableHead>
                 <TableHead>{t("blog.col.date")}</TableHead>
-                <TableHead className="w-28">{t("blog.col.actions")}</TableHead>
+                <TableHead className="w-40">{t("blog.col.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
