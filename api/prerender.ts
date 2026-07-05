@@ -443,6 +443,10 @@ export default async function handler(req: any, res: any) {
   try {
     const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
+    // Language detection: `?lang=ar` toggles Arabic. Default English.
+    const langRaw = (req.query?.lang ?? "").toString().toLowerCase();
+    const lang: "en" | "ar" = langRaw === "ar" ? "ar" : "en";
+
     // `path` wins over `slug`. Vercel forwards named source params
     // (e.g. `/courses/:slug`) into the destination query string, which
     // would otherwise hijack these requests into the blog-post branch.
@@ -454,7 +458,7 @@ export default async function handler(req: any, res: any) {
         res.send("Missing or invalid path");
         return;
       }
-      await handlePage(req, res, path, host);
+      await handlePage(req, res, path, host, lang);
       return;
     }
 
@@ -466,7 +470,7 @@ export default async function handler(req: any, res: any) {
         res.send("Missing slug");
         return;
       }
-      await handleBlogPost(req, res, slug, host);
+      await handleBlogPost(req, res, slug, host, lang);
       return;
     }
 
