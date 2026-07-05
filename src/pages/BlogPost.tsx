@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +11,8 @@ import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
+import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
+import TableOfContents from "@/components/blog/TableOfContents";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
@@ -146,6 +148,48 @@ const BlogPost = () => {
     ],
   };
 
+  // Auto-extract FAQ Schema from H2/H3 whose text ends with a question mark.
+  // Each question is paired with the immediately following paragraph(s) as its answer.
+  // This gives blog posts a chance at "People also ask" rich results without any
+  // author work — if a post has no question-style headings, nothing is emitted.
+  const faqSchema = useMemo(() => {
+    if (typeof window === "undefined" || !contentHtml) return null;
+    try {
+      const doc = new DOMParser().parseFromString(contentHtml, "text/html");
+      const nodes = Array.from(doc.querySelectorAll("h2, h3"));
+      const items: { q: string; a: string }[] = [];
+      for (const h of nodes) {
+        const q = (h.textContent || "").trim();
+        if (!q || !/[?؟]\s*$/.test(q)) continue;
+        const answerParts: string[] = [];
+        let sib = h.nextElementSibling;
+        while (sib && !/^H[1-6]$/i.test(sib.tagName)) {
+          const text = (sib.textContent || "").trim();
+          if (text) answerParts.push(text);
+          sib = sib.nextElementSibling;
+        }
+        const a = answerParts.join(" ").slice(0, 800);
+        if (a) items.push({ q, a });
+      }
+      if (items.length === 0) return null;
+      return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((it) => ({
+          "@type": "Question",
+          name: it.q,
+          acceptedAnswer: { "@type": "Answer", text: it.a },
+        })),
+      };
+    } catch {
+      return null;
+    }
+  }, [contentHtml]);
+
+  const structured = faqSchema
+    ? [articleSchema, breadcrumbSchema, faqSchema]
+    : [articleSchema, breadcrumbSchema];
+
   return (
     <div className="min-h-screen">
       <SEOHead
@@ -156,9 +200,10 @@ const BlogPost = () => {
         ogImage={post.featured_image}
         keywords={`${catName}, quran, alhamd academy`}
         article={{ publishedTime: post.published_at || postDate, modifiedTime: post.updated_at || post.published_at || postDate, author: post.author || "Alhamd Academy", section: catName }}
-        structuredData={[articleSchema, breadcrumbSchema]}
+        structuredData={structured}
         dynamicSeo={dynamicSeo}
       />
+      <ReadingProgressBar />
       <Navbar />
 
       <main>
@@ -222,7 +267,13 @@ const BlogPost = () => {
         )}
 
         <article className="container mx-auto px-4 max-w-4xl py-12">
+          <TableOfContents
+            html={sanitizeHtml(contentHtml)}
+            containerSelector="#blog-post-body"
+            lang={lang === "ar" ? "ar" : "en"}
+          />
           <div
+            id="blog-post-body"
             className="bg-card rounded-xl border border-border p-6 md:p-10 shadow-soft prose prose-sm max-w-none"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(contentHtml) }}
           />
