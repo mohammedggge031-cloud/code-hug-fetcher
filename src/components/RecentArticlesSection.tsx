@@ -24,9 +24,26 @@ interface RecentPost {
 const RecentArticlesSection = () => {
   const { t, lang } = useLanguage();
   const { fadeIn, fadeInUp, slideInLeft } = useMobileSafeMotion();
-  const [posts, setPosts] = useState<RecentPost[]>([]);
+  const mapPosts = (raw: any[]): RecentPost[] =>
+    raw.map((p: any) => ({
+      slug: p.slug,
+      title_en: p.title_en || p.title_ar,
+      title_ar: p.title_ar || p.title_en,
+      excerpt_en: p.excerpt_en || p.excerpt_ar || "",
+      excerpt_ar: p.excerpt_ar || p.excerpt_en || "",
+      category: p.blog_categories?.name_en || "Uncategorized",
+      categoryAr: p.blog_categories?.name_ar || "غير مصنف",
+      readTimeEn: p.read_time_en || "5 min read",
+      readTimeAr: p.read_time_ar || "٥ دقائق قراءة",
+      image: p.featured_image || "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=640&q=70",
+    }));
+
+  const inline = getInlineRecentPosts<any>();
+  const [posts, setPosts] = useState<RecentPost[]>(inline ? mapPosts(inline) : []);
 
   useEffect(() => {
+    // Server-inlined data from prerender — skip the client fetch.
+    if (inline && inline.length > 0) return;
     let cancelled = false;
 
     const fetch = async () => {
@@ -46,21 +63,7 @@ const RecentArticlesSection = () => {
       });
 
       if (cancelled) return;
-
-      setPosts(
-        data.map((p: any) => ({
-          slug: p.slug,
-          title_en: p.title_en || p.title_ar,
-          title_ar: p.title_ar || p.title_en,
-          excerpt_en: p.excerpt_en || p.excerpt_ar || "",
-          excerpt_ar: p.excerpt_ar || p.excerpt_en || "",
-          category: p.blog_categories?.name_en || "Uncategorized",
-          categoryAr: p.blog_categories?.name_ar || "غير مصنف",
-          readTimeEn: p.read_time_en || "5 min read",
-          readTimeAr: p.read_time_ar || "٥ دقائق قراءة",
-          image: p.featured_image || "https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=640&q=70",
-        }))
-      );
+      setPosts(mapPosts(data));
     };
 
     void fetch();
