@@ -196,6 +196,7 @@ PricingCard.displayName = "PricingCard";
 const PricingSection = () => {
   const { t } = useLanguage();
   const [duration, setDuration] = useState<Duration>("30");
+  const pricingData = useActivePricingPackages();
 
   const durations: { value: Duration; label: string }[] = [
     { value: "30", label: t("30 Min", "٣٠ دقيقة") },
@@ -203,7 +204,7 @@ const PricingSection = () => {
     { value: "60", label: t("60 Min", "٦٠ دقيقة") },
   ];
 
-  const plans = pricing[duration];
+  const plans = pricingData[duration];
 
   return (
     <section id="pricing" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="Online Quran Classes Pricing Plans">
