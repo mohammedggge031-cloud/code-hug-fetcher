@@ -135,6 +135,7 @@ const App = () => (
               <Route path="/trial-registration" element={<TrialRegistration />} />
               
               <Route path="/courses/ten-qirat-online" element={<TenQiratOnline />} />
+              <Route path="/courses/ijazah-program" element={<IjazahProgramCourse />} />
               <Route path="/courses/:slug" element={<CoursePage />} />
               <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
               <Route path="/quran-classes-for-kids" element={<QuranClassesForKids />} />
