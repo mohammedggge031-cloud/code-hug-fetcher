@@ -164,6 +164,32 @@ const BlogPost = () => {
       <main>
         <section className="bg-hero geometric-pattern pt-32 pb-12 md:pt-40 md:pb-16">
           <div className="container mx-auto px-4 max-w-4xl">
+            {/* Visible breadcrumbs (also emitted as BreadcrumbList schema above) */}
+            <nav aria-label={t("Breadcrumb", "مسار التصفح")} className="mb-5">
+              <ol className="flex flex-wrap items-center gap-1.5 text-xs text-primary-foreground/60">
+                <li>
+                  <Link to="/" className="inline-flex items-center gap-1 hover:text-accent transition-colors">
+                    <Home className="w-3.5 h-3.5" />
+                    {t("Home", "الرئيسية")}
+                  </Link>
+                </li>
+                <li aria-hidden="true">
+                  {lang === "ar" ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                </li>
+                <li>
+                  <Link to="/blog" className="hover:text-accent transition-colors">
+                    {t("Blog", "المدونة")}
+                  </Link>
+                </li>
+                <li aria-hidden="true">
+                  {lang === "ar" ? <ChevronLeft className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                </li>
+                <li className="text-accent line-clamp-1 max-w-[60%]" aria-current="page">
+                  {t(titleEn, titleAr)}
+                </li>
+              </ol>
+            </nav>
+
             <Link to="/blog" className="inline-flex items-center gap-1.5 text-primary-foreground/70 hover:text-accent text-sm mb-6 transition-colors">
               <BackArrow className="w-4 h-4" />
               {t("Back to Blog", "العودة للمدونة")}
