@@ -8,6 +8,7 @@
 
 insert into public.seo_metadata (
   page_path,
+  page_name,
   title,
   description,
   keywords,
