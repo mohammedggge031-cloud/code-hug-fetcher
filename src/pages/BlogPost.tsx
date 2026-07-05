@@ -24,6 +24,49 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
 
+  // Precompute values that hooks below depend on — must be defined before any
+  // conditional early-return so hook order stays stable across renders.
+  const contentEnEarly = post?.content_en || post?.content_ar || "";
+  const contentArEarly = post?.content_ar || post?.content_en || "";
+  const contentHtmlForHooks = t(contentEnEarly, contentArEarly);
+
+  // Auto-extract FAQ Schema from H2/H3 whose text ends with a question mark.
+  // MUST be declared before any conditional return to satisfy Rules of Hooks.
+  const faqSchema = useMemo(() => {
+    if (typeof window === "undefined" || !contentHtmlForHooks) return null;
+    try {
+      const doc = new DOMParser().parseFromString(contentHtmlForHooks, "text/html");
+      const nodes = Array.from(doc.querySelectorAll("h2, h3"));
+      const items: { q: string; a: string }[] = [];
+      for (const h of nodes) {
+        const q = (h.textContent || "").trim();
+        if (!q || !/[?؟]\s*$/.test(q)) continue;
+        const answerParts: string[] = [];
+        let sib = h.nextElementSibling;
+        while (sib && !/^H[1-6]$/i.test(sib.tagName)) {
+          const text = (sib.textContent || "").trim();
+          if (text) answerParts.push(text);
+          sib = sib.nextElementSibling;
+        }
+        const a = answerParts.join(" ").slice(0, 800);
+        if (a) items.push({ q, a });
+      }
+      if (items.length === 0) return null;
+      return {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((it) => ({
+          "@type": "Question",
+          name: it.q,
+          acceptedAnswer: { "@type": "Answer", text: it.a },
+        })),
+      };
+    } catch {
+      return null;
+    }
+  }, [contentHtmlForHooks]);
+
+
   useEffect(() => {
     let cancelled = false;
 
