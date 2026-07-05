@@ -1,11 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { memo, useState, useCallback } from "react";
+import { memo, useState } from "react";
 import { Check, Star } from "lucide-react";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
 import { retryWithBackoff } from "@/lib/logger";
-
-type Duration = "30" | "45" | "60";
+import { useActivePricingPackages, type Duration } from "@/hooks/usePricingPlan";
 
 interface Plan {
   days: number;
