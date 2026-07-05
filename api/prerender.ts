@@ -215,10 +215,10 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<link rel="canonical" href="${m.canonical}" />`,
   );
 
-  // og:type website -> article
+  // og:type (article for blog posts, website for landing pages)
   html = html.replace(
     /<meta\s+property=["']og:type["'][^>]*>/i,
-    `<meta property="og:type" content="article" />`,
+    `<meta property="og:type" content="${m.ogType}" />`,
   );
 
   // og:url
@@ -263,27 +263,32 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
-  // Article timestamps + JSON-LD injected right before </head>
-  const extra = [
-    m.publishedTime
-      ? `<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`
-      : "",
-    m.modifiedTime
-      ? `<meta property="article:modified_time" content="${escapeAttr(m.modifiedTime)}" />`
-      : "",
-    `<script type="application/ld+json">${m.jsonLd}</script>`,
-  ].filter(Boolean).join("\n");
-  html = html.replace(/<\/head>/i, `${extra}\n</head>`);
+  // Article extras — only for blog posts.
+  const extras: string[] = [];
+  if (m.publishedTime) {
+    extras.push(`<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`);
+  }
+  if (m.modifiedTime) {
+    extras.push(`<meta property="article:modified_time" content="${escapeAttr(m.modifiedTime)}" />`);
+  }
+  if (m.jsonLd) {
+    extras.push(`<script type="application/ld+json">${m.jsonLd}</script>`);
+  }
+  if (extras.length) {
+    html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
+  }
 
-  // Inject a <noscript> summary right after <body> so JS-less crawlers
-  // see the article title/excerpt too.
-  html = html.replace(
-    /<body([^>]*)>/i,
-    `<body$1>\n<noscript>${m.noscriptBody}</noscript>`,
-  );
+  // Optional <noscript> body summary (blog posts only).
+  if (m.noscriptBody) {
+    html = html.replace(
+      /<body([^>]*)>/i,
+      `<body$1>\n<noscript>${m.noscriptBody}</noscript>`,
+    );
+  }
 
   return html;
 }
+
 
 function buildFallbackHtml(slug: string): string {
   const canonical = `${SITE_URL}/blog/${slug}`;
