@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { RelatedCoursesForBlog } from "@/components/InternalLinking";
-import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, ArrowRight, BookOpen, ChevronRight, ChevronLeft, Home } from "lucide-react";
 import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { sanitizeHtml } from "@/lib/sanitize";
