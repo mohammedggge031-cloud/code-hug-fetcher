@@ -61,6 +61,7 @@ insert into public.seo_metadata (
   false
 )
 on conflict (page_path) do update set
+  page_name              = excluded.page_name,
   title                  = excluded.title,
   description            = excluded.description,
   keywords               = excluded.keywords,
