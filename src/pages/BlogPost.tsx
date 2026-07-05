@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,6 +11,8 @@ import ExploreMoreSection from "@/components/ExploreMoreSection";
 import { isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
+import ReadingProgressBar from "@/components/blog/ReadingProgressBar";
+import TableOfContents from "@/components/blog/TableOfContents";
 
 const BlogPost = () => {
   const { t, lang } = useLanguage();
