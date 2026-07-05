@@ -62,6 +62,7 @@
     { "source": "/one-on-one-quran-classes", "destination": "/api/prerender?path=/one-on-one-quran-classes" },
     { "source": "/online-quran-classes-with-certificate", "destination": "/api/prerender?path=/online-quran-classes-with-certificate" },
     { "source": "/learn-quran-online-:location", "destination": "/api/prerender?path=/learn-quran-online-:location" },
+    { "source": "/:file(google[a-z0-9]+\\.html)", "destination": "/:file" },
     { "source": "/(.*)", "destination": "/app.html" }
   ],
   "headers": [
