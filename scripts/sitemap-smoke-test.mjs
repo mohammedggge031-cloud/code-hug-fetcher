@@ -13,7 +13,7 @@
  * Exit code 0 = all good, 1 = failure (suitable for CI / post-deploy hooks).
  */
 
-const BASE = (process.env.SITEMAP_BASE_URL || "https://code-hug-fetcher.lovable.app").replace(/\/$/, "");
+const BASE = (process.env.SITEMAP_BASE_URL || "https://www.alhamdacademy.net").replace(/\/$/, "");
 const INDEX_URL = `${BASE}/sitemap.xml`;
 const TIMEOUT_MS = 15_000;
 
