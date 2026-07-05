@@ -98,17 +98,8 @@ const LocationPage = () => {
     },
   };
 
-  const faqs: FAQ[] = useMemo(
-    () => location?.faqs.map((faq) => ({
-      questionEn: faq.q,
-      questionAr: faq.q,
-      answerEn: faq.a,
-      answerAr: faq.a,
-    })) || [],
-    [location],
-  );
-
   if (!location) return <Navigate to="/404" replace />;
+
 
   const trustBadges: TrustBadge[] = [
     { icon: Award, textEn: "Certified Al-Azhar Teachers", textAr: "معلمون معتمدون من الأزهر" },
