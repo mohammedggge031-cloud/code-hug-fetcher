@@ -109,7 +109,7 @@ const App = () => (
       <LanguageProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename={ROUTER_BASENAME || undefined}>
           <ScrollToTop />
           <SiteVerificationMeta />
           <FloatingActions />
