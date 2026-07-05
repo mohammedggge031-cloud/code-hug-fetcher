@@ -29,6 +29,7 @@
     },
     { "source": "/ar/blog/:slug", "destination": "/api/prerender?slug=:slug&lang=ar" },
     { "source": "/ar/blog", "destination": "/api/prerender?path=/blog&lang=ar" },
+    { "source": "/ar/courses/ten-qirat-online", "destination": "/api/prerender?path=/courses/ten-qirat-online&lang=ar" },
     { "source": "/ar", "destination": "/api/prerender?path=/&lang=ar" },
     { "source": "/ar/:path*", "destination": "/api/prerender?path=/:path*&lang=ar" },
     {
@@ -61,6 +62,7 @@
     { "source": "/one-on-one-quran-classes", "destination": "/api/prerender?path=/one-on-one-quran-classes" },
     { "source": "/online-quran-classes-with-certificate", "destination": "/api/prerender?path=/online-quran-classes-with-certificate" },
     { "source": "/learn-quran-online-:location", "destination": "/api/prerender?path=/learn-quran-online-:location" },
+    { "source": "/:file(google[a-z0-9]+\\.html)", "destination": "/:file" },
     { "source": "/(.*)", "destination": "/app.html" }
   ],
   "headers": [

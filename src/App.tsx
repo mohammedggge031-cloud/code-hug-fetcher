@@ -101,6 +101,7 @@ const LearnQuranForReverts = lazyRetry(() => import("./pages/LearnQuranForRevert
 const NooraniQaidaOnline = lazyRetry(() => import("./pages/NooraniQaidaOnline"));
 const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSisters"));
 const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
+const TenQiratOnline = lazyRetry(() => import("./pages/TenQiratOnline"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const App = () => (
@@ -131,6 +132,7 @@ const App = () => (
               <Route path="/free-trial" element={<FreeTrial />} />
               <Route path="/trial-registration" element={<TrialRegistration />} />
               
+              <Route path="/courses/ten-qirat-online" element={<TenQiratOnline />} />
               <Route path="/courses/:slug" element={<CoursePage />} />
               <Route path="/learn-quran-online-worldwide" element={<LearnQuranWorldwide />} />
               <Route path="/quran-classes-for-kids" element={<QuranClassesForKids />} />
