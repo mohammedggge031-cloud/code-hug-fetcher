@@ -192,6 +192,8 @@ describe("api/prerender routing", () => {
     expect(res.body).toContain('hreflang="ar"');
     expect(res.body).toContain('hreflang="x-default"');
     expect(res.body).toContain('href="https://www.alhamdacademy.net/videos"');
+    expect(res.body).toContain('href="https://www.alhamdacademy.net/ar/videos"');
+    expect(res.body).not.toContain("?lang=");
   });
 
   it("switches <html lang>, dir, canonical, and og:url to Arabic when lang=ar (from /ar/* rewrite)", async () => {
