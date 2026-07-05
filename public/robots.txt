@@ -29,5 +29,6 @@ Sitemap: https://www.alhamdacademy.net/sitemap-main.xml
 Sitemap: https://www.alhamdacademy.net/sitemap-locations.xml
 Sitemap: https://www.alhamdacademy.net/sitemap-blog.xml
 
-# RSS feed
-# Feed: https://www.alhamdacademy.net/rss.xml
+# RSS feed (discoverable in HTML via <link rel="alternate" type="application/rss+xml">)
+# https://www.alhamdacademy.net/rss.xml
+
