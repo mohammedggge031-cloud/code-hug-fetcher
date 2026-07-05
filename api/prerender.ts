@@ -360,7 +360,7 @@ function normalisePath(raw: string): string | null {
   return trimmed.replace(/\/+$/, "");
 }
 
-async function handleBlogPost(req: any, res: any, slug: string, host: string) {
+async function handleBlogPost(req: any, res: any, slug: string, host: string, lang: "en" | "ar" = "en") {
   const [post, seo, template] = await Promise.all([
     fetchPost(slug),
     fetchSeoOverride(`/blog/${slug}`),
@@ -378,7 +378,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
     const canonical = `${SITE_URL}/blog/${post.slug}`;
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.status(200).send(
-      `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
+      `<!doctype html><html lang="${lang}"><head><meta charset="UTF-8" /><title>${
         escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
       }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
     );
@@ -386,7 +386,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
   }
 
   const meta = buildPostMeta(post, seo);
-  const html = injectMeta(template, meta);
+  const html = injectMeta(template, meta, lang);
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
   res.setHeader(
@@ -396,7 +396,7 @@ async function handleBlogPost(req: any, res: any, slug: string, host: string) {
   res.status(200).send(html);
 }
 
-async function handlePage(req: any, res: any, path: string, host: string) {
+async function handlePage(req: any, res: any, path: string, host: string, lang: "en" | "ar" = "en") {
   const [seo, template] = await Promise.all([
     fetchSeoOverride(path),
     getTemplate(host),
@@ -407,15 +407,28 @@ async function handlePage(req: any, res: any, path: string, host: string) {
   if (!template) {
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.status(200).send(
-      `<!doctype html><html><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
+      `<!doctype html><html lang="${lang}"><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
     );
     return;
   }
 
-  const meta = buildPageMeta(path, seo);
-  // No override → serve the untouched template. That still gives the
-  // homepage's defaults, which is exactly what index.html would ship.
-  const html = meta ? injectMeta(template, meta) : template;
+  // Build a minimal MetaBundle for pages without a seo_metadata override
+  // so lang/dir + hreflang still get applied to the static template.
+  const meta =
+    buildPageMeta(path, seo) ??
+    ({
+      title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
+      description: "",
+      canonical: `${SITE_URL}${path === "/" ? "/" : path}`,
+      ogType: "website" as const,
+      ogTitle: "Alhamd Academy",
+      ogDescription: "",
+      ogImage: DEFAULT_OG_IMAGE,
+      twitterTitle: "Alhamd Academy",
+      twitterDescription: "",
+      twitterImage: DEFAULT_OG_IMAGE,
+    } as MetaBundle);
+  const html = injectMeta(template, meta, lang);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Vary", "Accept-Encoding");
