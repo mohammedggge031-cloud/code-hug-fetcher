@@ -331,21 +331,15 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
-  // hreflang alternates. English is the default baseline: `en` and
-  // `x-default` both point at the bare canonical (no query string).
-  // Arabic gets `?lang=ar` appended.
-  let arabicUrl = m.canonical;
-  try {
-    const u = new URL(m.canonical);
-    u.searchParams.set("lang", "ar");
-    arabicUrl = u.toString();
-  } catch {
-    arabicUrl = m.canonical;
-  }
+  // hreflang alternates — clean directory-based URLs (no query params).
+  // English is the default baseline at the bare path; Arabic lives under
+  // the `/ar` subfolder; `x-default` mirrors English.
+  const englishUrl = englishUrlFor(m.logicalPath);
+  const arabicUrl = arabicUrlFor(m.logicalPath);
   const hreflangTags = [
-    `<link rel="alternate" hreflang="en" href="${escapeAttr(m.canonical)}" />`,
+    `<link rel="alternate" hreflang="en" href="${escapeAttr(englishUrl)}" />`,
     `<link rel="alternate" hreflang="ar" href="${escapeAttr(arabicUrl)}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(m.canonical)}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeAttr(englishUrl)}" />`,
   ].join("");
   // Strip any hreflang alternates already present so we don't ship duplicates.
   html = html.replace(
