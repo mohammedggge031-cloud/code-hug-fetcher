@@ -210,7 +210,7 @@ describe("api/prerender routing", () => {
     expect(res.body).toContain('content="ar_AR"');
   });
 
-  it("emits exactly one hreflang link per language + x-default", async () => {
+  it("emits exactly one hreflang link per language + x-default (en is bare canonical, ar carries ?lang=ar)", async () => {
     installFetchMock({
       posts: { p: { slug: "p", title_en: "P", published_at: "2026-05-01T00:00:00Z" } },
     });
@@ -225,9 +225,18 @@ describe("api/prerender routing", () => {
     expect(en).toBe(1);
     expect(ar).toBe(1);
     expect(xd).toBe(1);
-    // hreflang URLs carry the ?lang= toggle
-    expect(res.body).toContain("?lang=en");
-    expect(res.body).toContain("?lang=ar");
+    // English default: bare canonical, no ?lang= parameter
+    expect(res.body).not.toContain("?lang=en");
+    expect(res.body).toContain(
+      '<link rel="alternate" hreflang="en" href="https://www.alhamdacademy.net/blog/p" />',
+    );
+    expect(res.body).toContain(
+      '<link rel="alternate" hreflang="x-default" href="https://www.alhamdacademy.net/blog/p" />',
+    );
+    // Arabic override: canonical + ?lang=ar
+    expect(res.body).toContain(
+      '<link rel="alternate" hreflang="ar" href="https://www.alhamdacademy.net/blog/p?lang=ar" />',
+    );
   });
 
   it("injects per-page title/canonical/og for landing pages", async () => {
