@@ -90,6 +90,24 @@ async function getTemplate(host: string): Promise<string | null> {
   }
 }
 
+
+interface MetaBundle {
+  title: string;
+  description: string;
+  canonical: string;
+  ogType: "article" | "website";
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  twitterTitle: string;
+  twitterDescription: string;
+  twitterImage: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  jsonLd?: string;
+  noscriptBody?: string;
+}
+
 function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string {
   const titleEn = post.title_en || post.title_ar || "";
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
@@ -124,23 +142,7 @@ function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string
   return JSON.stringify([article, breadcrumb]);
 }
 
-interface MetaBundle {
-  title: string;
-  description: string;
-  canonical: string;
-  ogTitle: string;
-  ogDescription: string;
-  ogImage: string;
-  twitterTitle: string;
-  twitterDescription: string;
-  twitterImage: string;
-  publishedTime: string;
-  modifiedTime: string;
-  jsonLd: string;
-  noscriptBody: string;
-}
-
-function buildMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
+function buildPostMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
   const canonical = `${SITE_URL}/blog/${post.slug}`;
   const titleEn = post.title_en || post.title_ar || "Alhamd Academy Blog";
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
@@ -160,11 +162,34 @@ function buildMeta(post: BlogPost, seo: SeoOverride | null): MetaBundle {
     excerptEn ? `<p>${escapeHtml(excerptEn)}</p>` : ""
   }<p><a href="${canonical}">Read on Alhamd Academy</a></p>`;
   return {
-    title, description, canonical, ogTitle, ogDescription, ogImage,
-    twitterTitle, twitterDescription, twitterImage, publishedTime,
-    modifiedTime, jsonLd, noscriptBody,
+    title, description, canonical, ogType: "article",
+    ogTitle, ogDescription, ogImage,
+    twitterTitle, twitterDescription, twitterImage,
+    publishedTime, modifiedTime, jsonLd, noscriptBody,
   };
 }
+
+function buildPageMeta(path: string, seo: SeoOverride | null): MetaBundle | null {
+  // Page-mode only injects when we have a seo_metadata row — otherwise
+  // the static index.html defaults are already correct for /.
+  if (!seo || (!seo.title && !seo.description && !seo.og_title)) return null;
+  const canonical = `${SITE_URL}${path === "/" ? "/" : path}`;
+  const title = seo.title || seo.og_title || "Alhamd Academy";
+  const description = seo.description || seo.og_description || "";
+  const ogTitle = seo.og_title || title;
+  const ogDescription = seo.og_description || description;
+  const ogImage = seo.og_image || DEFAULT_OG_IMAGE;
+  const twitterTitle = seo.twitter_title || ogTitle;
+  const twitterDescription = seo.twitter_description || ogDescription;
+  const twitterImage = seo.twitter_image || ogImage;
+  return {
+    title, description, canonical, ogType: "website",
+    ogTitle, ogDescription, ogImage,
+    twitterTitle, twitterDescription, twitterImage,
+  };
+}
+
+
 
 /**
  * Rewrite the <head> of the built SPA template with per-article meta.
@@ -190,10 +215,10 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<link rel="canonical" href="${m.canonical}" />`,
   );
 
-  // og:type website -> article
+  // og:type (article for blog posts, website for landing pages)
   html = html.replace(
     /<meta\s+property=["']og:type["'][^>]*>/i,
-    `<meta property="og:type" content="article" />`,
+    `<meta property="og:type" content="${m.ogType}" />`,
   );
 
   // og:url
@@ -238,27 +263,32 @@ function injectMeta(template: string, m: MetaBundle): string {
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
-  // Article timestamps + JSON-LD injected right before </head>
-  const extra = [
-    m.publishedTime
-      ? `<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`
-      : "",
-    m.modifiedTime
-      ? `<meta property="article:modified_time" content="${escapeAttr(m.modifiedTime)}" />`
-      : "",
-    `<script type="application/ld+json">${m.jsonLd}</script>`,
-  ].filter(Boolean).join("\n");
-  html = html.replace(/<\/head>/i, `${extra}\n</head>`);
+  // Article extras — only for blog posts.
+  const extras: string[] = [];
+  if (m.publishedTime) {
+    extras.push(`<meta property="article:published_time" content="${escapeAttr(m.publishedTime)}" />`);
+  }
+  if (m.modifiedTime) {
+    extras.push(`<meta property="article:modified_time" content="${escapeAttr(m.modifiedTime)}" />`);
+  }
+  if (m.jsonLd) {
+    extras.push(`<script type="application/ld+json">${m.jsonLd}</script>`);
+  }
+  if (extras.length) {
+    html = html.replace(/<\/head>/i, `${extras.join("\n")}\n</head>`);
+  }
 
-  // Inject a <noscript> summary right after <body> so JS-less crawlers
-  // see the article title/excerpt too.
-  html = html.replace(
-    /<body([^>]*)>/i,
-    `<body$1>\n<noscript>${m.noscriptBody}</noscript>`,
-  );
+  // Optional <noscript> body summary (blog posts only).
+  if (m.noscriptBody) {
+    html = html.replace(
+      /<body([^>]*)>/i,
+      `<body$1>\n<noscript>${m.noscriptBody}</noscript>`,
+    );
+  }
 
   return html;
 }
+
 
 function buildFallbackHtml(slug: string): string {
   const canonical = `${SITE_URL}/blog/${slug}`;
@@ -271,55 +301,111 @@ function buildFallbackHtml(slug: string): string {
 </head><body><p>Article not found. <a href="${SITE_URL}/blog">Back to blog</a>.</p></body></html>`;
 }
 
+// Normalise a path from the ?path=... query param: keep leading slash,
+// strip trailing slash (except root), reject anything non-URL-safe.
+function normalisePath(raw: string): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("/")) return null;
+  if (!/^[/A-Za-z0-9\-_./]+$/.test(trimmed)) return null;
+  if (trimmed.length > 300) return null;
+  if (trimmed === "/") return "/";
+  return trimmed.replace(/\/+$/, "");
+}
+
+async function handleBlogPost(req: any, res: any, slug: string, host: string) {
+  const [post, seo, template] = await Promise.all([
+    fetchPost(slug),
+    fetchSeoOverride(`/blog/${slug}`),
+    getTemplate(host),
+  ]);
+
+  if (!post) {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
+    res.status(404).send(buildFallbackHtml(slug));
+    return;
+  }
+
+  if (!template) {
+    const canonical = `${SITE_URL}/blog/${post.slug}`;
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(
+      `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
+        escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
+      }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
+    );
+    return;
+  }
+
+  const meta = buildPostMeta(post, seo);
+  const html = injectMeta(template, meta);
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Vary", "Accept-Encoding");
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
+  );
+  res.status(200).send(html);
+}
+
+async function handlePage(req: any, res: any, path: string, host: string) {
+  const [seo, template] = await Promise.all([
+    fetchSeoOverride(path),
+    getTemplate(host),
+  ]);
+
+  // Without a template we can't do anything useful — fall through to
+  // the static index.html by letting Vercel serve /index.html normally.
+  if (!template) {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(
+      `<!doctype html><html><head><meta http-equiv="refresh" content="0; url=${SITE_URL}${path}" /></head><body></body></html>`,
+    );
+    return;
+  }
+
+  const meta = buildPageMeta(path, seo);
+  // No override → serve the untouched template. That still gives the
+  // homepage's defaults, which is exactly what index.html would ship.
+  const html = meta ? injectMeta(template, meta) : template;
+
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.setHeader("Vary", "Accept-Encoding");
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=60, s-maxage=600, stale-while-revalidate=86400",
+  );
+  res.status(200).send(html);
+}
+
 export default async function handler(req: any, res: any) {
   try {
-    const slugRaw = (req.query?.slug ?? "").toString();
-    const slug = slugRaw.trim().replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 200);
-    if (!slug) {
-      res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
-      res.send("Missing slug");
-      return;
-    }
-
     const host = (req.headers?.["x-forwarded-host"] ?? req.headers?.host ?? "www.alhamdacademy.net").toString();
 
-    const [post, seo, template] = await Promise.all([
-      fetchPost(slug),
-      fetchSeoOverride(`/blog/${slug}`),
-      getTemplate(host),
-    ]);
-
-    if (!post) {
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.setHeader("Cache-Control", "public, max-age=60, s-maxage=300");
-      res.status(404).send(buildFallbackHtml(slug));
+    const slugRaw = (req.query?.slug ?? "").toString();
+    if (slugRaw) {
+      const slug = slugRaw.trim().replace(/[^a-zA-Z0-9-_]/g, "").slice(0, 200);
+      if (!slug) {
+        res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+        res.send("Missing slug");
+        return;
+      }
+      await handleBlogPost(req, res, slug, host);
       return;
     }
 
-    if (!template) {
-      // Template fetch failed — degrade to a minimal but correct meta doc.
-      const canonical = `${SITE_URL}/blog/${post.slug}`;
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.status(200).send(
-        `<!doctype html><html lang="en"><head><meta charset="UTF-8" /><title>${
-          escapeHtml(post.title_en || post.title_ar || "Alhamd Academy Blog")
-        }</title><link rel="canonical" href="${canonical}" /><meta http-equiv="refresh" content="0; url=${canonical}" /></head><body><script>location.replace(${JSON.stringify(canonical)})</script></body></html>`,
-      );
+    const pathRaw = (req.query?.path ?? "").toString();
+    const path = normalisePath(pathRaw);
+    if (!path) {
+      res.status(400).setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.send("Missing or invalid path");
       return;
     }
-
-    const meta = buildMeta(post, seo);
-    const html = injectMeta(template, meta);
-
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.setHeader("Vary", "Accept-Encoding");
-    res.setHeader(
-      "Cache-Control",
-      "public, max-age=60, s-maxage=300, stale-while-revalidate=86400",
-    );
-    res.status(200).send(html);
+    await handlePage(req, res, path, host);
   } catch (err) {
     res.status(500).setHeader("Content-Type", "text/plain; charset=utf-8");
     res.send(`Prerender error: ${String(err)}`);
   }
 }
+
