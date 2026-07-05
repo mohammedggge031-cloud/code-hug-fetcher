@@ -177,7 +177,34 @@ function canonicalFor(logicalPath: string, lang: "en" | "ar"): string {
 }
 
 function buildJsonLd(post: BlogPost, canonical: string, ogImage: string): string {
-...
+  const titleEn = post.title_en || post.title_ar || "";
+  const excerptEn = post.excerpt_en || post.excerpt_ar || "";
+  const publishedTime = post.published_at || post.created_at || "";
+  const modifiedTime = post.updated_at || publishedTime;
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: titleEn,
+    description: excerptEn,
+    image: ogImage,
+    author: { "@type": "Organization", name: "Alhamd Academy" },
+    publisher: {
+      "@type": "Organization",
+      name: "Alhamd Academy",
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon-512.png` },
+    },
+    datePublished: publishedTime,
+    dateModified: modifiedTime,
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+    inLanguage: ["en", "ar"],
+  };
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE_URL}/blog` },
+      { "@type": "ListItem", position: 3, name: titleEn, item: canonical },
     ],
   };
   return JSON.stringify([article, breadcrumb]);
