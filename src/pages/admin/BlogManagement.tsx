@@ -179,6 +179,46 @@ const BlogManagement = () => {
     }
   };
 
+  const pingIndexNow = async (urls: string[] | undefined, label: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke("indexnow-ping", {
+        body: urls && urls.length > 0 ? { urls } : {},
+      });
+      if (error) throw error;
+      const count = (data as { urlsSubmitted?: number } | null)?.urlsSubmitted ?? urls?.length ?? 0;
+      toast({
+        title: lang === "ar" ? "تم إرسال طلب الفهرسة" : "Re-index submitted",
+        description: lang === "ar"
+          ? `${label} — ${count} رابط أُرسل إلى Bing / Yandex / IndexNow.`
+          : `${label} — ${count} URL(s) sent to Bing / Yandex / IndexNow.`,
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      toast({ title: t("err.error"), description: msg, variant: "destructive" });
+    }
+  };
+
+  const handleReindexPost = async (post: BlogPost) => {
+    setReindexingId(post.id);
+    try {
+      await pingIndexNow(
+        [`https://www.alhamdacademy.net/blog/${post.slug}`],
+        lang === "ar" ? post.title_ar || post.title_en : post.title_en,
+      );
+    } finally {
+      setReindexingId(null);
+    }
+  };
+
+  const handleReindexAll = async () => {
+    setReindexingAll(true);
+    try {
+      await pingIndexNow(undefined, lang === "ar" ? "كل صفحات الموقع" : "All site pages");
+    } finally {
+      setReindexingAll(false);
+    }
+  };
+
   const filtered = posts.filter(p => p.title_en.toLowerCase().includes(search.toLowerCase()) || p.title_ar.includes(search));
   const getCategoryName = (catId: string | null) => {
     if (!catId) return "—";
