@@ -110,6 +110,8 @@ async function fetchSeoMetadata() {
 
 function removeStaticSeoFromHead(head) {
   return head
+    .replace(/<meta\s+charset=["'][^"']+["'][^>]*>\s*/gi, "")
+    .replace(/<meta\s+name=["']viewport["'][^>]*>\s*/gi, "")
     .replace(/<title>[\s\S]*?<\/title>\s*/gi, "")
     .replace(/<meta\s+name=["'](?:description|keywords|robots|author|twitter:[^"']+)["'][^>]*>\s*/gi, "")
     .replace(/<meta\s+property=["'](?:og:[^"']+|article:[^"']+)["'][^>]*>\s*/gi, "")
