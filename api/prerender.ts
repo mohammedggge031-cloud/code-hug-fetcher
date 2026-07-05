@@ -292,21 +292,20 @@ function injectMeta(template: string, m: MetaBundle, lang: "en" | "ar" = "en"): 
     `<meta name="twitter:image:alt" content="${escapeAttr(m.twitterTitle)}" />`,
   );
 
-  // hreflang alternates. Emit distinct URLs per language on the same
-  // canonical (query-param toggle) plus x-default → bare canonical.
-  let hreflangUrl: (code: "en" | "ar") => string;
+  // hreflang alternates. English is the default baseline: `en` and
+  // `x-default` both point at the bare canonical (no query string).
+  // Arabic gets `?lang=ar` appended.
+  let arabicUrl = m.canonical;
   try {
-    hreflangUrl = (code) => {
-      const u = new URL(m.canonical);
-      u.searchParams.set("lang", code);
-      return u.toString();
-    };
+    const u = new URL(m.canonical);
+    u.searchParams.set("lang", "ar");
+    arabicUrl = u.toString();
   } catch {
-    hreflangUrl = () => m.canonical;
+    arabicUrl = m.canonical;
   }
   const hreflangTags = [
-    `<link rel="alternate" hreflang="en" href="${escapeAttr(hreflangUrl("en"))}" />`,
-    `<link rel="alternate" hreflang="ar" href="${escapeAttr(hreflangUrl("ar"))}" />`,
+    `<link rel="alternate" hreflang="en" href="${escapeAttr(m.canonical)}" />`,
+    `<link rel="alternate" hreflang="ar" href="${escapeAttr(arabicUrl)}" />`,
     `<link rel="alternate" hreflang="x-default" href="${escapeAttr(m.canonical)}" />`,
   ].join("");
   // Strip any hreflang alternates already present so we don't ship duplicates.
