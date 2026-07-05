@@ -2,7 +2,7 @@ import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video, Megaphone, Inbox, Target } from "lucide-react";
+import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video, Megaphone, Inbox, Target, DollarSign } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -32,6 +32,7 @@ const AdminLayout = () => {
         { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isOwner },
         { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isOwner },
         { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isOwner },
+        { to: "/admin/pricing", icon: DollarSign, label: lang === "ar" ? "الأسعار" : "Pricing", end: false, show: isOwner || isAdmin },
       ],
     },
     {

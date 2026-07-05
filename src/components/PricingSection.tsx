@@ -1,11 +1,10 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { memo, useState, useCallback } from "react";
+import { memo, useState } from "react";
 import { Check, Star } from "lucide-react";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
 import { retryWithBackoff } from "@/lib/logger";
-
-type Duration = "30" | "45" | "60";
+import { useActivePricingPackages, type Duration } from "@/hooks/usePricingPlan";
 
 interface Plan {
   days: number;
@@ -19,39 +18,6 @@ interface Plan {
   popular?: boolean;
 }
 
-/*
- * Hourly-rate matrix ($/hr) — range $8–$10, strictly descending:
- *
- *              30 min   45 min   60 min
- * Explorer     10.00     9.67     9.50
- * Learner       9.50     9.17     9.00
- * Scholar       9.00     8.67     8.50
- * Achiever      8.63     8.25     8.19
- * Master        8.30     8.13     8.00
- */
-const pricing: Record<Duration, Plan[]> = {
-  "30": [
-    { days: 1, hoursPerMonth: 2, monthly: 20, was: 24, semi: 113, semiSave: "6%", annual: 206, annualSave: "14%" },
-    { days: 2, hoursPerMonth: 4, monthly: 38, was: 45, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 6, monthly: 54, was: 64, semi: 305, semiSave: "6%", annual: 557, annualSave: "14%", popular: true },
-    { days: 4, hoursPerMonth: 8, monthly: 69, was: 82, semi: 389, semiSave: "6%", annual: 712, annualSave: "14%" },
-    { days: 5, hoursPerMonth: 10, monthly: 83, was: 98, semi: 468, semiSave: "6%", annual: 857, annualSave: "14%" },
-  ],
-  "45": [
-    { days: 1, hoursPerMonth: 3, monthly: 29, was: 35, semi: 164, semiSave: "6%", annual: 299, annualSave: "14%" },
-    { days: 2, hoursPerMonth: 6, monthly: 55, was: 65, semi: 310, semiSave: "6%", annual: 567, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 9, monthly: 78, was: 92, semi: 440, semiSave: "6%", annual: 805, annualSave: "14%", popular: true },
-    { days: 4, hoursPerMonth: 12, monthly: 99, was: 117, semi: 558, semiSave: "6%", annual: 1022, annualSave: "14%" },
-    { days: 5, hoursPerMonth: 15, monthly: 122, was: 144, semi: 688, semiSave: "6%", annual: 1259, annualSave: "14%" },
-  ],
-  "60": [
-    { days: 1, hoursPerMonth: 4, monthly: 38, was: 45, semi: 214, semiSave: "6%", annual: 392, annualSave: "14%" },
-    { days: 2, hoursPerMonth: 8, monthly: 72, was: 85, semi: 406, semiSave: "6%", annual: 743, annualSave: "14%" },
-    { days: 3, hoursPerMonth: 12, monthly: 102, was: 121, semi: 575, semiSave: "6%", annual: 1053, annualSave: "14%", popular: true },
-    { days: 4, hoursPerMonth: 16, monthly: 131, was: 155, semi: 739, semiSave: "6%", annual: 1352, annualSave: "14%" },
-    { days: 5, hoursPerMonth: 20, monthly: 160, was: 189, semi: 902, semiSave: "6%", annual: 1651, annualSave: "14%" },
-  ],
-};
 
 const tierNames = {
   en: ["Basic", "Plus", "Standard", "Premium", "Ultimate"],
@@ -197,6 +163,7 @@ PricingCard.displayName = "PricingCard";
 const PricingSection = () => {
   const { t } = useLanguage();
   const [duration, setDuration] = useState<Duration>("30");
+  const pricingData = useActivePricingPackages();
 
   const durations: { value: Duration; label: string }[] = [
     { value: "30", label: t("30 Min", "٣٠ دقيقة") },
@@ -204,7 +171,7 @@ const PricingSection = () => {
     { value: "60", label: t("60 Min", "٦٠ دقيقة") },
   ];
 
-  const plans = pricing[duration];
+  const plans = pricingData[duration];
 
   return (
     <section id="pricing" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="Online Quran Classes Pricing Plans">
