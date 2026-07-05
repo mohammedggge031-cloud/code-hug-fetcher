@@ -105,6 +105,7 @@ const BlogPost = () => {
   const catName = post.blog_categories?.name_en || "Uncategorized";
   const catNameAr = post.blog_categories?.name_ar || "غير مصنف";
   const postDate = (post.published_at || post.created_at || "").split("T")[0];
+  const modifiedDate = (post.updated_at || post.published_at || post.created_at || "").split("T")[0];
   const titleEn = post.title_en || post.title_ar;
   const titleAr = post.title_ar || post.title_en;
   const excerptEn = post.excerpt_en || post.excerpt_ar || "";
@@ -121,15 +122,18 @@ const BlogPost = () => {
     headline: t(titleEn, titleAr),
     description: t(excerptEn, excerptAr),
     image: post.featured_image || "https://www.alhamdacademy.net/og-image.jpg",
-    datePublished: post.created_at || postDate,
-    dateModified: post.updated_at || post.created_at || postDate,
-    author: { "@type": "Organization", name: "Alhamd Academy", url: "https://www.alhamdacademy.net" },
+    datePublished: post.published_at || post.created_at || postDate,
+    dateModified: post.updated_at || post.published_at || post.created_at || modifiedDate,
+    // Use Person to match the prerender schema; falls back to org name so
+    // Search Console still sees a valid author string when post.author is empty.
+    author: { "@type": "Person", name: post.author || "Alhamd Academy" },
     publisher: {
       "@type": "Organization",
       name: "Alhamd Academy",
       logo: { "@type": "ImageObject", url: "https://www.alhamdacademy.net/favicon-512.png" },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": `https://www.alhamdacademy.net/blog/${post.slug}` },
+    inLanguage: lang === "ar" ? "ar" : "en",
   };
 
   const breadcrumbSchema = {
@@ -151,7 +155,7 @@ const BlogPost = () => {
         ogType="article"
         ogImage={post.featured_image}
         keywords={`${catName}, quran, alhamd academy`}
-        article={{ publishedTime: postDate, modifiedTime: postDate, author: "Alhamd Academy", section: catName }}
+        article={{ publishedTime: post.published_at || postDate, modifiedTime: post.updated_at || post.published_at || postDate, author: post.author || "Alhamd Academy", section: catName }}
         structuredData={[articleSchema, breadcrumbSchema]}
         dynamicSeo={dynamicSeo}
       />
@@ -186,7 +190,7 @@ const BlogPost = () => {
         {post.featured_image && (
           <div className="container mx-auto px-4 max-w-4xl -mt-6">
             <div className="rounded-xl overflow-hidden shadow-elevated">
-              <img src={post.featured_image} alt={t(titleEn, titleAr)} className="w-full h-64 md:h-96 object-cover" decoding="async" {...({ fetchpriority: "high" } as any)} />
+              <img src={post.featured_image} alt={t(titleEn, titleAr)} width={1200} height={630} className="w-full h-64 md:h-96 object-cover" decoding="async" {...({ fetchpriority: "high" } as any)} />
             </div>
           </div>
         )}
