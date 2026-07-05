@@ -233,7 +233,18 @@ const BlogManagement = () => {
           <h1 className="text-2xl font-bold text-foreground">{t("blog.title")}</h1>
           <p className="text-muted-foreground">{posts.length} {t("blog.total")}</p>
         </div>
-        <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={handleReindexAll}
+            disabled={reindexingAll}
+            title={lang === "ar" ? "إرسال كل صفحات الموقع إلى محركات البحث عبر IndexNow" : "Submit all site pages to search engines via IndexNow"}
+          >
+            {reindexingAll ? <Loader2 className="h-4 w-4 me-1 animate-spin" /> : <Zap className="h-4 w-4 me-1" />}
+            {lang === "ar" ? "أعِد فهرسة كل الصفحات" : "Re-index all pages"}
+          </Button>
+          <Button onClick={openNew}><Plus className="h-4 w-4 me-1" /> {t("blog.new")}</Button>
+        </div>
       </div>
 
       <div className="relative w-full sm:w-80">
