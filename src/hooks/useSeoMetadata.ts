@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { SUPABASE_TIMEOUT_MS, isGlobalFallbackMode, safeDataRequest } from "@/lib/safeRuntimeData";
 import { getCached, setCache } from "@/lib/supabaseCache";
+import { getInlineSeo } from "@/lib/inlineData";
 
 const TIMEOUT_MS = SUPABASE_TIMEOUT_MS;
 const SEO_CACHE_TTL = 5 * 60 * 1000;
