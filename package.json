@@ -7,6 +7,7 @@
     "dev": "vite",
     "prebuild": "node scripts/stamp-sitemap-lastmod.mjs",
     "build": "vite build",
+    "postbuild": "node -e \"import('fs').then(({renameSync,existsSync,copyFileSync})=>{if(existsSync('dist/index.html')){copyFileSync('dist/index.html','dist/app.html');renameSync('dist/index.html','dist/_index.html.bak');console.log('postbuild: dist/index.html -> dist/app.html (+ .bak)')}})\"",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
