@@ -299,9 +299,22 @@ const BlogManagement = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(post)}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")}><Eye className="h-4 w-4" /></Button>
-                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(post)}><Trash2 className="h-4 w-4" /></Button>}
+                      <Button variant="ghost" size="icon" onClick={() => openEdit(post)} title={t("blog.edit")}><Pencil className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")} title={lang === "ar" ? "معاينة" : "Preview"}><Eye className="h-4 w-4" /></Button>
+                      {post.status === "published" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleReindexPost(post)}
+                          disabled={reindexingId === post.id}
+                          title={lang === "ar" ? "أعِد فهرسة هذا المقال الآن" : "Re-index this post now"}
+                        >
+                          {reindexingId === post.id
+                            ? <Loader2 className="h-4 w-4 animate-spin" />
+                            : <RefreshCw className="h-4 w-4" />}
+                        </Button>
+                      )}
+                      {isAdmin && <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setDeleteTarget(post)} title={t("blog.confirm_delete")}><Trash2 className="h-4 w-4" /></Button>}
                     </div>
                   </TableCell>
                 </TableRow>
