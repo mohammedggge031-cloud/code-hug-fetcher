@@ -118,7 +118,7 @@ const FAQS: FAQ[] = [
 ];
 
 const TESTIMONIALS = [
-  { name: "Yusuf A.", country: "United States", rating: 5, textEn: "Alhamdulillah I completed my Warsh Ijazah with my shaykh in under a year. The Talaqqi is serious, the Sanad is documented and the scheduling around my New York timezone was flawless.", textAr: "الحمد لله أتممت إجازتي في ورش على شيخي في أقل من عام. التلقي جاد والسند موثق والمواعيد متوفرة تمامًا لتوقيت نيويورك." },
+  { name: "Yusuf A.", country: "United States", rating: 5, textEn: "Alhamdulillah I completed my Warsh Ijazah with my shaykh. The Talaqqi is serious, the Sanad is documented and the scheduling around my New York timezone was flawless.", textAr: "الحمد لله أتممت إجازتي في ورش على شيخي. التلقي جاد والسند موثق والمواعيد متوفرة تمامًا لتوقيت نيويورك." },
   { name: "Aisha M.", country: "United Kingdom", rating: 5, textEn: "As a sister I always wanted to study the ten Qira'at with a female Shaykhah. I finally found that here — she is patient, precise and holds a real Sanad.", textAr: "كأخت كنت أرغب دائمًا بدراسة القراءات العشر على شيخة. وجدت ذلك هنا — صبورة ودقيقة وتملك سندًا حقيقيًا." },
   { name: "Ibrahim K.", country: "Canada", rating: 5, textEn: "The bridge phase from Hafs into the Shatibiyyah completely restructured my recitation. I now understand why each Qari reads the way he does.", textAr: "المرحلة التمهيدية من حفص إلى الشاطبية أعادت هيكلة تلاوتي كليًا. صرت أفهم لماذا يقرأ كل قارئ بطريقته." },
 ];
