@@ -172,7 +172,7 @@ const App = () => (
                   <Route path="scripts" element={<ScriptsManagement />} />
                   <Route path="videos" element={<VideoManagement />} />
                   <Route path="users" element={<UserRolesManagement />} />
-                  <Route path="pricing" element={<PricingManagement />} />
+                  <Route path="pricing" element={<OwnerOnlyRoute><PricingManagement /></OwnerOnlyRoute>} />
                 </Route>
               </Route>
 
