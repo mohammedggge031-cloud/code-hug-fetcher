@@ -4,7 +4,7 @@ import SEOHead from "@/components/SEOHead";
 import PricingSection from "@/components/PricingSection";
 import { useSeoMetadata } from "@/hooks/useSeoMetadata";
 import { useLanguage } from "@/contexts/LanguageContext";
-import InternalLinking from "@/components/InternalLinking";
+
 
 /**
  * Dedicated public Pricing page. Served at /pricing (EN baseline) and
