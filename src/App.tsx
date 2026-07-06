@@ -104,6 +104,7 @@ const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSi
 const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
 const TenQiratOnline = lazyRetry(() => import("./pages/TenQiratOnline"));
 const IjazahProgramCourse = lazyRetry(() => import("./pages/IjazahProgramCourse"));
+const PricingPage = lazyRetry(() => import("./pages/PricingPage"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const App = () => (
