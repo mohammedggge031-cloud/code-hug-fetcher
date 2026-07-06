@@ -100,6 +100,7 @@ const PricingManagement = () => {
     if (!p) return;
     setSelectedId(id);
     setDraft(JSON.parse(JSON.stringify(p)));
+    setTargetAvgInput(computeAverageRate(p.packages_data).toFixed(2));
   };
 
   const updateTier = (dur: Duration, idx: number, field: keyof PricingTier, value: string | number | boolean) => {
