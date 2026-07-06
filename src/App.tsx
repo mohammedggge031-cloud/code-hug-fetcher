@@ -151,7 +151,9 @@ const App = () => (
               <Route path="/quran-classes-for-sisters" element={<QuranClassesForSisters />} />
               <Route path="/learn-quran-with-tajweed" element={<LearnQuranWithTajweed />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/:slug" element={<LocationPage />} />
+
 
               {/* Admin routes – single shared AuthProvider for login + dashboard */}
               <Route path="/admin" element={<AuthProvider><AdminLangProvider><Outlet /></AdminLangProvider></AuthProvider>}>
