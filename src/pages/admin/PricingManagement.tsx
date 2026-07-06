@@ -33,6 +33,22 @@ const computeAverageRate = (data: PackagesData): number => {
   return totalHours > 0 ? Math.round((totalRevenue / totalHours) * 100) / 100 : 0;
 };
 
+const scalePackagesToRate = (data: PackagesData, targetRate: number): PackagesData => {
+  const current = computeAverageRate(data);
+  if (current <= 0 || targetRate <= 0 || Math.abs(targetRate - current) < 0.005) return data;
+  const factor = targetRate / current;
+  const clone = JSON.parse(JSON.stringify(data)) as PackagesData;
+  DURATIONS.forEach((d) => {
+    (clone[d] || []).forEach((t) => {
+      t.monthly = Math.max(1, Math.round(t.monthly * factor));
+      t.was = Math.max(1, Math.round(t.was * factor));
+      t.semi = Math.max(1, Math.round(t.semi * factor));
+      t.annual = Math.max(1, Math.round(t.annual * factor));
+    });
+  });
+  return clone;
+};
+
 const emptyPlan = (): PricingPlanRow => ({
   id: "",
   plan_name: "New Plan",
