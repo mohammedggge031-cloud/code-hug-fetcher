@@ -87,6 +87,7 @@ const ReviewsManagement = lazyRetry(() => import("./pages/admin/ReviewsManagemen
 const SocialManagement = lazyRetry(() => import("./pages/admin/SocialManagement"));
 const AdsTracking = lazyRetry(() => import("./pages/admin/AdsTracking"));
 const PricingManagement = lazyRetry(() => import("./pages/admin/PricingManagement"));
+const OwnerOnlyRoute = lazyRetry(() => import("./components/admin/OwnerOnlyRoute"));
 const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazyRetry(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazyRetry(() => import("./pages/LearnQuranWorldwide"));
