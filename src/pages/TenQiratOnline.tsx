@@ -139,7 +139,6 @@ const JSON_LD = {
   hasCourseInstance: {
     "@type": "CourseInstance",
     courseMode: "Online",
-    courseWorkload: "PT5H",
     inLanguage: ["ar", "en"],
   },
   educationalCredentialAwarded: "Ijazah with Sanad in the Ten Qira'at",
