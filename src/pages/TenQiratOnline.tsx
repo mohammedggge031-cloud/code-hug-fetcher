@@ -53,10 +53,10 @@ const AUDIENCE: AudiencePersona[] = [
 ];
 
 const CLASS_STEPS: ClassStep[] = [
-  { titleEn: "Review of Previous Portion", titleAr: "مراجعة المقطع السابق", descEn: "The shaykh listens to the student recite the previously assigned pages under the target Qira'ah with full application of usool (principles).", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة بالقراءة المستهدفة مع تطبيق كامل للأصول.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "Precision Error Correction", titleAr: "تصحيح دقيق للأخطاء", descEn: "Every deviation in madd, hamz, imalah, ishmam, rawm, or takbir is isolated, demonstrated by the shaykh, and drilled until stable.", descAr: "كل انحراف في المد والهمز والإمالة والإشمام والروم والتكبير يُعزل ويُوضّح ثم يُدرَّب حتى يستقر.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "New Usool or Farsh Lesson", titleAr: "درس أصول أو فرش جديد", descEn: "New principles from the Shatibiyyah or Durrah are explained with textual references, then applied on live ayat from the current juz.", descAr: "أصول جديدة من الشاطبية أو الدرة تُشرح بالنصوص ثم تُطبَّق على آيات مباشرة من الجزء الحالي.", durationEn: "20 min", durationAr: "20 دقيقة" },
-  { titleEn: "Guided Talaqqi & Assignment", titleAr: "تلقٍ موجَّه وتكليف", descEn: "The student recites the new portion under the shaykh's ear (Talaqqi), receives the next assignment and a written progress note.", descAr: "يتلو الطالب المقطع الجديد على الشيخ (تلقٍّ) ثم يتسلم التكليف الجديد وملاحظة تقدم مكتوبة.", durationEn: "10 min", durationAr: "10 دقائق" },
+  { titleEn: "Review of Previous Portion", titleAr: "مراجعة المقطع السابق", descEn: "The shaykh listens to the student recite the previously assigned pages under the target Qira'ah with full application of usool (principles).", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة بالقراءة المستهدفة مع تطبيق كامل للأصول." },
+  { titleEn: "Precision Error Correction", titleAr: "تصحيح دقيق للأخطاء", descEn: "Every deviation in madd, hamz, imalah, ishmam, rawm, or takbir is isolated, demonstrated by the shaykh, and drilled until stable.", descAr: "كل انحراف في المد والهمز والإمالة والإشمام والروم والتكبير يُعزل ويُوضّح ثم يُدرَّب حتى يستقر." },
+  { titleEn: "New Usool or Farsh Lesson", titleAr: "درس أصول أو فرش جديد", descEn: "New principles from the Shatibiyyah or Durrah are explained with textual references, then applied on live ayat from the current juz.", descAr: "أصول جديدة من الشاطبية أو الدرة تُشرح بالنصوص ثم تُطبَّق على آيات مباشرة من الجزء الحالي." },
+  { titleEn: "Guided Talaqqi & Assignment", titleAr: "تلقٍ موجَّه وتكليف", descEn: "The student recites the new portion under the shaykh's ear (Talaqqi), receives the next assignment and a written progress note.", descAr: "يتلو الطالب المقطع الجديد على الشيخ (تلقٍّ) ثم يتسلم التكليف الجديد وملاحظة تقدم مكتوبة." },
 ];
 
 const CHALLENGES: Challenge[] = [
