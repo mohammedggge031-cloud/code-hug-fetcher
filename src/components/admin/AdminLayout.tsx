@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 import logoLive from "@/assets/logo-new.webp";
+import { isPrimaryOwnerEmail } from "@/lib/ownerConfig";
 
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin, isOwner, can } = useAuth();
