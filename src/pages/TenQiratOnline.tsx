@@ -53,17 +53,17 @@ const AUDIENCE: AudiencePersona[] = [
 ];
 
 const CLASS_STEPS: ClassStep[] = [
-  { titleEn: "Review of Previous Portion", titleAr: "مراجعة المقطع السابق", descEn: "The shaykh listens to the student recite the previously assigned pages under the target Qira'ah with full application of usool (principles).", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة بالقراءة المستهدفة مع تطبيق كامل للأصول.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "Precision Error Correction", titleAr: "تصحيح دقيق للأخطاء", descEn: "Every deviation in madd, hamz, imalah, ishmam, rawm, or takbir is isolated, demonstrated by the shaykh, and drilled until stable.", descAr: "كل انحراف في المد والهمز والإمالة والإشمام والروم والتكبير يُعزل ويُوضّح ثم يُدرَّب حتى يستقر.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "New Usool or Farsh Lesson", titleAr: "درس أصول أو فرش جديد", descEn: "New principles from the Shatibiyyah or Durrah are explained with textual references, then applied on live ayat from the current juz.", descAr: "أصول جديدة من الشاطبية أو الدرة تُشرح بالنصوص ثم تُطبَّق على آيات مباشرة من الجزء الحالي.", durationEn: "20 min", durationAr: "20 دقيقة" },
-  { titleEn: "Guided Talaqqi & Assignment", titleAr: "تلقٍ موجَّه وتكليف", descEn: "The student recites the new portion under the shaykh's ear (Talaqqi), receives the next assignment and a written progress note.", descAr: "يتلو الطالب المقطع الجديد على الشيخ (تلقٍّ) ثم يتسلم التكليف الجديد وملاحظة تقدم مكتوبة.", durationEn: "10 min", durationAr: "10 دقائق" },
+  { titleEn: "Review of Previous Portion", titleAr: "مراجعة المقطع السابق", descEn: "The shaykh listens to the student recite the previously assigned pages under the target Qira'ah with full application of usool (principles).", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة بالقراءة المستهدفة مع تطبيق كامل للأصول." },
+  { titleEn: "Precision Error Correction", titleAr: "تصحيح دقيق للأخطاء", descEn: "Every deviation in madd, hamz, imalah, ishmam, rawm, or takbir is isolated, demonstrated by the shaykh, and drilled until stable.", descAr: "كل انحراف في المد والهمز والإمالة والإشمام والروم والتكبير يُعزل ويُوضّح ثم يُدرَّب حتى يستقر." },
+  { titleEn: "New Usool or Farsh Lesson", titleAr: "درس أصول أو فرش جديد", descEn: "New principles from the Shatibiyyah or Durrah are explained with textual references, then applied on live ayat from the current juz.", descAr: "أصول جديدة من الشاطبية أو الدرة تُشرح بالنصوص ثم تُطبَّق على آيات مباشرة من الجزء الحالي." },
+  { titleEn: "Guided Talaqqi & Assignment", titleAr: "تلقٍ موجَّه وتكليف", descEn: "The student recites the new portion under the shaykh's ear (Talaqqi), receives the next assignment and a written progress note.", descAr: "يتلو الطالب المقطع الجديد على الشيخ (تلقٍّ) ثم يتسلم التكليف الجديد وملاحظة تقدم مكتوبة." },
 ];
 
 const CHALLENGES: Challenge[] = [
   { problemEn: "\"I only know Hafs — can I really jump into all ten Qira'at?\"", problemAr: "\"لا أعرف إلا حفصًا — هل يمكنني فعلاً دخول القراءات العشر؟\"", solutionEn: "You begin with a bridge phase that maps your existing Hafs foundation onto the Shatibiyyah, then move Qira'ah by Qira'ah so you never study more than one at a time.", solutionAr: "تبدأ بمرحلة تمهيدية تربط أساسك في حفص بالشاطبية، ثم تنتقل قراءة قراءة حتى لا تدرس أكثر من قراءة في وقت واحد." },
   { problemEn: "\"Will the certification be recognized?\"", problemAr: "\"هل الإجازة معترف بها؟\"", solutionEn: "Every Sanad we grant is issued by an Al-Azhar-qualified shaykh with a documented, unbroken chain back to the Prophet ﷺ, accepted worldwide by scholarly institutions.", solutionAr: "كل سند نمنحه يصدر عن شيخ مؤهل من الأزهر بسلسلة موثقة متصلة إلى النبي ﷺ، ومقبول عالميًا لدى المؤسسات الشرعية." },
   { problemEn: "\"I live in a different timezone from Egypt.\"", problemAr: "\"أعيش في منطقة زمنية مختلفة عن مصر.\"", solutionEn: "Classes are one-on-one and scheduled 24/7. Students from the USA, Canada, UK, Australia and Europe pick slots that suit their day.", solutionAr: "الحصص فردية وتُحجز على مدار الساعة. طلابنا من أمريكا وكندا وبريطانيا وأستراليا وأوروبا يختارون المواعيد التي تناسبهم." },
-  { problemEn: "\"How long does the full ten Qira'at Ijazah take?\"", problemAr: "\"كم يستغرق إتمام إجازة القراءات العشر؟\"", solutionEn: "With 3–5 sessions per week and consistent daily revision, students typically complete the full 'Ashr in 2–4 years depending on prior mastery.", solutionAr: "بمعدل 3–5 حصص أسبوعيًا ومراجعة يومية منتظمة، عادةً ما يُكمل الطالب العشر خلال 2–4 سنوات بحسب مستواه السابق." },
+  { problemEn: "\"How long does the full ten Qira'at Ijazah take?\"", problemAr: "\"كم يستغرق إتمام إجازة القراءات العشر؟\"", solutionEn: "The pace is set by your shaykh after the free assessment based on your prior mastery and weekly availability. Every stage — bridge, Shatibiyyah, Durrah — is tracked page by page so you always know your position on the path.", solutionAr: "يضع الشيخ الوتيرة بعد حصة التقييم المجانية بحسب مستواك السابق وجدولك الأسبوعي. كل مرحلة — التمهيد والشاطبية والدرة — تُتابَع صفحة صفحة فتعرف دائمًا موقعك من المسار." },
 ];
 
 const CURRICULUM: CurriculumWeek[] = [
@@ -114,11 +114,11 @@ const FAQS: FAQ[] = [
   { questionEn: "Do I need to complete Hifz before starting?", questionAr: "هل يجب أن أُتمّ الحفظ قبل البدء؟", answerEn: "Completing the Hifz of the entire Quran in Hafs 'an 'Asim is strongly recommended before starting Qira'at, because you will recite each Qira'ah from memory during Talaqqi. Students without full Hifz can start the bridge level while continuing memorization.", answerAr: "يُستحسن إتمام حفظ القرآن كاملًا برواية حفص عن عاصم قبل البدء بالقراءات لأنك ستتلو كل قراءة عن ظهر قلب أثناء التلقي. من لم يُتم الحفظ يمكنه البدء بالمرحلة التمهيدية مع استمرار الحفظ." },
   { questionEn: "How is the Ijazah granted?", questionAr: "كيف تُمنح الإجازة؟", answerEn: "After completing a full Khatmah on the shaykh in the target Qira'ah and passing an oral examination on its usool and farsh, the shaykh issues a written Ijazah document listing the full Sanad chain of teachers back to the Prophet ﷺ.", answerAr: "بعد إتمام ختمة كاملة على الشيخ في القراءة المستهدفة واجتياز امتحان شفهي في أصولها وفرشها، يمنح الشيخ وثيقة إجازة مكتوبة تحوي سلسلة السند المتصل إلى النبي ﷺ." },
   { questionEn: "Can women study Qira'at with a female shaykhah?", questionAr: "هل تستطيع النساء دراسة القراءات مع شيخة؟", answerEn: "Yes. Alhamd Academy has certified female Qira'at teachers (Shaykhat) with full Sanad who teach sisters worldwide with the same rigor as our male shuyukh.", answerAr: "نعم. لدى أكاديمية الحمد شيخات مؤهلات في القراءات ومسندات، يدرّسن الأخوات في أنحاء العالم بنفس الدقة العلمية." },
-  { questionEn: "What is the price of the ten Qira'at course?", questionAr: "ما سعر دورة القراءات العشر؟", answerEn: "Pricing depends on the number of weekly sessions and your current level. Book a free assessment class and we will send you a personalized plan and quote.", answerAr: "السعر يعتمد على عدد الحصص الأسبوعية ومستواك الحالي. احجز حصة تقييم مجانية وسنرسل لك خطة وعرض سعر مخصص." },
+  { questionEn: "What is the price of the ten Qira'at course?", questionAr: "ما سعر دورة القراءات العشر؟", answerEn: "Pricing depends on your chosen frequency and your current level. Book a free assessment class and we will send you a personalized plan and quote.", answerAr: "السعر يعتمد على الوتيرة التي تختارها ومستواك الحالي. احجز حصة تقييم مجانية وسنرسل لك خطة وعرض سعر مخصص." },
 ];
 
 const TESTIMONIALS = [
-  { name: "Yusuf A.", country: "United States", rating: 5, textEn: "Alhamdulillah I completed my Warsh Ijazah with my shaykh in under a year. The Talaqqi is serious, the Sanad is documented and the scheduling around my New York timezone was flawless.", textAr: "الحمد لله أتممت إجازتي في ورش على شيخي في أقل من عام. التلقي جاد والسند موثق والمواعيد متوفرة تمامًا لتوقيت نيويورك." },
+  { name: "Yusuf A.", country: "United States", rating: 5, textEn: "Alhamdulillah I completed my Warsh Ijazah with my shaykh. The Talaqqi is serious, the Sanad is documented and the scheduling around my New York timezone was flawless.", textAr: "الحمد لله أتممت إجازتي في ورش على شيخي. التلقي جاد والسند موثق والمواعيد متوفرة تمامًا لتوقيت نيويورك." },
   { name: "Aisha M.", country: "United Kingdom", rating: 5, textEn: "As a sister I always wanted to study the ten Qira'at with a female Shaykhah. I finally found that here — she is patient, precise and holds a real Sanad.", textAr: "كأخت كنت أرغب دائمًا بدراسة القراءات العشر على شيخة. وجدت ذلك هنا — صبورة ودقيقة وتملك سندًا حقيقيًا." },
   { name: "Ibrahim K.", country: "Canada", rating: 5, textEn: "The bridge phase from Hafs into the Shatibiyyah completely restructured my recitation. I now understand why each Qari reads the way he does.", textAr: "المرحلة التمهيدية من حفص إلى الشاطبية أعادت هيكلة تلاوتي كليًا. صرت أفهم لماذا يقرأ كل قارئ بطريقته." },
 ];
@@ -139,7 +139,6 @@ const JSON_LD = {
   hasCourseInstance: {
     "@type": "CourseInstance",
     courseMode: "Online",
-    courseWorkload: "PT5H",
     inLanguage: ["ar", "en"],
   },
   educationalCredentialAwarded: "Ijazah with Sanad in the Ten Qira'at",
@@ -189,8 +188,8 @@ const TenQiratOnline = () => (
     audienceTitleEn="Who Is This Qira'at Course For?"
     audienceTitleAr="لمن هذه الدورة؟"
     classSteps={CLASS_STEPS}
-    classSessionTitleEn="What a Qira'at Class Looks Like — 60 Minutes of Focused Talaqqi"
-    classSessionTitleAr="كيف تبدو حصة القراءات — 60 دقيقة من التلقي المركّز"
+    classSessionTitleEn="What a Qira'at Class Looks Like — Focused Talaqqi With Your Shaykh"
+    classSessionTitleAr="كيف تبدو حصة القراءات — تلقٍّ مركّز مع شيخك"
     challenges={CHALLENGES}
     challengesTitleEn="Common Concerns From Qira'at Students — And How We Address Them"
     challengesTitleAr="أهم مخاوف طلاب القراءات — وكيف نعالجها"

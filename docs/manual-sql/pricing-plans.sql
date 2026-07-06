@@ -111,29 +111,29 @@ on conflict (plan_name) do update set
 insert into public.pricing_plans (plan_name, average_hourly_rate, is_active, packages_data)
 values (
   'Budget Alternative',
-  6.20,
+  6.80,
   false,
   '{
     "30": [
-      {"days":1,"hoursPerMonth":2,"monthly":14,"was":17,"semi":79,"semiSave":"6%","annual":144,"annualSave":"14%"},
-      {"days":2,"hoursPerMonth":4,"monthly":27,"was":32,"semi":152,"semiSave":"6%","annual":279,"annualSave":"14%"},
-      {"days":3,"hoursPerMonth":6,"monthly":39,"was":46,"semi":220,"semiSave":"6%","annual":402,"annualSave":"14%","popular":true},
-      {"days":4,"hoursPerMonth":8,"monthly":50,"was":60,"semi":282,"semiSave":"6%","annual":516,"annualSave":"14%"},
-      {"days":5,"hoursPerMonth":10,"monthly":60,"was":71,"semi":338,"semiSave":"6%","annual":619,"annualSave":"14%"}
+      {"days":1,"hoursPerMonth":2,"monthly":15,"was":19,"semi":87,"semiSave":"6%","annual":159,"annualSave":"14%"},
+      {"days":2,"hoursPerMonth":4,"monthly":30,"was":35,"semi":168,"semiSave":"6%","annual":308,"annualSave":"14%"},
+      {"days":3,"hoursPerMonth":6,"monthly":43,"was":51,"semi":243,"semiSave":"6%","annual":444,"annualSave":"14%","popular":true},
+      {"days":4,"hoursPerMonth":8,"monthly":55,"was":66,"semi":312,"semiSave":"6%","annual":570,"annualSave":"14%"},
+      {"days":5,"hoursPerMonth":10,"monthly":66,"was":78,"semi":373,"semiSave":"6%","annual":684,"annualSave":"14%"}
     ],
     "45": [
-      {"days":1,"hoursPerMonth":3,"monthly":20,"was":24,"semi":113,"semiSave":"6%","annual":206,"annualSave":"14%"},
-      {"days":2,"hoursPerMonth":6,"monthly":39,"was":46,"semi":220,"semiSave":"6%","annual":402,"annualSave":"14%"},
-      {"days":3,"hoursPerMonth":9,"monthly":56,"was":67,"semi":316,"semiSave":"6%","annual":578,"annualSave":"14%","popular":true},
-      {"days":4,"hoursPerMonth":12,"monthly":73,"was":87,"semi":412,"semiSave":"6%","annual":754,"annualSave":"14%"},
-      {"days":5,"hoursPerMonth":15,"monthly":90,"was":107,"semi":508,"semiSave":"6%","annual":929,"annualSave":"14%"}
+      {"days":1,"hoursPerMonth":3,"monthly":22,"was":27,"semi":125,"semiSave":"6%","annual":228,"annualSave":"14%"},
+      {"days":2,"hoursPerMonth":6,"monthly":43,"was":51,"semi":243,"semiSave":"6%","annual":444,"annualSave":"14%"},
+      {"days":3,"hoursPerMonth":9,"monthly":62,"was":74,"semi":349,"semiSave":"6%","annual":639,"annualSave":"14%","popular":true},
+      {"days":4,"hoursPerMonth":12,"monthly":81,"was":96,"semi":455,"semiSave":"6%","annual":833,"annualSave":"14%"},
+      {"days":5,"hoursPerMonth":15,"monthly":99,"was":118,"semi":561,"semiSave":"6%","annual":1026,"annualSave":"14%"}
     ],
     "60": [
-      {"days":1,"hoursPerMonth":4,"monthly":26,"was":31,"semi":147,"semiSave":"6%","annual":268,"annualSave":"14%"},
-      {"days":2,"hoursPerMonth":8,"monthly":50,"was":60,"semi":282,"semiSave":"6%","annual":516,"annualSave":"14%"},
-      {"days":3,"hoursPerMonth":12,"monthly":73,"was":87,"semi":412,"semiSave":"6%","annual":753,"annualSave":"14%","popular":true},
-      {"days":4,"hoursPerMonth":16,"monthly":96,"was":114,"semi":542,"semiSave":"6%","annual":990,"annualSave":"14%"},
-      {"days":5,"hoursPerMonth":20,"monthly":118,"was":140,"semi":666,"semiSave":"6%","annual":1218,"annualSave":"14%"}
+      {"days":1,"hoursPerMonth":4,"monthly":29,"was":34,"semi":162,"semiSave":"6%","annual":296,"annualSave":"14%"},
+      {"days":2,"hoursPerMonth":8,"monthly":55,"was":66,"semi":312,"semiSave":"6%","annual":570,"annualSave":"14%"},
+      {"days":3,"hoursPerMonth":12,"monthly":81,"was":96,"semi":455,"semiSave":"6%","annual":832,"annualSave":"14%","popular":true},
+      {"days":4,"hoursPerMonth":16,"monthly":106,"was":126,"semi":599,"semiSave":"6%","annual":1094,"annualSave":"14%"},
+      {"days":5,"hoursPerMonth":20,"monthly":130,"was":155,"semi":736,"semiSave":"6%","annual":1346,"annualSave":"14%"}
     ]
   }'::jsonb
 )

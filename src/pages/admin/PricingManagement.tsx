@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Plus, Save, Trash2 } from "lucide-react";
+import { Loader2, Plus, Save, Trash2, Wand2 } from "lucide-react";
 import { FALLBACK_PACKAGES, type PackagesData, type Duration, type PricingTier } from "@/hooks/usePricingPlan";
 
 interface PricingPlanRow {
@@ -31,6 +31,22 @@ const computeAverageRate = (data: PackagesData): number => {
     });
   });
   return totalHours > 0 ? Math.round((totalRevenue / totalHours) * 100) / 100 : 0;
+};
+
+const scalePackagesToRate = (data: PackagesData, targetRate: number): PackagesData => {
+  const current = computeAverageRate(data);
+  if (current <= 0 || targetRate <= 0 || Math.abs(targetRate - current) < 0.005) return data;
+  const factor = targetRate / current;
+  const clone = JSON.parse(JSON.stringify(data)) as PackagesData;
+  DURATIONS.forEach((d) => {
+    (clone[d] || []).forEach((t) => {
+      t.monthly = Math.max(1, Math.round(t.monthly * factor));
+      t.was = Math.max(1, Math.round(t.was * factor));
+      t.semi = Math.max(1, Math.round(t.semi * factor));
+      t.annual = Math.max(1, Math.round(t.annual * factor));
+    });
+  });
+  return clone;
 };
 
 const emptyPlan = (): PricingPlanRow => ({
@@ -59,6 +75,7 @@ const PricingManagement = () => {
   const [draft, setDraft] = useState<PricingPlanRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [targetAvgInput, setTargetAvgInput] = useState<string>("");
 
   const load = async () => {
     setLoading(true);
@@ -71,6 +88,7 @@ const PricingManagement = () => {
     if (rows.length && !selectedId) {
       setSelectedId(rows[0].id);
       setDraft(JSON.parse(JSON.stringify(rows[0])));
+      setTargetAvgInput(computeAverageRate(rows[0].packages_data).toFixed(2));
     }
     setLoading(false);
   };
@@ -82,6 +100,7 @@ const PricingManagement = () => {
     if (!p) return;
     setSelectedId(id);
     setDraft(JSON.parse(JSON.stringify(p)));
+    setTargetAvgInput(computeAverageRate(p.packages_data).toFixed(2));
   };
 
   const updateTier = (dur: Duration, idx: number, field: keyof PricingTier, value: string | number | boolean) => {
@@ -104,21 +123,29 @@ const PricingManagement = () => {
   const savePlan = async () => {
     if (!draft) return;
     setSaving(true);
+    const targetRate = Number(targetAvgInput);
+    const finalPackages =
+      targetRate > 0 ? scalePackagesToRate(draft.packages_data, targetRate) : draft.packages_data;
+    const finalAvg = computeAverageRate(finalPackages);
     const payload: Partial<PricingPlanRow> = {
       plan_name: draft.plan_name,
-      average_hourly_rate: computeAverageRate(draft.packages_data),
-      packages_data: draft.packages_data,
+      average_hourly_rate: finalAvg,
+      packages_data: finalPackages,
       is_active: draft.is_active,
     };
     if (draft.id) {
       const { error } = await db.from("pricing_plans").update(payload).eq("id", draft.id);
       if (error) toast({ title: "Update failed", description: error.message, variant: "destructive" });
-      else toast({ title: "Plan saved" });
+      else {
+        toast({ title: "Plan saved", description: `Average now $${finalAvg.toFixed(2)}/hr` });
+        setDraft({ ...draft, packages_data: finalPackages, average_hourly_rate: finalAvg });
+        setTargetAvgInput(finalAvg.toFixed(2));
+      }
     } else {
       const { data, error } = await db.from("pricing_plans").insert(payload).select().single();
       if (error) toast({ title: "Create failed", description: error.message, variant: "destructive" });
       else if (data) {
-        toast({ title: "Plan created" });
+        toast({ title: "Plan created", description: `Average $${finalAvg.toFixed(2)}/hr` });
         setSelectedId(data.id);
       }
     }
@@ -208,9 +235,27 @@ const PricingManagement = () => {
 
           {draft && (
             <Card>
-              <CardHeader className="flex-row items-center justify-between space-y-0">
+              <CardHeader className="flex-row items-center justify-between space-y-0 gap-4 flex-wrap">
                 <CardTitle className="text-base">{draft.id ? "Edit Plan" : "New Plan"}</CardTitle>
-                <div className="text-sm text-muted-foreground">Computed avg: <span className="font-bold text-foreground">${liveAverage.toFixed(2)}/hr</span></div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <span>
+                    Computed avg:{" "}
+                    <span className="font-bold text-foreground">${liveAverage.toFixed(2)}/hr</span>
+                  </span>
+                  <div className="flex items-center gap-2 border-l pl-3">
+                    <Wand2 className="w-4 h-4 text-primary" />
+                    <Label htmlFor="target-avg" className="text-xs">Target avg $/hr</Label>
+                    <Input
+                      id="target-avg"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      className="h-8 w-24"
+                      value={targetAvgInput}
+                      onChange={(e) => setTargetAvgInput(e.target.value)}
+                    />
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

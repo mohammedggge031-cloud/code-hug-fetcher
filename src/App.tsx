@@ -87,6 +87,7 @@ const ReviewsManagement = lazyRetry(() => import("./pages/admin/ReviewsManagemen
 const SocialManagement = lazyRetry(() => import("./pages/admin/SocialManagement"));
 const AdsTracking = lazyRetry(() => import("./pages/admin/AdsTracking"));
 const PricingManagement = lazyRetry(() => import("./pages/admin/PricingManagement"));
+const OwnerOnlyRoute = lazyRetry(() => import("./components/admin/OwnerOnlyRoute"));
 const ProtectedRoute = lazyRetry(() => import("./components/admin/ProtectedRoute"));
 const LocationPage = lazyRetry(() => import("./pages/LocationPage"));
 const LearnQuranWorldwide = lazyRetry(() => import("./pages/LearnQuranWorldwide"));
@@ -104,6 +105,7 @@ const QuranClassesForSisters = lazyRetry(() => import("./pages/QuranClassesForSi
 const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajweed"));
 const TenQiratOnline = lazyRetry(() => import("./pages/TenQiratOnline"));
 const IjazahProgramCourse = lazyRetry(() => import("./pages/IjazahProgramCourse"));
+const PricingPage = lazyRetry(() => import("./pages/PricingPage"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const App = () => (
@@ -150,7 +152,9 @@ const App = () => (
               <Route path="/quran-classes-for-sisters" element={<QuranClassesForSisters />} />
               <Route path="/learn-quran-with-tajweed" element={<LearnQuranWithTajweed />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/pricing" element={<PricingPage />} />
               <Route path="/:slug" element={<LocationPage />} />
+
 
               {/* Admin routes – single shared AuthProvider for login + dashboard */}
               <Route path="/admin" element={<AuthProvider><AdminLangProvider><Outlet /></AdminLangProvider></AuthProvider>}>
@@ -168,7 +172,7 @@ const App = () => (
                   <Route path="scripts" element={<ScriptsManagement />} />
                   <Route path="videos" element={<VideoManagement />} />
                   <Route path="users" element={<UserRolesManagement />} />
-                  <Route path="pricing" element={<PricingManagement />} />
+                  <Route path="pricing" element={<OwnerOnlyRoute><PricingManagement /></OwnerOnlyRoute>} />
                 </Route>
               </Route>
 
