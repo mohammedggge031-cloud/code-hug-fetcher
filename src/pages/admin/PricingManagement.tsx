@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Plus, Save, Trash2 } from "lucide-react";
+import { Loader2, Plus, Save, Trash2, Wand2 } from "lucide-react";
 import { FALLBACK_PACKAGES, type PackagesData, type Duration, type PricingTier } from "@/hooks/usePricingPlan";
 
 interface PricingPlanRow {
