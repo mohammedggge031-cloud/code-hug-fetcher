@@ -88,6 +88,7 @@ const PricingManagement = () => {
     if (rows.length && !selectedId) {
       setSelectedId(rows[0].id);
       setDraft(JSON.parse(JSON.stringify(rows[0])));
+      setTargetAvgInput(computeAverageRate(rows[0].packages_data).toFixed(2));
     }
     setLoading(false);
   };
