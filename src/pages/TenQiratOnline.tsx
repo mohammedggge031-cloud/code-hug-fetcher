@@ -188,8 +188,8 @@ const TenQiratOnline = () => (
     audienceTitleEn="Who Is This Qira'at Course For?"
     audienceTitleAr="لمن هذه الدورة؟"
     classSteps={CLASS_STEPS}
-    classSessionTitleEn="What a Qira'at Class Looks Like — 60 Minutes of Focused Talaqqi"
-    classSessionTitleAr="كيف تبدو حصة القراءات — 60 دقيقة من التلقي المركّز"
+    classSessionTitleEn="What a Qira'at Class Looks Like — Focused Talaqqi With Your Shaykh"
+    classSessionTitleAr="كيف تبدو حصة القراءات — تلقٍّ مركّز مع شيخك"
     challenges={CHALLENGES}
     challengesTitleEn="Common Concerns From Qira'at Students — And How We Address Them"
     challengesTitleAr="أهم مخاوف طلاب القراءات — وكيف نعالجها"
