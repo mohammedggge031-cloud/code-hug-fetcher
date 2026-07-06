@@ -141,7 +141,6 @@ const JSON_LD = {
   hasCourseInstance: {
     "@type": "CourseInstance",
     courseMode: "Online",
-    courseWorkload: "PT4H",
     inLanguage: ["ar", "en"],
   },
   educationalCredentialAwarded: "Formal Ijazah in Quran (Tajweed or Hifz) with Sanad connected to the Prophet ﷺ",
