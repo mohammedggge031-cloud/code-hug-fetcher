@@ -190,8 +190,8 @@ const IjazahProgramCourse = () => (
     audienceTitleEn="Who Is the Ijazah Program For?"
     audienceTitleAr="لمن هذا البرنامج؟"
     classSteps={CLASS_STEPS}
-    classSessionTitleEn="What an Ijazah Class Looks Like — 60 Minutes of Focused Talaqqi"
-    classSessionTitleAr="كيف تبدو حصة الإجازة — 60 دقيقة من التلقي المركّز"
+    classSessionTitleEn="What an Ijazah Class Looks Like — Focused Talaqqi With Your Shaykh"
+    classSessionTitleAr="كيف تبدو حصة الإجازة — تلقٍّ مركّز مع شيخك"
     challenges={CHALLENGES}
     challengesTitleEn="Common Concerns From Ijazah Students — And How We Address Them"
     challengesTitleAr="أهم مخاوف طلاب الإجازة — وكيف نعالجها"
