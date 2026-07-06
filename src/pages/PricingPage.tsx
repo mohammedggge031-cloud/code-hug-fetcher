@@ -67,7 +67,6 @@ const PricingPage = () => {
 
         <PricingSection />
 
-        <InternalLinking />
       </main>
 
       <Footer />
