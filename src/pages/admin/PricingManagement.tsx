@@ -75,6 +75,7 @@ const PricingManagement = () => {
   const [draft, setDraft] = useState<PricingPlanRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [targetAvgInput, setTargetAvgInput] = useState<string>("");
 
   const load = async () => {
     setLoading(true);
