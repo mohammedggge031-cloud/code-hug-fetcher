@@ -54,10 +54,10 @@ const AUDIENCE: AudiencePersona[] = [
 ];
 
 const CLASS_STEPS: ClassStep[] = [
-  { titleEn: "Recite Previous Portion from Memory", titleAr: "تلاوة المقطع السابق حفظًا", descEn: "The shaykh listens to the student recite the previously assigned pages from memory with full Tajweed and no notes.", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة حفظًا بتجويد كامل ودون الاطلاع على المصحف.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "Precision Tajweed Correction", titleAr: "تصحيح دقيق للتجويد", descEn: "Every hidden error in makharij, sifat, madd, ghunnah or waqf is isolated, demonstrated by the shaykh, and drilled until it is stable.", descAr: "كل خطأ خفي في المخارج والصفات والمد والغنة والوقف يُعزل ويُوضّح ثم يُدرَّب عليه حتى يستقر.", durationEn: "15 min", durationAr: "15 دقيقة" },
-  { titleEn: "New Portion Talaqqi", titleAr: "تلقٍّ لمقطع جديد", descEn: "The shaykh recites the new portion first, the student follows verse by verse (Talaqqi), then recites it back until it is fully corrected.", descAr: "يتلو الشيخ المقطع الجديد أولًا، ثم يتابعه الطالب آية آية (تلقيًا)، ثم يعيد تلاوته حتى يُصحَّح كليًا.", durationEn: "20 min", durationAr: "20 دقيقة" },
-  { titleEn: "Assignment & Ijazah Progress Log", titleAr: "التكليف وسجل تقدم الإجازة", descEn: "The student receives the next assignment and a written note added to the Ijazah progress log tracking the Khatmah page by page.", descAr: "يتسلم الطالب التكليف الجديد وملاحظة مكتوبة تُضاف إلى سجل تقدم الإجازة الذي يتابع الختمة صفحة صفحة.", durationEn: "10 min", durationAr: "10 دقائق" },
+  { titleEn: "Recite Previous Portion from Memory", titleAr: "تلاوة المقطع السابق حفظًا", descEn: "The shaykh listens to the student recite the previously assigned pages from memory with full Tajweed and no notes.", descAr: "يستمع الشيخ إلى الطالب وهو يتلو الصفحات السابقة حفظًا بتجويد كامل ودون الاطلاع على المصحف." },
+  { titleEn: "Precision Tajweed Correction", titleAr: "تصحيح دقيق للتجويد", descEn: "Every hidden error in makharij, sifat, madd, ghunnah or waqf is isolated, demonstrated by the shaykh, and drilled until it is stable.", descAr: "كل خطأ خفي في المخارج والصفات والمد والغنة والوقف يُعزل ويُوضّح ثم يُدرَّب عليه حتى يستقر." },
+  { titleEn: "New Portion Talaqqi", titleAr: "تلقٍّ لمقطع جديد", descEn: "The shaykh recites the new portion first, the student follows verse by verse (Talaqqi), then recites it back until it is fully corrected.", descAr: "يتلو الشيخ المقطع الجديد أولًا، ثم يتابعه الطالب آية آية (تلقيًا)، ثم يعيد تلاوته حتى يُصحَّح كليًا." },
+  { titleEn: "Assignment & Ijazah Progress Log", titleAr: "التكليف وسجل تقدم الإجازة", descEn: "The student receives the next assignment and a written note added to the Ijazah progress log tracking the Khatmah page by page.", descAr: "يتسلم الطالب التكليف الجديد وملاحظة مكتوبة تُضاف إلى سجل تقدم الإجازة الذي يتابع الختمة صفحة صفحة." },
 ];
 
 const CHALLENGES: Challenge[] = [
