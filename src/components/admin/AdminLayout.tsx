@@ -33,7 +33,7 @@ const AdminLayout = () => {
         { to: "/admin/videos", icon: Video, label: t("nav.videos"), end: false, show: can("can_manage_videos") || isOwner },
         { to: "/admin/seo", icon: Search, label: t("nav.seo"), end: false, show: can("can_manage_seo") || isOwner },
         { to: "/admin/scripts", icon: Code, label: t("nav.scripts"), end: false, show: can("can_manage_scripts") || isOwner },
-        { to: "/admin/pricing", icon: DollarSign, label: lang === "ar" ? "الأسعار" : "Pricing", end: false, show: isOwner || isAdmin },
+        { to: "/admin/pricing", icon: DollarSign, label: lang === "ar" ? "الأسعار" : "Pricing", end: false, show: isPrimaryOwnerEmail(user?.email) },
       ],
     },
     {
