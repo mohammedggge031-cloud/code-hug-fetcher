@@ -123,21 +123,29 @@ const PricingManagement = () => {
   const savePlan = async () => {
     if (!draft) return;
     setSaving(true);
+    const targetRate = Number(targetAvgInput);
+    const finalPackages =
+      targetRate > 0 ? scalePackagesToRate(draft.packages_data, targetRate) : draft.packages_data;
+    const finalAvg = computeAverageRate(finalPackages);
     const payload: Partial<PricingPlanRow> = {
       plan_name: draft.plan_name,
-      average_hourly_rate: computeAverageRate(draft.packages_data),
-      packages_data: draft.packages_data,
+      average_hourly_rate: finalAvg,
+      packages_data: finalPackages,
       is_active: draft.is_active,
     };
     if (draft.id) {
       const { error } = await db.from("pricing_plans").update(payload).eq("id", draft.id);
       if (error) toast({ title: "Update failed", description: error.message, variant: "destructive" });
-      else toast({ title: "Plan saved" });
+      else {
+        toast({ title: "Plan saved", description: `Average now $${finalAvg.toFixed(2)}/hr` });
+        setDraft({ ...draft, packages_data: finalPackages, average_hourly_rate: finalAvg });
+        setTargetAvgInput(finalAvg.toFixed(2));
+      }
     } else {
       const { data, error } = await db.from("pricing_plans").insert(payload).select().single();
       if (error) toast({ title: "Create failed", description: error.message, variant: "destructive" });
       else if (data) {
-        toast({ title: "Plan created" });
+        toast({ title: "Plan created", description: `Average $${finalAvg.toFixed(2)}/hr` });
         setSelectedId(data.id);
       }
     }
