@@ -28,7 +28,7 @@ const JSON_LD = {
 
 const PricingPage = () => {
   const { t } = useLanguage();
-  const dynamicSeo = useSeoMetadata("/pricing");
+  const { seo: dynamicSeo } = useSeoMetadata("/pricing");
 
   return (
     <>
