@@ -235,9 +235,27 @@ const PricingManagement = () => {
 
           {draft && (
             <Card>
-              <CardHeader className="flex-row items-center justify-between space-y-0">
+              <CardHeader className="flex-row items-center justify-between space-y-0 gap-4 flex-wrap">
                 <CardTitle className="text-base">{draft.id ? "Edit Plan" : "New Plan"}</CardTitle>
-                <div className="text-sm text-muted-foreground">Computed avg: <span className="font-bold text-foreground">${liveAverage.toFixed(2)}/hr</span></div>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                  <span>
+                    Computed avg:{" "}
+                    <span className="font-bold text-foreground">${liveAverage.toFixed(2)}/hr</span>
+                  </span>
+                  <div className="flex items-center gap-2 border-l pl-3">
+                    <Wand2 className="w-4 h-4 text-primary" />
+                    <Label htmlFor="target-avg" className="text-xs">Target avg $/hr</Label>
+                    <Input
+                      id="target-avg"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      className="h-8 w-24"
+                      value={targetAvgInput}
+                      onChange={(e) => setTargetAvgInput(e.target.value)}
+                    />
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
