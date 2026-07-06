@@ -120,9 +120,9 @@ const FAQS: FAQ[] = [
 ];
 
 const TESTIMONIALS = [
-  { name: "Omar S.", country: "United States", rating: 5, textEn: "Alhamdulillah I received my Ijazah in Hafs after a year of steady Talaqqi. Holding the written Sanad going back to the Prophet ﷺ was the most powerful moment of my life.", textAr: "الحمد لله حصلت على إجازتي في حفص بعد عام من التلقي المنتظم. لحظة استلامي وثيقة السند المتصل إلى النبي ﷺ كانت أعظم لحظة في حياتي." },
-  { name: "Khadijah R.", country: "United Kingdom", rating: 5, textEn: "As a mother of three, I never thought I could finish an Ijazah. My shaykhah scheduled sessions after Fajr and I completed my Khatmah in fourteen months.", textAr: "كأم لثلاثة أطفال ما كنت أتصور أن أُتم إجازة. رتّبت لي شيختي حصصًا بعد الفجر وأتممت ختمتي في أربعة عشر شهرًا." },
-  { name: "Bilal H.", country: "Canada", rating: 5, textEn: "I had already memorized the Quran but had no formal Ijazah. Alhamd Academy paired me with a shaykh who sealed my Hifz with a documented Sanad in ten months.", textAr: "كنت قد حفظت القرآن لكن دون إجازة رسمية. رشّحت لي أكاديمية الحمد شيخًا ختم حفظي بسند موثق خلال عشرة أشهر." },
+  { name: "Omar S.", country: "United States", rating: 5, textEn: "Alhamdulillah I received my Ijazah in Hafs after steady Talaqqi with my shaykh. Holding the written Sanad going back to the Prophet ﷺ was the most powerful moment of my life.", textAr: "الحمد لله حصلت على إجازتي في حفص بعد تلقٍّ منتظم على شيخي. لحظة استلامي وثيقة السند المتصل إلى النبي ﷺ كانت أعظم لحظة في حياتي." },
+  { name: "Khadijah R.", country: "United Kingdom", rating: 5, textEn: "As a mother of three, I never thought I could finish an Ijazah. My shaykhah scheduled sessions around my day and, alhamdulillah, I completed my Khatmah at my own pace.", textAr: "كأم لثلاثة أطفال ما كنت أتصور أن أُتم إجازة. رتّبت لي شيختي حصصًا تناسب يومي والحمد لله أتممت ختمتي على راحتي." },
+  { name: "Bilal H.", country: "Canada", rating: 5, textEn: "I had already memorized the Quran but had no formal Ijazah. Alhamd Academy paired me with a shaykh who sealed my Hifz with a documented Sanad.", textAr: "كنت قد حفظت القرآن لكن دون إجازة رسمية. رشّحت لي أكاديمية الحمد شيخًا ختم حفظي بسند موثق." },
 ];
 
 const JSON_LD = {
