@@ -106,6 +106,8 @@ const LearnQuranWithTajweed = lazyRetry(() => import("./pages/LearnQuranWithTajw
 const TenQiratOnline = lazyRetry(() => import("./pages/TenQiratOnline"));
 const IjazahProgramCourse = lazyRetry(() => import("./pages/IjazahProgramCourse"));
 const PricingPage = lazyRetry(() => import("./pages/PricingPage"));
+const AboutPage = lazyRetry(() => import("./pages/About"));
+const ReviewsPage = lazyRetry(() => import("./pages/Reviews"));
 const AdminErrorBoundary = lazyRetry(() => import("./components/admin/AdminErrorBoundary"));
 
 const App = () => (
@@ -153,6 +155,8 @@ const App = () => (
               <Route path="/learn-quran-with-tajweed" element={<LearnQuranWithTajweed />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
               <Route path="/:slug" element={<LocationPage />} />
 
 
