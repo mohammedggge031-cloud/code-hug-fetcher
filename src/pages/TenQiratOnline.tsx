@@ -62,8 +62,8 @@ const CLASS_STEPS: ClassStep[] = [
 const CHALLENGES: Challenge[] = [
   { problemEn: "\"I only know Hafs — can I really jump into all ten Qira'at?\"", problemAr: "\"لا أعرف إلا حفصًا — هل يمكنني فعلاً دخول القراءات العشر؟\"", solutionEn: "You begin with a bridge phase that maps your existing Hafs foundation onto the Shatibiyyah, then move Qira'ah by Qira'ah so you never study more than one at a time.", solutionAr: "تبدأ بمرحلة تمهيدية تربط أساسك في حفص بالشاطبية، ثم تنتقل قراءة قراءة حتى لا تدرس أكثر من قراءة في وقت واحد." },
   { problemEn: "\"Will the certification be recognized?\"", problemAr: "\"هل الإجازة معترف بها؟\"", solutionEn: "Every Sanad we grant is issued by an Al-Azhar-qualified shaykh with a documented, unbroken chain back to the Prophet ﷺ, accepted worldwide by scholarly institutions.", solutionAr: "كل سند نمنحه يصدر عن شيخ مؤهل من الأزهر بسلسلة موثقة متصلة إلى النبي ﷺ، ومقبول عالميًا لدى المؤسسات الشرعية." },
-  { problemEn: "\"I live in a different timezone from Egypt.\"", problemAr: "\"أعيش في منطقة زمنية مختلفة عن مصر.\"", solutionEn: "Classes are one-on-one and scheduled 24/7. Students from the USA, Canada, UK, Australia and Europe pick slots that suit their day.", solutionAr: "الحصص فردية وتُحجز على مدار الساعة. طلابنا من أمريكا وكندا وبريطانيا وأستراليا وأوروبا يختارون المواعيد التي تناسبهم." },
-  { problemEn: "\"How long does the full ten Qira'at Ijazah take?\"", problemAr: "\"كم يستغرق إتمام إجازة القراءات العشر؟\"", solutionEn: "The pace is set by your shaykh after the free assessment based on your prior mastery and weekly availability. Every stage — bridge, Shatibiyyah, Durrah — is tracked page by page so you always know your position on the path.", solutionAr: "يضع الشيخ الوتيرة بعد حصة التقييم المجانية بحسب مستواك السابق وجدولك الأسبوعي. كل مرحلة — التمهيد والشاطبية والدرة — تُتابَع صفحة صفحة فتعرف دائمًا موقعك من المسار." },
+  { problemEn: "\"I live in a different timezone from Egypt.\"", problemAr: "\"أعيش في منطقة زمنية مختلفة عن مصر.\"", solutionEn: "Classes are one-on-one and scheduled flexibly. Students from the USA, Canada, UK, Australia and Europe pick slots that suit their day.", solutionAr: "الحصص فردية وتُحجز على مدار الساعة. طلابنا من أمريكا وكندا وبريطانيا وأستراليا وأوروبا يختارون المواعيد التي تناسبهم." },
+  { problemEn: "\"How long does the full ten Qira'at Ijazah take?\"", problemAr: "\"كم يستغرق إتمام إجازة القراءات العشر؟\"", solutionEn: "The pace is set by your shaykh after the free assessment based on your prior mastery and availability. Every stage — bridge, Shatibiyyah, Durrah — is tracked page by page so you always know your position on the path.", solutionAr: "يضع الشيخ الوتيرة بعد حصة التقييم المجانية بحسب مستواك السابق وجدولك الأسبوعي. كل مرحلة — التمهيد والشاطبية والدرة — تُتابَع صفحة صفحة فتعرف دائمًا موقعك من المسار." },
 ];
 
 const CURRICULUM: CurriculumWeek[] = [
@@ -78,7 +78,7 @@ const COMPARISON: ComparisonRow[] = [
   { featureEn: "Teacher Qualification", featureAr: "تأهيل الشيخ", usEn: "✅ Al-Azhar-certified Sanad holders", usAr: "✅ مشايخ مسندون من الأزهر", othersEn: "❌ Unverified Ijazah claims", othersAr: "❌ ادعاءات إجازة غير موثقة" },
   { featureEn: "Class Format", featureAr: "نوع الحصة", usEn: "✅ One-on-one Talaqqi", usAr: "✅ تلقٍّ فردي", othersEn: "❌ Recorded lectures or groups", othersAr: "❌ محاضرات مسجلة أو مجموعات" },
   { featureEn: "Sanad Documentation", featureAr: "توثيق السند", usEn: "✅ Written Ijazah with full chain to the Prophet ﷺ", usAr: "✅ إجازة مكتوبة بسند متصل إلى النبي ﷺ", othersEn: "⚠️ Verbal or no formal document", othersAr: "⚠️ شفهي أو بدون وثيقة رسمية" },
-  { featureEn: "Scheduling", featureAr: "المواعيد", usEn: "✅ 24/7 slots for all timezones", usAr: "✅ مواعيد على مدار الساعة لجميع المناطق الزمنية", othersEn: "⚠️ Fixed Egypt-only hours", othersAr: "⚠️ ساعات مصرية ثابتة فقط" },
+  { featureEn: "Scheduling", featureAr: "المواعيد", usEn: "✅ Flexible slots for every timezone", usAr: "✅ مواعيد على مدار الساعة لجميع المناطق الزمنية", othersEn: "⚠️ Fixed Egypt-only hours", othersAr: "⚠️ ساعات مصرية ثابتة فقط" },
   { featureEn: "Free Trial", featureAr: "حصة تجريبية", usEn: "✅ Free assessment session", usAr: "✅ حصة تقييم مجانية", othersEn: "❌ Paid intake", othersAr: "❌ حصة قبول مدفوعة" },
 ];
 
@@ -161,7 +161,7 @@ const TenQiratOnline = () => (
     aboutContentEn={[
       "The ten Qira'at ('Al-Qira'at Al-'Ashr) are the ten mass-transmitted (mutawatir) recitations of the Quran preserved from the Prophet ﷺ through unbroken chains of Sanad. Studying them properly is one of the highest sciences of the Quran and requires a qualified, connected shaykh — not just recordings or books.",
       "At Alhamd Academy every Qira'at student is paired with an Al-Azhar-certified shaykh who holds a documented, unbroken Sanad in each Qira'ah he teaches. Every session is one-on-one Talaqqi over live video, so nothing is generalized and every error is corrected the moment it occurs.",
-      "We serve students from the USA, Canada, UK, Australia, Germany, France and the broader Muslim world. Classes are scheduled 24/7 to fit any timezone, and we offer full brother-with-shaykh and sister-with-shaykhah tracks so every student is comfortable.",
+      "We serve students from the USA, Canada, UK, Australia, Germany, France and the broader Muslim world. Classes are scheduled flexibly to fit any timezone, and we offer full brother-with-shaykh and sister-with-shaykhah tracks so every student is comfortable.",
       "Our curriculum walks you from a Hafs bridge phase into the full Shatibiyyah (seven Qira'at) and then the Durrah (three additional Qira'at) to complete Al-'Ashr Al-Sughra. Each stage ends with a Khatmah on the shaykh and, ultimately, a written Ijazah document with the full Sanad chain.",
     ]}
     aboutContentAr={[
@@ -175,7 +175,7 @@ const TenQiratOnline = () => (
     methodContentEn={[
       "We teach the ten Qira'at through the classical Talaqqi (oral transmission) method exactly as it has been transmitted for over fourteen centuries. Nothing is delivered as a lecture — every ayah is recited by the student directly to the shaykh and corrected immediately.",
       "Each Qira'ah is studied as a complete system: first the usool (recurring principles) from the Shatibiyyah or the Durrah, then the farsh (word-specific differences), then a full continuous Khatmah on the shaykh to prove mastery.",
-      "Progress is tracked in a private student portal: recorded assignments, weekly notes from the shaykh, and a Khatmah tracker so you always know exactly where you are inside each Qira'ah and how far from Ijazah.",
+      "Progress is tracked in a private student portal: recorded assignments, written notes from the shaykh, and a Khatmah tracker so you always know exactly where you are inside each Qira'ah and how far from Ijazah.",
       "Once the shaykh is satisfied with your recitation and your understanding of the usool, a formal written Ijazah is issued listing the full Sanad chain of your shaykh's teachers back to the Prophet ﷺ.",
     ]}
     methodContentAr={[
@@ -223,10 +223,10 @@ const TenQiratOnline = () => (
       "Strict one-on-one Talaqqi — never group lectures",
       "Shatibiyyah + Durrah routes for full Al-'Ashr Al-Sughra",
       "Free assessment class before enrolment",
-      "Flexible 24/7 scheduling for every timezone",
+      "Flexible scheduling for every timezone",
       "Formal written Ijazah with full Sanad chain",
       "Dedicated female shaykhat for sisters",
-      "Progress tracking portal and weekly reports",
+      "Progress tracking portal and progress reports",
     ]}
     featuresAr={[
       "مشايخ ومشيخات مسندون معتمدون من الأزهر",
