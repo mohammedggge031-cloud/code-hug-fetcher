@@ -486,18 +486,35 @@ async function handlePage(req: any, res: any, path: string, host: string, lang: 
 
   // Build a minimal MetaBundle for pages without a seo_metadata override
   // so lang/dir + hreflang still get applied to the static template.
+  // Isolated, path-specific defaults for /pricing, /about, /reviews (and
+  // their /ar/ mirrors) so they NEVER fall back to the homepage title.
+  const isolatedDefaults: Record<string, { title: string; description: string }> = {
+    "/pricing": {
+      title: "Quran Classes Pricing | Monthly, 6-Month & Annual Plans | Alhamd Academy",
+      description: "Transparent pricing for one-on-one online Quran classes. Choose your session length and weekly frequency. Free trial included.",
+    },
+    "/about": {
+      title: "About Alhamd Academy | Certified Al-Azhar Quran & Arabic Teachers",
+      description: "Learn about Alhamd Academy — our mission, our certified Al-Azhar teachers, and how we deliver one-on-one online Quran, Tajweed, Hifz and Arabic classes worldwide.",
+    },
+    "/reviews": {
+      title: "Student Reviews & Testimonials | Alhamd Academy",
+      description: "Read verified reviews from Alhamd Academy students worldwide. Real experiences learning Quran, Tajweed, Hifz and Arabic online with certified Al-Azhar teachers.",
+    },
+  };
+  const iso = isolatedDefaults[path];
   const meta =
     buildPageMeta(path, seo) ??
     ({
-      title: "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
-      description: "",
+      title: iso?.title ?? "Alhamd Academy | Online Quran, Arabic & Islamic Studies",
+      description: iso?.description ?? "",
       logicalPath: path,
       ogType: "website" as const,
-      ogTitle: "Alhamd Academy",
-      ogDescription: "",
+      ogTitle: iso?.title ?? "Alhamd Academy",
+      ogDescription: iso?.description ?? "",
       ogImage: DEFAULT_OG_IMAGE,
-      twitterTitle: "Alhamd Academy",
-      twitterDescription: "",
+      twitterTitle: iso?.title ?? "Alhamd Academy",
+      twitterDescription: iso?.description ?? "",
       twitterImage: DEFAULT_OG_IMAGE,
     } as MetaBundle);
   let html = injectMeta(template, meta, lang);
