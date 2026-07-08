@@ -252,15 +252,14 @@ const ServicePageLayout = (props: ServicePageProps) => {
               {t(props.heroDescEn, props.heroDescAr)}
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <a
-                href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/#contact"
+                onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
                 className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-lg font-bold text-lg hover:scale-105 transition-transform shadow-lg"
               >
                 {t("Book Free Trial Class", "احجز حصة تجريبية مجانية")}
                 <ArrowRight className="w-5 h-5" />
-              </a>
+              </Link>
               <Link
                 to="/#pricing"
                 className="inline-flex items-center gap-2 border-2 border-primary-foreground/30 text-primary-foreground px-8 py-4 rounded-lg font-bold text-lg hover:bg-primary-foreground/10 transition-colors"
@@ -312,15 +311,14 @@ const ServicePageLayout = (props: ServicePageProps) => {
                 )}
               </p>
             </div>
-            <a
-              href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/#contact"
+              onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
               className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-lg font-bold hover:scale-105 transition-transform shadow-md whitespace-nowrap"
             >
               {t("Book Now", "احجز الآن")}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -674,10 +672,9 @@ const ServicePageLayout = (props: ServicePageProps) => {
               props.ctaDescAr || "احجز حصتك التجريبية المجانية الآن وجرّب طريقتنا في التدريس. بدون التزام."
             )}
           </p>
-          <a
-            href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/#contact"
+            onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
             className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-10 py-5 rounded-lg font-bold text-xl hover:scale-105 transition-transform shadow-lg"
           >
             {t(
@@ -685,7 +682,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
               props.ctaButtonAr || "احجز حصة مجانية الآن"
             )}
             <ArrowRight className="w-6 h-6" />
-          </a>
+          </Link>
         </div>
       </section>
 

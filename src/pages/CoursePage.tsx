@@ -210,15 +210,14 @@ const CoursePage = () => {
 
                 {/* CTA + Teacher badge inline */}
                 <div className="flex flex-wrap items-center gap-3">
-                  <a
-                    href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to="/#contact"
+                    onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform shadow-elevated text-sm"
                   >
                     {t("Book Free Trial", "احجز تجربة مجانية")}
                     <ArrowIcon className="w-4 h-4" />
-                  </a>
+                  </Link>
                   <a
                     href="#tracks"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-primary-foreground/25 text-primary-foreground font-semibold hover:bg-primary-foreground/10 transition-colors text-sm"
@@ -458,15 +457,14 @@ const CoursePage = () => {
                 )}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <a
-                  href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/#contact"
+                  onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-accent text-accent-foreground font-bold hover:scale-105 transition-transform shadow-elevated"
                 >
                   <Phone className="w-5 h-5" />
-                  {t("Book Free Trial on WhatsApp", "احجز تجربة مجانية على واتساب")}
-                </a>
+                  {t("Book Free Trial", "احجز تجربة مجانية")}
+                </Link>
                 <Link
                   to="/free-trial"
                   className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl border-2 border-primary-foreground/25 text-primary-foreground font-semibold hover:bg-primary-foreground/10 transition-colors"

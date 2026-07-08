@@ -32,7 +32,8 @@ export const fetchExternalFunction = (functionName: string, init: RequestInit = 
     headers["Authorization"] = `Bearer ${anonKey}`;
   }
 
-  return fetchWithTimeout(url, { ...init, headers }, {
+  // keepalive: true → survives if user is navigated to WhatsApp/new tab
+  return fetchWithTimeout(url, { ...init, headers, keepalive: true }, {
     timeoutMs: SUPABASE_TIMEOUT_MS,
     markGlobalFallbackOnError: false,
   });
