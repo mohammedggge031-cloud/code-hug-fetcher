@@ -672,10 +672,9 @@ const ServicePageLayout = (props: ServicePageProps) => {
               props.ctaDescAr || "احجز حصتك التجريبية المجانية الآن وجرّب طريقتنا في التدريس. بدون التزام."
             )}
           </p>
-          <a
-            href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/#contact"
+            onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
             className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-10 py-5 rounded-lg font-bold text-xl hover:scale-105 transition-transform shadow-lg"
           >
             {t(
@@ -683,7 +682,7 @@ const ServicePageLayout = (props: ServicePageProps) => {
               props.ctaButtonAr || "احجز حصة مجانية الآن"
             )}
             <ArrowRight className="w-6 h-6" />
-          </a>
+          </Link>
         </div>
       </section>
 
