@@ -195,28 +195,43 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
               const sourceLine = source ? `\n🏷️ *Source:* ${source}` : '';
               const text = `📚 *New Booking Request - Alhamd Academy*\n\n👤 *Name:* ${name}\n📱 *Phone:* ${phone}\n📖 *Course:* ${course}\n💬 *Message:* ${message}${scheduleText}${sourceLine}`;
 
-              // Send copy to admin system (non-blocking, retry 3x with backoff)
+              const bookingPayload = {
+                full_name: name,
+                phone,
+                email: null as string | null,
+                course_interest: course,
+                preferred_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
+                preferred_time: selectedTime || null,
+                timezone: selectedTz,
+                message: message || null,
+                source: source || "website",
+              };
+
+              // 1) Send to EXTERNAL system (retry 3x, keepalive so it survives WA nav)
               void retryWithBackoff(
                 () =>
                   fetchExternalFunction("receive-booking", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      full_name: name,
-                      phone,
-                      email: null,
-                      course_interest: course,
-                      preferred_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
-                      preferred_time: selectedTime || null,
-                      timezone: selectedTz,
-                      message: message || null,
-                      ...(source ? { source } : {}),
-                    }),
+                    body: JSON.stringify(bookingPayload),
                   }),
-                { label: "booking-sync" },
+                { label: "booking-sync-external" },
               ).catch(() => { /* logged in retryWithBackoff */ });
 
-              // Local lead-log capture (UTM-aware) for the admin dashboard
+              // 2) Persist to MAIN Supabase `bookings` for the admin dashboard
+              void (async () => {
+                try {
+                  const { supabase } = await import("@/integrations/supabase/client");
+                  await (supabase.from("bookings" as never) as never)
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .insert(bookingPayload as any);
+                } catch (err) {
+                  const { logger } = await import("@/lib/logger");
+                  logger.warn("bookings insert failed:", err);
+                }
+              })();
+
+              // 3) Local lead-log capture (UTM-aware) for admin dashboard reporting
               void captureLead({
                 name,
                 contact: phone,
@@ -224,6 +239,7 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
                 sourceOverride: source || undefined,
               });
 
+              // 4) Open WhatsApp with the same details
               window.open(`https://wa.me/201271134828?text=${encodeURIComponent(text)}`, '_blank');
             }}>
               {/* Honeypot — invisible to real users */}
