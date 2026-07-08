@@ -222,9 +222,9 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
               void (async () => {
                 try {
                   const { supabase } = await import("@/integrations/supabase/client");
-                  await (supabase.from("bookings" as never) as never)
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    .insert(bookingPayload as any);
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const client = supabase as any;
+                  await client.from("bookings").insert(bookingPayload);
                 } catch (err) {
                   const { logger } = await import("@/lib/logger");
                   logger.warn("bookings insert failed:", err);
