@@ -311,15 +311,14 @@ const ServicePageLayout = (props: ServicePageProps) => {
                 )}
               </p>
             </div>
-            <a
-              href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/#contact"
+              onClick={() => window.sessionStorage.setItem("pendingScrollTarget", "contact")}
               className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-6 py-3 rounded-lg font-bold hover:scale-105 transition-transform shadow-md whitespace-nowrap"
             >
               {t("Book Now", "احجز الآن")}
               <ArrowRight className="w-4 h-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </section>
