@@ -39,6 +39,7 @@ const AdminLayout = () => {
     {
       label: lang === "ar" ? "التسويق والإعلانات" : "Marketing & Ads",
       items: [
+        { to: "/admin/bookings", icon: Inbox, label: lang === "ar" ? "الحجوزات" : "Bookings", end: false, show: isPrimaryOwnerEmail(user?.email) },
         { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isOwner },
         { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isOwner },
         { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isOwner },
