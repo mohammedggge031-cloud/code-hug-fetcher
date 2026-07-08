@@ -178,6 +178,7 @@ const App = () => (
                   <Route path="videos" element={<VideoManagement />} />
                   <Route path="users" element={<UserRolesManagement />} />
                   <Route path="pricing" element={<OwnerOnlyRoute><PricingManagement /></OwnerOnlyRoute>} />
+                  <Route path="bookings" element={<OwnerOnlyRoute><BookingsManagement /></OwnerOnlyRoute>} />
                 </Route>
               </Route>
 
