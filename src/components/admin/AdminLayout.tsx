@@ -11,6 +11,23 @@ import logoLive from "@/assets/logo-new.webp";
 import { isPrimaryOwnerEmail } from "@/lib/ownerConfig";
 import { supabase } from "@/integrations/supabase/client";
 
+type AdminNavItem = {
+  to: string;
+  icon: typeof LayoutDashboard;
+  label: string;
+  end: boolean;
+  show: boolean;
+  badge?: number;
+};
+
+type BookingsCounterClient = {
+  from: (table: "bookings") => {
+    select: (columns: string, options: { count: "exact"; head: true }) => {
+      eq: (column: "is_read", value: boolean) => Promise<{ count: number | null; error: { message: string } | null }>;
+    };
+  };
+};
+
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin, isOwner, can } = useAuth();
   const { t, lang, toggleLang, dir } = useAdminLang();
@@ -28,7 +45,7 @@ const AdminLayout = () => {
     let active = true;
     const loadUnread = async () => {
       try {
-        const { count, error } = await (supabase as any)
+        const { count, error } = await (supabase as unknown as BookingsCounterClient)
           .from("bookings")
           .select("id", { count: "exact", head: true })
           .eq("is_read", false);
@@ -44,7 +61,7 @@ const AdminLayout = () => {
     return () => { active = false; window.clearInterval(timer); };
   }, [user?.email]);
 
-  const navGroups = [
+  const navGroups: { label: string; items: AdminNavItem[] }[] = [
     {
       label: lang === "ar" ? "الرئيسية" : "Overview",
       items: [
@@ -153,9 +170,9 @@ const AdminLayout = () => {
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="flex-1">{item.label}</span>
-                  {Boolean("badge" in item ? item.badge : 0) && (
+                  {Boolean(item.badge) && (
                     <span className="min-w-5 h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
-                      {("badge" in item ? item.badge : 0) > 99 ? "99+" : ("badge" in item ? item.badge : 0)}
+                      {item.badge > 99 ? "99+" : item.badge}
                     </span>
                   )}
                 </NavLink>
