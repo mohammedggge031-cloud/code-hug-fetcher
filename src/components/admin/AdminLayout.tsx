@@ -3,12 +3,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Search, Users, Code, LogOut, Menu, X, FileText, Image, FolderOpen, Globe, KeyRound, Video, Megaphone, Inbox, Target, DollarSign } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ChangePasswordDialog from "@/components/admin/ChangePasswordDialog";
 import logoLive from "@/assets/logo-new.webp";
 import { isPrimaryOwnerEmail } from "@/lib/ownerConfig";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminLayout = () => {
   const { user, role, signOut, isAdmin, isOwner, can } = useAuth();
@@ -16,11 +17,38 @@ const AdminLayout = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [unreadBookings, setUnreadBookings] = useState(0);
+
+  useEffect(() => {
+    if (!isPrimaryOwnerEmail(user?.email)) {
+      setUnreadBookings(0);
+      return;
+    }
+
+    let active = true;
+    const loadUnread = async () => {
+      try {
+        const { count, error } = await (supabase as any)
+          .from("bookings")
+          .select("id", { count: "exact", head: true })
+          .eq("is_read", false);
+        if (!active || error) return;
+        setUnreadBookings(count || 0);
+      } catch {
+        if (active) setUnreadBookings(0);
+      }
+    };
+
+    void loadUnread();
+    const timer = window.setInterval(loadUnread, 45_000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [user?.email]);
 
   const navGroups = [
     {
       label: lang === "ar" ? "الرئيسية" : "Overview",
       items: [
+        { to: "/admin/bookings", icon: Inbox, label: lang === "ar" ? "الحجوزات" : "Bookings", end: false, show: isPrimaryOwnerEmail(user?.email), badge: unreadBookings },
         { to: "/admin", icon: LayoutDashboard, label: t("nav.dashboard"), end: true, show: true },
       ],
     },
@@ -39,7 +67,6 @@ const AdminLayout = () => {
     {
       label: lang === "ar" ? "التسويق والإعلانات" : "Marketing & Ads",
       items: [
-        { to: "/admin/bookings", icon: Inbox, label: lang === "ar" ? "الحجوزات" : "Bookings", end: false, show: isPrimaryOwnerEmail(user?.email) },
         { to: "/admin/leads", icon: Inbox, label: lang === "ar" ? "العملاء المحتملون" : "Leads", end: false, show: can("can_manage_leads") || isOwner },
         { to: "/admin/social", icon: Megaphone, label: lang === "ar" ? "السوشيال" : "Social", end: false, show: can("can_manage_social") || isOwner },
         { to: "/admin/ads", icon: Target, label: lang === "ar" ? "تتبع الإعلانات" : "Ads Tracking", end: false, show: can("can_manage_leads") || can("can_manage_social") || isOwner },
@@ -125,7 +152,12 @@ const AdminLayout = () => {
                   )}
                 >
                   <item.icon className="h-4 w-4" />
-                  {item.label}
+                  <span className="flex-1">{item.label}</span>
+                  {Boolean(item.badge) && (
+                    <span className="min-w-5 h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>
