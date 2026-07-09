@@ -80,10 +80,11 @@ const BlogPost = () => {
         fallback: null,
         markGlobalFallbackOnError: true,
         request: async (signal) => {
+          const slug = decodeURIComponent(id || "").replace(/^\/+|\/+$/g, "").replace(/^blog\//, "");
           const { data, error } = await supabase
             .from("blog_posts")
             .select("*, blog_categories(name_en, name_ar)")
-            .eq("slug", id!)
+            .eq("slug", slug)
             .eq("status", "published")
             .abortSignal(signal)
             .maybeSingle();
