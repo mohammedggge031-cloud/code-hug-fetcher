@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminLang } from "@/contexts/AdminLangContext";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Eye, Search, Loader2, RefreshCw, Zap } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, Search, Loader2, RefreshCw, Zap, Upload } from "lucide-react";
 import TipTapEditor from "@/components/admin/TipTapEditor";
 import TranslateButton from "@/components/admin/TranslateButton";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,6 +49,8 @@ const BlogManagement = () => {
   const [deleteTarget, setDeleteTarget] = useState<BlogPost | null>(null);
   const [reindexingId, setReindexingId] = useState<string | null>(null);
   const [reindexingAll, setReindexingAll] = useState(false);
+  const [imageUploading, setImageUploading] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const { isAdmin } = useAuth();
   const { t, lang } = useAdminLang();
   const { toast } = useToast();
@@ -165,6 +167,78 @@ const BlogManagement = () => {
     }
   };
 
+  const optimizeArticleImage = (file: File): Promise<Blob> => new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const maxWidth = 1400;
+      const scale = Math.min(1, maxWidth / img.width);
+      const width = Math.round(img.width * scale);
+      const height = Math.round(img.height * scale);
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Image optimizer is unavailable."));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Could not optimize image."));
+      }, "image/webp", 0.78);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Invalid image file."));
+    };
+    img.src = url;
+  });
+
+  const handleFeaturedImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: t("err.error"), description: "Please upload an image file.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      toast({ title: t("err.error"), description: "Image must be less than 8MB before compression.", variant: "destructive" });
+      return;
+    }
+
+    setImageUploading(true);
+    try {
+      const optimized = await optimizeArticleImage(file);
+      const safeBase = (editing.slug || generateSlug(editing.title_en) || "article").replace(/[^a-z0-9-]/g, "").slice(0, 70);
+      const path = `blog/${safeBase}-${Date.now()}.webp`;
+      const { error: uploadError } = await supabase.storage.from("media").upload(path, optimized, {
+        contentType: "image/webp",
+        cacheControl: "31536000",
+        upsert: false,
+      });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from("media").getPublicUrl(path);
+      await supabase.from("media_assets").insert({
+        file_name: `${safeBase}.webp`,
+        file_url: publicUrl,
+        file_size: optimized.size,
+        file_type: "image/webp",
+        alt_text: editing.title_en || editing.title_ar || null,
+      });
+      setEditing(prev => ({ ...prev, featured_image: publicUrl }));
+      toast({ title: t("ok.done"), description: lang === "ar" ? "تم ضغط الصورة ورفعها." : "Image compressed and uploaded." });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      toast({ title: t("err.error"), description: message, variant: "destructive" });
+    } finally {
+      setImageUploading(false);
+      e.target.value = "";
+    }
+  };
+
   const handleDelete = async (post: BlogPost) => {
     try {
       const { error } = await supabase.from("blog_posts").delete().eq("id", post.id);
@@ -219,7 +293,20 @@ const BlogManagement = () => {
     }
   };
 
-  const filtered = posts.filter(p => p.title_en.toLowerCase().includes(search.toLowerCase()) || p.title_ar.includes(search));
+  const filtered = posts.filter((p) => {
+    const q = search.trim().toLowerCase();
+    if (!q) return true;
+    const fields = [
+      p.title_en,
+      p.title_ar,
+      p.slug,
+      p.excerpt_en || "",
+      p.excerpt_ar || "",
+      getCategoryName(p.category_id),
+      ...(p.tags || []),
+    ];
+    return fields.some((field) => field.toLowerCase().includes(q));
+  });
   const getCategoryName = (catId: string | null) => {
     if (!catId) return "—";
     const cat = categories.find(c => c.id === catId);
@@ -387,7 +474,19 @@ const BlogManagement = () => {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2"><Label>{t("blog.image")}</Label><Input value={editing.featured_image} onChange={e => setEditing(prev => ({ ...prev, featured_image: e.target.value }))} dir="ltr" placeholder="https://..." /></div>
+              <div className="space-y-2">
+                <Label>{t("blog.image")}</Label>
+                <div className="flex gap-2">
+                  <Input value={editing.featured_image} onChange={e => setEditing(prev => ({ ...prev, featured_image: e.target.value }))} dir="ltr" placeholder="https://..." />
+                  <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleFeaturedImageUpload} />
+                  <Button type="button" variant="outline" size="icon" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} title={lang === "ar" ? "رفع صورة مضغوطة" : "Upload optimized image"}>
+                    {imageUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  </Button>
+                </div>
+                {editing.featured_image && (
+                  <img src={editing.featured_image} alt="" className="h-20 w-32 rounded-md object-cover border" loading="lazy" />
+                )}
+              </div>
               <div className="space-y-2"><Label>{t("blog.read_en")}</Label><Input value={editing.read_time_en} onChange={e => setEditing(prev => ({ ...prev, read_time_en: e.target.value }))} placeholder="5 min read" /></div>
               <div className="space-y-2"><Label>{t("blog.read_ar")}</Label><Input value={editing.read_time_ar} onChange={e => setEditing(prev => ({ ...prev, read_time_ar: e.target.value }))} dir="rtl" placeholder="٥ دقائق قراءة" /></div>
             </div>
