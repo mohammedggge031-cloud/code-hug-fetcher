@@ -90,7 +90,21 @@ const BlogManagement = () => {
   useEffect(() => { fetchData(); }, []);
 
   const generateSlug = (title: string) =>
-    title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").slice(0, 100);
+    title.toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 100);
+
+  const normalizeSlug = (slug: string, fallbackTitle: string) => {
+    const cleaned = slug
+      .trim()
+      .toLowerCase()
+      .replace(/^\/+|\/+$/g, "")
+      .replace(/^blog\//, "")
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 100);
+    return cleaned || generateSlug(fallbackTitle) || `article-${Date.now()}`;
+  };
 
   const openNew = () => { setEditing(emptyPost); setTagsInput(""); setActiveTab("en"); setShowEditor(true); };
 
@@ -114,7 +128,7 @@ const BlogManagement = () => {
     }
 
     setIsSaving(true);
-    const slug = editing.slug || generateSlug(editing.title_en);
+    const slug = normalizeSlug(editing.slug, editing.title_en);
     const tags = tagsInput.split(",").map(t => t.trim()).filter(Boolean);
 
     // Only set published_at on first publish, preserve existing value on edit
@@ -388,7 +402,7 @@ const BlogManagement = () => {
                   <TableCell>
                     <div className="flex gap-1">
                       <Button variant="ghost" size="icon" onClick={() => openEdit(post)} title={t("blog.edit")}><Pencil className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${post.slug}`, "_blank")} title={lang === "ar" ? "معاينة" : "Preview"}><Eye className="h-4 w-4" /></Button>
+                      <Button variant="ghost" size="icon" onClick={() => window.open(`/blog/${encodeURIComponent(post.slug)}`, "_blank")} title={lang === "ar" ? "معاينة" : "Preview"}><Eye className="h-4 w-4" /></Button>
                       {post.status === "published" && (
                         <Button
                           variant="ghost"
