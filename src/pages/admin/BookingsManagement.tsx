@@ -349,7 +349,7 @@ const BookingsManagement = () => {
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-muted-foreground">{copy.to}</label>
-              <Input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setRangeMode("custom"); }} min={fromDate || undefined} max={toDate || undefined} />
+              <Input type="date" value={toDate} onChange={(e) => { setToDate(e.target.value); setRangeMode("custom"); }} min={fromDate || undefined} />
             </div>
           </div>
         </CardHeader>
