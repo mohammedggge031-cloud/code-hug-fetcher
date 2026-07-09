@@ -293,6 +293,12 @@ const BlogManagement = () => {
     }
   };
 
+  const getCategoryName = (catId: string | null) => {
+    if (!catId) return "—";
+    const cat = categories.find(c => c.id === catId);
+    return cat ? (lang === "ar" ? cat.name_ar : cat.name_en) : "—";
+  };
+
   const filtered = posts.filter((p) => {
     const q = search.trim().toLowerCase();
     if (!q) return true;
@@ -307,11 +313,6 @@ const BlogManagement = () => {
     ];
     return fields.some((field) => field.toLowerCase().includes(q));
   });
-  const getCategoryName = (catId: string | null) => {
-    if (!catId) return "—";
-    const cat = categories.find(c => c.id === catId);
-    return cat ? (lang === "ar" ? cat.name_ar : cat.name_en) : "—";
-  };
 
   return (
     <div className="space-y-6">
