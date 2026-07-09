@@ -4,7 +4,6 @@ import { Mail, Phone, Send, CalendarIcon, Clock, Globe, AlertCircle } from "luci
 import { useMobileSafeMotion } from "@/hooks/useMobileSafeMotion";
 import EgyptFlag from "@/components/EgyptFlag";
 import { useState, useRef } from "react";
-import { format } from "date-fns";
 import { fetchExternalFunction } from "@/lib/externalDashboard";
 import { captureLead } from "@/lib/leadCapture";
 import { retryWithBackoff } from "@/lib/logger";
@@ -21,59 +20,89 @@ const TIME_SLOTS = [
 ];
 
 const TIMEZONES = [
-  { label: "(UTC-12:00) Baker Island", value: "UTC-12", offset: -12 },
-  { label: "(UTC-11:00) Samoa", value: "UTC-11", offset: -11 },
-  { label: "(UTC-10:00) Hawaii", value: "UTC-10", offset: -10 },
-  { label: "(UTC-9:00) Alaska", value: "UTC-9", offset: -9 },
-  { label: "(UTC-8:00) Pacific Time (US)", value: "UTC-8", offset: -8 },
-  { label: "(UTC-7:00) Mountain Time (US)", value: "UTC-7", offset: -7 },
-  { label: "(UTC-6:00) Central Time (US)", value: "UTC-6", offset: -6 },
-  { label: "(UTC-5:00) Eastern Time (US)", value: "UTC-5", offset: -5 },
-  { label: "(UTC-4:00) Atlantic Time", value: "UTC-4", offset: -4 },
-  { label: "(UTC-3:00) Buenos Aires", value: "UTC-3", offset: -3 },
-  { label: "(UTC-2:00) Mid-Atlantic", value: "UTC-2", offset: -2 },
-  { label: "(UTC-1:00) Azores", value: "UTC-1", offset: -1 },
-  { label: "(UTC+0:00) London, UTC", value: "UTC+0", offset: 0 },
-  { label: "(UTC+1:00) Paris, Berlin", value: "UTC+1", offset: 1 },
-  { label: "(UTC+2:00) Cairo, Egypt", value: "UTC+2", offset: 2 },
-  { label: "(UTC+3:00) Riyadh, Moscow", value: "UTC+3", offset: 3 },
-  { label: "(UTC+3:30) Tehran", value: "UTC+3:30", offset: 3.5 },
-  { label: "(UTC+4:00) Dubai, Muscat", value: "UTC+4", offset: 4 },
-  { label: "(UTC+4:30) Kabul", value: "UTC+4:30", offset: 4.5 },
-  { label: "(UTC+5:00) Karachi, Tashkent", value: "UTC+5", offset: 5 },
-  { label: "(UTC+5:30) Mumbai, New Delhi", value: "UTC+5:30", offset: 5.5 },
-  { label: "(UTC+5:45) Kathmandu", value: "UTC+5:45", offset: 5.75 },
-  { label: "(UTC+6:00) Dhaka", value: "UTC+6", offset: 6 },
-  { label: "(UTC+6:30) Yangon", value: "UTC+6:30", offset: 6.5 },
-  { label: "(UTC+7:00) Bangkok, Jakarta", value: "UTC+7", offset: 7 },
-  { label: "(UTC+8:00) Singapore, Beijing", value: "UTC+8", offset: 8 },
-  { label: "(UTC+9:00) Tokyo, Seoul", value: "UTC+9", offset: 9 },
-  { label: "(UTC+9:30) Adelaide", value: "UTC+9:30", offset: 9.5 },
-  { label: "(UTC+10:00) Sydney, Melbourne", value: "UTC+10", offset: 10 },
-  { label: "(UTC+11:00) Solomon Islands", value: "UTC+11", offset: 11 },
-  { label: "(UTC+12:00) Auckland, Fiji", value: "UTC+12", offset: 12 },
-  { label: "(UTC+13:00) Tonga", value: "UTC+13", offset: 13 },
+  { label: "Auto-detected timezone", value: "auto" },
+  { label: "London / UK", value: "Europe/London" },
+  { label: "Paris / Berlin", value: "Europe/Paris" },
+  { label: "Cairo / Egypt", value: "Africa/Cairo" },
+  { label: "Riyadh", value: "Asia/Riyadh" },
+  { label: "Dubai / Muscat", value: "Asia/Dubai" },
+  { label: "Doha / Qatar", value: "Asia/Qatar" },
+  { label: "Kuwait", value: "Asia/Kuwait" },
+  { label: "Istanbul", value: "Europe/Istanbul" },
+  { label: "New York / Eastern US", value: "America/New_York" },
+  { label: "Chicago / Central US", value: "America/Chicago" },
+  { label: "Denver / Mountain US", value: "America/Denver" },
+  { label: "Los Angeles / Pacific US", value: "America/Los_Angeles" },
+  { label: "Toronto", value: "America/Toronto" },
+  { label: "Sydney", value: "Australia/Sydney" },
+  { label: "Melbourne", value: "Australia/Melbourne" },
+  { label: "Perth", value: "Australia/Perth" },
+  { label: "Karachi", value: "Asia/Karachi" },
+  { label: "New Delhi", value: "Asia/Kolkata" },
+  { label: "Dhaka", value: "Asia/Dhaka" },
+  { label: "Singapore", value: "Asia/Singapore" },
+  { label: "Kuala Lumpur", value: "Asia/Kuala_Lumpur" },
+  { label: "Jakarta", value: "Asia/Jakarta" },
+  { label: "Tokyo", value: "Asia/Tokyo" },
+  { label: "Auckland", value: "Pacific/Auckland" },
 ];
 
-const EGYPT_OFFSET = 2; // UTC+2
-function convertTimeSlotToEgypt(slotValue: string, userOffset: number): string {
-  const startHour = parseInt(slotValue.split("-")[0].split(":")[0]);
-  const diff = EGYPT_OFFSET - userOffset;
-  let egyptStart = startHour + diff;
-  let egyptEnd = egyptStart + 4;
-  
-  const formatH = (h: number) => {
-    h = ((h % 24) + 24) % 24;
-    if (h === 0) return "12:00 AM";
-    if (h === 12) return "12:00 PM";
-    return h > 12 ? `${h - 12}:00 PM` : `${h}:00 AM`;
-  };
-  
-  return `${formatH(egyptStart)} – ${formatH(egyptEnd)}`;
+const EGYPT_TZ = "Africa/Cairo";
+
+const detectUserTimeZone = () => {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || EGYPT_TZ; }
+  catch { return EGYPT_TZ; }
+};
+
+const formatDateInput = (date: Date) => {
+  const y = date.getUTCFullYear();
+  const m = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const d = String(date.getUTCDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const todayInput = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+};
+
+const formatDateDisplay = (date: Date, timeZone: string, locale = "en-US") =>
+  new Intl.DateTimeFormat(locale, { dateStyle: "full", timeZone }).format(date);
+
+const getTimeZoneOffsetHours = (timeZone: string, date: Date): number => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+  }).formatToParts(date).reduce<Record<string, string>>((acc, part) => {
+    if (part.type !== "literal") acc[part.type] = part.value;
+    return acc;
+  }, {});
+  const asUtc = Date.UTC(+parts.year, +parts.month - 1, +parts.day, +parts.hour, +parts.minute, +parts.second);
+  return (asUtc - date.getTime()) / 36e5;
+};
+
+const zonedWallTimeToUtc = (date: Date, timeZone: string, hour: number, minute = 0) => {
+  const y = date.getUTCFullYear();
+  const m = date.getUTCMonth();
+  const d = date.getUTCDate();
+  const guess = new Date(Date.UTC(y, m, d, hour, minute));
+  const offset = getTimeZoneOffsetHours(timeZone, guess);
+  return new Date(Date.UTC(y, m, d, hour, minute) - offset * 60 * 60 * 1000);
+};
+
+function convertTimeSlotToEgypt(slotValue: string, sourceTimeZone: string, date?: Date): string {
+  const startHour = parseInt(slotValue.split("-")[0].split(":")[0], 10);
+  const baseDate = date || new Date();
+  const startUtc = zonedWallTimeToUtc(baseDate, sourceTimeZone, startHour);
+  const endUtc = new Date(startUtc.getTime() + 4 * 60 * 60 * 1000);
+  const fmt = new Intl.DateTimeFormat("en-US", { timeZone: EGYPT_TZ, hour: "numeric", minute: "2-digit", hour12: true });
+  return `${fmt.format(startUtc)} – ${fmt.format(endUtc)}`;
 }
 
-function formatDiff(userOffset: number): string {
-  const diff = EGYPT_OFFSET - userOffset;
+function formatDiff(sourceTimeZone: string, date?: Date): string {
+  const at = date || new Date();
+  const diff = getTimeZoneOffsetHours(EGYPT_TZ, at) - getTimeZoneOffsetHours(sourceTimeZone, at);
   if (diff === 0) return "same as Egypt";
   const sign = diff > 0 ? "+" : "";
   const hours = Math.floor(Math.abs(diff));
@@ -107,12 +136,16 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
   const { fadeIn, slideInLeft } = useMobileSafeMotion();
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
-  const [selectedTz, setSelectedTz] = useState("UTC+2");
+  const [selectedTz, setSelectedTz] = useState("auto");
   const [formErrors, setFormErrors] = useState<z.ZodError | null>(null);
   const [submitError, setSubmitError] = useState("");
   const honeypotRef = useRef<HTMLInputElement>(null);
 
+  const resolvedTimeZone = selectedTz === "auto" ? detectUserTimeZone() : selectedTz;
   const currentTzObj = TIMEZONES.find(tz => tz.value === selectedTz);
+  const timezoneLabel = selectedTz === "auto"
+    ? `${resolvedTimeZone} (auto)`
+    : `${currentTzObj?.label || selectedTz} (${resolvedTimeZone})`;
 
   return (
     <section id="contact" className="py-16 sm:py-20 md:py-24 bg-background" aria-label="Book a Free Trial Class - Contact Alhamd Academy">
@@ -179,15 +212,15 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
 
               let scheduleText = '';
               if (selectedDate || selectedTime) {
-                const dateStr = selectedDate ? format(selectedDate, "yyyy-MM-dd (EEEE)") : t("Not specified", "غير محدد");
+                const dateStr = selectedDate ? formatDateDisplay(selectedDate, resolvedTimeZone, "en-US") : t("Not specified", "غير محدد");
                 const timeLabel = selectedTime ? TIME_SLOTS.find(s => s.value === selectedTime)?.label || selectedTime : t("Not specified", "غير محدد");
-                const tzLabel = currentTzObj?.label || selectedTz;
+                const tzLabel = timezoneLabel;
                 
                 scheduleText = `\n\n📅 *${t("Preferred Date", "التاريخ المفضل")}:* ${dateStr}\n⏰ *${t("Time Slot", "الوقت")}:* ${timeLabel}\n🌍 *${t("Timezone", "المنطقة الزمنية")}:* ${tzLabel}`;
                 
-                if (selectedTime && currentTzObj) {
-                  const egyptTime = convertTimeSlotToEgypt(selectedTime, currentTzObj.offset);
-                  const diff = formatDiff(currentTzObj.offset);
+                if (selectedTime) {
+                  const egyptTime = convertTimeSlotToEgypt(selectedTime, resolvedTimeZone, selectedDate);
+                  const diff = formatDiff(resolvedTimeZone, selectedDate);
                   scheduleText += `\n🇪🇬 *${t("Egypt Time", "توقيت مصر")}:* ${egyptTime}\n🔄 *${t("Time Difference", "فرق التوقيت")}:* ${diff}`;
                 }
               }
@@ -200,11 +233,27 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
                 phone,
                 email: null as string | null,
                 course_interest: course,
-                preferred_date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : null,
+                preferred_date: selectedDate ? formatDateInput(selectedDate) : null,
                 preferred_time: selectedTime || null,
-                timezone: selectedTz,
+                timezone: timezoneLabel,
                 message: message || null,
                 source: source || "website",
+                is_read: false,
+                form_details: {
+                  fullName: name,
+                  phone,
+                  course,
+                  message: message || "",
+                  preferredDate: selectedDate ? formatDateInput(selectedDate) : null,
+                  preferredDateDisplay: selectedDate ? formatDateDisplay(selectedDate, resolvedTimeZone, "en-US") : null,
+                  preferredTimeSlot: selectedTime || null,
+                  preferredTimeLabel: selectedTime ? TIME_SLOTS.find(s => s.value === selectedTime)?.label || selectedTime : null,
+                  timezone: timezoneLabel,
+                  resolvedTimeZone,
+                  egyptTime: selectedTime ? convertTimeSlotToEgypt(selectedTime, resolvedTimeZone, selectedDate) : null,
+                  timeDifference: formatDiff(resolvedTimeZone, selectedDate),
+                  source: source || "website",
+                },
               };
 
               // 1) Send to EXTERNAL system (retry 3x, keepalive so it survives WA nav)
@@ -310,8 +359,8 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
                 </label>
                 <input
                   type="date"
-                  value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
-                  min={format(new Date(), "yyyy-MM-dd")}
+                  value={selectedDate ? formatDateInput(selectedDate) : ""}
+                  min={todayInput()}
                   onChange={(e) => {
                     const value = e.target.value;
                     if (!value) {
@@ -319,7 +368,7 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
                       return;
                     }
                     const [year, month, day] = value.split("-").map(Number);
-                    setSelectedDate(new Date(year, month - 1, day));
+                    setSelectedDate(new Date(Date.UTC(year, month - 1, day)));
                   }}
                   className="w-full px-4 py-3 rounded-xl border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
                   aria-label={t("Preferred Date", "التاريخ المفضل")}
@@ -361,9 +410,9 @@ const ContactSection = ({ source }: ContactSectionProps = {}) => {
                     <option key={tz.value} value={tz.value}>{tz.label}</option>
                   ))}
                 </select>
-                {selectedTime && currentTzObj && currentTzObj.offset !== EGYPT_OFFSET && (
+                {selectedTime && (
                   <p className="text-xs text-muted-foreground mt-2">
-                    <EgyptFlag className="w-5 h-3.5 inline-block align-middle mr-1" /> {t("Egypt Time", "توقيت مصر")}: {convertTimeSlotToEgypt(selectedTime, currentTzObj.offset)} ({formatDiff(currentTzObj.offset)})
+                    <EgyptFlag className="w-5 h-3.5 inline-block align-middle mr-1" /> {t("Egypt Time", "توقيت مصر")}: {convertTimeSlotToEgypt(selectedTime, resolvedTimeZone, selectedDate)} ({formatDiff(resolvedTimeZone, selectedDate)})
                   </p>
                 )}
               </div>
