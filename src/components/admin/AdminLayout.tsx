@@ -153,9 +153,9 @@ const AdminLayout = () => {
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="flex-1">{item.label}</span>
-                  {Boolean(item.badge) && (
+                  {Boolean("badge" in item ? item.badge : 0) && (
                     <span className="min-w-5 h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
-                      {item.badge > 99 ? "99+" : item.badge}
+                      {("badge" in item ? item.badge : 0) > 99 ? "99+" : ("badge" in item ? item.badge : 0)}
                     </span>
                   )}
                 </NavLink>
