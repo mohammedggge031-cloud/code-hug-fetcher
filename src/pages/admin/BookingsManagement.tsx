@@ -42,13 +42,6 @@ type RangeMode = "all" | "today" | "month" | "custom";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = supabase as any;
 
-const toDateInput = (date: Date) => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-};
-
 const buildWhatsAppUrl = (booking: Booking) => {
   const phone = booking.phone.replace(/[^\d]/g, "");
   const details = booking.form_details || {};
