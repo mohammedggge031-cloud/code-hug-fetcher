@@ -16,11 +16,25 @@ CREATE TABLE IF NOT EXISTS public.bookings (
   message text,
   source text,
   status text NOT NULL DEFAULT 'new',
+  is_read boolean NOT NULL DEFAULT false,
+  transferred_at timestamptz,
+  form_details jsonb NOT NULL DEFAULT '{}'::jsonb,
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE public.bookings
+  ADD COLUMN IF NOT EXISTS is_read boolean NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS transferred_at timestamptz,
+  ADD COLUMN IF NOT EXISTS form_details jsonb NOT NULL DEFAULT '{}'::jsonb;
+
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at
   ON public.bookings (created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_is_read_created_at
+  ON public.bookings (is_read, created_at DESC);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_preferred_date
+  ON public.bookings (preferred_date);
 
 -- Data-API grants
 GRANT INSERT ON public.bookings TO anon;
