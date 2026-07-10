@@ -1,9 +1,7 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { memo, useState } from "react";
 import { Check, Star } from "lucide-react";
-import { fetchExternalFunction } from "@/lib/externalDashboard";
-import { captureLead } from "@/lib/leadCapture";
-import { retryWithBackoff } from "@/lib/logger";
+import { Link } from "react-router-dom";
 import { useActivePricingPackages, type Duration } from "@/hooks/usePricingPlan";
 
 interface Plan {
@@ -115,37 +113,8 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         </div>
       </div>
 
-      <a
-        href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy%20%F0%9F%91%8B"
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => {
-          void retryWithBackoff(
-            () =>
-              fetchExternalFunction("receive-booking", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  full_name: "Subscription Request",
-                  phone: "",
-                  email: "",
-                  course_interest: `${tierNames.en[i]} Plan`,
-                  preferred_date: "",
-                  preferred_time: "",
-                  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                  message: `📋 Plan: ${tierNames.en[i]} | ⏱ Session: ${duration} min | 📅 Days/week: ${plan.days} | 🕐 Hours/month: ${plan.hoursPerMonth} | 💰 Price: $${plan.monthly}/month`,
-                }),
-              }),
-            { label: "subscription-sync" },
-          ).catch(() => { /* logged in retryWithBackoff */ });
-
-          // Local lead-log capture for dashboard reporting
-          void captureLead({
-            name: `Pricing — ${tierNames.en[i]}`,
-            contact: "(via WhatsApp)",
-            notes: `Plan ${tierNames.en[i]} · ${duration}min · ${plan.days}d/wk · $${plan.monthly}/mo`,
-          });
-        }}
+      <Link
+        to="/#contact"
         className={`w-full text-center py-3 sm:py-2.5 md:py-3 rounded-lg text-[13px] sm:text-xs md:text-sm font-semibold transition-opacity min-h-[44px] flex items-center justify-center ${
           plan.popular
             ? "bg-accent text-accent-foreground hover:opacity-90"
@@ -153,7 +122,7 @@ const PricingCard = memo(({ plan, i, duration, t }: { plan: Plan; i: number; dur
         }`}
       >
         {t("Subscribe Now", "اشترك الآن")}
-      </a>
+      </Link>
     </div>
   );
 });

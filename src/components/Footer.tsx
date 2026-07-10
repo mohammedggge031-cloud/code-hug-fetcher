@@ -153,15 +153,13 @@ const Footer = () => {
                 "احجز حصتك التجريبية المجانية اليوم. بدون التزام."
               )}
             </p>
-            <a
-              href="https://wa.me/201271134828?text=Salam%20Alhamd%20Academy"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/#contact"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent/80 text-accent-foreground font-semibold text-sm hover:bg-accent transition-colors"
             >
               <WhatsAppIcon />
               {t("Book Free Trial", "احجز تجربة مجانية")}
-            </a>
+            </Link>
 
             <div className="mt-5 p-3.5 rounded-xl bg-primary-foreground/5 border border-primary-foreground/10">
               <div className="flex items-center gap-2 mb-1.5">

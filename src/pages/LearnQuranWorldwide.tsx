@@ -70,7 +70,7 @@ const LearnQuranWorldwide = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/free-trial"
+                to="/#contact"
                 className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition-colors text-lg"
               >
                 Book Free Trial <ArrowRight className="w-5 h-5" />
@@ -194,7 +194,7 @@ const LearnQuranWorldwide = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              to="/free-trial"
+              to="/#contact"
               className="inline-flex items-center justify-center gap-2 bg-background text-primary px-8 py-4 rounded-lg font-semibold hover:bg-background/90 transition-colors text-lg"
             >
               Book Free Trial <ArrowRight className="w-5 h-5" />
