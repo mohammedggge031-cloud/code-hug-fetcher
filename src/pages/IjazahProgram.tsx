@@ -89,10 +89,10 @@ const IjazahPricingSection = () => {
               </div>
 
               <a
-                href="#contact-section"
+                href="/#contact"
                 onClick={(e) => {
                   e.preventDefault();
-                  const contactEl = document.getElementById("contact-section") || document.querySelector("[data-contact]");
+                  const contactEl = document.getElementById("contact") || document.querySelector("[data-contact]");
                   if (contactEl) {
                     const top = contactEl.getBoundingClientRect().top + window.scrollY - 96;
                     window.scrollTo({ top: Math.max(top, 0), left: 0, behavior: getSafeScrollBehavior() });
